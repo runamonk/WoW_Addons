@@ -1,0 +1,86 @@
+<Ui xmlns='http://www.blizzard.com/wow/ui/'>
+  <FontFamily name='OswaldNormal' virtual='true'>
+    <Member alphabet='roman'>
+      <Font font='Interface\AddOns\mnkStuff\assets\Oswald.ttf' height='18' outline='' monochrome='false'/>
+    </Member>
+  </FontFamily>
+  <FontFamily name='OswaldMedium' virtual='true'>
+    <Member alphabet='roman'>
+      <Font font='Interface\AddOns\mnkStuff\assets\Oswald.ttf' height='12' outline='NORMAL' monochrome='false'/>
+    </Member>
+  </FontFamily>
+  <FontFamily name='OswaldSmall' virtual='true'>
+    <Member alphabet='roman'>
+      <Font font='Interface\AddOns\mnkStuff\assets\Oswald.ttf' height='10' outline='' monochrome='false'/>
+    </Member>
+  </FontFamily>
+
+  <FontFamily name='abfNormal' virtual='true'>
+    <Member alphabet='roman'>
+      <Font font='Interface\AddOns\mnkStuff\assets\ABF.ttf' height='18' outline='' monochrome='false'/>
+    </Member>
+  </FontFamily>
+  <FontFamily name='abfMedium' virtual='true'>
+    <Member alphabet='roman'>
+      <Font font='Interface\AddOns\mnkStuff\assets\ABF.ttf' height='12' outline='NORMAL' monochrome='false'/>
+    </Member>
+  </FontFamily>
+  <FontFamily name='abfSmall' virtual='true'>
+    <Member alphabet='roman'>
+      <Font font='Interface\AddOns\mnkStuff\assets\ABF.ttf' height='10' outline='' monochrome='false'/>
+    </Member>
+  </FontFamily>
+
+  <FontFamily name='apNormal' virtual='true'>
+    <Member alphabet='roman'>
+      <Font font='Interface\AddOns\mnkStuff\assets\AP.ttf' height='18' outline='' monochrome='false'/>
+    </Member>
+  </FontFamily>
+  <FontFamily name='apMedium' virtual='true'>
+    <Member alphabet='roman'>
+      <Font font='Interface\AddOns\mnkStuff\assets\AP.ttf' height='12' outline='NORMAL' monochrome='false'/>
+    </Member>
+  </FontFamily>
+  <FontFamily name='apSmall' virtual='true'>
+    <Member alphabet='roman'>
+      <Font font='Interface\AddOns\mnkStuff\assets\AP.ttf' height='10' outline='' monochrome='false'/>
+    </Member>
+  </FontFamily>
+
+  <Font name='OswaldLeft' inherits='OswaldNormal' justifyH='LEFT' virtual='true'/>
+  <Font name='OswaldRight' inherits='OswaldNormal' justifyH='RIGHT' virtual='true'/>
+  <Font name='OswaldCenter' inherits='OswaldNormal' justifyH='CENTER' virtual='true'/>
+
+  <Font name='OswaldMediumLeft' inherits='OswaldMedium' justifyH='LEFT' virtual='true'/>
+  <Font name='OswaldMediumRight' inherits='OswaldMedium' justifyH='RIGHT' virtual='true'/>
+  <Font name='OswaldMediumCenter' inherits='OswaldMedium' justifyH='CENTER' virtual='true'/>
+
+  <Font name='OswaldSmallCenter' inherits='OswaldSmall' justifyH='CENTER' virtual='true'/>
+  <Font name='OswaldSmallRight' inherits='OswaldSmall' justifyH='RIGHT' virtual='true'/>
+  <Font name='OswaldSmallLeft' inherits='OswaldSmall' justifyH='LEFT' virtual='true'/>
+
+
+  <Font name='abfLeft' inherits='abfNormal' justifyH='LEFT' virtual='true'/>
+  <Font name='abfRight' inherits='abfNormal' justifyH='RIGHT' virtual='true'/>
+  <Font name='abfCenter' inherits='abfNormal' justifyH='CENTER' virtual='true'/>
+
+  <Font name='abfMediumLeft' inherits='abfMedium' justifyH='LEFT' virtual='true'/>
+  <Font name='abfMediumRight' inherits='abfMedium' justifyH='RIGHT' virtual='true'/>
+  <Font name='abfMediumCenter' inherits='abfMedium' justifyH='CENTER' virtual='true'/>
+
+  <Font name='abfSmallCenter' inherits='abfSmall' justifyH='CENTER' virtual='true'/>
+  <Font name='abfSmallRight' inherits='abfSmall' justifyH='RIGHT' virtual='true'/>
+  <Font name='abfSmallLeft' inherits='abfSmall' justifyH='LEFT' virtual='true'/>
+
+  <Font name='apLeft' inherits='apNormal' justifyH='LEFT' virtual='true'/>
+  <Font name='apRight' inherits='apNormal' justifyH='RIGHT' virtual='true'/>
+  <Font name='apCenter' inherits='apNormal' justifyH='CENTER' virtual='true'/>
+
+  <Font name='apMediumLeft' inherits='apMedium' justifyH='LEFT' virtual='true'/>
+  <Font name='apMediumRight' inherits='apMedium' justifyH='RIGHT' virtual='true'/>
+  <Font name='apMediumCenter' inherits='apMedium' justifyH='CENTER' virtual='true'/>
+
+  <Font name='apSmallCenter' inherits='apSmall' justifyH='CENTER' virtual='true'/>
+  <Font name='apSmallRight' inherits='apSmall' justifyH='RIGHT' virtual='true'/>
+  <Font name='apSmallLeft' inherits='apSmall' justifyH='LEFT' virtual='true'/>
+</Ui>

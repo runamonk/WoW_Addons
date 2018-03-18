@@ -1,0 +1,9 @@
+## Interface: 60000
+## Title: mnkXP
+## Notes: Display XP in a broker display
+## Author: runamonk
+## X-Embeds: LibDataBroker-1.1
+## Version: 1
+##Dependencies: mnkLibs
+
+mnkXP.lua

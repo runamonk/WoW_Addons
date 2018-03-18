@@ -1,0 +1,9 @@
+## Interface: 70300
+## Title: mnkMisc
+## Notes: AutoRepair/AutoSell Junk
+## Author: runamonk
+## X-Embeds: LibDataBroker-1.1
+## Version: 1
+##Dependencies: mnkLibs
+
+mnkMisc.lua

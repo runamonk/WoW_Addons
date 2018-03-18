@@ -1,0 +1,9 @@
+## Interface: 70300
+## Author: runamonk
+## Version: 1
+## Title: mnkBackpack
+## Notes: Basic layout for the Backpack addon
+## RequiredDeps: Backpack
+
+GetItemArtifactPower.lua
+mnkBackpack.lua

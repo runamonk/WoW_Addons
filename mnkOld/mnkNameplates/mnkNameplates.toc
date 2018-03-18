@@ -1,0 +1,11 @@
+## Interface: 70300
+## Title: mnkNameplates
+## Version: 1
+## Notes: Nameplates
+## Author: runamonk
+
+mnkNameplates.xml
+mnkNameplates.lua
+Auras.lua
+Power.lua
+
