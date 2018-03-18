@@ -1,6 +1,6 @@
 ## Interface: 70300
 ## Title: mnkReps
-## Notes: Show reputation for specific factions in LDB display.
+## Notes: Show reputation for specific factions in LDB display. Also auto switches tabards.
 ## Author: runamonk
 ## X-Embeds: LibDataBroker-1.1
 ## Version: 1
