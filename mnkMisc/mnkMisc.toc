@@ -1,6 +1,6 @@
 ## Interface: 70300
 ## Title: mnkMisc
-## Notes: AutoRepair/AutoSell Junk
+## Notes: Loot/Rep/Tradeskill noticess and misc configs
 ## Author: runamonk
 ## X-Embeds: LibDataBroker-1.1
 ## Version: 1
