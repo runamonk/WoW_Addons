@@ -1,0 +1,131 @@
+mnkDurability = CreateFrame('Frame')
+mnkDurability.LDB = LibStub:GetLibrary("LibDataBroker-1.1")
+
+local LibQTip = LibStub("LibQTip-1.0")
+local t = {}
+
+
+local function DoOnEnter(self)
+  local tooltip = LibQTip:Acquire("mnkDurabilityTooltip", 4, "LEFT","LEFT","RIGHT","RIGHT")
+  self.tooltip = tooltip 
+  
+  tooltip:Clear()
+  local ItemCount = 0;
+  local Total = 0
+  local Current = 0
+  
+  tooltip:AddHeader(Color(COLOR_GOLD)..'Slot',Color(COLOR_GOLD)..'Name',Color(COLOR_GOLD)..'Durability',Color(COLOR_GOLD)..'Level')
+  
+  for i in pairs(t) do 
+    Current = (Current + t[i].Current)
+    Total = (Total + t[i].Max)
+    
+    if (t[i].ItemID == nil) then
+      pct = '-'
+    else
+      if (t[i].Max > 0) then
+        pct = math.floor((t[i].Current/t[i].Max)*100).."%"
+      else
+        pct = '-'
+      end
+    end
+    
+    tooltip:AddLine([i].Text, t[i].ItemName, pct, t[i].Level)      
+  end
+   
+  tooltip:SetAutoHideDelay( .1, self )
+  tooltip:SmartAnchorTo(self)
+  tooltip:Show() 
+end
+
+function AddInventory(SlotID, Text)
+  local c, m = GetInventoryItemDurability(SlotID)
+  
+  if c == nil then
+    c = 0
+  end
+  if m == nil then
+    m = 0
+  end
+  
+  t[SlotID] = {}
+  t[SlotID].Text = Text
+  t[SlotID].Current = c
+  t[SlotID].Max = m
+  t[SlotID].ItemID = GetInventoryItemID("player", SlotID)
+  
+  
+  if t[SlotID].ItemID ~= nil then
+    local itemName,_,itemRarity,itemLevel,_,_,_,_,_,itemTexture,_ = GetItemInfo(t[SlotID].ItemID)    
+    --when the addon is first loaded after logging in item information is not available.
+    if (itemName == nil) or (itemRarity == nil) then
+      itemName = 'n/a'
+      itemRarity = 0
+      itemTexture = 'Interface\\Icons\\Inv_chest_plate15'
+    end
+    t[SlotID].Level = itemLevel
+    _,_,_,color = GetItemQualityColor(itemRarity)
+    t[SlotID].ItemName = string.format('|T%s:21|t %s', itemTexture, color..itemName)
+  else
+    t[SlotID].ItemName = '-'
+  end
+ end
+
+function mnkDurability:GetText()
+  local Total = 0
+  local Current = 0
+  local Lowest = 100
+  local Percent = 100
+  
+  AddInventory(1, 'Head' )
+  AddInventory(3, 'Shoulder')
+  AddInventory(5, 'Chest')
+  AddInventory(6, 'Waist')
+  AddInventory(7, 'Legs')
+  AddInventory(8, 'Feet')
+  AddInventory(9, 'Wrist')
+  AddInventory(10, 'Gloves')
+  AddInventory(16, 'Main Hand')
+  AddInventory(17, 'Off Hand')
+  AddInventory(18, 'Ranged')  
+  
+  for i in pairs(t) do 
+    if (t[i].Max ~= nil) and (t[i].Current ~= nil) then
+      if (math.floor((t[i].Current/t[i].Max)*100) < Lowest) then
+        Lowest = math.floor((t[i].Current/t[i].Max)*100)
+      end
+        
+      Current = (Current + t[i].Current)
+      Total = (Total + t[i].Max)
+    end 
+  end
+  
+  Percent = math.floor((Current/Total)*100)
+  
+  if (Lowest ~= Percent) then
+    return Lowest.."%/"..Percent.."% "
+  else
+    return Percent.."%"
+  end
+end
+
+function mnkDurability:DoOnEvent(event)
+  if event == "PLAYER_LOGIN" then
+    mnkDurability.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkDurability', {
+        icon = "Interface\\Icons\\Inv_chest_plate15.blp",  
+        type = 'data source',
+        OnEnter = DoOnEnter
+      })  
+  else
+    self.LDB.text = self.GetText()
+  end
+end
+
+mnkDurability:SetScript("OnEvent", mnkDurability.DoOnEvent)
+
+mnkDurability:RegisterEvent("PLAYER_LOGIN", "DoOnEvent")
+mnkDurability:RegisterEvent("UPDATE_INVENTORY_DURABILITY","DoOnEvent")
+mnkDurability:RegisterEvent("UPDATE_INVENTORY_ALERTS","DoOnEvent")
+mnkDurability:RegisterEvent("UNIT_INVENTORY_CHANGED","DoOnEvent")
+mnkDurability:RegisterEvent("EQUIPMENT_SWAP_FINISHED","DoOnEvent")
+

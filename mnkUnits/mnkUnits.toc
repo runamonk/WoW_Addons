@@ -1,0 +1,15 @@
+## Interface: 70300
+## Author: runamonk
+## Version: 70300.1
+## Title: mnkUnits
+## Notes: Minimalistic layout, Modified verison of oUF_P3lim
+## SavedVariables: mnkUnits
+## RequiredDeps: mnkLibs
+## X-SavedVariables: mnkUnits
+## X-SlashCmdList: /mnkUnits, /mu
+## X-oUF: mnkUnits
+
+
+embeds\_embeds.xml
+Tags.lua
+mnkUnits.lua

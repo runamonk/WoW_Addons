@@ -1,0 +1,9 @@
+## Interface: 70300
+## Title: mnkGuild
+## Notes: Display guild members in a broker display
+## Author: runamonk
+## X-Embeds: LibDataBroker-1.1
+## Version: 1
+##Dependencies: mnkLibs
+
+mnkGuild.lua

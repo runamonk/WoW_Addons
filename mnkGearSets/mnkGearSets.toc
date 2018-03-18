@@ -1,0 +1,9 @@
+## Interface: 70000
+## Title: mnkGearSets
+## Notes: Allows switching between gear equipment sets
+## Author: runamonk
+## X-Embeds: LibDataBroker-1.1
+## Version: 1
+##Dependencies: mnkLibs
+
+mnkGearSets.lua

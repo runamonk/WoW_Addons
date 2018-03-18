@@ -1,0 +1,9 @@
+## Interface: 70300
+## Title: mnkPC
+## Notes: Display FPS and Latency in a broker display
+## Author: runamonk
+## X-Embeds: LibDataBroker-1.1
+## Version: 1
+##Dependencies: mnkLibs
+
+mnkPC.lua

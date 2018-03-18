@@ -1,0 +1,8 @@
+## Interface: 70000
+## Title: mnkBags
+## Author: runamonk
+## Notes: Bag Addon
+## Version: 1.0
+## SavedVariables: mnkBags_DB
+
+src/manifest.xml

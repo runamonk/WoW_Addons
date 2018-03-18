@@ -1,0 +1,9 @@
+## Interface: 70000
+## Title: mnkDurability
+## Notes: Display current durability in a broker display
+## Author: runamonk
+## X-Embeds: LibDataBroker-1.1
+## Version: 1
+##Dependencies: mnkLibs
+
+mnkDurability.lua

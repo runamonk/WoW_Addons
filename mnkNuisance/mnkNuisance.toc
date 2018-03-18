@@ -1,0 +1,10 @@
+## Interface: 70300
+## Title: mnkNuisance
+## Notes: Block nuisance group invites.
+## Author: runamonk
+## X-Embeds: LibDataBroker-1.1
+## Version: 1
+## Dependencies: mnkLibs
+## SavedVariablesPerCharacter: bBlockEnabled
+
+mnkNuisance.lua

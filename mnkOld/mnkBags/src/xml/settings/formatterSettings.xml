@@ -1,0 +1,65 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
+    <Frame name="mnkBagsFormatSettings" hidden="false" virtual="true">
+        <Size x="500" y="160"/>
+        <Backdrop bgFile="Interface\ChatFrame\ChatFrameBackground" edgeFile="Interface\Buttons\WHITE8x8">
+            <EdgeSize>
+                <AbsValue val="1" />
+            </EdgeSize>
+            <Color r="0" g="0" b="0" a="0.6" />
+            <BorderColor r="0.3" g="0.3" b="0.3" a="1" />
+        </Backdrop>
+        <Layers>
+            <Layer level="ARTWORK">
+                <FontString name="$parentName" inherits="GameFontNormal" text="mnkBags_LOCALE_FORMAT_SETTINGS">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="15" y="-5"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Frame name="$parentBox" parentKey="box">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="$parentName" relativePoint="BOTTOMLEFT" y="-5"  />
+                    <Anchor point="BOTTOMRIGHT" relativeTo="$parent" x="-5" y="5" />
+                </Anchors>
+                <Frames>
+                    <Slider name="$parentItemsSlider" inherits="mnkBagsSettingsSliderTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" >
+                                <Offset>
+                                    <AbsDimension x="0" y="-20"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnShow>
+                                mnkBagsInitSettingsSlider(self, mnkBags_LOCALE_MAX_ITEMS, 5, 20, 1, mnkBags_TYPE_CONTAINER, mnkBags_SETTING_FORMATTER_BOX_COLS)
+                            </OnShow>
+                        </Scripts>
+                    </Slider>
+                    <Slider name="$parentHeightSlider" inherits="mnkBagsSettingsSliderTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeTo="$parentItemsSlider" relativePoint="BOTTOMLEFT">
+                                <Offset>
+                                    <AbsDimension x="0" y="-32"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnShow>
+                                mnkBagsInitSettingsSlider(self, mnkBags_LOCALE_MAX_HEIGHT, 30, 100, 1, mnkBags_TYPE_CONTAINER, mnkBags_SETTING_FORMATTER_MAX_HEIGHT)
+                            </OnShow>
+                        </Scripts>
+                    </Slider>
+                </Frames>
+            </Frame>
+        </Frames>
+        <Scripts>
+            <OnShow>
+                mnkBagsFormatSettings_OnLoad(self)
+            </OnShow>
+        </Scripts>
+    </Frame>
+</Ui>

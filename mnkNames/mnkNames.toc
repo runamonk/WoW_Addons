@@ -1,0 +1,10 @@
+## Interface: 70300
+## Author: runamonk
+## Version: 70300.1
+## Title: mnkNames
+## Notes: Minimalistic oUF Nameplates Layout
+## X-oUF: mnkNames
+## RequiredDeps: mnkLibs
+
+mnkNames.lua
+tags.lua

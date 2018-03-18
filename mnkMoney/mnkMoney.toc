@@ -1,0 +1,9 @@
+## Interface: 70300
+## Title: mnkMoney
+## Notes: Display money in a broker display
+## Author: runamonk
+## X-Embeds: LibDataBroker-1.1
+## Version: 1
+##Dependencies: mnkLibs
+
+mnkMoney.lua

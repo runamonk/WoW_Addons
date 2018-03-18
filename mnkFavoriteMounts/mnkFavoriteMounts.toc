@@ -1,0 +1,10 @@
+## Interface: 70300
+## Title: mnkFavoriteMounts
+## Notes: Access favorite mounts from a broker display.
+## Author: runamonk
+## X-Embeds: LibDataBroker-1.1
+## Version: 1
+## Dependencies: mnkLibs
+
+
+mnkFavoriteMounts.lua

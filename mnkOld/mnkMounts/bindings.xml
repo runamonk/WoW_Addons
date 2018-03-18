@@ -1,0 +1,3 @@
+<Bindings>
+	<Binding name="RANDOM_MOUNT" header="MNKMOUNT" description="Load random mount">mnkMount.DoRandomMount()</Binding>
+</Bindings>
