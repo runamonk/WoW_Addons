@@ -310,7 +310,7 @@ function mnkReputation.GetRepLeft(amt)
     if amt == 0 or amt == 1 then
         return ""; 
     else
-        return amt; 
+        return TruncNumber(amt,0); 
     end
 end
 
