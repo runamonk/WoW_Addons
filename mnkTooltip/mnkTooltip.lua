@@ -94,9 +94,9 @@ local function OnTooltipSetItem()
 end
 
 local function OnShow()
-    GameTooltip.shoppingTooltips[1]:SetBackdropBorderColor(0,0,0,0); -- hide the border. 
-    GameTooltip.shoppingTooltips[2]:SetBackdropBorderColor(0,0,0,0); -- hide the border. 
-    GameTooltip:SetBackdropBorderColor(0,0,0,0); -- hide the border. 
+    GameTooltip.shoppingTooltips[1]:SetBackdropBorderColor(0, 0, 0, 0); -- hide the border. 
+    GameTooltip.shoppingTooltips[2]:SetBackdropBorderColor(0, 0, 0, 0); -- hide the border. 
+    GameTooltip:SetBackdropBorderColor(0, 0, 0, 0); -- hide the border. 
 end
 
 hooksecurefunc("GameTooltip_SetDefaultAnchor", function(tooltip, parent)

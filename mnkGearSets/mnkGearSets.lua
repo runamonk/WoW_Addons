@@ -38,8 +38,8 @@ function mnkGearSets.DoOnEnter(self)
             tooltip:SetLineScript(y, "OnMouseDown", mnkGearSets.DoOnSetClick, name); 
         end
         tooltip:SetAutoHideDelay(.1, self); 
-        tooltip:SmartAnchorTo(self);
-        tooltip:SetBackdropBorderColor(0,0,0,0);
+        tooltip:SmartAnchorTo(self); 
+        tooltip:SetBackdropBorderColor(0, 0, 0, 0); 
         tooltip:Show(); 
     end
 end

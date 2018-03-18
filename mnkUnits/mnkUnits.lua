@@ -7,22 +7,22 @@ local fontOswald = [[Interface\AddOns\mnkLibs\Fonts\oswald.ttf]]
 local font1l = CreateFont('font1l')
 font1l:SetFont(fontOswald, 18, '')
 font1l:SetShadowOffset(0, 0)
-font1l:SetJustifyH('LEFT');
+font1l:SetJustifyH('LEFT'); 
 
 local font1r = CreateFont('font1r')
 font1r:SetFont(fontOswald, 18, 'OUTLINE')
 font1r:SetShadowOffset(0, 0)
-font1r:SetJustifyH('RIGHT');
+font1r:SetJustifyH('RIGHT'); 
 
 local font2l = CreateFont('font2l')
 font2l:SetFont(fontOswald, 10, '')
 font2l:SetShadowOffset(0, 0)
-font2l:SetJustifyH('LEFT');
+font2l:SetJustifyH('LEFT'); 
 
 local font2c = CreateFont('font2c')
 font2c:SetFont(fontOswald, 10, '')
 font2c:SetShadowOffset(0, 0)
-font2c:SetJustifyH('CENTER');
+font2c:SetJustifyH('CENTER'); 
 
 local GLOW = {
     edgeFile = [[Interface\AddOns\mnkUnits\assets\glow]], edgeSize = 3
@@ -44,9 +44,9 @@ local function UpdateHealth(self, event, unit)
     end
 end
 local function UpdateHealthPrep(self)
-	local element = self.Health
-	element:SetMinMaxValues(0, 1)
-	element:SetValue(0)
+    local element = self.Health
+    element:SetMinMaxValues(0, 1)
+    element:SetValue(0)
 end
 
 local function PostUpdateCast(element, unit)
@@ -215,7 +215,7 @@ local function Shared(self, unit)
     self.HealthValue = HealthValue
 
     if (unit == 'player' or unit == 'target') then
-        Health:SetHeight(20)    
+        Health:SetHeight(20) 
         local Castbar = CreateFrame('StatusBar', nil, self)
         Castbar:SetAllPoints(Health)
         Castbar:SetStatusBarTexture(TEXTURE)

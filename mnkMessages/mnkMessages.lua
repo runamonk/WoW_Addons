@@ -83,7 +83,7 @@ function mnkMessages.DoOnEnter(self)
     tooltip:SetAutoHideDelay(.1, self); 
     tooltip:SmartAnchorTo(self); 
     tooltip:UpdateScrolling(500); 
-    tooltip:SetBackdropBorderColor(0,0,0,0);
+    tooltip:SetBackdropBorderColor(0, 0, 0, 0); 
     tooltip:Show(); 
 end
 
