@@ -32,8 +32,8 @@ function mnkXP.DoOnEnter(self)
     tooltip:AddLine(Color(COLOR_GOLD) .. "Rested XP", TruncNumber(extXP, 2), Color(COLOR_BLUE)..ToPCT((extXP / UnitXPMax("player")))); 
 
     tooltip:SetAutoHideDelay(.1, self); 
-    tooltip:SmartAnchorTo(self);
-    tooltip:SetBackdropBorderColor(0,0,0,0); 
+    tooltip:SmartAnchorTo(self); 
+    tooltip:SetBackdropBorderColor(0, 0, 0, 0); 
     tooltip:Show(); 
 end
 

@@ -68,8 +68,8 @@ function mnkProfessions.DoOnEnter(self)
     end 
 
     tooltip:SetAutoHideDelay(.1, self); 
-    tooltip:SmartAnchorTo(self);
-    tooltip:SetBackdropBorderColor(0,0,0,0);
+    tooltip:SmartAnchorTo(self); 
+    tooltip:SetBackdropBorderColor(0, 0, 0, 0); 
     tooltip:Show(); 
 end
 

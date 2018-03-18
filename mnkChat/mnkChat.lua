@@ -196,7 +196,7 @@ local function searchforurl(frame, text, ...)
     text = string.gsub(text, "%[(%d)%. Trade%]", "<2> "); 
     text = string.gsub(text, "%[(%d)%. LocalDefense%]", "<3> "); 
 
-    local fullName, shortName = strmatch(text,  "|Hplayer:(.-)|h%[(.-)%]|h");
+    local fullName, shortName = strmatch(text, "|Hplayer:(.-)|h%[(.-)%]|h"); 
 
     if fullName ~= nil then
         if strmatch(shortName, "|cff") then
@@ -204,7 +204,7 @@ local function searchforurl(frame, text, ...)
         else
             shortName = strmatch(shortName, "[^%-]+")
         end
-        text = gsub(text, "|Hplayer:(.-)|h%[(.-)%]|h", format("|Hplayer:%s|h[%s]|h", fullName, shortName));
+        text = gsub(text, "|Hplayer:(.-)|h%[(.-)%]|h", format("|Hplayer:%s|h[%s]|h", fullName, shortName)); 
     end
     --print(fullName, " ", shortName)
     frame.am(frame, text, ...); 

@@ -69,7 +69,7 @@ function mnkDurability.DoOnEnter(self)
     tooltip:SetAutoHideDelay(.1, self); 
     tooltip:SmartAnchorTo(self); 
     tooltip:SetFrameStrata("HIGH"); 
-    tooltip:SetBackdropBorderColor(0,0,0,0);
+    tooltip:SetBackdropBorderColor(0, 0, 0, 0); 
     tooltip:Show(); 
 end
 

@@ -23,7 +23,7 @@ function mnkMoney:DoOnEvent(event)
 
     if gold > 0 then
         self.LDB.icon = "Interface\\MoneyFrame\\UI-GoldIcon"; 
-        text = TruncNumber(gold,0); 
+        text = TruncNumber(gold, 0); 
     elseif silver > 0 then
         self.LDB.icon = "Interface\\MoneyFrame\\UI-SilverIcon"; 
         text = silver; 
@@ -83,7 +83,7 @@ function mnkMoney.DoOnEnter(self)
 
     tooltip:SetAutoHideDelay(.1, self); 
     tooltip:SmartAnchorTo(self); 
-    tooltip:SetBackdropBorderColor(0,0,0,0);
+    tooltip:SetBackdropBorderColor(0, 0, 0, 0); 
     tooltip:Show(); 
 end
 

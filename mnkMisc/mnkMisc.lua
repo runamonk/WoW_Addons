@@ -2,7 +2,7 @@ mnkMisc = CreateFrame("Frame")
 currencyOnHand = 0; 
 
 function mnkMisc:DoOnEvent(event, arg1, arg2)
---[[    if OrderHallCommandBar then
+    --[[    if OrderHallCommandBar then
         OrderHallCommandBar:Hide(); 
         OrderHallCommandBar.Show = OrderHallCommandBar.Hide; 
     end--]]
@@ -26,11 +26,11 @@ function mnkMisc:DoOnEvent(event, arg1, arg2)
         if event == "CHAT_MSG_LOOT" then
             --print("1 "..arg1)
             if arg1 ~= nil then
-                local LOOT_ITEM_PATTERN = (LOOT_ITEM_SELF):gsub("%%s", "(.+)");
-                local LOOT_ITEM_PUSH_PATTERN = (LOOT_ITEM_PUSHED_SELF):gsub("%%s", "(.+)");
-                local LOOT_ITEM_MULTIPLE_PATTERN = (LOOT_ITEM_SELF_MULTIPLE):gsub("%%s", "(.+)"):gsub("%%d", "(%%d+)");
-                local LOOT_ITEM_PUSH_MULTIPLE_PATTERN = (LOOT_ITEM_PUSHED_SELF_MULTIPLE):gsub("%%s", "(.+)"):gsub("%%d", "(%%d+)");
-                local LOOT_ITEM_CREATED_SELF_PATTERN  = LOOT_ITEM_CREATED_SELF:gsub("%%s", "(.+)");                
+                local LOOT_ITEM_PATTERN = (LOOT_ITEM_SELF):gsub("%%s", "(.+)"); 
+                local LOOT_ITEM_PUSH_PATTERN = (LOOT_ITEM_PUSHED_SELF):gsub("%%s", "(.+)"); 
+                local LOOT_ITEM_MULTIPLE_PATTERN = (LOOT_ITEM_SELF_MULTIPLE):gsub("%%s", "(.+)"):gsub("%%d", "(%%d+)"); 
+                local LOOT_ITEM_PUSH_MULTIPLE_PATTERN = (LOOT_ITEM_PUSHED_SELF_MULTIPLE):gsub("%%s", "(.+)"):gsub("%%d", "(%%d+)"); 
+                local LOOT_ITEM_CREATED_SELF_PATTERN = LOOT_ITEM_CREATED_SELF:gsub("%%s", "(.+)"); 
                 local l, q = arg1:match(LOOT_ITEM_MULTIPLE_PATTERN)
 
                 --print(l.." * "..q)
@@ -121,11 +121,11 @@ function mnkMisc:DoOnEvent(event, arg1, arg2)
             local x = currency - currencyOnHand or 0; 
             if x > 0 then
                 --print(x)
-                local s = GetCoinTextureString(x) or nil;
+                local s = GetCoinTextureString(x) or nil; 
                 --print(s)
                 if s ~= nil then
                     CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false); 
-                    currencyOnHand = currency;
+                    currencyOnHand = currency; 
                 end 
             end
         end -- PLAYER_MONEY

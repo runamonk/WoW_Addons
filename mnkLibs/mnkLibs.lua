@@ -3,17 +3,17 @@ oUF = ns.oUF
 
 mnkLibs = CreateFrame("Frame")
 mnkLibs.Fonts = {
-    oswald = "Interface\\AddOns\\mnkLibs\\Fonts\\oswald.ttf",
-    abf = "Interface\\AddOns\\mnkLibs\\Fonts\\abf.ttf",
+    oswald = "Interface\\AddOns\\mnkLibs\\Fonts\\oswald.ttf", 
+    abf = "Interface\\AddOns\\mnkLibs\\Fonts\\abf.ttf", 
     ap = "Interface\\AddOns\\mnkLibs\\Fonts\\ap.ttf"
 }
 
 mnkLibs.Textures = {
-    background = "Interface\\AddOns\\mnkLibs\\Assets\\background",
-    border = "Interface\\AddOns\\mnkLibs\\Assets\\border",
-    bar = "Interface\\AddOns\\mnkLibs\\Assets\\bar",
+    background = "Interface\\AddOns\\mnkLibs\\Assets\\background", 
+    border = "Interface\\AddOns\\mnkLibs\\Assets\\border", 
+    bar = "Interface\\AddOns\\mnkLibs\\Assets\\bar", 
     edge = "Interface\\AddOns\\mnkLibs\\Assets\\edge"
- }
+}
 
 
 COLOR_GREEN = {r = 153, g = 255, b = 0}; 
@@ -91,7 +91,7 @@ function CreateFontString(frame, font, size, outline, layer)
     fs:SetFont(font, size, outline)
     fs:SetShadowColor(0, 0, 0, 1)
     fs:SetShadowOffset(1, -1)
-  return fs
+    return fs
 end
 
 function CreateDropShadow(frame, point, edge, color)
@@ -100,34 +100,34 @@ function CreateDropShadow(frame, point, edge, color)
     shadow:SetPoint("TOPLEFT", frame, "TOPLEFT", -point, point)
     shadow:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", point, -point)
     shadow:SetBackdrop({
-    bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-    edgeFile = mnkLibs.Textures.edge, 
-    tile = false,
-    tileSize = 32,
-    edgeSize = edge,
-    insets = {
-          left = -edge,
-          right = -edge,
-          top = -edge,
-          bottom = -edge
-        }
-    })
-    shadow:SetBackdropColor(0, 0, 0, 0)
-    shadow:SetBackdropBorderColor(unpack(color))
-end
+        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", 
+        edgeFile = mnkLibs.Textures.edge, 
+        tile = false, 
+        tileSize = 32, 
+        edgeSize = edge, 
+        insets = {
+            left = -edge, 
+            right = -edge, 
+            top = -edge, 
+            bottom = -edge
+        }})
+        shadow:SetBackdropColor(0, 0, 0, 0)
+        shadow:SetBackdropBorderColor(unpack(color))
+    end
 
 
-function SetBackdrop(self, inset_l, inset_r, inset_t, inset_b)
-  self:SetBackdrop {
-    bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
-    tile = false,
-    tileSize = 0,
-    insets = {
-          left = -inset_l,
-          right = -inset_r,
-          top = -inset_t,
-          bottom = -inset_b
-        }
-  }
-  self:SetBackdropColor(0, 0, 0, 1)
-end
+    function SetBackdrop(self, inset_l, inset_r, inset_t, inset_b)
+        self:SetBackdrop {
+            bgFile = "Interface\\ChatFrame\\ChatFrameBackground", 
+            tile = false, 
+            tileSize = 0, 
+            insets = {
+                left = -inset_l, 
+                right = -inset_r, 
+                top = -inset_t, 
+                bottom = -inset_b
+            }}
+            self:SetBackdropColor(0, 0, 0, 1)
+        end
+
+       

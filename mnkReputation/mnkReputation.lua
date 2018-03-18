@@ -141,8 +141,8 @@ function mnkReputation.DoOnEnter(self)
 
     tooltip:SetAutoHideDelay(.1, self); 
     tooltip:SmartAnchorTo(self); 
-    tooltip:UpdateScrolling(500);
-    tooltip:SetBackdropBorderColor(0,0,0,0); 
+    tooltip:UpdateScrolling(500); 
+    tooltip:SetBackdropBorderColor(0, 0, 0, 0); 
     tooltip:Show(); 
 end
 
@@ -310,7 +310,7 @@ function mnkReputation.GetRepLeft(amt)
     if amt == 0 or amt == 1 then
         return ""; 
     else
-        return TruncNumber(amt,0); 
+        return TruncNumber(amt, 0); 
     end
 end
 

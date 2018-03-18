@@ -53,8 +53,8 @@ function mnkMemory.DoOnEnter(self)
     tooltip:SetCell(l, 1, "Displaying highest 10 addons.", 3); 
 
     tooltip:SetAutoHideDelay(.1, self); 
-    tooltip:SmartAnchorTo(self);
-    tooltip:SetBackdropBorderColor(0,0,0,0);
+    tooltip:SmartAnchorTo(self); 
+    tooltip:SetBackdropBorderColor(0, 0, 0, 0); 
     tooltip:Show(); 
 end
 
