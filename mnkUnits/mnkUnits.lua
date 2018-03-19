@@ -3,7 +3,7 @@
 local TEXTURE = [[Interface\ChatFrame\ChatFrameBackground]]
 local BACKDROP = {bgFile = TEXTURE, insets = {top = -1, bottom = -1, left = -1, right = -1}}
 
-local fontOswald = [[Interface\AddOns\mnkLibs\Fonts\oswald.ttf]]
+local fontOswald = mnkLibs.Fonts.oswald
 local font1l = CreateFont('font1l')
 font1l:SetFont(fontOswald, 18, '')
 font1l:SetShadowOffset(0, 0)
@@ -25,7 +25,7 @@ font2c:SetShadowOffset(0, 0)
 font2c:SetJustifyH('CENTER'); 
 
 local GLOW = {
-    edgeFile = [[Interface\AddOns\mnkUnits\assets\glow]], edgeSize = 3
+    edgeFile = mnkLibs.Textures.edge, edgeSize = 3
 }
 
 local function UpdateHealth(self, event, unit)

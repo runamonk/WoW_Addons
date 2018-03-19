@@ -39,7 +39,7 @@ function mnkChat:DoOnEvent(event, ...)
         mnkChat.SetFrameSettings(f); 
     end
     if event == "CHAT_MSG_WHISPER" then
-        PlaySoundFile("Interface\\AddOns\\mnkLibs\\Sounds\\RobotBlip.ogg", "Master"); 
+        PlaySoundFile(mnkLibs.Sounds.incoming_message, "Master")
     elseif event == "PLAYER_LOGIN" then
         CHAT_WHISPER_GET = ">> %s: "
         CHAT_WHISPER_INFORM_GET = "<< %s: "
@@ -74,19 +74,6 @@ function mnkChat:DoOnEvent(event, ...)
         for iCh = 1, 15 do
             ToggleChatColorNamesByClassGroup(true, "CHANNEL"..iCh)
         end
-        
-
-        -- todo Maybe keep track of new incoming messages, if we a new message comes in we show the tab?
-        
-        -- CHAT_TAB_HIDE_DELAY = .1;
-        -- CHAT_FRAME_TAB_NORMAL_MOUSEOVER_ALPHA = 1;
-        -- CHAT_FRAME_TAB_NORMAL_NOMOUSE_ALPHA = 0;
-        -- CHAT_FRAME_TAB_SELECTED_MOUSEOVER_ALPHA = 1;
-        -- CHAT_FRAME_TAB_SELECTED_NOMOUSE_ALPHA = 0;
-        -- CHAT_FRAME_TAB_ALERTING_MOUSEOVER_ALPHA = 1;
-        -- CHAT_FRAME_TAB_ALERTING_NOMOUSE_ALPHA = 0;
-
-        -- DEFAULT_CHATFRAME_ALPHA = 0.25
     end
 end
 

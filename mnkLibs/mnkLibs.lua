@@ -12,9 +12,15 @@ mnkLibs.Textures = {
     background = "Interface\\AddOns\\mnkLibs\\Assets\\background", 
     border = "Interface\\AddOns\\mnkLibs\\Assets\\border", 
     bar = "Interface\\AddOns\\mnkLibs\\Assets\\bar", 
-    edge = "Interface\\AddOns\\mnkLibs\\Assets\\edge"
+    edge = "Interface\\AddOns\\mnkLibs\\Assets\\edge", 
+    icon_new = "Interface\\AddOns\\mnkLibs\\Assets\\icon_new", 
+    icon_none = "Interface\\AddOns\\mnkLibs\\Assets\\icon_none"
 }
 
+mnkLibs.Sounds = {
+    friend_online = "Interface\\AddOns\\mnkLibs\\Assets\\snd_friend_online.ogg", 
+    incoming_message = "Interface\\AddOns\\mnkLibs\\Assets\\snd_incoming_message.ogg"
+}
 
 COLOR_GREEN = {r = 153, g = 255, b = 0}; 
 COLOR_WHITE = {r = 255, g = 255, b = 255}; 
@@ -129,5 +135,25 @@ function CreateDropShadow(frame, point, edge, color)
             }}
             self:SetBackdropColor(0, 0, 0, 1)
         end
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
 
        
