@@ -1,6 +1,0 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/">
-	<Script file="oUF_Experience.lua"/>
-	<Script file="oUF_Reputation.lua"/>
-	<Script file="oUF_MovableFrames.lua"/>
-	<Script file="oUF_Smooth.lua"/>
-</Ui>
