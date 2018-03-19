@@ -9,7 +9,7 @@ NEW_MESSAGES = 0
 function mnkMessages:DoOnEvent(event, ...)
     if event == "PLAYER_LOGIN" then
         mnkMessages.LDB = LibStub("LibDataBroker-1.1"):NewDataObject("mnkMessages", {
-            icon = "Interface\\AddOns\\mnkMessages\\icon_none", 
+            icon = mnkLibs.Textures.icon_none, 
             type = "data source", 
             OnEnter = mnkMessages.DoOnEnter, 
             OnClick = mnkMessages.DoOnClick
@@ -23,12 +23,8 @@ end
 function mnkMessages.DoOnChat(event, message, playername, _, _, _, playerstatus, _, _, _, lineid, _, guid, pid)
 
     if message ~= nil then
-        --print(playername, ' ', message)
         CombatText_AddMessage(StripServerName(playername) .. ": "..message, CombatText_StandardScroll, 255, 0, 0, nil, false); 
-
-        PlaySoundFile("Interface\\AddOns\\mnkMessages\\sound_incoming.ogg")
         table.insert(tMessages, 1, {time, name, message})
-
         tMessages[1].time = date("%I:%M:%S:%p")
         if string.find(playername, "-") == nil then
             tMessages[1].name = playername
@@ -93,19 +89,15 @@ end
 
 function mnkMessages.UpdateText()
     if NEW_MESSAGES > 0 then
-        mnkMessages.LDB.icon = "Interface\\AddOns\\mnkMessages\\icon_new"
+        mnkMessages.LDB.icon = mnkLibs.Textures.icon_new
     else
-        mnkMessages.LDB.icon = "Interface\\AddOns\\mnkMessages\\icon_none"
+        mnkMessages.LDB.icon = mnkLibs.Textures.icon_none
     end
     mnkMessages.LDB.text = NEW_MESSAGES
 end
 
-
 mnkMessages:SetScript("OnEvent", mnkMessages.DoOnEvent)
-
 mnkMessages:RegisterEvent("PLAYER_LOGIN")
 mnkMessages:RegisterEvent("CHAT_MSG_WHISPER")
---mnkMessages:RegisterEvent("CHAT_MSG_WHISPER_INFORM")
 mnkMessages:RegisterEvent("CHAT_MSG_BN_WHISPER")
---mnkMessages:RegisterEvent("CHAT_MSG_BN_WHISPER_INFORM")
 

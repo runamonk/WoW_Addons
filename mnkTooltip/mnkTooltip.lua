@@ -118,7 +118,6 @@ GameTooltip:HookScript("OnTooltipSetSpell", OnTooltipSetSpell)
 GameTooltip:HookScript("OnTooltipSetItem", OnTooltipSetItem)
 GameTooltip:HookScript("OnShow", OnShow)
 
-
 mnkTooltip:SetScript("OnEvent", mnkTooltip.DoOnEvent); 
 mnkTooltip:RegisterEvent("PLAYER_REGEN_DISABLED"); 
 mnkTooltip:RegisterEvent("PLAYER_REGEN_ENABLED"); 

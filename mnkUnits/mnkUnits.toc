@@ -9,7 +9,6 @@
 ## X-SlashCmdList: /mnkUnits, /mu
 ## X-oUF: mnkUnits
 
-
-embeds\_embeds.xml
+oUF_MovableFrames.lua
 Tags.lua
 mnkUnits.lua

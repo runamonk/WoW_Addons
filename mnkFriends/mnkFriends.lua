@@ -100,7 +100,7 @@ function mnkFriends.GetNumFriendsOnline()
 
     if LastFriendsOnline ~= (i + x) then
         if ((i + x) > LastFriendsOnline) then
-            PlaySoundFile("Interface\\AddOns\\mnkLibs\\Sounds\\friendonline.ogg", "Master"); 
+            PlaySoundFile(mnkLibs.Sounds.friend_online, "Master"); 
         end
         LastFriendsOnline = (i + x); 
     end
