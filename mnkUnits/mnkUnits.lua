@@ -24,10 +24,6 @@ font2c:SetFont(fontOswald, 10, '')
 font2c:SetShadowOffset(0, 0)
 font2c:SetJustifyH('CENTER'); 
 
-local GLOW = {
-    edgeFile = mnkLibs.Textures.edge, edgeSize = 3
-}
-
 local function UpdateHealth(self, event, unit)
     if (not unit or self.unit ~= unit) then
         return
@@ -42,11 +38,6 @@ local function UpdateHealth(self, event, unit)
         element:SetMinMaxValues(0, max)
         element:SetValue(max - cur)
     end
-end
-local function UpdateHealthPrep(self)
-    local element = self.Health
-    element:SetMinMaxValues(0, 1)
-    element:SetValue(0)
 end
 
 local function PostUpdateCast(element, unit)
@@ -66,9 +57,9 @@ local function UpdateThreat(self, event, unit)
     local situation = UnitThreatSituation(unit)
     if (situation and situation > 0) then
         local r, g, b = GetThreatStatusColor(situation)
-        self.ThreatIndicator:SetBackdropBorderColor(r, g, b, 1)
+        self.ThreatIndicator:SetBackdropColor(r, g, b, 1)
     else
-        self.ThreatIndicator:SetBackdropBorderColor(0, 0, 0, 0)
+        self.ThreatIndicator:SetBackdropColor(0, 0, 0, 0)
     end
 end
 
@@ -106,17 +97,12 @@ local UnitSpecific = {
         Power:SetHeight(2)
         Power:SetStatusBarTexture(TEXTURE)
         Power.frequentUpdates = true
-        self.Power = Power
-        Power.colorPower = true
-        Power.colorClass = false
+        Power.colorPower = false
+        Power.colorClass = true
         Power.colorTapping = false
         Power.colorDisconnected = false
         Power.colorReaction = false
-        local PowerBG = Power:CreateTexture(nil, 'BORDER')
-        PowerBG:SetAllPoints()
-        PowerBG:SetTexture(TEXTURE)
-        PowerBG.multiplier = 1 / 3
-        Power.bg = PowerBG
+        self.Power = Power
     end, 
     target = function(self)
         local Name = self.StringParent:CreateFontString(nil, 'OVERLAY', 'font1l')
@@ -243,16 +229,13 @@ local function Shared(self, unit)
         RaidTarget:SetPoint('TOP', self, 0, 8)
         RaidTarget:SetSize(16, 16)
         self.RaidTargetIndicator = RaidTarget
-
-        if (unit ~= 'arena') then
-            local Threat = CreateFrame('Frame', nil, self)
-            Threat:SetPoint('TOPRIGHT', 3, 3)
-            Threat:SetPoint('BOTTOMLEFT', -3, -3)
-            Threat:SetFrameStrata('LOW')
-            Threat:SetBackdrop(GLOW)
-            Threat.Override = UpdateThreat
-            self.ThreatIndicator = Threat
-        end
+        local Threat = CreateFrame('Frame', nil, self)
+        Threat:SetPoint('TOPRIGHT', 2, 2)
+        Threat:SetPoint('BOTTOMLEFT', -2, -2)
+        Threat:SetFrameStrata('BACKGROUND')
+        SetBackdrop(Threat, mnkLibs.Textures.border, 0, 0, 0, 0)
+        Threat.Override = UpdateThreat
+        self.ThreatIndicator = Threat
     end
     
     self:SetSize(161, 20)
@@ -268,6 +251,7 @@ oUF:Factory(function(self)
     self:Spawn('player'):SetPoint('CENTER', -300, -250)
     self:Spawn('focus'):SetPoint('TOPLEFT', oUF_mnkuPlayer, 0, 26)
     self:Spawn('target'):SetPoint('CENTER', 300, -250)
+    
     --self:Spawn('targettarget'):SetPoint('TOPRIGHT', oUF_mnkuTarget, 0, 26)
     
     self:SpawnHeader(nil, nil, 'custom [group:party] show; [@raid3,exists] show; [@raid26,exists] hide; hide', 
