@@ -10,9 +10,8 @@ mnkLibs.Fonts = {
 
 mnkLibs.Textures = {
     background = "Interface\\AddOns\\mnkLibs\\Assets\\background", 
-    border = "Interface\\AddOns\\mnkLibs\\Assets\\border", 
     bar = "Interface\\AddOns\\mnkLibs\\Assets\\bar", 
-    edge = "Interface\\AddOns\\mnkLibs\\Assets\\edge", 
+    border = "Interface\\AddOns\\mnkLibs\\Assets\\border", 
     icon_new = "Interface\\AddOns\\mnkLibs\\Assets\\icon_new", 
     icon_none = "Interface\\AddOns\\mnkLibs\\Assets\\icon_none"
 }
@@ -107,7 +106,7 @@ function CreateDropShadow(frame, point, edge, color)
     shadow:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", point, -point)
     shadow:SetBackdrop({
         bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", 
-        edgeFile = mnkLibs.Textures.edge, 
+        edgeFile = mnkLibs.Textures.border, 
         tile = false, 
         tileSize = 32, 
         edgeSize = edge, 
@@ -122,9 +121,13 @@ function CreateDropShadow(frame, point, edge, color)
     end
 
 
-    function SetBackdrop(self, inset_l, inset_r, inset_t, inset_b)
+    function SetBackdrop(self, bgfile, inset_l, inset_r, inset_t, inset_b)
+        if not bgFile then
+            bgfile = "Interface\\ChatFrame\\ChatFrameBackground"
+        end 
+
         self:SetBackdrop {
-            bgFile = "Interface\\ChatFrame\\ChatFrameBackground", 
+            bgFile = bgfile, 
             tile = false, 
             tileSize = 0, 
             insets = {
@@ -135,6 +138,40 @@ function CreateDropShadow(frame, point, edge, color)
             }}
             self:SetBackdropColor(0, 0, 0, 1)
         end
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
 
         
 
