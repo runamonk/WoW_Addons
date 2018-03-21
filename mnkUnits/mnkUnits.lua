@@ -1,43 +1,55 @@
--- Unit Style for oUF. Based on code by P3lim.
--- 
-local TEXTURE = [[Interface\ChatFrame\ChatFrameBackground]]
-local BACKDROP = {bgFile = TEXTURE, insets = {top = -1, bottom = -1, left = -1, right = -1}}
-
 local fontOswald = mnkLibs.Fonts.oswald
 local font1l = CreateFont('font1l')
 font1l:SetFont(fontOswald, 18, '')
 font1l:SetShadowOffset(0, 0)
-font1l:SetJustifyH('LEFT'); 
+font1l:SetJustifyH('LEFT')
 
 local font1r = CreateFont('font1r')
-font1r:SetFont(fontOswald, 18, 'OUTLINE')
+font1r:SetFont(fontOswald, 18, '')
 font1r:SetShadowOffset(0, 0)
-font1r:SetJustifyH('RIGHT'); 
+font1r:SetJustifyH('RIGHT')
 
 local font2l = CreateFont('font2l')
 font2l:SetFont(fontOswald, 10, '')
 font2l:SetShadowOffset(0, 0)
-font2l:SetJustifyH('LEFT'); 
+font2l:SetJustifyH('LEFT') 
 
 local font2c = CreateFont('font2c')
 font2c:SetFont(fontOswald, 10, '')
 font2c:SetShadowOffset(0, 0)
-font2c:SetJustifyH('CENTER'); 
+font2c:SetJustifyH('CENTER')
 
-local function UpdateHealth(self, event, unit)
-    if (not unit or self.unit ~= unit) then
-        return
-    end
+local function CreateBackground(self)
+    local t = self:CreateTexture(nil, 'BORDER')
+    t:SetAllPoints(self)
+    t:SetColorTexture(0, 0, 0)
+end
 
-    local element = self.Health
-    element:SetShown(UnitIsConnected(unit))
+local function CreateCastBar(self)
+    self.Castbar = CreateFrame('StatusBar', nil, self)
+    self.Castbar:SetAllPoints(self.Health)
+    self.Castbar:SetStatusBarTexture("Interface\\ChatFrame\\ChatFrameBackground")
+    self.Castbar:SetStatusBarColor(0, 0, 0, 0)
+    self.Castbar:SetFrameStrata('HIGH') 
+    self.Castbar.PostCastStart = PostUpdateCast
+    self.Castbar.PostCastInterruptible = PostUpdateCast
+    self.Castbar.PostCastNotInterruptible = PostUpdateCast
+    self.Castbar.PostChannelStart = PostUpdateCast
+    self.Castbar.Spark = self.Castbar:CreateTexture(nil, 'OVERLAY')
+    self.Castbar.Spark:SetSize(1, self.Health:GetHeight())
+    self.Castbar.Spark:SetColorTexture(1, 0, 0)
+end
 
-    if (element:IsShown()) then
-        local cur = UnitHealth(unit)
-        local max = UnitHealthMax(unit)
-        element:SetMinMaxValues(0, max)
-        element:SetValue(max - cur)
-    end
+local function CreateHealthBar(self)
+    local h = CreateFrame('StatusBar', nil, self)
+    h:SetStatusBarTexture("Interface\\ChatFrame\\ChatFrameBackground")
+    h:SetStatusBarColor(0, 0, 0)
+    h:SetReverseFill(false) 
+    h.frequentUpdates = true
+    local b = self:CreateTexture(nil, 'BORDER')
+    b:SetAllPoints(h)
+    b:SetColorTexture(1 / 5, 1 / 5, 1 / 5)
+    return h; 
 end
 
 local function PostUpdateCast(element, unit)
@@ -63,195 +75,137 @@ local function UpdateThreat(self, event, unit)
     end
 end
 
-local UnitSpecific = {
-    player = function(self)
-        local PetHealth = self.StringParent:CreateFontString(nil, 'OVERLAY', 'font1r')
-        PetHealth:SetPoint('RIGHT', self.HealthValue, 'LEFT', 0, 1)
-        PetHealth.overrideUnit = 'pet'
-        self:CustomTag(PetHealth, '[mnku:pethp]')
-
-        local resting = self.StringParent:CreateFontString(nil, 'OVERLAY', 'font1r')
-        resting:SetPoint('LEFT', self, 'TOPLEFT', -25, -11)
-        self:Tag(resting, '[|cFFFFFF00>resting<|r]')
-
-        local classcombo = self.StringParent:CreateFontString(nil, 'OVERLAY', 'font1r')
-        classcombo:SetPoint('LEFT', self, 'TOPLEFT', -25, -11)
-        self:Tag(classcombo, '[|cFFFFFFFF>cpoints<|r]')
-
-        local HealthValue = self.StringParent:CreateFontString(nil, 'OVERLAY', 'font1l')
-        HealthValue:SetPoint('LEFT', self.Health, 2, 1)
-        self:Tag(HealthValue, '[mnku:status][mnku:perhp] [mnku:curhp]')
-        self:SetWidth(230)
-
-        local incombat = self.StringParent:CreateFontString(nil, 'OVERLAY', 'font1l')
-        incombat:SetPoint('LEFT', HealthValue, 'RIGHT', 1, 0)
-        self:CustomTag(incombat, '[|cffff0000>mnku:combat<|r]')
-
-        local pvp = self.StringParent:CreateFontString(nil, 'OVERLAY', 'font1l')
-        pvp:SetPoint('LEFT', incombat, 'RIGHT', 1, 0)
-        self:Tag(pvp, '[|cffff0000>pvp<|r]')
-
-        local Power = CreateFrame('StatusBar', nil, self.Health)
-        Power:SetPoint('BOTTOMRIGHT')
-        Power:SetPoint('BOTTOMLEFT')
-        Power:SetHeight(2)
-        Power:SetStatusBarTexture(TEXTURE)
-        Power.frequentUpdates = true
-        Power.colorPower = false
-        Power.colorClass = true
-        Power.colorTapping = false
-        Power.colorDisconnected = false
-        Power.colorReaction = false
-        self.Power = Power
-    end, 
-    target = function(self)
-        local Name = self.StringParent:CreateFontString(nil, 'OVERLAY', 'font1l')
-        Name:SetPoint('LEFT', self.Health, 2, 0)
-        Name:SetPoint('RIGHT', self.HealthValue, 'LEFT')
-        Name:SetWordWrap(false)
-        self:Tag(Name, '[mnku:name]')
-
-        local lvl = self.StringParent:CreateFontString(nil, 'OVERLAY', 'font1r')
-        lvl:SetPoint('LEFT', self, 'TOPLEFT', -25, -10)
-        self:Tag(lvl, '[|cFFFFFF00>level<|r]')
-
-        local resting = self.StringParent:CreateFontString(nil, 'OVERLAY', 'font2l')
-        resting:SetPoint('LEFT', self, 'TOPLEFT', 2, 2)
-        self:Tag(resting, '[|cFFFFFF00>resting<|r]')
-
-        local HealthValue = self.StringParent:CreateFontString(nil, 'OVERLAY', 'font1r')
-        HealthValue:SetPoint('RIGHT', self.Health, -2, 0)
-        HealthValue:SetWordWrap(false)
-        self:Tag(HealthValue, '[mnku:curhp]')
-        self.Castbar.PostCastStart = PostUpdateCast
-        self.Castbar.PostCastInterruptible = PostUpdateCast
-        self.Castbar.PostCastNotInterruptible = PostUpdateCast
-        self.Castbar.PostChannelStart = PostUpdateCast
-        
-        self:SetWidth(230)
-    end, 
-    party = function(self)
-        local Name = self.StringParent:CreateFontString(nil, 'OVERLAY', 'font1l')
-        Name:SetPoint('LEFT', self.Health, 3, 0)
-        Name:SetPoint('RIGHT', self.HealthValue, 'LEFT')
-        Name:SetJustifyH('LEFT')
-        Name:SetWordWrap(false)
-        self:Tag(Name, '[mnku:leader][raidcolor][name]')
-
-        local Resurrect = self.StringParent:CreateTexture(nil, 'OVERLAY')
-        Resurrect:SetPoint('CENTER', self)
-        Resurrect:SetSize(16, 16)
-        self.ResurrectIndicator = Resurrect
-
-        local ReadyCheck = self:CreateTexture()
-        ReadyCheck:SetPoint('LEFT', self, 'RIGHT', 3, 0)
-        ReadyCheck:SetSize(14, 14)
-        self.ReadyCheckIndicator = ReadyCheck
-
-        local RoleIcon = self:CreateTexture(nil, 'OVERLAY')
-        RoleIcon:SetPoint('LEFT', self, 'RIGHT', 3, 0)
-        RoleIcon:SetSize(14, 14)
-        RoleIcon:SetAlpha(0)
-        self.GroupRoleIndicator = RoleIcon
-
-        self:HookScript('OnEnter', function() RoleIcon:SetAlpha(1) end)
-        self:HookScript('OnLeave', function() RoleIcon:SetAlpha(0) end)
-        self:Tag(self.HealthValue, '[mnku:status][mnku:perhp<|cff0090ff|r]')
-    end, 
-    boss = function(self)
-        self:Tag(self.HealthValue, '[mnku:perhp<|cff0090ff|r]')
-    end, 
-    arena = function(self)
-        local Name = self.StringParent:CreateFontString(nil, 'OVERLAY', 'font1l')
-        Name:SetPoint('LEFT', self.Health, 3, 0)
-        Name:SetPoint('RIGHT', self.HealthValue, 'LEFT')
-        Name:SetJustifyH('LEFT')
-        Name:SetWordWrap(false)
-        self:Tag(Name, '[raidcolor][name]')
-    end
-}
-UnitSpecific.raid = UnitSpecific.party
-
-local function Shared(self, unit)
-    unit = unit:match('^(.-)%d+') or unit
+local function CreateUnit(self)
     self:RegisterForClicks('AnyUp')
     self:SetScript('OnEnter', UnitFrame_OnEnter)
     self:SetScript('OnLeave', UnitFrame_OnLeave)
-    self:SetBackdrop(BACKDROP)
-    self:SetBackdropColor(0, 0, 0)
+    self:SetBackdrop({bgFile = "Interface\\ChatFrame\\ChatFrameBackground", insets = {top = -1, bottom = -1, left = -1, right = -1}})
+    self:SetBackdropColor(0, 0, 0); 
+    self:SetSize(160, 20)
+    self.Health = CreateHealthBar(self)
+    self.Health:SetHeight(20)
+    self.Health:SetPoint('TOPRIGHT')
+    self.Health:SetPoint('TOPLEFT')
+    self.frameValues = CreateFrame('Frame', nil, self)
+    self.frameValues:SetFrameLevel(20)
+end
 
-    local Health = CreateFrame('StatusBar', nil, self)
-    Health:SetStatusBarTexture(TEXTURE)
-    Health:SetStatusBarColor(1 / 3, 1 / 3, 1 / 3)
-    Health:SetReverseFill(true)
-    Health.Override = UpdateHealth
-    Health.frequentUpdates = true
-    self.Health = Health
+local function FocusUnit(self, unit)
+    CreateUnit(self)
+    self.HealthValue = self.frameValues:CreateFontString(nil, 'OVERLAY', 'font1r')
+    self.HealthValue:SetPoint('RIGHT', self.Health, -2, 0)
+    self.HealthValue:SetWordWrap(false)
+    self:Tag(self.HealthValue, '[mnku:curhp]')
+    self.Name = self.frameValues:CreateFontString(nil, 'OVERLAY', 'font1l')
+    self.Name:SetPoint('LEFT', self.Health, 2, 0)
+    self.Name:SetPoint('RIGHT', self.HealthValue, 'LEFT')
+    self.Name:SetWordWrap(false)
+    self:Tag(self.Name, '[mnku:name]')
+    self:SetWidth(100); 
+end
 
-    local HealthBG = self:CreateTexture(nil, 'BORDER')
-    HealthBG:SetAllPoints(Health)
-    HealthBG:SetColorTexture(0, 0, 0)
+local function PartyUnit(self, unit)
+    CreateUnit(self)
+    self.Name = self.frameValues:CreateFontString(nil, 'OVERLAY', 'font1l')
+    self.Name:SetPoint('LEFT', self.Health, 3, 0)
+    self.Name:SetPoint('RIGHT', self:GetWidth() - 2)
+    self:Tag(self.Name, '[mnku:leader][raidcolor][name]')
+    self.ResurrectIndicator = self.frameValues:CreateTexture(nil, 'OVERLAY')
+    self.ResurrectIndicator:SetPoint('CENTER', self)
+    self.ReadyCheckIndicator = self:CreateTexture()
+    self.ReadyCheckIndicator:SetPoint('LEFT', self, 'RIGHT', 3, 0)
+    self.ReadyCheckIndicator:SetSize(14, 14)
+    self.GroupRoleIndicator = self:CreateTexture(nil, 'OVERLAY')
+    self.GroupRoleIndicator:SetPoint('LEFT', self, 'RIGHT', 3, 0)
+    self.GroupRoleIndicator:SetSize(14, 14)
+    self.GroupRoleIndicator:SetAlpha(0)
+    self:HookScript('OnEnter', function() RoleIcon:SetAlpha(1) end)
+    self:HookScript('OnLeave', function() RoleIcon:SetAlpha(0) end)
+end
 
-    local StringParent = CreateFrame('Frame', nil, self)
-    StringParent:SetFrameLevel(20)
-    self.StringParent = StringParent
+local function PlayerUnit(self, unit)
+    CreateUnit(self)
+    self.HealthValue = self.frameValues:CreateFontString(nil, 'OVERLAY', 'font1l')
+    self.HealthValue:SetPoint('LEFT', self.Health, 1, 1)
+    self:Tag(self.HealthValue, '[mnku:status][mnku:perhp] [mnku:curhp]') 
+    self.PetHealth = self.frameValues:CreateFontString(nil, 'OVERLAY', 'font1r')
+    self.PetHealth:SetPoint('RIGHT', self.Health, 'RIGHT', -1, 1)
+    self.PetHealth.overrideUnit = 'pet'
+    self:CustomTag(self.PetHealth, '[mnku:pethp]')
+    self.isResting = self.frameValues:CreateFontString(nil, 'OVERLAY', 'font1r')
+    self.isResting:SetPoint('LEFT', self, 'TOPLEFT', -25, -11)
+    self:Tag(self.isResting, '[|cFFFFFF00>resting<|r]')
+    self.cbPoints = self.frameValues:CreateFontString(nil, 'OVERLAY', 'font1r')
+    self.cbPoints:SetPoint('LEFT', self, 'TOPLEFT', -25, -11)
+    self:Tag(self.cbPoints, '[|cFFFFFFFF>cpoints<|r]')
+    self.flagCombat = self.frameValues:CreateFontString(nil, 'OVERLAY', 'font1l')
+    self.flagCombat:SetPoint('LEFT', self.HealthValue, 'RIGHT', 1, 0)
+    self:CustomTag(self.flagCombat, '[|cffff0000>mnku:combat<|r]')
+    self.flagPVP = self.frameValues:CreateFontString(nil, 'OVERLAY', 'font1l')
+    self.flagPVP:SetPoint('LEFT', self.flagCombat, 'RIGHT', 1, 0)
+    self:Tag(self.flagPVP, '[|cffff0000>pvp<|r]') 
+    self.Power = CreateFrame('StatusBar', nil, self.Health)
+    self.Power:SetPoint('BOTTOMRIGHT')
+    self.Power:SetPoint('BOTTOMLEFT')
+    self.Power:SetHeight(2)
+    self.Power:SetStatusBarTexture("Interface\\ChatFrame\\ChatFrameBackground")
+    self.Power.frequentUpdates = true
+    self.Power.colorPower = false
+    self.Power.colorClass = true
+    self.Power.colorTapping = false
+    self.Power.colorDisconnected = false
+    self.Power.colorReaction = false 
+    self.ThreatIndicator = CreateFrame('Frame', nil, self)
+    self.ThreatIndicator:SetPoint('TOPRIGHT', 2, 2)
+    self.ThreatIndicator:SetPoint('BOTTOMLEFT', -2, -2)
+    self.ThreatIndicator:SetFrameStrata('BACKGROUND')
+    SetBackdrop(self.ThreatIndicator, mnkLibs.Textures.border, 0, 0, 0, 0)
+    self.ThreatIndicator.Override = UpdateThreat
+    self:SetWidth(200)
+    CreateCastBar(self)
+end
 
-    local HealthValue = StringParent:CreateFontString(nil, 'OVERLAY', 'font1r')
-    HealthValue:SetPoint('RIGHT', Health, -2, 0)
-    self.HealthValue = HealthValue
+local function TargetUnit(self, unit)
+    CreateUnit(self)
+    self.HealthValue = self.frameValues:CreateFontString(nil, 'OVERLAY', 'font1r')
+    self.HealthValue:SetPoint('RIGHT', self.Health, -2, 0)
+    self.HealthValue:SetWordWrap(false)
+    self:Tag(self.HealthValue, '[mnku:curhp]')
+    self.Name = self.frameValues:CreateFontString(nil, 'OVERLAY', 'font1l')
+    self.Name:SetPoint('LEFT', self.Health, 2, 0)
+    self.Name:SetPoint('RIGHT', self.HealthValue, 'LEFT')
+    self.Name:SetWordWrap(false)
+    self:Tag(self.Name, '[mnku:name]')
+    self.lvl = self.frameValues:CreateFontString(nil, 'OVERLAY', 'font1r')
+    self.lvl:SetPoint('LEFT', self, 'TOPLEFT', -25, -10)
+    self:Tag(self.lvl, '[|cFFFFFF00>level<|r]')
+    self.RaidTargetIndicator = self.frameValues:CreateTexture(nil, 'OVERLAY')
+    self.RaidTargetIndicator:SetPoint('LEFT', self, 'RIGHT', 10, 2)
+    self.RaidTargetIndicator:SetSize(16, 16)
+    self:SetWidth(250); 
+    CreateCastBar(self)
+end
 
-    if (unit == 'player' or unit == 'target') then
-        Health:SetHeight(20) 
-        local Castbar = CreateFrame('StatusBar', nil, self)
-        Castbar:SetAllPoints(Health)
-        Castbar:SetStatusBarTexture(TEXTURE)
-        Castbar:SetStatusBarColor(0, 0, 0, 0)
-        Castbar:SetFrameStrata('HIGH')
-        self.Castbar = Castbar
-        local Spark = Castbar:CreateTexture(nil, 'OVERLAY')
-        Spark:SetSize(1, Health:GetHeight())
-        Spark:SetColorTexture(1, 0, 0)
-        Castbar.Spark = Spark
-        Health:SetPoint('TOPRIGHT')
-        Health:SetPoint('TOPLEFT')
-    else
-        Health:SetAllPoints()
-    end
-
-    if (unit == 'focus' or unit == 'targettarget' or unit == 'boss') then
-        local Name = StringParent:CreateFontString(nil, 'OVERLAY', 'font1l')
-        Name:SetPoint('LEFT', Health, 2, 0)
-        Name:SetPoint('RIGHT', HealthValue, 'LEFT')
-        Name:SetWordWrap(false)
-        self:Tag(Name, '[mnku:color][name]')
-    else
-        local RaidTarget = StringParent:CreateTexture(nil, 'OVERLAY')
-        RaidTarget:SetPoint('TOP', self, 0, 8)
-        RaidTarget:SetSize(16, 16)
-        self.RaidTargetIndicator = RaidTarget
-        local Threat = CreateFrame('Frame', nil, self)
-        Threat:SetPoint('TOPRIGHT', 2, 2)
-        Threat:SetPoint('BOTTOMLEFT', -2, -2)
-        Threat:SetFrameStrata('BACKGROUND')
-        SetBackdrop(Threat, mnkLibs.Textures.border, 0, 0, 0, 0)
-        Threat.Override = UpdateThreat
-        self.ThreatIndicator = Threat
-    end
-    
-    self:SetSize(161, 20)
-
-    if (UnitSpecific[unit]) then
-        return UnitSpecific[unit](self)
+local function CreateUnits(self, unit)
+    if unit == "player" then 
+        PlayerUnit(self, unit)
+    elseif unit == "target" then 
+        TargetUnit(self, unit)
+    elseif unit == "party" or "raid" then 
+        PartyUnit(self, unit)
+    elseif unit == "focus" then 
+        FocusUnit(self, unit)
     end
 end
 
-oUF:RegisterStyle('mnku', Shared)
+oUF:RegisterStyle('mnku', CreateUnits); 
+oUF:SetActiveStyle('mnku'); 
+
 oUF:Factory(function(self)
-    self:SetActiveStyle('mnku')
+    
     self:Spawn('player'):SetPoint('CENTER', -300, -250)
     self:Spawn('focus'):SetPoint('TOPLEFT', oUF_mnkuPlayer, 0, 26)
     self:Spawn('target'):SetPoint('CENTER', 300, -250)
-    
     --self:Spawn('targettarget'):SetPoint('TOPRIGHT', oUF_mnkuTarget, 0, 26)
     
     self:SpawnHeader(nil, nil, 'custom [group:party] show; [@raid3,exists] show; [@raid26,exists] hide; hide', 
@@ -265,9 +219,9 @@ oUF:Factory(function(self)
         self:SetHeight(19)
         self:SetWidth(126)
         ]]
-    ):SetPoint('TOP', Minimap, 'BOTTOM', 0, -10)
+    ):SetPoint('TOPLEFT', 25, -50)
 
-    for index = 1, 5 do
+    for index = 1, MAX_BOSS_FRAMES or 5 do
         local boss = self:Spawn('boss' .. index)
         local arena = self:Spawn('arena' .. index)
 
@@ -280,3 +234,7 @@ oUF:Factory(function(self)
         end
     end
 end)
+
+
+
+
