@@ -112,16 +112,11 @@ end
 
 local function FocusUnit(self)
     CreateUnit(self)
-    self.HealthValue = self.frameValues:CreateFontString(nil, 'OVERLAY', 'font1r')
-    self.HealthValue:SetPoint('RIGHT', self.Health, -2, 0)
-    self.HealthValue:SetWordWrap(false)
-    self:Tag(self.HealthValue, '[mnku:curhp]')
     self.Name = self.frameValues:CreateFontString(nil, 'OVERLAY', 'font1l')
-    self.Name:SetPoint('LEFT', self.Health, 2, 0)
-    self.Name:SetPoint('RIGHT', self.HealthValue, 'LEFT')
-    self.Name:SetWordWrap(false)
+    self.Name:SetPoint('CENTER', self, 'CENTER')
+    --self.Name:SetPoint('RIGHT', self, 'RIGHT')
     self:Tag(self.Name, '[mnku:name]')
-    self:SetWidth(100); 
+    self:SetWidth(200); 
 end
 
 local function PartyUnit(self)
@@ -212,14 +207,14 @@ local function TargetUnit(self)
 end
 
 local function CreateUnits(self, unit)
-    if unit == "player" then 
-        PlayerUnit(self, unit)
-    elseif unit == "target" then 
-        TargetUnit(self, unit)
-    elseif unit == "party" or "raid" then 
-        PartyUnit(self, unit)
-    elseif unit == "focus" then 
-        FocusUnit(self, unit)
+    if (unit == "player") then 
+        PlayerUnit(self)
+    elseif (unit == "target") then 
+        TargetUnit(self)
+    elseif (unit == "party" or unit == "raid") then 
+        PartyUnit(self)
+    elseif (unit == "focus") then
+        FocusUnit(self)
     end
 end
 
