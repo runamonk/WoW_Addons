@@ -90,7 +90,7 @@ local function CreateUnit(self)
     self.frameValues:SetFrameLevel(20)
 end
 
-local function FocusUnit(self, unit)
+local function FocusUnit(self)
     CreateUnit(self)
     self.HealthValue = self.frameValues:CreateFontString(nil, 'OVERLAY', 'font1r')
     self.HealthValue:SetPoint('RIGHT', self.Health, -2, 0)
@@ -104,7 +104,7 @@ local function FocusUnit(self, unit)
     self:SetWidth(100); 
 end
 
-local function PartyUnit(self, unit)
+local function PartyUnit(self)
     CreateUnit(self)
     self.Name = self.frameValues:CreateFontString(nil, 'OVERLAY', 'font1l')
     self.Name:SetPoint('LEFT', self.Health, 3, 0)
@@ -123,7 +123,28 @@ local function PartyUnit(self, unit)
     self:HookScript('OnLeave', function() RoleIcon:SetAlpha(0) end)
 end
 
-local function PlayerUnit(self, unit)
+local function GetClassPower(self)
+    local _, pc = UnitClass('player')
+    local s = "[|cFFFFFFFF>%s<|r]"
+    local r = nil
+
+    if pc == 'ROGUE' then
+        r = format(s, "cpoints")
+    elseif pc == 'WARLOCK' then
+        r = format(s, "soulshards")
+    elseif pc == 'MONK' then
+        r = format(s, "chi")
+    elseif pc == 'MAGE' then
+        r = format(s, "holypower")
+    elseif pc == 'PALADIN' then
+        r = format(s, "arcanecharges")
+    end
+
+    return r
+end
+
+
+local function PlayerUnit(self)
     CreateUnit(self)
     self.HealthValue = self.frameValues:CreateFontString(nil, 'OVERLAY', 'font1l')
     self.HealthValue:SetPoint('LEFT', self.Health, 1, 1)
@@ -135,9 +156,14 @@ local function PlayerUnit(self, unit)
     self.isResting = self.frameValues:CreateFontString(nil, 'OVERLAY', 'font1r')
     self.isResting:SetPoint('LEFT', self, 'TOPLEFT', -25, -11)
     self:Tag(self.isResting, '[|cFFFFFF00>resting<|r]')
-    self.cbPoints = self.frameValues:CreateFontString(nil, 'OVERLAY', 'font1r')
-    self.cbPoints:SetPoint('LEFT', self, 'TOPLEFT', -25, -11)
-    self:Tag(self.cbPoints, '[|cFFFFFFFF>cpoints<|r]')
+    
+    local cp = GetClassPower(self)
+    if cp then
+        self.cbPoints = self.frameValues:CreateFontString(nil, 'OVERLAY', 'font1r')
+        self.cbPoints:SetPoint('LEFT', self, 'TOPLEFT', -25, -11)
+        self:Tag(self.cbPoints, cp)
+    end
+
     self.flagCombat = self.frameValues:CreateFontString(nil, 'OVERLAY', 'font1l')
     self.flagCombat:SetPoint('LEFT', self.HealthValue, 'RIGHT', 1, 0)
     self:CustomTag(self.flagCombat, '[|cffff0000>mnku:combat<|r]')
@@ -165,7 +191,7 @@ local function PlayerUnit(self, unit)
     CreateCastBar(self)
 end
 
-local function TargetUnit(self, unit)
+local function TargetUnit(self)
     CreateUnit(self)
     self.HealthValue = self.frameValues:CreateFontString(nil, 'OVERLAY', 'font1r')
     self.HealthValue:SetPoint('RIGHT', self.Health, -2, 0)
@@ -176,11 +202,11 @@ local function TargetUnit(self, unit)
     self.Name:SetPoint('RIGHT', self.HealthValue, 'LEFT')
     self.Name:SetWordWrap(false)
     self:Tag(self.Name, '[mnku:name]')
-    self.lvl = self.frameValues:CreateFontString(nil, 'OVERLAY', 'font1r')
-    self.lvl:SetPoint('LEFT', self, 'TOPLEFT', -25, -10)
-    self:Tag(self.lvl, '[|cFFFFFF00>level<|r]')
+    self.Level = self.frameValues:CreateFontString(nil, 'OVERLAY', 'font1r')
+    self.Level:SetPoint('LEFT', self, 'TOPLEFT', -25, -10)
+    self:Tag(self.Level, '[|cFFFFFF00>level<|r]')
     self.RaidTargetIndicator = self.frameValues:CreateTexture(nil, 'OVERLAY')
-    self.RaidTargetIndicator:SetPoint('LEFT', self, 'RIGHT', 10, 2)
+    self.RaidTargetIndicator:SetPoint('LEFT', self, 'RIGHT', 10, 0)
     self.RaidTargetIndicator:SetSize(16, 16)
     self:SetWidth(250); 
     CreateCastBar(self)
@@ -226,8 +252,8 @@ oUF:Factory(function(self)
         local arena = self:Spawn('arena' .. index)
 
         if (index == 1) then
-            boss:SetPoint('TOP', oUF_mnkuRaid, 'BOTTOM', 0, -20)
-            arena:SetPoint('TOP', oUF_mnkuRaid, 'BOTTOM', 0, -20)
+            boss:SetPoint('TOPRIGHT', -50, -100)
+            arena:SetPoint('TOPRIGHT', -50, -100)
         else
             boss:SetPoint('TOP', _G['oUF_mnkuBoss' .. index - 1], 'BOTTOM', 0, -6)
             arena:SetPoint('TOP', _G['oUF_mnkuArena' .. index - 1], 'BOTTOM', 0, -6)
