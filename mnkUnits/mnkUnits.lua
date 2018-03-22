@@ -52,6 +52,26 @@ local function CreateHealthBar(self)
     return h; 
 end
 
+local function GetClassPower(self)
+    local _, pc = UnitClass('player')
+    local s = "[|cFFFFFFFF>%s<|r]"
+    local r = nil
+
+    if pc == 'ROGUE' then
+        r = format(s, "cpoints")
+    elseif pc == 'WARLOCK' then
+        r = format(s, "soulshards")
+    elseif pc == 'MONK' then
+        r = format(s, "chi")
+    elseif pc == 'MAGE' then
+        r = format(s, "holypower")
+    elseif pc == 'PALADIN' then
+        r = format(s, "arcanecharges")
+    end
+
+    return r
+end
+
 local function PostUpdateCast(element, unit)
     local Spark = element.Spark
     if (not element.notInterruptible and UnitCanAttack('player', unit)) then
@@ -122,27 +142,6 @@ local function PartyUnit(self)
     self:HookScript('OnEnter', function() RoleIcon:SetAlpha(1) end)
     self:HookScript('OnLeave', function() RoleIcon:SetAlpha(0) end)
 end
-
-local function GetClassPower(self)
-    local _, pc = UnitClass('player')
-    local s = "[|cFFFFFFFF>%s<|r]"
-    local r = nil
-
-    if pc == 'ROGUE' then
-        r = format(s, "cpoints")
-    elseif pc == 'WARLOCK' then
-        r = format(s, "soulshards")
-    elseif pc == 'MONK' then
-        r = format(s, "chi")
-    elseif pc == 'MAGE' then
-        r = format(s, "holypower")
-    elseif pc == 'PALADIN' then
-        r = format(s, "arcanecharges")
-    end
-
-    return r
-end
-
 
 local function PlayerUnit(self)
     CreateUnit(self)
