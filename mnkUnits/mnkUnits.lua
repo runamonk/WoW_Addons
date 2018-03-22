@@ -52,26 +52,6 @@ local function CreateHealthBar(self)
     return h; 
 end
 
-local function GetClassPower(self)
-    local _, pc = UnitClass('player')
-    local s = "[|cFFFFFFFF>%s<|r]"
-    local r = nil
-
-    if pc == 'ROGUE' then
-        r = format(s, "cpoints")
-    elseif pc == 'WARLOCK' then
-        r = format(s, "soulshards")
-    elseif pc == 'MONK' then
-        r = format(s, "chi")
-    elseif pc == 'MAGE' then
-        r = format(s, "holypower")
-    elseif pc == 'PALADIN' then
-        r = format(s, "arcanecharges")
-    end
-
-    return r
-end
-
 local function PostUpdateCast(element, unit)
     local Spark = element.Spark
     if (not element.notInterruptible and UnitCanAttack('player', unit)) then
@@ -151,12 +131,23 @@ local function PlayerUnit(self)
     self.isResting:SetPoint('LEFT', self, 'TOPLEFT', -25, -11)
     self:Tag(self.isResting, '[|cFFFFFF00>resting<|r]')
     
-    local cp = GetClassPower(self)
-    if cp then
-        self.cbPoints = self.frameValues:CreateFontString(nil, 'OVERLAY', 'font1r')
-        self.cbPoints:SetPoint('LEFT', self, 'TOPLEFT', -25, -11)
-        self:Tag(self.cbPoints, cp)
+    local ClassPower = {}
+    for index = 1, 10 do
+        local Bar = CreateFrame('StatusBar', nil, self)
+        Bar:SetStatusBarTexture("Interface\\ChatFrame\\ChatFrameBackground")
+        Bar:SetSize(16, 4)
+
+        if (index == 1) then
+            Bar:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 0, -4)
+        else
+            Bar:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', ((Bar:GetWidth() + 2) * (index - 1)), -4)
+        end
+
+        ClassPower[index] = Bar
     end
+
+    self.ClassPower = ClassPower
+    self.Runes = ClassPower
 
     self.flagCombat = self.frameValues:CreateFontString(nil, 'OVERLAY', 'font1l')
     self.flagCombat:SetPoint('LEFT', self.HealthValue, 'RIGHT', 1, 0)
