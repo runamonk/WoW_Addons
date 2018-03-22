@@ -23,7 +23,7 @@ function mnkMoney:DoOnEvent(event)
 
     if gold > 0 then
         self.LDB.icon = "Interface\\MoneyFrame\\UI-GoldIcon"; 
-        text = TruncNumber(gold, 0); 
+        text = TruncNumber(gold, 2); 
     elseif silver > 0 then
         self.LDB.icon = "Interface\\MoneyFrame\\UI-SilverIcon"; 
         text = silver; 
@@ -50,7 +50,7 @@ function mnkMoney.DoOnEnter(self)
     local gold, silver, copper = mnkMoney.GetMoneyText(); 
     
     if gold > 0 then
-        tooltip:AddLine(format("|T%s:16|t %s", "Interface\\MoneyFrame\\UI-GoldIcon", "Gold"), SPACER, TruncNumber(gold, 0)); 
+        tooltip:AddLine(format("|T%s:16|t %s", "Interface\\MoneyFrame\\UI-GoldIcon", "Gold"), SPACER, TruncNumber(gold, 2)); 
     elseif silver > 0 then
         tooltip:AddLine(format("|T%s:16|t %s", "Interface\\MoneyFrame\\UI-SilverIcon", "Silver"), SPACER, format("%d", silver)); 
     elseif copper > 0 then
