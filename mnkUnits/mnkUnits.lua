@@ -130,28 +130,29 @@ local function PlayerUnit(self)
     self.isResting:SetPoint('LEFT', self, 'TOPLEFT', -25, -11)
     self:Tag(self.isResting, '[|cFFFFFF00>resting<|r]')
     
-    local ClassPower = {}
-    for index = 1, 10 do
-        local Bar = CreateFrame('StatusBar', nil, self)
-        Bar:SetStatusBarTexture("Interface\\ChatFrame\\ChatFrameBackground")
-        Bar:SetSize(16, 10)
+    local t = {}
+    
+    for i = 1, 10 do
+        local f = CreateFrame('StatusBar', nil, self)
+        f:SetStatusBarTexture("Interface\\ChatFrame\\ChatFrameBackground")
+        f:SetSize(16, 10)
 
-        local n = Bar:CreateFontString(nil, 'OVERLAY', 'font2c')
-        n:SetPoint('CENTER', Bar, 0, 0)
-        n:SetText(index)
+        local n = f:CreateFontString(nil, 'OVERLAY', 'font2c')
+        n:SetPoint('CENTER', f, 0, 0)
+        n:SetText(i)
         n:SetTextColor(0, 0, 0)
-
-        if (index == 1) then
-            Bar:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 0, -4)
+        
+        if (i == 1) then
+            f:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 0, -4)
         else
-            Bar:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', ((Bar:GetWidth() + 2) * (index - 1)), -4)
+            f:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', ((f:GetWidth() + 2) * (i - 1)), -4)
         end
 
-        ClassPower[index] = Bar
+        t[i] = f
     end
 
-    self.ClassPower = ClassPower
-    self.Runes = ClassPower
+    self.ClassPower = t
+    self.Runes = t
 
     self.flagCombat = self.frameValues:CreateFontString(nil, 'OVERLAY', 'font1l')
     self.flagCombat:SetPoint('LEFT', self.HealthValue, 'RIGHT', 1, 0)
