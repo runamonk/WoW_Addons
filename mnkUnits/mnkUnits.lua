@@ -92,9 +92,8 @@ end
 
 local function FocusUnit(self)
     CreateUnit(self)
-    self.Name = self.frameValues:CreateFontString(nil, 'OVERLAY', 'font1l')
+    self.Name = self.frameValues:CreateFontString(nil, 'OVERLAY', 'font2c')
     self.Name:SetPoint('CENTER', self, 'CENTER')
-    --self.Name:SetPoint('RIGHT', self, 'RIGHT')
     self:Tag(self.Name, '[mnku:name]')
     self:SetWidth(200); 
 end
@@ -135,7 +134,12 @@ local function PlayerUnit(self)
     for index = 1, 10 do
         local Bar = CreateFrame('StatusBar', nil, self)
         Bar:SetStatusBarTexture("Interface\\ChatFrame\\ChatFrameBackground")
-        Bar:SetSize(16, 4)
+        Bar:SetSize(16, 10)
+
+        local n = Bar:CreateFontString(nil, 'OVERLAY', 'font2c')
+        n:SetPoint('CENTER', Bar, 0, 0)
+        n:SetText(index)
+        n:SetTextColor(0, 0, 0)
 
         if (index == 1) then
             Bar:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 0, -4)
@@ -211,7 +215,6 @@ end
 
 oUF:RegisterStyle('mnku', CreateUnits); 
 oUF:SetActiveStyle('mnku'); 
-
 oUF:Factory(function(self)
     
     self:Spawn('player'):SetPoint('CENTER', -300, -250)
@@ -245,7 +248,3 @@ oUF:Factory(function(self)
         end
     end
 end)
-
-
-
-
