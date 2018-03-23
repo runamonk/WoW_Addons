@@ -28,6 +28,8 @@ local cfg_debuffs_spacing = 1
 local lastNameplate = nil
 
 function mnkNames.CreateStyle(self, unit)
+    self.disableMovement = true
+
     local health = CreateFrame("StatusBar", nil, self)
     health:SetAllPoints()
     health:SetStatusBarTexture(mnkLibs.Textures.background)
