@@ -1,8 +1,3 @@
-local function CreateBackground(self)
-    local t = self:CreateTexture(nil, 'BORDER')
-    t:SetAllPoints(self)
-    t:SetColorTexture(0, 0, 0)
-end
 
 local function CreateCastBar(self)
     self.Castbar = CreateFrame('StatusBar', nil, self)
@@ -29,6 +24,17 @@ local function CreateHealthBar(self)
     b:SetAllPoints(h)
     b:SetColorTexture(1 / 5, 1 / 5, 1 / 5)
     return h; 
+end
+
+function PostCreateIcon(Auras, button)
+    local count = button.count
+    count:ClearAllPoints()
+    count:SetFont(mnkLibs.Fonts.oswald, 12, 'OUTLINE')
+    count:SetPoint('TOPRIGHT', button, 3, 3)
+    button.icon:SetTexCoord(.07, .93, .07, .93)
+    button.overlay:SetTexture(mnkLibs.Textures.border)
+    button.overlay:SetTexCoord(0, 1, 0, 1)
+    button.overlay.Hide = function(self) self:SetVertexColor(0.3, 0.3, 0.3) end
 end
 
 local function PostUpdateCast(element, unit)
@@ -156,6 +162,13 @@ local function PlayerUnit(self)
     self.ThreatIndicator:SetFrameStrata('BACKGROUND')
     SetBackdrop(self.ThreatIndicator, mnkLibs.Textures.border, 0, 0, 0, 0)
     self.ThreatIndicator.Override = UpdateThreat
+    self.Auras = CreateFrame('Frame', nil, self)
+    self.Auras.spacing = 1
+    self.Auras.numTotal = 12
+    self.Auras:SetPoint('LEFT', self, 'LEFT', -1, 0)
+    self.Auras:SetPoint('BOTTOM', self, 'TOP', 0 , 5)
+    self.Auras:SetSize(self.Health:GetWidth(), 16)
+    self.Auras.PostCreateIcon = PostCreateIcon
     self:SetWidth(200)
     CreateCastBar(self)
 end
@@ -197,7 +210,6 @@ end
 oUF:RegisterStyle('mnku', CreateUnits); 
 oUF:SetActiveStyle('mnku'); 
 oUF:Factory(function(self)
-    
     self:Spawn('player'):SetPoint('CENTER', -300, -250)
     self:Spawn('focus'):SetPoint('TOPLEFT', oUF_mnkuPlayer, 0, 26)
     self:Spawn('target'):SetPoint('CENTER', 300, -250)
@@ -229,3 +241,18 @@ oUF:Factory(function(self)
         end
     end
 end)
+
+
+-- HIDE THE DEFAULT BUFF/DEBUFF FRAMES
+mnkUnits = CreateFrame('Frame')
+
+function mnkUnits:DoOnEvent(event, arg1, arg2)
+    if event == 'PLAYER_ENTERING_WORLD' then
+        BuffFrame:UnregisterEvent("UNIT_AURA")
+        BuffFrame:Hide()
+        TemporaryEnchantFrame:Hide()
+    end
+end
+
+mnkUnits:SetScript('OnEvent', mnkUnits.DoOnEvent); 
+mnkUnits:RegisterEvent('PLAYER_ENTERING_WORLD'); 
