@@ -29,21 +29,19 @@ local lastNameplate = nil
 
 function mnkNames.CreateStyle(self, unit)
     self.disableMovement = true
-
-    local health = CreateFrame('StatusBar', nil, self)
-    health:SetAllPoints()
-    health:SetStatusBarTexture(mnkLibs.Textures.background)
-    health:GetStatusBarTexture():SetHorizTile(false)
-    health.colorHealth = true
-    health.colorClass = true
-    health.colorReaction = true
-    health.colorTapping = true
-    health.colorDisconnected = true
-    health.bg = health:CreateTexture(nil, 'BACKGROUND')
-    health.bg:SetAllPoints(health)
-    health.bg:SetAlpha(0.20)
-    health.bg:SetTexture(mnkLibs.Textures.bar)
-    self.Health = health
+    self.Health = CreateFrame('StatusBar', nil, self)
+    self.Health:SetAllPoints()
+    self.Health:SetStatusBarTexture(mnkLibs.Textures.background)
+    self.Health:GetStatusBarTexture():SetHorizTile(false)
+    self.Health.colorHealth = true
+    self.Health.colorClass = true
+    self.Health.colorReaction = true
+    self.Health.colorTapping = true
+    self.Health.colorDisconnected = true
+    self.Health.background = self.Health:CreateTexture(nil, 'BACKGROUND')
+    self.Health.background:SetAllPoints(health)
+    self.Health.background:SetAlpha(0.20)
+    self.Health.background:SetTexture(mnkLibs.Textures.bar)
     self.Name = CreateFontString(self.Health, mnkLibs.Fonts.oswald, cfg_font_height, '')
     self.Name:SetPoint('CENTER', self.Health, 0, 0)
     self.Name:SetJustifyH('CENTER')
@@ -55,45 +53,42 @@ function mnkNames.CreateStyle(self, unit)
     self.Level:SetWidth(25)
     self.Level:SetHeight(25)
     self:Tag(self.Level, '[mnknames:level]')
-    local RaidIcon = self:CreateTexture(nil, 'OVERLAY')
-    RaidIcon:SetPoint('LEFT', self, 'RIGHT', 8, 0)
-    RaidIcon:SetSize(16, 16)
-    self.RaidTargetIndicator = RaidIcon
-    local castbar = CreateFrame('StatusBar', nil, self)
-    castbar:SetStatusBarTexture(mnkLibs.Textures.bar)
-    castbar:GetStatusBarTexture():SetHorizTile(false)
-    castbar.bg = castbar:CreateTexture(nil, 'BORDER')
-    castbar.bg:SetAllPoints()
-    castbar.bg:SetAlpha(0.3)
-    castbar.bg:SetTexture(mnkLibs.Textures.background)
-    castbar.bg:SetColorTexture(1 / 3, 1 / 3, 1 / 3)
-    SetBackdrop(castbar, nil, 1, 1, 1, 1)
-    castbar:SetBackdropColor(0, 0, 0, 1)
-    castbar:SetStatusBarColor(1, 1, 1, 1)
-    castbar:SetWidth(cfg_frame_width)
-    castbar:SetHeight(cfg_frame_height)
-    castbar:SetPoint('TOPLEFT', self.Health, 'BOTTOMLEFT', 0, -5)
-    castbar.Text = castbar:CreateFontString(nil, 'OVERLAY')
-    castbar.Text:SetTextColor(1, 1, 1)
-    castbar.Text:SetShadowOffset(1, -1)
-    castbar.Text:SetJustifyH('CENTER')
-    castbar.Text:SetHeight(cfg_font_height)
-    castbar.Text:SetFont(mnkLibs.Fonts.oswald, cfg_font_height, 'THINOUTLINE')
-    castbar.Text:SetWidth(cfg_name_width)
-    castbar.Text:SetPoint('CENTER', castbar, 0, 0)
-    self.Castbar = castbar
-    local debuffs = CreateFrame('Frame', nil, self)
-    debuffs:SetSize((cfg_debuffs_num * (cfg_debuffs_size + 9)) / cfg_debuffs_rows, (cfg_debuffs_size + 9) * cfg_debuffs_rows)
-    debuffs.num = cfg_debuffs_num
-    debuffs.size = cfg_debuffs_size
-    debuffs.spacing = cfg_debuffs_spacing
-    debuffs:SetPoint('BOTTOMLEFT', self, 'TOPLEFT', 0, 8)
-    debuffs.initialAnchor = 'BOTTOMLEFT'
-    debuffs['growth-x'] = 'RIGHT'
-    debuffs['growth-y'] = 'UP'
-    debuffs.onlyShowPlayer = true
-    debuffs.PostCreateIcon = mnkNames.PostCreateIcon
-    self.Debuffs = debuffs
+    self.RaidTargetIndicator = self:CreateTexture(nil, 'OVERLAY')
+    self.RaidTargetIndicator:SetPoint('LEFT', self, 'RIGHT', 8, 0)
+    self.RaidTargetIndicator:SetSize(16, 16)
+    self.Castbar = CreateFrame('StatusBar', nil, self)
+    self.Castbar:SetStatusBarTexture(mnkLibs.Textures.bar)
+    self.Castbar:GetStatusBarTexture():SetHorizTile(false)
+    self.Castbar.background = self.Castbar:CreateTexture(nil, 'BORDER')
+    self.Castbar.background:SetAllPoints()
+    self.Castbar.background:SetAlpha(0.3)
+    self.Castbar.background:SetTexture(mnkLibs.Textures.background)
+    self.Castbar.background:SetColorTexture(1 / 3, 1 / 3, 1 / 3)
+    SetBackdrop(self.Castbar, nil, 1, 1, 1, 1)
+    self.Castbar:SetBackdropColor(0, 0, 0, 1)
+    self.Castbar:SetStatusBarColor(1, 1, 1, 1)
+    self.Castbar:SetWidth(cfg_frame_width)
+    self.Castbar:SetHeight(cfg_frame_height)
+    self.Castbar:SetPoint('TOPLEFT', self.Health, 'BOTTOMLEFT', 0, -5)
+    self.Castbar.Text = self.Castbar:CreateFontString(nil, 'OVERLAY')
+    self.Castbar.Text:SetTextColor(1, 1, 1)
+    self.Castbar.Text:SetShadowOffset(1, -1)
+    self.Castbar.Text:SetJustifyH('CENTER')
+    self.Castbar.Text:SetHeight(cfg_font_height)
+    self.Castbar.Text:SetFont(mnkLibs.Fonts.oswald, cfg_font_height, 'THINOUTLINE')
+    self.Castbar.Text:SetWidth(cfg_name_width)
+    self.Castbar.Text:SetPoint('CENTER', castbar, 0, 0)
+    self.Debuffs = CreateFrame('Frame', nil, self)
+    self.Debuffs:SetSize((cfg_debuffs_num * (cfg_debuffs_size + 9)) / cfg_debuffs_rows, (cfg_debuffs_size + 9) * cfg_debuffs_rows)
+    self.Debuffs.num = cfg_debuffs_num
+    self.Debuffs.size = cfg_debuffs_size
+    self.Debuffs.spacing = cfg_debuffs_spacing
+    self.Debuffs:SetPoint('BOTTOMLEFT', self, 'TOPLEFT', 0, 8)
+    self.Debuffs.initialAnchor = 'BOTTOMLEFT'
+    self.Debuffs['growth-x'] = 'RIGHT'
+    self.Debuffs['growth-y'] = 'UP'
+    self.Debuffs.onlyShowPlayer = true
+    self.Debuffs.PostCreateIcon = mnkNames.PostCreateIcon
     self:SetSize(cfg_frame_width, cfg_frame_height)
     self:SetPoint('CENTER', 0, 0)
     self:SetScale(1)
@@ -102,10 +97,9 @@ function mnkNames.CreateStyle(self, unit)
 end
 
 function mnkNames.PostCreateIcon(Auras, button)
-    local count = button.count
-    count:ClearAllPoints()
-    count:SetFont(mnkLibs.Fonts.oswald, 12, 'OUTLINE')
-    count:SetPoint('TOPRIGHT', button, 3, 3)
+    button.count:ClearAllPoints()
+    button.count:SetFont(mnkLibs.Fonts.oswald, 12, 'OUTLINE')
+    button.count:SetPoint('TOPRIGHT', button, 3, 3)
     button.icon:SetTexCoord(.07, .93, .07, .93)
     button.overlay:SetTexture(mnkLibs.Textures.border)
     button.overlay:SetTexCoord(0, 1, 0, 1)
