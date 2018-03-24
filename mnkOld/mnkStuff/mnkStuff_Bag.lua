@@ -1,5 +1,5 @@
 
-local mnkStuff_Bag = CreateFrame("Frame"); 
+local mnkStuff_Bag = CreateFrame('Frame'); 
 
 local bag_TEXTURE = [[Interface\ChatFrame\ChatFrameBackground]]
 local bag_BACKDROP = {bgFile = bag_TEXTURE, edgeFile = bag_TEXTURE, edgeSize = 1}
@@ -33,11 +33,11 @@ function mnkStuff_Bag.AddPocketTab(pocket, idx)
         offset = 22 * idx /- 1
     end
 
-    pocket.button = CreateFrame("Button", "button"..pocket.name, backpack); 
+    pocket.button = CreateFrame('Button', 'button'..pocket.name, backpack); 
     pocket.button.pocket = pocket; 
-    pocket.button:SetScript("OnClick", function(self, button) mnkStuff_Bag.OnClickPocket(self, button) end); 
+    pocket.button:SetScript('OnClick', function(self, button) mnkStuff_Bag.OnClickPocket(self, button) end); 
 
-    pocket.button:RegisterForClicks("AnyUp"); 
+    pocket.button:RegisterForClicks('AnyUp'); 
     pocket.button:SetPoint('RIGHT', backpack, 'LEFT', 0, 0); 
     pocket.button:SetPoint('TOP', backpack, 'TOP', 0, offset); 
     pocket.button:SetSize(140, 20); 
@@ -56,7 +56,7 @@ end
 function mnkStuff_Bag.AddItemToBackpack(itemlink, itemcount, bagnumber, slotnumber)
     local itemName, _, itemRarity, _, _, itemType, itemSubType, itemStackCount, _, itemTexture, _ = GetItemInfo(itemlink); 
     local _, _, _, itemColor = GetItemQualityColor(itemRarity or 1); 
-    local itemNameColored = string.format("%s", "|c"..itemColor..itemName); 
+    local itemNameColored = string.format('%s', '|c'..itemColor..itemName); 
     local pocket = mnkStuff_Bag.GetPocket(itemlink); 
     local i = mnkStuff_Bag.getIndex(pocket.stuff, itemName); 
     if i == -1 then
@@ -70,22 +70,22 @@ function mnkStuff_Bag.AddItemToBackpack(itemlink, itemcount, bagnumber, slotnumb
         pocket.stuff[i].itemTexture = itemTexture; 
         pocket.stuff[i].itemStackCount = itemStackCount; 
         pocket.stuff[i].itemNameColored = itemNameColored; 
-        pocket.stuff[i].itemicon = CreateFrame("Button", itemName, backpack.content); 
+        pocket.stuff[i].itemicon = CreateFrame('Button', itemName, backpack.content); 
         pocket.stuff[i].itemicon.item = pocket.stuff[i]; 
         pocket.stuff[i].itemicon:SetNormalTexture(itemTexture); 
         pocket.stuff[i].itemicon:SetSize(BUTTON_SIZE, BUTTON_SIZE); 
         pocket.stuff[i].itemicon:SetFrameStrata('HIGH'); 
-        pocket.stuff[i].itemicon:SetAttribute("type", "item"); 
-        pocket.stuff[i].itemicon:SetAttribute("item", itemName); 
-        pocket.stuff[i].itemicon:SetScript("OnEnter", function(self) GameTooltip:SetOwner(self, "ANCHOR_CURSOR"); GameTooltip:ClearLines(); GameTooltip:SetHyperlink(itemlink); GameTooltip:Show(); end)
-        pocket.stuff[i].itemicon:SetScript("OnLeave", function(self) GameTooltip:Hide(); end); 
-        pocket.stuff[i].itemicon:SetScript("OnClick", function(self, button) mnkStuff_Bag.OnClickItem(self, button) end); 
-        pocket.stuff[i].itemicon:RegisterForClicks("AnyUp"); 
+        pocket.stuff[i].itemicon:SetAttribute('type', 'item'); 
+        pocket.stuff[i].itemicon:SetAttribute('item', itemName); 
+        pocket.stuff[i].itemicon:SetScript('OnEnter', function(self) GameTooltip:SetOwner(self, 'ANCHOR_CURSOR'); GameTooltip:ClearLines(); GameTooltip:SetHyperlink(itemlink); GameTooltip:Show(); end)
+        pocket.stuff[i].itemicon:SetScript('OnLeave', function(self) GameTooltip:Hide(); end); 
+        pocket.stuff[i].itemicon:SetScript('OnClick', function(self, button) mnkStuff_Bag.OnClickItem(self, button) end); 
+        pocket.stuff[i].itemicon:RegisterForClicks('AnyUp'); 
 
         pocket.stuff[i].itemicon.itemleveltext = pocket.stuff[i].itemicon:CreateFontString(nil, 'OVERLAY', 'apLeft'); 
         pocket.stuff[i].itemicon.itemleveltext:SetPoint('BOTTOMLEFT', pocket.stuff[i].itemicon, 'BOTTOMRIGHT', 5, 1); 
         pocket.stuff[i].itemicon.itemleveltext:SetWordWrap(false); 
-        pocket.stuff[i].itemicon.itemleveltext:SetText(Color(COLOR_YELLOW) .. "i"..GetDetailedItemLevelInfo(itemlink) or nil); 
+        pocket.stuff[i].itemicon.itemleveltext:SetText(Color(COLOR_YELLOW) .. 'i'..GetDetailedItemLevelInfo(itemlink) or nil); 
         
         pocket.stuff[i].itemicon.itemtext = pocket.stuff[i].itemicon:CreateFontString(nil, 'OVERLAY', 'apLeft'); 
         pocket.stuff[i].itemicon.itemtext:SetPoint('BOTTOMLEFT', pocket.stuff[i].itemicon, 'BOTTOMRIGHT', 40, 1); 
@@ -95,7 +95,7 @@ function mnkStuff_Bag.AddItemToBackpack(itemlink, itemcount, bagnumber, slotnumb
         pocket.stuff[i].itemicon.itemcountext = pocket.stuff[i].itemicon:CreateFontString(nil, 'OVERLAY', 'apLeft'); 
         pocket.stuff[i].itemicon.itemcountext:SetPoint('LEFT', pocket.stuff[i].itemicon.itemtext, 'RIGHT', 3, 1); 
         pocket.stuff[i].itemicon.itemcountext:SetWordWrap(false); 
-        pocket.stuff[i].itemicon.itemcountext:SetText(""); 
+        pocket.stuff[i].itemicon.itemcountext:SetText(''); 
 
         local sort_func = function(a, b) return a.name < b.name end
         table.sort(pocket.stuff, sort_func); 
@@ -105,7 +105,7 @@ function mnkStuff_Bag.AddItemToBackpack(itemlink, itemcount, bagnumber, slotnumb
 end
 
 function mnkStuff_Bag.ClosePocket(pocket)
-    --print("ClosePocket: "..pocket.name)
+    --print('ClosePocket: '..pocket.name)
     for b = 1, #pocket.stuff do
         pocket.stuff[b].itemicon:Hide(); 
     end 
@@ -113,42 +113,42 @@ end
 
 function mnkStuff_Bag.CreateBackpack()
     if backpack ~= nil then return end
-    backpack = CreateFrame("Frame", "backpack", UIParent); 
+    backpack = CreateFrame('Frame', 'backpack', UIParent); 
     backpack.pockets = {}; 
     backpack.openpocket = nil; 
     backpack:EnableMouse(true); 
     backpack:SetMovable(true); 
-    backpack:RegisterForDrag("LeftButton"); 
-    backpack:SetScript("OnDragStart", mnkStuff_Bag.StartDrag); 
-    backpack:SetScript("OnDragStop", mnkStuff_Bag.StopDrag); 
+    backpack:RegisterForDrag('LeftButton'); 
+    backpack:SetScript('OnDragStart', mnkStuff_Bag.StartDrag); 
+    backpack:SetScript('OnDragStop', mnkStuff_Bag.StopDrag); 
     backpack:SetBackdrop(bag_BACKDROP); 
     backpack:SetBackdropColor(0, 0, 0, 1); 
     backpack:SetBackdropBorderColor(0, 0.5, 0, 1); 
     backpack:SetPoint('BOTTOMLEFT', mnkStuffDB.backpack_xpos, mnkStuffDB.backpack_ypos); 
     backpack:SetFrameStrata('HIGH'); 
-    backpack.scrollframe = CreateFrame("ScrollFrame", nil, backpack); 
-    backpack.scrollframe:SetPoint("TOPLEFT", 2, -4); 
-    backpack.scrollframe:SetPoint("BOTTOMRIGHT", -2, 4); 
+    backpack.scrollframe = CreateFrame('ScrollFrame', nil, backpack); 
+    backpack.scrollframe:SetPoint('TOPLEFT', 2, -4); 
+    backpack.scrollframe:SetPoint('BOTTOMRIGHT', -2, 4); 
 
-    backpack.slider = CreateFrame("Slider", nil, backpack.scrollframe); 
-    backpack.slider:SetPoint("TOPLEFT", backpack, "TOPRIGHT", -10, -1); 
-    backpack.slider:SetPoint("BOTTOMLEFT", backpack, "BOTTOMRIGHT", -10, 1); 
+    backpack.slider = CreateFrame('Slider', nil, backpack.scrollframe); 
+    backpack.slider:SetPoint('TOPLEFT', backpack, 'TOPRIGHT', -10, -1); 
+    backpack.slider:SetPoint('BOTTOMLEFT', backpack, 'BOTTOMRIGHT', -10, 1); 
     backpack.slider:SetMinMaxValues(0, 1); 
     backpack.slider:SetValueStep(1); 
     backpack.slider:SetWidth(10); 
     backpack.slider:SetObeyStepOnDrag(true); 
-    backpack.slider:SetScript("OnValueChanged", function (self) self:GetParent():SetVerticalScroll(self:GetValue()) end); 
-    backpack.slider.thumb = backpack.slider:CreateTexture(nil, "OVERLAY"); 
-    backpack.slider.thumb:SetTexture(""); 
+    backpack.slider:SetScript('OnValueChanged', function (self) self:GetParent():SetVerticalScroll(self:GetValue()) end); 
+    backpack.slider.thumb = backpack.slider:CreateTexture(nil, 'OVERLAY'); 
+    backpack.slider.thumb:SetTexture(''); 
     backpack.slider.thumb:SetColorTexture(0, 0, 0, 1); 
     backpack.slider.thumb:SetSize(6, 50); 
     backpack.slider:SetThumbTexture(backpack.slider.thumb); 
     backpack.slider:SetBackdrop(bag_BACKDROP); 
     backpack.slider:SetBackdropColor(0, 0.4, 0, 1); 
     backpack.slider:SetBackdropBorderColor(0, 0.5, 0, 1); 
-    backpack.content = CreateFrame("Frame", nil, backpack.scrollframe); 
+    backpack.content = CreateFrame('Frame', nil, backpack.scrollframe); 
 
-    backpack:SetScript("OnMouseWheel", 
+    backpack:SetScript('OnMouseWheel', 
         function(self, delta)
             if delta == -1 then
                 backpack.slider:SetValue(backpack.slider:GetValue() + BUTTON_SIZE); 
@@ -166,7 +166,7 @@ function mnkStuff_Bag.CreateBackpack()
     function mnkStuff_Bag.CreateBackpackBags()
         if backpack.bagsframe then return end
 
-        backpack.bagsframe = CreateFrame("Frame", "backpack.bagsframe", backpack); 
+        backpack.bagsframe = CreateFrame('Frame', 'backpack.bagsframe', backpack); 
         backpack.bagsframe.bags = {}; 
         backpack.bagsframe:SetBackdrop(bag_BACKDROP); 
         backpack.bagsframe:SetBackdropColor(0, 0, 0, 1); 
@@ -180,7 +180,7 @@ function mnkStuff_Bag.CreateBackpack()
         for b = 1, NUM_BAG_SLOTS do
             backpack.bagsframe.bags[b] = {}; 
             backpack.bagsframe.bags[b].bagname = GetBagName(b); 
-            backpack.bagsframe.bags[b].button = CreateFrame("Button", "bag"..b, backpack.bagsframe); 
+            backpack.bagsframe.bags[b].button = CreateFrame('Button', 'bag'..b, backpack.bagsframe); 
             backpack.bagsframe.bags[b].button:SetBackdrop(bag_BACKDROP); 
             backpack.bagsframe.bags[b].button:SetBackdropColor(0.2, 0.2, 0.2, .5); 
             backpack.bagsframe.bags[b].button:SetBackdropBorderColor(0, 0.5, 0, 1); 
@@ -188,8 +188,8 @@ function mnkStuff_Bag.CreateBackpack()
             local itemName, itemLink, itemTexture = nil; 
 
             if backpack.bagsframe.bags[b].bagname == nil then
-                backpack.bagsframe.bags[b].button.itemname = "Empty"; 
-                backpack.bagsframe.bags[b].button:SetNormalTexture(""); 
+                backpack.bagsframe.bags[b].button.itemname = 'Empty'; 
+                backpack.bagsframe.bags[b].button:SetNormalTexture(''); 
             else
                 itemName, itemLink, _, _, _, _, _, _, _, itemTexture, _ = GetItemInfo(backpack.bagsframe.bags[b].bagname); 
                 backpack.bagsframe.bags[b].button.itemname = itemName; 
@@ -199,13 +199,13 @@ function mnkStuff_Bag.CreateBackpack()
                 --backpack.bagsframe.bags[b].button:GetNormalTexture():SetTexCoord(0.1, 0.1, 0.1, 0.1);
             end
             if itemLink then
-                backpack.bagsframe.bags[b].button:SetScript("OnEnter", function(self) GameTooltip:SetOwner(self, "ANCHOR_CURSOR"); GameTooltip:ClearLines(); GameTooltip:SetHyperlink(itemLink); GameTooltip:Show(); end)
-                backpack.bagsframe.bags[b].button:SetScript("OnLeave", function(self) GameTooltip:Hide(); end); 
+                backpack.bagsframe.bags[b].button:SetScript('OnEnter', function(self) GameTooltip:SetOwner(self, 'ANCHOR_CURSOR'); GameTooltip:ClearLines(); GameTooltip:SetHyperlink(itemLink); GameTooltip:Show(); end)
+                backpack.bagsframe.bags[b].button:SetScript('OnLeave', function(self) GameTooltip:Hide(); end); 
             else
-                backpack.bagsframe.bags[b].button:SetScript("OnEnter", function(self) GameTooltip:SetOwner(self, "ANCHOR_CURSOR"); GameTooltip:ClearLines(); GameTooltip:SetText("Empty"); GameTooltip:Show(); end)
-                backpack.bagsframe.bags[b].button:SetScript("OnLeave", function(self) GameTooltip:Hide(); end); 
+                backpack.bagsframe.bags[b].button:SetScript('OnEnter', function(self) GameTooltip:SetOwner(self, 'ANCHOR_CURSOR'); GameTooltip:ClearLines(); GameTooltip:SetText('Empty'); GameTooltip:Show(); end)
+                backpack.bagsframe.bags[b].button:SetScript('OnLeave', function(self) GameTooltip:Hide(); end); 
             end
-            backpack.bagsframe.bags[b].button:SetScript("OnClick", function(self, button) mnkStuff_Bag.Bag_OnClickItem(self, button) end); 
+            backpack.bagsframe.bags[b].button:SetScript('OnClick', function(self, button) mnkStuff_Bag.Bag_OnClickItem(self, button) end); 
             
             if (b) > 1 then
                 backpack.bagsframe.bags[b].button:SetPoint('LEFT', backpack.bagsframe.bags[b - 1].button, 'RIGHT', 5, 0); 
@@ -220,20 +220,20 @@ function mnkStuff_Bag.CreateBackpack()
     end
 
     function mnkStuff_Bag.Bag_OnClickItem(self, button)
-        print("click "..button)
+        print('click '..button)
     end
 
     function mnkStuff_Bag:DoOnEvent(event, arg1, arg2)
         --print(event)
-        if event == "PLAYER_ENTERING_WORLD" then
+        if event == 'PLAYER_ENTERING_WORLD' then
             
             
-        elseif event == "BAG_UPDATE_DELAYED" then
-            mnkStuff_Bag:RegisterEvent("BAG_UPDATE"); 
+        elseif event == 'BAG_UPDATE_DELAYED' then
+            mnkStuff_Bag:RegisterEvent('BAG_UPDATE'); 
             mnkStuff_Bag.CreateBackpack(); 
-        elseif event == "BAG_UPDATE" then
+        elseif event == 'BAG_UPDATE' then
             
-        elseif event == "MERCHANT_SHOW" then
+        elseif event == 'MERCHANT_SHOW' then
             mnkStuff_Bag.OnSellJunk(); 
         end
     end
@@ -270,9 +270,9 @@ function mnkStuff_Bag.CreateBackpack()
         local pocketname = itemType; 
 
         if itemRarity == LE_ITEM_QUALITY_POOR then
-            pocketname = "Junk"
-        elseif string.find(itemName, "Hearthstone") or string.find(itemName, "Flight Master's Whistle") then
-            pocketname = "Teleporters"; 
+            pocketname = 'Junk'
+        elseif string.find(itemName, 'Hearthstone') or string.find(itemName, 'Flight Master's Whistle') then
+            pocketname = 'Teleporters'; 
         end
 
 
@@ -313,15 +313,15 @@ function mnkStuff_Bag.CreateBackpack()
 
         for b = 1, #pocket.stuff do
             if b == 1 then
-                pocket.stuff[b].itemicon:SetPoint("TOP", backpack.content); 
+                pocket.stuff[b].itemicon:SetPoint('TOP', backpack.content); 
             else
-                pocket.stuff[b].itemicon:SetPoint("TOP", pocket.stuff[b - 1].itemicon, "BOTTOM", 0, -3); 
+                pocket.stuff[b].itemicon:SetPoint('TOP', pocket.stuff[b - 1].itemicon, 'BOTTOM', 0, -3); 
             end
             pocket.stuff[b].itemicon:SetPoint('LEFT', backpack.content, 'LEFT', 2, 0); 
             if pocket.stuff[b].itemCount > 1 then
-                pocket.stuff[b].itemicon.itemcountext:SetText(Color(COLOR_RED) .. " × "..Color(COLOR_GOLD)..pocket.stuff[b].itemCount); 
+                pocket.stuff[b].itemicon.itemcountext:SetText(Color(COLOR_RED) .. ' × '..Color(COLOR_GOLD)..pocket.stuff[b].itemCount); 
             else
-                pocket.stuff[b].itemicon.itemcountext:SetText(""); 
+                pocket.stuff[b].itemicon.itemcountext:SetText(''); 
             end
             pocket.stuff[b].itemicon:Show(); 
         end 
@@ -351,12 +351,12 @@ function mnkStuff_Bag.CreateBackpack()
         end
         ResetCursor()
         if price ~= 0 then
-            DEFAULT_CHAT_FRAME:AddMessage(string.format("Sold junk for: %s", GetCoinTextureString(price))); 
+            DEFAULT_CHAT_FRAME:AddMessage(string.format('Sold junk for: % s', GetCoinTextureString(price))); 
         end
     end
 
     function mnkStuff_Bag.ShowBackpack()
-        --print("showbackpack") 
+        --print('showbackpack') 
         if not backpack.openpocket then
             if not backpack.bagsframe then
                 mnkStuff_Bag.CreateBackpackBags(); 
@@ -380,7 +380,7 @@ function mnkStuff_Bag.CreateBackpack()
     end
 
     function mnkStuff_Bag.Toggle(var)
-        --print("toggle "..var)
+        --print('toggle '..var)
 
         if (var == 2 and not backpack:IsVisible()) or (var == 1 and backpack:IsVisible()) then return end
 
@@ -401,10 +401,12 @@ function mnkStuff_Bag.CreateBackpack()
         end
     end
 
-    mnkStuff_Bag:SetScript("OnEvent", mnkStuff_Bag.DoOnEvent); 
-    mnkStuff_Bag:RegisterEvent("PLAYER_ENTERING_WORLD"); 
-    mnkStuff_Bag:RegisterEvent("MERCHANT_SHOW"); 
-    mnkStuff_Bag:RegisterEvent("BAG_UPDATE_DELAYED"); 
-    mnkStuff_Bag:RegisterEvent("BAG_SLOT_FLAGS_UPDATED"); 
+    mnkStuff_Bag:SetScript('OnEvent', mnkStuff_Bag.DoOnEvent); 
+    mnkStuff_Bag:RegisterEvent('PLAYER_ENTERING_WORLD'); 
+    mnkStuff_Bag:RegisterEvent('MERCHANT_SHOW'); 
+    mnkStuff_Bag:RegisterEvent('BAG_UPDATE_DELAYED'); 
+    mnkStuff_Bag:RegisterEvent('BAG_SLOT_FLAGS_UPDATED'); 
 
    
+
+               

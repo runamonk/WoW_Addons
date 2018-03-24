@@ -1,8 +1,8 @@
-mnkReputation = CreateFrame("Frame"); 
-mnkReputation.LDB = LibStub:GetLibrary("LibDataBroker-1.1"); 
+mnkReputation = CreateFrame('Frame'); 
+mnkReputation.LDB = LibStub:GetLibrary('LibDataBroker-1.1'); 
 
-local libQTip = LibStub("LibQTip-1.0"); 
-local libAG = LibStub("AceGUI-3.0"); 
+local libQTip = LibStub('LibQTip-1.0'); 
+local libAG = LibStub('AceGUI-3.0'); 
 local fConfig = nil; 
 local bEnteredWorld = false; 
 
@@ -18,61 +18,61 @@ iHated = 0;
 iHonored = 0; 
 
 function mnkReputation:DoOnEvent(event, arg1)
-    if event == "PLAYER_LOGIN" then
-        mnkReputation.LDB = LibStub("LibDataBroker-1.1"):NewDataObject("mnkReputation", {
-            icon = "Interface\\Icons\\Inv_misc_bone_skull_02.blp", 
-            type = "data source", 
+    if event == 'PLAYER_LOGIN' then
+        mnkReputation.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkReputation', {
+            icon = 'Interface\\Icons\\Inv_misc_bone_skull_02.blp', 
+            type = 'data source', 
             OnEnter = mnkReputation.DoOnEnter, 
             OnClick = mnkReputation.DoOnClick
         }); 
         
-        mnkReputation.LDB.label = "Factions"; 
+        mnkReputation.LDB.label = 'Factions'; 
     end
-    if (event == "PLAYER_LOGIN") or (event == "CHAT_MSG_COMBAT_FACTION_CHANGE") then
-        if (event == "CHAT_MSG_COMBAT_FACTION_CHANGE") and (arg1 ~= nil) then
+    if (event == 'PLAYER_LOGIN') or (event == 'CHAT_MSG_COMBAT_FACTION_CHANGE') then
+        if (event == 'CHAT_MSG_COMBAT_FACTION_CHANGE') and (arg1 ~= nil) then
             CombatText_AddMessage(arg1, CombatText_StandardScroll, 255, 255, 255, nil, false); 
         end
         mnkReputation.GetAllFactions(); 
         mnkReputation.UpdateText(); 
     end
-    if (event == "PLAYER_ENTERING_WORLD") or (event == "BAG_UPDATE") then
-        if event == "PLAYER_ENTERING_WORLD" and not bEnteredWorld then
+    if (event == 'PLAYER_ENTERING_WORLD') or (event == 'BAG_UPDATE') then
+        if event == 'PLAYER_ENTERING_WORLD' and not bEnteredWorld then
             bEnteredWorld = true; 
         end
 
-        if event == "PLAYER_ENTERING_WORLD" and (AutoTabard ~= nil) then
+        if event == 'PLAYER_ENTERING_WORLD' and (AutoTabard ~= nil) then
             mnkReputation.CheckTabard(); 
         end
         if bEnteredWorld then
             mnkReputation.GetAllTabards(); 
         end
     end
-    if (event == "ZONE_CHANGED_NEW_AREA") and (AutoTabard ~= nil) then
+    if (event == 'ZONE_CHANGED_NEW_AREA') and (AutoTabard ~= nil) then
         mnkReputation.CheckTabard(); 
     end
 end
 
 function mnkReputation.DoOnClick(self, button)
-    if button == "RightButton" then
+    if button == 'RightButton' then
         --if fConfig ~= nil then
         --  return;
         --end
         if fConfig == nil then
-            fConfig = libAG:Create("Frame"); 
-            fConfig:SetCallback("OnClose", mnkReputation.DoOnConfigClose); 
-            fConfig:SetTitle("mnkReputation Favorite Factions"); 
-            fConfig:SetStatusText("Check factions you want to watch."); 
+            fConfig = libAG:Create('Frame'); 
+            fConfig:SetCallback('OnClose', mnkReputation.DoOnConfigClose); 
+            fConfig:SetTitle('mnkReputation Favorite Factions'); 
+            fConfig:SetStatusText('Check factions you want to watch.'); 
             fConfig:SetHeight(500); 
             fConfig:SetWidth(400); 
             fConfig:EnableResize(false); 
-            fConfig:SetLayout("Fill"); 
+            fConfig:SetLayout('Fill'); 
             fConfig:PauseLayout(); 
-            g = libAG:Create("InlineGroup"); 
-            g:SetTitle("Factions"); 
-            g:SetLayout("Fill"); 
+            g = libAG:Create('InlineGroup'); 
+            g:SetTitle('Factions'); 
+            g:SetLayout('Fill'); 
 
-            sFactions = libAG:Create("ScrollFrame"); 
-            sFactions:SetLayout("List"); 
+            sFactions = libAG:Create('ScrollFrame'); 
+            sFactions:SetLayout('List'); 
             g:AddChild(sFactions); 
             fConfig:AddChild(g); 
         else
@@ -81,20 +81,20 @@ function mnkReputation.DoOnClick(self, button)
 
         sFactions.ReleaseChildren(sFactions); 
         mnkReputation.GetAllFactions(); 
-        local header = ""; 
+        local header = ''; 
 
         for i = 1, #tblAllFactions do
             if header ~= tblAllFactions[i].header then
                 header = tblAllFactions[i].header; 
                 local s = (tblAllFactions[i].max - tblAllFactions[i].current); 
-                mnkReputation.AddLabel(sFactions, header, " ("..tblAllFactions[i].standing.." - "..tostring(s) .. ")"); 
+                mnkReputation.AddLabel(sFactions, header, ' ('..tblAllFactions[i].standing..' - '..tostring(s) .. ')'); 
             end
             mnkReputation.AddCheckbox(sFactions, mnkReputation.InTable(tblFactions, tblAllFactions[i].name), tblAllFactions[i].name, tblAllFactions[i].standingid, tblAllFactions[i].standing, mnkReputation.GetRepLeft(tblAllFactions[i].max - tblAllFactions[i].current)); 
         end
 
         fConfig:ResumeLayout(); 
-    elseif button == "LeftButton" then
-        ToggleCharacter("ReputationFrame"); 
+    elseif button == 'LeftButton' then
+        ToggleCharacter('ReputationFrame'); 
     end
 end
 
@@ -108,33 +108,33 @@ end
 
 function mnkReputation.DoOnEnter(self)
     local color = COLOR_WHITE; 
-    local tooltip = libQTip:Acquire("mnkReputationToolTip", 3, "LEFT", "LEFT", "RIGHT"); 
+    local tooltip = libQTip:Acquire('mnkReputationToolTip', 3, 'LEFT', 'LEFT', 'RIGHT'); 
 
     mnkReputation.tooltip = tooltip; 
 
     tooltip:Clear(); 
     
     if #tblFactions == 0 then
-        tooltip:AddLine("You have not selected any factions to display."); 
-        tooltip:AddLine("Right click on mnkReputation to open the config."); 
+        tooltip:AddLine('You have not selected any factions to display.'); 
+        tooltip:AddLine('Right click on mnkReputation to open the config.'); 
     else 
         table.sort(tblAllFactions, function(a, b) return a.name < b.name end); 
 
-        tooltip:AddHeader(Color(COLOR_GOLD) .. "Name", Color(COLOR_GOLD) .. "Reputation", Color(COLOR_GOLD) .. "To go"); 
+        tooltip:AddHeader(Color(COLOR_GOLD) .. 'Name', Color(COLOR_GOLD) .. 'Reputation', Color(COLOR_GOLD) .. 'To go'); 
 
         for i = 1, #tblAllFactions do
             if mnkReputation.InTable(tblFactions, tblAllFactions[i].name) == true then
-                if tblAllFactions[i].header == ".Guild." then
-                    tooltip:AddLine(Color(mnkReputation.GetFactionColor(tblAllFactions[i].standingid)) .. "<"..tblAllFactions[i].name..">", tblAllFactions[i].standing, mnkReputation.GetRepLeft(tblAllFactions[i].max - tblAllFactions[i].current)); 
+                if tblAllFactions[i].header == '.Guild.' then
+                    tooltip:AddLine(Color(mnkReputation.GetFactionColor(tblAllFactions[i].standingid)) .. '<'..tblAllFactions[i].name..'>', tblAllFactions[i].standing, mnkReputation.GetRepLeft(tblAllFactions[i].max - tblAllFactions[i].current)); 
                 else 
                     tooltip:AddLine(Color(mnkReputation.GetFactionColor(tblAllFactions[i].standingid))..tblAllFactions[i].name, tblAllFactions[i].standing, mnkReputation.GetRepLeft(tblAllFactions[i].max - tblAllFactions[i].current)); 
                 end
             end
         end
         
-        tooltip:AddLine(" "); 
+        tooltip:AddLine(' '); 
         local y, x = tooltip:AddLine(); 
-        tooltip:SetCell(y, 1, Color(COLOR_PURPLE) .. "Exalted: "..Color(COLOR_WHITE)..iExalted..Color(COLOR_GREEN) .. " Honored/Revered: "..Color(COLOR_WHITE)..iHonored..Color(COLOR_RED) .. " Hated: "..Color(COLOR_WHITE)..iHated, "LEFT", 3); 
+        tooltip:SetCell(y, 1, Color(COLOR_PURPLE) .. 'Exalted: '..Color(COLOR_WHITE)..iExalted..Color(COLOR_GREEN) .. ' Honored/Revered: '..Color(COLOR_WHITE)..iHonored..Color(COLOR_RED) .. ' Hated: '..Color(COLOR_WHITE)..iHated, 'LEFT', 3); 
     end
 
     mnkReputation.AddTabards(tooltip); 
@@ -147,20 +147,20 @@ function mnkReputation.DoOnEnter(self)
 end
 
 function mnkReputation.AddCheckbox(scrollbox, checked, name, standingid, standing, rating)
-    local c = libAG:Create("CheckBox"); 
+    local c = libAG:Create('CheckBox'); 
     c:SetValue(checked); 
-    c:SetLabel(name.." ["..Color(mnkReputation.GetFactionColor(standingid))..standing..Color(COLOR_WHITE) .. "] "..Color(COLOR_WHITE)..rating); 
-    c:SetUserData("name", name); 
+    c:SetLabel(name..' ['..Color(mnkReputation.GetFactionColor(standingid))..standing..Color(COLOR_WHITE) .. '] '..Color(COLOR_WHITE)..rating); 
+    c:SetUserData('name', name); 
     c:SetWidth(400); 
     scrollbox:AddChild(c); 
 end
 
 function mnkReputation.AddLabel(scrollbox, name, standing)
-    local c = libAG:Create("Label"); 
-    c:SetText(" "); 
+    local c = libAG:Create('Label'); 
+    c:SetText(' '); 
     scrollbox:AddChild(c); 
 
-    local c = libAG:Create("Label"); 
+    local c = libAG:Create('Label'); 
     c:SetText(Color(COLOR_GOLD)..name..standing); 
     c:SetWidth(400); 
     scrollbox:AddChild(c); 
@@ -168,27 +168,27 @@ end
 
 function mnkReputation.AddTabards(t)
     if #tblTabards > 0 then
-        t:AddLine(" "); 
-        t:AddHeader(Color(COLOR_GOLD) .. "Tabard Name", "", ""); 
+        t:AddLine(' '); 
+        t:AddHeader(Color(COLOR_GOLD) .. 'Tabard Name', '', ''); 
         local i = 0; 
         for i = 1, #tblTabards do
             local y = t:AddLine(); 
-            t:SetCell(y, 1, string.format("|T%s:16|t %s", tblTabards[i].itemTexture, tblTabards[i].itemName), 2); 
-            t:SetLineScript(y, "OnMouseDown", mnkReputation.TabardClick, i); 
+            t:SetCell(y, 1, string.format('|T%s:16|t %s', tblTabards[i].itemTexture, tblTabards[i].itemName), 2); 
+            t:SetLineScript(y, 'OnMouseDown', mnkReputation.TabardClick, i); 
             if tblTabards[i].itemName == AutoTabard then
-                t:SetCell(y, 3, string.format("|T%s:16|t", "Interface\\Buttons\\UI-CheckBox-Check")); 
+                t:SetCell(y, 3, string.format('|T%s:16|t', 'Interface\\Buttons\\UI-CheckBox-Check')); 
             end
         end
-        t:AddLine(" "); 
-        t:AddLine("Click on a tabard to auto equip in instances.")
+        t:AddLine(' '); 
+        t:AddLine('Click on a tabard to auto equip in instances.')
     end
 end
 
 function mnkReputation.CheckTabard()
     inInstance, instanceType = IsInInstance(); 
-    if (not inInstance) or (instanceType == "none") or (AutoTabard == nil) then
+    if (not inInstance) or (instanceType == 'none') or (AutoTabard == nil) then
         mnkReputation.RemoveTabard(); 
-    elseif inInstance and (instanceType ~= "none") then
+    elseif inInstance and (instanceType ~= 'none') then
         mnkReputation.EquipTabard(); 
     end
 end
@@ -202,7 +202,7 @@ function mnkReputation.GetAllFactions()
 
     local x = GetNumFactions(); 
     local idx = 0; 
-    local header = ""; 
+    local header = ''; 
 
     iExalted = 0; 
     iHated = 0; 
@@ -215,7 +215,7 @@ function mnkReputation.GetAllFactions()
         
         if isHeader then
             header = name; 
-            --PrintError(name, " ", hasRep);
+            --PrintError(name, ' ', hasRep);
         end
 
         if isHeader and isCollapsed then
@@ -235,8 +235,8 @@ function mnkReputation.GetAllFactions()
 
             idx = idx + 1; 
             tblAllFactions[idx] = {}; 
-            if header == "Guild" then
-                header = ".Guild."; 
+            if header == 'Guild' then
+                header = '.Guild.'; 
             end
             tblAllFactions[idx].header = header; 
             tblAllFactions[idx].name = name; 
@@ -262,8 +262,8 @@ end
 function mnkReputation.GetAllTabards()
     tblTabards = {}; 
     local i = 0; 
-    local slotId, _, _ = GetInventorySlotInfo("TabardSlot"); 
-    local itemId = GetInventoryItemID("player", slotId); 
+    local slotId, _, _ = GetInventorySlotInfo('TabardSlot'); 
+    local itemId = GetInventoryItemID('player', slotId); 
 
     if itemId ~= nil then
         i = 1; 
@@ -279,7 +279,7 @@ function mnkReputation.GetAllTabards()
             local _, itemCount, _, _, _, _, itemLink = GetContainerItemInfo(b, s); 
             if itemLink ~= nil then
                 local itemName, _, _, _, _, _, _, _, itemEquipLoc, itemTexture, _ = GetItemInfo(itemLink); 
-                if itemEquipLoc == "INVTYPE_TABARD" then
+                if itemEquipLoc == 'INVTYPE_TABARD' then
                     i = (i + 1); 
                     tblTabards[i] = {}; 
                     tblTabards[i].itemName = itemName; 
@@ -298,7 +298,7 @@ function mnkReputation.GetFirstEmptyBagSlot()
     for b = 0, NUM_BAG_SLOTS do
         i, t = GetContainerNumFreeSlots(b); 
         if i > 0 and t == 0 then
-            --PrintError(b, " ", i, " ", t)
+            --PrintError(b, ' ', i, ' ', t)
             --bags are numbered 19 to 23
             return b + 19; 
         end
@@ -308,7 +308,7 @@ end
 
 function mnkReputation.GetRepLeft(amt)
     if amt == 0 or amt == 1 then
-        return ""; 
+        return ''; 
     else
         return TruncNumber(amt, 0); 
     end
@@ -352,7 +352,7 @@ end
 
 function mnkReputation.RemoveTabard()
     ClearCursor(); 
-    PickupInventoryItem(GetInventorySlotInfo("TabardSlot")); 
+    PickupInventoryItem(GetInventorySlotInfo('TabardSlot')); 
     local b = mnkReputation.GetFirstEmptyBagSlot(); 
     if b == 19 then
         PutItemInBackpack(); 
@@ -363,7 +363,7 @@ function mnkReputation.RemoveTabard()
 end
 
 function mnkReputation.TabardClick(self, arg, button)
-    local newTabard = string.format("|T%s:16|t %s", tblTabards[arg].itemTexture, tblTabards[arg].itemName); 
+    local newTabard = string.format('|T%s:16|t %s', tblTabards[arg].itemTexture, tblTabards[arg].itemName); 
     local oldTabard = AutoTabard; 
     local b = nil; 
 
@@ -382,7 +382,7 @@ function mnkReputation.TabardClick(self, arg, button)
             end
             --clicked a new tabard
         elseif string.find(s, tblTabards[arg].itemName) ~= nil then
-            mnkReputation.tooltip:SetCell(i, 3, string.format("|T%s:16|t", "Interface\\Buttons\\UI-CheckBox-Check")); 
+            mnkReputation.tooltip:SetCell(i, 3, string.format('|T%s:16|t', 'Interface\\Buttons\\UI-CheckBox-Check')); 
             AutoTabard = tblTabards[arg].itemName; 
             newTabard = nil; 
         elseif (oldTabard ~= nil) and string.find(s, oldTabard) ~= nil then
@@ -402,24 +402,24 @@ function mnkReputation.UpdateTable(t, scrollbox)
     
     local x = 0
     for i = 1, #scrollbox.children do
-        if scrollbox.children[i].type == "CheckBox" and scrollbox.children[i]:GetValue() == true then
+        if scrollbox.children[i].type == 'CheckBox' and scrollbox.children[i]:GetValue() == true then
             x = (x + 1); 
             t[x] = {}; 
-            t[x].name = scrollbox.children[i]:GetUserData("name"); 
+            t[x].name = scrollbox.children[i]:GetUserData('name'); 
         end
     end 
 end
 
 function mnkReputation.UpdateText()
-    mnkReputation.LDB.text = Color(COLOR_PURPLE)..iExalted..Color(COLOR_WHITE) .. " / "..Color(COLOR_GREEN)..iHonored..Color(COLOR_WHITE) .. " / "..Color(COLOR_RED)..iHated; 
+    mnkReputation.LDB.text = Color(COLOR_PURPLE)..iExalted..Color(COLOR_WHITE) .. ' / '..Color(COLOR_GREEN)..iHonored..Color(COLOR_WHITE) .. ' / '..Color(COLOR_RED)..iHated; 
 end
 
-mnkReputation:SetScript("OnEvent", mnkReputation.DoOnEvent); 
-mnkReputation:RegisterEvent("PLAYER_LOGIN"); 
-mnkReputation:RegisterEvent("PLAYER_ENTERING_WORLD")
-mnkReputation:RegisterEvent("CHAT_MSG_COMBAT_FACTION_CHANGE"); 
-mnkReputation:RegisterEvent("PLAYER_ENTERING_WORLD"); 
-mnkReputation:RegisterEvent("ZONE_CHANGED_NEW_AREA"); 
-mnkReputation:RegisterEvent("BAG_UPDATE"); 
+mnkReputation:SetScript('OnEvent', mnkReputation.DoOnEvent); 
+mnkReputation:RegisterEvent('PLAYER_LOGIN'); 
+mnkReputation:RegisterEvent('PLAYER_ENTERING_WORLD')
+mnkReputation:RegisterEvent('CHAT_MSG_COMBAT_FACTION_CHANGE'); 
+mnkReputation:RegisterEvent('PLAYER_ENTERING_WORLD'); 
+mnkReputation:RegisterEvent('ZONE_CHANGED_NEW_AREA'); 
+mnkReputation:RegisterEvent('BAG_UPDATE'); 
 
 

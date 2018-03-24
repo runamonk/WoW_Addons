@@ -11,8 +11,8 @@ tags['mnknames:level'] = function(unit)
     local l = UnitLevel(unit)
     local d = GetQuestDifficultyColor(l)
 
-    if l <= 0 then l = "??" end
+    if l <= 0 then l = '??' end
 
-    return string.format("|cff%02x%02x%02x%s|r", d.r * 255, d.g * 255, d.b * 255, l)
+    return string.format('|cff%02x%02x%02x%s|r', d.r * 255, d.g * 255, d.b * 255, l)
 end
 events['mnknames:level'] = 'UNIT_LEVEL PLAYER_LEVEL_UP UNIT_CLASSIFICATION_CHANGED'
