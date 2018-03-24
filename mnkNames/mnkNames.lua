@@ -29,6 +29,7 @@ local lastNameplate = nil
 
 function mnkNames.CreateStyle(self, unit)
     self.disableMovement = true
+
     self.Health = CreateFrame("StatusBar", nil, self)
     self.Health:SetAllPoints()
     self.Health:SetStatusBarTexture(mnkLibs.Textures.background)
@@ -39,7 +40,7 @@ function mnkNames.CreateStyle(self, unit)
     self.Health.colorTapping = true
     self.Health.colorDisconnected = true
     self.Health.bg = self.Health:CreateTexture(nil, "BACKGROUND")
-    self.Health.bg:SetAllPoints(health)
+    self.Health.bg:SetAllPoints(self.Health)
     self.Health.bg:SetAlpha(0.20)
     self.Health.bg:SetTexture(mnkLibs.Textures.bar)
     self.Name = CreateFontString(self.Health, mnkLibs.Fonts.oswald, cfg_font_height, nil, nil, true)
