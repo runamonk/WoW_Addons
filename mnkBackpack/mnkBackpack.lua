@@ -98,7 +98,7 @@ local function SkinSlot(Slot)
     boe:SetJustifyH('LEFT')
     boe:SetTextColor(1, 0, 0, 1)
     Slot.boe = boe
-    boe:SetText(".")
+    boe:SetText('.')
     boe:Hide()
 
     local Pushed = Slot.PushedTexture
@@ -142,7 +142,7 @@ Backpack:AddLayout('mnkBackpack', SkinContainer, SkinSlot)
 local function IsItemBOE(bagID, slotID)
     local link = GetContainerItemLink(bagID, slotID)
     if link then 
-        local tip, leftside = CreateFrame("GameTooltip", "mnkBackpackScanTooltip"), {}
+        local tip, leftside = CreateFrame('GameTooltip', 'mnkBackpackScanTooltip'), {}
 
         for i = 1, 5 do
             local L, R = tip:CreateFontString(), tip:CreateFontString()
@@ -154,7 +154,7 @@ local function IsItemBOE(bagID, slotID)
         tip.leftside = leftside
         tip:ClearLines()
 
-        tip:SetOwner(UIParent, "ANCHOR_NONE")
+        tip:SetOwner(UIParent, 'ANCHOR_NONE')
         tip:SetBagItem(bagID, slotID)
 
         -- third line for equipment is the bind type/status

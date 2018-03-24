@@ -11,7 +11,7 @@ end
 
 function mnkStuff:DoOnEvent(event, ...)
     --print(event)
-    if event == "PLAYER_LOGIN" then
+    if event == 'PLAYER_LOGIN' then
         if mnkStuffDB == nil then
             mnkStuffDB = {}; 
             mnkStuffDB.backpack_xpos = -50; 
@@ -20,6 +20,6 @@ function mnkStuff:DoOnEvent(event, ...)
     end
 end
 
-mnkStuff:SetScript("OnEvent", mnkStuff.DoOnEvent); 
-mnkStuff:RegisterEvent("PLAYER_LOGIN"); 
+mnkStuff:SetScript('OnEvent', mnkStuff.DoOnEvent); 
+mnkStuff:RegisterEvent('PLAYER_LOGIN'); 
 

@@ -1,17 +1,17 @@
-mnkPC = CreateFrame("Frame")
-mnkPC.LDB = LibStub:GetLibrary("LibDataBroker-1.1")
+mnkPC = CreateFrame('Frame')
+mnkPC.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 
-local LibQTip = LibStub("LibQTip-1.0")
+local LibQTip = LibStub('LibQTip-1.0')
 local _Elapsed = 0; 
 
 function mnkPC:DoOnEvent(event)
-    if event == "PLAYER_LOGIN" then
-        mnkPC.LDB = LibStub("LibDataBroker-1.1"):NewDataObject("mnkPC", {
-            icon = "Interface\\Icons\\Achievement_guildperk_fasttrack.blp", 
-            type = "data source", 
+    if event == 'PLAYER_LOGIN' then
+        mnkPC.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkPC', {
+            icon = 'Interface\\Icons\\Achievement_guildperk_fasttrack.blp', 
+            type = 'data source', 
             OnEnter = mnkPC.DoOnEnter
         }); 
-        mnkPC.LDB.label = "FPS/Latency"; 
+        mnkPC.LDB.label = 'FPS/Latency'; 
     end
     mnkPC.UpdateText(); 
 end
@@ -31,10 +31,10 @@ end
 
 function mnkPC.UpdateText()
     local down, up, lagHome, lagWorld = GetNetStats(); 
-    mnkPC.LDB.text = math.floor(GetFramerate()) .. " fps / "..lagWorld.." ms"; 
+    mnkPC.LDB.text = math.floor(GetFramerate()) .. ' fps / '..lagWorld..' ms'; 
 end
 
-mnkPC:SetScript("OnEvent", mnkPC.DoOnEvent); 
-mnkPC:SetScript("OnUpdate", mnkPC.DoOnUpdate); 
-mnkPC:RegisterEvent("PLAYER_LOGIN"); 
+mnkPC:SetScript('OnEvent', mnkPC.DoOnEvent); 
+mnkPC:SetScript('OnUpdate', mnkPC.DoOnUpdate); 
+mnkPC:RegisterEvent('PLAYER_LOGIN'); 
 

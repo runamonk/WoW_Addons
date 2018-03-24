@@ -1,26 +1,26 @@
-mnkFavoriteMounts = CreateFrame("Frame"); 
-mnkFavoriteMounts.LDB = LibStub:GetLibrary("LibDataBroker-1.1"); 
+mnkFavoriteMounts = CreateFrame('Frame'); 
+mnkFavoriteMounts.LDB = LibStub:GetLibrary('LibDataBroker-1.1'); 
 
-local libQTip = LibStub("LibQTip-1.0"); 
-local libAG = LibStub("AceGUI-3.0"); 
+local libQTip = LibStub('LibQTip-1.0'); 
+local libAG = LibStub('AceGUI-3.0'); 
 
 function mnkFavoriteMounts:DoOnEvent(event)
-    if event == "PLAYER_LOGIN" then
-        mnkFavoriteMounts.LDB = LibStub("LibDataBroker-1.1"):NewDataObject("mnkFavoriteMountss", {
-            icon = "Interface\\Icons\\Ability_mount_blackpanther.blp", 
-            type = "data source", 
+    if event == 'PLAYER_LOGIN' then
+        mnkFavoriteMounts.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkFavoriteMountss', {
+            icon = 'Interface\\Icons\\Ability_mount_blackpanther.blp', 
+            type = 'data source', 
             OnEnter = mnkFavoriteMounts.DoOnEnter, 
             OnClick = mnkFavoriteMounts.DoOnClick
         }); 
 
-        Hotkey, _ = GetBindingKey("RANDOM_MOUNT"); 
+        Hotkey, _ = GetBindingKey('RANDOM_MOUNT'); 
 
-        mnkFavoriteMounts.LDB.label = "Favorite Mounts"; 
+        mnkFavoriteMounts.LDB.label = 'Favorite Mounts'; 
     end
 end
 
 function mnkFavoriteMounts.DoOnEnter(self)
-    local tooltip = libQTip:Acquire("mnkFavoriteMountssToolTip", 1, "LEFT"); 
+    local tooltip = libQTip:Acquire('mnkFavoriteMountssToolTip', 1, 'LEFT'); 
     self.tooltip = tooltip; 
     tooltip:Clear(); 
     local tblMountIDs = C_MountJournal.GetMountIDs(); 
@@ -28,7 +28,7 @@ function mnkFavoriteMounts.DoOnEnter(self)
     local c = 0; 
 
     if #tblMountIDs > 0 then
-        tooltip:AddHeader(Color(COLOR_GOLD) .. "Favorites"); 
+        tooltip:AddHeader(Color(COLOR_GOLD) .. 'Favorites'); 
         
         for i = 1, #tblMountIDs do
             local mName, spellID, mIcon, active, isUsable, _, isFavorite, _, _, hideOnChar, isCollected, mountID = C_MountJournal.GetMountInfoByID(tblMountIDs[i]); 
@@ -46,13 +46,13 @@ function mnkFavoriteMounts.DoOnEnter(self)
         table.sort(tblMounts, sort_func); 
 
         for i = 1, #tblMounts do
-            local y = tooltip:AddLine(string.format("|T%s:16|t", tblMounts[i].mIcon) .. " "..tblMounts[i].mName); 
-            tooltip:SetLineScript(y, "OnMouseDown", mnkFavoriteMounts.DoOnMouseDown, tblMounts[i].mID); 
+            local y = tooltip:AddLine(string.format('|T%s:16|t', tblMounts[i].mIcon) .. ' '..tblMounts[i].mName); 
+            tooltip:SetLineScript(y, 'OnMouseDown', mnkFavoriteMounts.DoOnMouseDown, tblMounts[i].mID); 
         end 
     end
 
     if (c == 0) then
-        tooltip:AddLine(Color(COLOR_GOLD) .. "No favorite mounts defined."); 
+        tooltip:AddLine(Color(COLOR_GOLD) .. 'No favorite mounts defined.'); 
     end
 
     tooltip:SetAutoHideDelay(.1, self); 
@@ -70,7 +70,7 @@ function mnkFavoriteMounts.DoOnMouseDown(button, arg)
     C_MountJournal.SummonByID(arg); 
 end
 
-mnkFavoriteMounts:SetScript("OnEvent", mnkFavoriteMounts.DoOnEvent); 
-mnkFavoriteMounts:RegisterEvent("PLAYER_LOGIN"); 
-mnkFavoriteMounts:RegisterEvent("PLAYER_ENTERING_WORLD"); 
+mnkFavoriteMounts:SetScript('OnEvent', mnkFavoriteMounts.DoOnEvent); 
+mnkFavoriteMounts:RegisterEvent('PLAYER_LOGIN'); 
+mnkFavoriteMounts:RegisterEvent('PLAYER_ENTERING_WORLD'); 
 
