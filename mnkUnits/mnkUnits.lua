@@ -2,6 +2,7 @@
 local function CreateCastBar(self)
     self.Castbar = CreateFrame('StatusBar', nil, self)
     self.Castbar:SetAllPoints(self.Health)
+
     self.Castbar:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
     self.Castbar:SetStatusBarColor(0, 0, 0, 0)
     self.Castbar:SetFrameStrata('HIGH') 
@@ -11,7 +12,8 @@ local function CreateCastBar(self)
     self.Castbar.PostChannelStart = PostUpdateCast
     self.Castbar.Spark = self.Castbar:CreateTexture(nil, 'OVERLAY')
     self.Castbar.Spark:SetSize(1, self.Health:GetHeight())
-    self.Castbar.Spark:SetColorTexture(1, 0, 0)
+    self.Castbar.Spark:SetColorTexture(1, 1/8, 1/8)
+    self.Castbar.Spark:SetBlendMode('ADD')
 end
 
 local function CreateHealthBar(self)
@@ -143,7 +145,7 @@ local function PlayerUnit(self)
     self.flagCombat:SetPoint('LEFT', self.HealthValue, 'RIGHT', 1, 0)
     self:CustomTag(self.flagCombat, '[|cffff0000>mnku:combat<|r]')
     self.flagPVP = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
-    self.flagPVP:SetPoint('LEFT', self.flagCombat, 'RIGHT', 1, 0)
+    self.flagPVP:SetPoint('LEFT', self.flagCombat, 'RIGHT', 0, 0)
     self:Tag(self.flagPVP, '[|cffff0000>pvp<|r]') 
     self.Power = CreateFrame('StatusBar', nil, self.Health)
     self.Power:SetPoint('BOTTOMRIGHT')
@@ -251,6 +253,11 @@ function mnkUnits:DoOnEvent(event, arg1, arg2)
         BuffFrame:UnregisterEvent("UNIT_AURA")
         BuffFrame:Hide()
         TemporaryEnchantFrame:Hide()
+        CompactRaidFrameManager:UnregisterAllEvents()
+        CompactRaidFrameManager:Hide()
+        CompactRaidFrameContainer:UnregisterAllEvents()
+        CompactRaidFrameContainer:Hide()
+        CompactRaidFrameContainer:Hide()
     end
 end
 
