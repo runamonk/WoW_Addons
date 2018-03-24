@@ -145,7 +145,11 @@ function CreateDropShadow(frame, point, edge, color)
             self:SetBackdropColor(0, 0, 0, 1)
         end
 
-        
+function CreateBackground(self)
+    local t = self:CreateTexture(nil, 'BORDER')
+    t:SetAllPoints(self)
+    t:SetColorTexture(0, 0, 0)
+end       
 
         
 
