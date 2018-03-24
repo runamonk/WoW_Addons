@@ -93,6 +93,7 @@ end
 
 function CreateFontString(frame, font, size, outline, layer, shadow)
     local fs = frame:CreateFontString(nil, layer or 'OVERLAY')
+    
     fs:SetFont(font, size, outline)
     if shadow then
         fs:SetShadowColor(0, 0, 0, 1)
@@ -143,6 +144,30 @@ function CreateDropShadow(frame, point, edge, color)
             }}
             self:SetBackdropColor(0, 0, 0, 1)
         end
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
 
         
 

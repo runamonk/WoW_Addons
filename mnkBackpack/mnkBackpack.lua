@@ -3,31 +3,8 @@ local addonName = ...
 local COLUMNS = 12; 
 
 local ICON_TEXTURES = [[Interface\AddOns\mnkLibs\Assets\icons]]
-local FONT = [[Interface\AddOns\mnkLibs\Fonts\oswald.ttf]]
-local normalFont = CreateFont('mnkBackpackFontNormal')
-normalFont:SetFont(FONT, 14, '')
-normalFont:SetShadowOffset(0, 0)
-
-local FONT2 = [[Interface\AddOns\mnkLibs\Fonts\ap.ttf]]
-local normal2Font = CreateFont('mnkBackpackFont2Normal')
-normal2Font:SetFont(FONT2, 14, 'OUTLINE')
-normal2Font:SetShadowOffset(0, 0)
-
-local FONT3 = [[Interface\AddOns\mnkLibs\Fonts\ap.ttf]]
-local normal3Font = CreateFont('mnkBackpackFont3Normal')
-normal3Font:SetFont(FONT2, 50, 'OUTLINE')
-normal3Font:SetShadowOffset(0, 0)
-
 local TEXTURE = [[Interface\ChatFrame\ChatFrameBackground]]
 local BACKDROP = {bgFile = TEXTURE, edgeFile = TEXTURE, edgeSize = 1}
-
-local disabledFont = CreateFont('mnkBackpackFontDisabled')
-disabledFont:CopyFontObject('mnkBackpackFontNormal')
-disabledFont:SetTextColor(DISABLED_FONT_COLOR:GetRGB())
-
-local titleFont = CreateFont('mnkBackpackFontYellow')
-titleFont:CopyFontObject('mnkBackpackFontNormal')
-titleFont:SetTextColor(NORMAL_FONT_COLOR:GetRGB())
 
 LibStub('LibDropDown'):RegisterStyle(addonName, {
     gap = 18, 
@@ -38,20 +15,16 @@ LibStub('LibDropDown'):RegisterStyle(addonName, {
         edgeFile = [[Interface\ChatFrame\ChatFrameBackground]], edgeSize = 1
     }, 
     backdropColor = CreateColor(0, 0, 0, 1), 
-    backdropBorderColor = CreateColor(0.2, 0.2, 0.2), 
-    normalFont = normalFont, 
-    disabledFont = disabledFont, 
-    titleFont = titleFont, 
+    backdropBorderColor = CreateColor(0.2, 0.2, 0.2)
 })
 
 Backpack.Dropdown:SetStyle(addonName)
 Backpack.Dropdown:SetFrameLevel(Backpack:GetFrameLevel() + 2)
 
 local function SkinContainer(Container)
-    local Title = Container:CreateFontString('$parentTitle', 'ARTWORK', 'mnkBackpackFontNormal')
-    Title:SetPoint('TOPLEFT', 6, -5)
-    Title:SetText(Container.name)
-    Container.Title = Title
+    Container.Title = CreateFontString(Container, mnkLibs.Fonts.oswald, 14)
+    Container.Title:SetPoint('TOPLEFT', 6, -5)
+    Container.Title:SetText(Container.name)
     Container.columns = COLUMNS; 
 
     local Anchor = CreateFrame('Frame', '$parentAnchor', Container)
@@ -76,65 +49,36 @@ local function SkinSlot(Slot)
     Slot:SetBackdrop(BACKDROP)
     Slot:SetBackdropColor(0.1, 0.1, 0.1, 1)
     Slot:SetBackdropBorderColor(0, 0, 0)
-
-    local ItemLevel = Slot:CreateFontString('$parentItemLevel', 'ARTWORK', 'mnkBackpackFont2Normal')
-    ItemLevel:SetPoint('CENTER', 0, 0)
-    ItemLevel:SetJustifyH('CENTER')
-    Slot.ItemLevel = ItemLevel
-
-    local Icon = Slot.Icon
-    Icon:ClearAllPoints()
-    Icon:SetPoint('TOPLEFT', 1, -1)
-    Icon:SetPoint('BOTTOMRIGHT', -1, 1)
-    Icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-
-    local Count = Slot.Count
-    Count:SetPoint('BOTTOMRIGHT', 0, 2)
-    Count:SetFontObject('mnkBackpackFont2Normal')
-    Count:Show()
-
-    local boe = Slot:CreateFontString(self, 'ARTWORK', 'mnkBackpackFont3Normal')
-    boe:SetPoint('TOPLEFT', -5, 35)
-    boe:SetJustifyH('LEFT')
-    boe:SetTextColor(1, 0, 0, 1)
-    Slot.boe = boe
-    boe:SetText('.')
-    boe:Hide()
-
-    local Pushed = Slot.PushedTexture
-    Pushed:ClearAllPoints()
-    Pushed:SetPoint('TOPLEFT', 1, -1)
-    Pushed:SetPoint('BOTTOMRIGHT', -1, 1)
-    Pushed:SetColorTexture(1, 1, 1, 0.3)
-
-    local Highlight = Slot.HighlightTexture
-    Highlight:ClearAllPoints()
-    Highlight:SetPoint('TOPLEFT', 1, -1)
-    Highlight:SetPoint('BOTTOMRIGHT', -1, 1)
-    Highlight:SetColorTexture(0, 0.6, 1, 0.3)
-
+    Slot.ItemLevel = CreateFontString(Slot, mnkLibs.Fonts.ap, 20, nil, nil, true)
+    Slot.ItemLevel:SetPoint('CENTER', 0, 0)
+    Slot.ItemLevel:SetJustifyH('CENTER')
+    Slot.Icon:ClearAllPoints()
+    Slot.Icon:SetPoint('TOPLEFT', 1, -1)
+    Slot.Icon:SetPoint('BOTTOMRIGHT', -1, 1)
+    Slot.Icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+    Slot.Count = CreateFontString(Slot, mnkLibs.Fonts.ap, 16, nil, nil, true)
+    Slot.Count:SetPoint('BOTTOMRIGHT', 0, 0)
+    Slot.Count:Show()
+    Slot.boe = CreateFontString(Slot, mnkLibs.Fonts.ap, 50, nil, nil, true)
+    Slot.boe:SetPoint('TOPLEFT', -5, 35)
+    Slot.boe:SetJustifyH('LEFT')
+    Slot.boe:SetTextColor(1, 0, 0, 1)
+    Slot.boe:SetText('.')
+    Slot.boe:Hide()
+    Slot.PushedTexture:ClearAllPoints()
+    Slot.PushedTexture:SetPoint('TOPLEFT', 1, -1)
+    Slot.PushedTexture:SetPoint('BOTTOMRIGHT', -1, 1)
+    Slot.PushedTexture:SetColorTexture(1, 1, 1, 0.3)
+    Slot.HighlightTexture:ClearAllPoints()
+    Slot.HighlightTexture:SetPoint('TOPLEFT', 1, -1)
+    Slot.HighlightTexture:SetPoint('BOTTOMRIGHT', -1, 1)
+    Slot.HighlightTexture:SetColorTexture(0, 0.6, 1, 0.3)
     Slot.NormalTexture:SetSize(0.1, 0.1)
 
-    local QuestIcon = Slot.QuestIcon
-    if (QuestIcon) then
-        QuestIcon:Hide()
-    end
-
-    local Flash = Slot.Flash; 
-    local NewItem = Slot.NewItem; 
-
-    if (NewItem) then
-        NewItem:Hide(); 
-    end
-
-    if (Flash) then
-        Flash:Hide(); 
-    end
-
-    local BattlePay = Slot.BattlePay; 
-    if (BattlePay) then
-        BattlePay:Hide(); 
-    end
+    if (Slot.QuestIcon) then Slot.QuestIcon:Hide() end
+    if (Slot.NewItem) then Slot.NewItem:Hide() end
+    if (Slot.Flash) then Slot.Flash:Hide() end
+    if (Slot.BattlePay) then Slot.BattlePay:Hide() end
 end
 
 Backpack:AddLayout('mnkBackpack', SkinContainer, SkinSlot)
@@ -209,62 +153,11 @@ Backpack:Override('UpdateSlot', function(Slot)
     end
 end)
 
-do
-    local function UpdateArtifactPower()
-        if (not BackpackCategoriesDB.categories[10].enabled) then
-            return
-        end
-
-        local totalArtifactPower = 0
-        for bagID = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
-            for slotID = 1, Backpack:GetContainerNumSlots(bagID) do
-                totalArtifactPower = totalArtifactPower + (GetContainerItemArtifactPower(bagID, slotID) or 0)
-            end
-        end
-
-        local Container = BackpackContainerArtifactPower
-        Container.Title:SetFormattedText('%s |cff00ff00(%s)|r', Container.name, TruncNumber(totalArtifactPower, 2))
-    end
-
-    Backpack:HookScript('OnShow', function(self)
-        self:RegisterEvent('BAG_UPDATE_DELAYED', UpdateArtifactPower)
-        UpdateArtifactPower()
-    end)
-
-    Backpack:HookScript('OnHide', function(self)
-        self:UnregisterEvent('BAG_UPDATE_DELAYED', UpdateArtifactPower)
-    end)
-end
-
 Backpack:On('PostCreateMoney', function(Money)
     Money:ClearAllPoints()
-    Money:SetPoint('BOTTOMRIGHT', -8, 10)
-    Money:SetFontObject('mnkBackpackFont2Normal')
+    Money:SetPoint('BOTTOMRIGHT', -5, 5)
+    Money:SetFont(mnkLibs.Fonts.ap, 16, '')
     Money:SetShadowOffset(0, 0)
-end)
-
-Backpack:On('PostCreateCurrencies', function(Currencies)
-    for index, Button in next, Currencies do
-        local Label = Button.Label
-        Label:SetFontObject('mnkBackpackFont2Normal')
-        Label:SetShadowOffset(0, 0)
-
-        local Icon = Button.Icon
-        Icon:SetSize(9, 9)
-        Icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-
-        local IconBorder = Button:CreateTexture('$parentIconBorder', 'BORDER')
-        IconBorder:SetPoint('TOPLEFT', Icon, -1, 1)
-        IconBorder:SetPoint('BOTTOMRIGHT', Icon, 1, -1)
-        IconBorder:SetColorTexture(0, 0, 0)
-
-        Button:ClearAllPoints()
-        if (index == 1) then
-            Button:SetPoint('BOTTOMLEFT', 11, 10)
-        else
-            Button:SetPoint('LEFT', Currencies[index - 1], 'RIGHT', 10, 0)
-        end
-    end
 end)
 
 local function OnSearchOpen(self)
@@ -292,7 +185,7 @@ Backpack:On('PostCreateSearch', function(SearchBox)
     SearchBox.Icon = SearchBoxIcon
 
     local Editbox = SearchBox.Editbox
-    Editbox:SetFontObject('mnkBackpackFontNormal')
+    Editbox:SetFont(mnkLibs.Fonts.ap, 16, '')
     Editbox:SetShadowOffset(0, 0)
     Editbox:HookScript('OnEscapePressed', OnSearchClosed)
 
