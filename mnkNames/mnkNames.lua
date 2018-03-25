@@ -29,7 +29,8 @@ local lastNameplate = nil
 
 function mnkNames.CreateStyle(self, unit)
     self.disableMovement = true
-
+    self:RegisterEvent('PLAYER_TARGET_CHANGED', mnkNames.OnNameplatesCallback)
+    
     self.Health = CreateFrame("StatusBar", nil, self)
     self.Health:SetAllPoints()
     self.Health:SetStatusBarTexture(mnkLibs.Textures.background)
@@ -108,8 +109,8 @@ function mnkNames.PostCreateIcon(Auras, button)
     button.overlay.Hide = function(self) self:SetVertexColor(0.3, 0.3, 0.3) end
 end
 
-function mnkNames.OnNameplatesCallback(self, event, unit)
-    if (UnitExists('target') and UnitIsUnit('target', unit)) then
+function mnkNames.OnNameplatesCallback(self)
+    if (UnitExists('target') and UnitIsUnit('target', self.unit)) then
         if (lastNameplate ~= nil and lastNameplate ~= self) then
             lastNameplate:SetBackdropColor(0, 0, 0, 1)
         end
