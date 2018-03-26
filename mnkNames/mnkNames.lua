@@ -30,7 +30,6 @@ local lastNameplate = nil
 function mnkNames.CreateStyle(self, unit)
     self.disableMovement = true
     self:RegisterEvent('PLAYER_TARGET_CHANGED', mnkNames.OnNameplatesCallback)
-    
     self.Health = CreateFrame("StatusBar", nil, self)
     self.Health:SetAllPoints()
     self.Health:SetStatusBarTexture(mnkLibs.Textures.background)
@@ -101,8 +100,11 @@ end
 function mnkNames.PostCreateIcon(Auras, button)
     local count = button.count
     count:ClearAllPoints()
-    count:SetFont(mnkLibs.Fonts.oswald, 12, 'OUTLINE')
+    count:SetFont(mnkLibs.Fonts.ap, 10, 'OUTLINE')
     count:SetPoint('TOPRIGHT', button, 3, 3)
+    local timer = button.cd:GetRegions()
+    timer:SetFont(mnkLibs.Fonts.ap, 10, 'OUTLINE')
+    timer:SetPoint('BOTTOMLEFT', button, 0, 0)
     button.icon:SetTexCoord(.07, .93, .07, .93)
     button.overlay:SetTexture(mnkLibs.Textures.border)
     button.overlay:SetTexCoord(0, 1, 0, 1)
