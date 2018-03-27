@@ -83,6 +83,36 @@ end
 
 Backpack:AddLayout('mnkBackpack', SkinContainer, SkinSlot)
 
+local function GetItemLevel(bagID, slotID)
+    local link = GetContainerItemLink(bagID, slotID)
+    if link then 
+        local tip, leftside = CreateFrame('GameTooltip', 'mnkBackpackScanTooltip'), {}
+        for i = 1, 5 do
+            local L, R = tip:CreateFontString(), tip:CreateFontString()
+            L:SetFontObject(GameFontNormal)
+            R:SetFontObject(GameFontNormal)
+            tip:AddFontStrings(L, R)
+            leftside[i] = L
+        end
+        tip.leftside = leftside
+        tip:ClearLines()
+
+        tip:SetOwner(UIParent, 'ANCHOR_NONE')
+        tip:SetBagItem(bagID, slotID)
+
+        for l = 1, #tip.leftside do
+            local t = tip.leftside[l]:GetText()
+            if t and t:find('Item Level') then
+                local _, i = string.find(t, 'Item Level%s%d')
+                return string.sub(t, i) or 0
+            end
+        end
+        return 0
+    else
+        return 0
+    end
+end
+
 local function IsItemBOE(bagID, slotID)
     local link = GetContainerItemLink(bagID, slotID)
     if link then 
@@ -97,7 +127,6 @@ local function IsItemBOE(bagID, slotID)
         end
         tip.leftside = leftside
         tip:ClearLines()
-
         tip:SetOwner(UIParent, 'ANCHOR_NONE')
         tip:SetBagItem(bagID, slotID)
 
@@ -128,21 +157,20 @@ Backpack:Override('UpdateSlot', function(Slot)
         local _, _, _, _, _, itemClass, itemSubClass = GetItemInfoInstant(itemID)
         if (itemQuality >= LE_ITEM_QUALITY_UNCOMMON and (itemClass == LE_ITEM_CLASS_WEAPON or itemClass == LE_ITEM_CLASS_ARMOR or (itemClass == LE_ITEM_CLASS_GEM and itemSubClass == 11))) then
             local ItemLevel = Slot.ItemLevel
-            ItemLevel:SetFormattedText('|c%s%s|r', hex, Slot.itemLevel)
+            --GetDetailedItemLevelInfo() is returning weird ilevels.
+            --ItemLevel:SetFormattedText('|c%s%s|r', hex, Slot.itemLevel)
+            --ItemLevel:Show()
+            ItemLevel:SetFormattedText('|c%s%s|r', hex, GetItemLevel(Slot.bagID, Slot.slotID))
             ItemLevel:Show()
-
             local b = IsItemBOE(Slot.bagID, Slot.slotID)
-
             if b then
                 Slot.boe:Show()
             else
                 Slot.boe:Hide()
             end
-
         else
             Slot.ItemLevel:Hide()
         end
-
         if (itemQuestID or questItem) then
             Slot:SetBackdropBorderColor(1, 1, 0)
         elseif (itemQuality >= LE_ITEM_QUALITY_UNCOMMON) then
