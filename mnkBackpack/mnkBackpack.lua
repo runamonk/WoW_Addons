@@ -21,6 +21,66 @@ LibStub('LibDropDown'):RegisterStyle(addonName, {
 Backpack.Dropdown:SetStyle(addonName)
 Backpack.Dropdown:SetFrameLevel(Backpack:GetFrameLevel() + 2)
 
+local function GetItemLevel(bagID, slotID)
+    local link = GetContainerItemLink(bagID, slotID)
+    if link then 
+        local tip, leftside = CreateFrame('GameTooltip', 'mnkBackpackScanTooltip'), {}
+        for i = 1, 5 do
+            local L, R = tip:CreateFontString(), tip:CreateFontString()
+            L:SetFontObject(GameFontNormal)
+            R:SetFontObject(GameFontNormal)
+            tip:AddFontStrings(L, R)
+            leftside[i] = L
+        end
+        tip.leftside = leftside
+        tip:ClearLines()
+
+        tip:SetOwner(UIParent, 'ANCHOR_NONE')
+        tip:SetBagItem(bagID, slotID)
+
+        for l = 1, #tip.leftside do
+            local t = tip.leftside[l]:GetText()
+            if t and t:find('Item Level') then
+                local _, i = string.find(t, 'Item Level%s%d')
+                return string.sub(t, i) or 0
+            end
+        end
+        return 0
+    else
+        return 0
+    end
+end
+
+local function IsItemBOE(bagID, slotID)
+    local link = GetContainerItemLink(bagID, slotID)
+    if link then 
+        local tip, leftside = CreateFrame('GameTooltip', 'mnkBackpackScanTooltip'), {}
+
+        for i = 1, 5 do
+            local L, R = tip:CreateFontString(), tip:CreateFontString()
+            L:SetFontObject(GameFontNormal)
+            R:SetFontObject(GameFontNormal)
+            tip:AddFontStrings(L, R)
+            leftside[i] = L
+        end
+        tip.leftside = leftside
+        tip:ClearLines()
+        tip:SetOwner(UIParent, 'ANCHOR_NONE')
+        tip:SetBagItem(bagID, slotID)
+
+        -- third line for equipment is the bind type/status
+        local t = tip.leftside[3]:GetText()
+        
+        if t and t:find(ITEM_BIND_ON_EQUIP) then
+            return true
+        end
+
+        tip:Hide()
+    end
+
+    return false
+end
+
 local function SkinContainer(Container)
     Container.Title = CreateFontString(Container, mnkLibs.Fonts.oswald, 14)
     Container.Title:SetPoint('TOPLEFT', 6, -5)
@@ -82,66 +142,6 @@ local function SkinSlot(Slot)
 end
 
 Backpack:AddLayout('mnkBackpack', SkinContainer, SkinSlot)
-
-local function GetItemLevel(bagID, slotID)
-    local link = GetContainerItemLink(bagID, slotID)
-    if link then 
-        local tip, leftside = CreateFrame('GameTooltip', 'mnkBackpackScanTooltip'), {}
-        for i = 1, 5 do
-            local L, R = tip:CreateFontString(), tip:CreateFontString()
-            L:SetFontObject(GameFontNormal)
-            R:SetFontObject(GameFontNormal)
-            tip:AddFontStrings(L, R)
-            leftside[i] = L
-        end
-        tip.leftside = leftside
-        tip:ClearLines()
-
-        tip:SetOwner(UIParent, 'ANCHOR_NONE')
-        tip:SetBagItem(bagID, slotID)
-
-        for l = 1, #tip.leftside do
-            local t = tip.leftside[l]:GetText()
-            if t and t:find('Item Level') then
-                local _, i = string.find(t, 'Item Level%s%d')
-                return string.sub(t, i) or 0
-            end
-        end
-        return 0
-    else
-        return 0
-    end
-end
-
-local function IsItemBOE(bagID, slotID)
-    local link = GetContainerItemLink(bagID, slotID)
-    if link then 
-        local tip, leftside = CreateFrame('GameTooltip', 'mnkBackpackScanTooltip'), {}
-
-        for i = 1, 5 do
-            local L, R = tip:CreateFontString(), tip:CreateFontString()
-            L:SetFontObject(GameFontNormal)
-            R:SetFontObject(GameFontNormal)
-            tip:AddFontStrings(L, R)
-            leftside[i] = L
-        end
-        tip.leftside = leftside
-        tip:ClearLines()
-        tip:SetOwner(UIParent, 'ANCHOR_NONE')
-        tip:SetBagItem(bagID, slotID)
-
-        -- third line for equipment is the bind type/status
-        local t = tip.leftside[3]:GetText()
-        
-        if t and t:find(ITEM_BIND_ON_EQUIP) then
-            return true
-        end
-
-        tip:Hide()
-    end
-
-    return false
-end
 
 Backpack:Override('UpdateSlot', function(Slot)
     local itemTexture, itemCount, isLocked, itemQuality, isReadable, isLootable, _, _, _, itemID = Backpack:GetContainerItemInfo(Slot.bagID, Slot.slotID)
