@@ -117,8 +117,9 @@ function mnkDurability.AddInventory(SlotID, Text)
             itemRarity = 0; 
             itemTexture = 'Interface\\Icons\\Inv_chest_plate15'; 
         end
-
-        t[SlotID].Level = GetDetailedItemLevelInfo(link) or 0; 
+        -- GetDetailedItemLevelInfo() returning a different itemlevel to what is diplayed in the tooltip
+        --t[SlotID].Level = GetDetailedItemLevelInfo(link) or 0; 
+        t[SlotID].Level = mnkDurability.GetItemLevel(SlotID)
         t[SlotID].ItemLink = link; 
         _, _, _, color = GetItemQualityColor(itemRarity); 
         --print(itemName..' '..itemLevel..' '..itemMinLevel);
@@ -132,6 +133,31 @@ end
 function mnkDurability.GetAvgILevel()
     local _, equipped = GetAverageItemLevel(); 
     return equipped; 
+end
+
+function mnkDurability.GetItemLevel(slotID)
+    local tip, leftside = CreateFrame('GameTooltip', 'mnkBackpackScanTooltip'), {}
+    for i = 1, 5 do
+        local L, R = tip:CreateFontString(), tip:CreateFontString()
+        L:SetFontObject(GameFontNormal)
+        R:SetFontObject(GameFontNormal)
+        tip:AddFontStrings(L, R)
+        leftside[i] = L
+    end
+    tip.leftside = leftside
+    tip:ClearLines()
+
+    tip:SetOwner(UIParent, 'ANCHOR_NONE')
+    tip:SetInventoryItem("player", slotID)
+
+    for l = 1, #tip.leftside do
+        local t = tip.leftside[l]:GetText()
+        if t and t:find('Item Level') then
+            local _, i = string.find(t, 'Item Level%s%d')
+            return string.sub(t, i) or 0
+        end
+    end
+    return 0
 end
 
 function mnkDurability:GetText()
