@@ -2,7 +2,17 @@ mnkMisc = CreateFrame('Frame')
 currencyOnHand = 0
 
 function mnkMisc:DoOnEvent(event, arg1, arg2)
-    if event == 'ADDON_LOADED' and arg1 == 'Blizzard_TalkingHeadUI' then
+    mnkMisc.HideOrderCommandBar()
+
+    if event == 'ADDON_LOADED' then
+        local b = _G.OrderHallCommandBar
+        if b then
+            b:HookScript("OnShow", function() mnkMisc.HideOrderCommandBar() end)
+            b:Hide()
+        end
+
+        end    
+        if arg1 == 'Blizzard_TalkingHeadUI' then
         hooksecurefunc('TalkingHeadFrame_PlayCurrent', function()
             TalkingHeadFrame_CloseImmediately()
             TalkingHeadFrame:Hide()
@@ -10,9 +20,7 @@ function mnkMisc:DoOnEvent(event, arg1, arg2)
         self:UnregisterEvent('ADDON_LOADED')
     end
 
-
     if event == 'PLAYER_ENTERING_WORLD' then
-        mnkMisc.HideOrderCommandBar()
         SetCVar('alwaysCompareItems', 0)
         SetCVar('autoLootDefault', 1)
         SetCVar('enableFloatingCombatText', 1)
@@ -156,7 +164,7 @@ function mnkMisc.QuotedStr(str)
 end
 
 function mnkMisc.HideOrderCommandBar()
-	local b = _G.OrderHallCommandBar
+    local b = _G.OrderHallCommandBar
 	if b then
         b:Hide()
     end
