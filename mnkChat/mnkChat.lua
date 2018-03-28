@@ -1,4 +1,11 @@
 mnkChat = CreateFrame("Frame")
+mnkChat.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
+local libQTip = LibStub('LibQTip-1.0')
+
+tMessages = {}
+MAX_MESSAGES = 10
+NEW_MESSAGES = 0
+
 
 local hooks = {}
 local color = "0099FF"
@@ -26,6 +33,82 @@ FCF_OpenTemporaryWindow = function(chatType, ...)
     return frame
 end
 
+function mnkChat.DoOnChat(event, message, playername, _, _, _, playerstatus, _, _, _, lineid, _, guid, pid)
+
+    if message ~= nil then
+        CombatText_AddMessage(StripServerName(playername) .. ': '..message, CombatText_StandardScroll, 255, 0, 0, nil, false)
+        table.insert(tMessages, 1, {time, name, message})
+        tMessages[1].time = date('%I:%M:%S:%p')
+        if string.find(playername, '-') == nil then
+            tMessages[1].name = playername
+        else
+            tMessages[1].name = StripServerName(playername)
+        end
+        tMessages[1].fullname = playername
+        tMessages[1].message = message
+
+        NEW_MESSAGES = NEW_MESSAGES + 1
+        if #mnkChat > MAX_MESSAGES then
+            for i = #tMessages, MAX_MESSAGES + 1, -1 do
+                table.remove(tMessages, i)
+            end
+        end
+    end
+end
+
+function mnkChat.DoOnClick(self, button)
+    if self.tooltip ~= nil then
+        self.tooltip:Hide()
+    end
+
+    if button == 'RightButton' then
+        tMessages = {}
+        mnkChat.UpdateText()
+    end
+end
+
+function mnkChat.DoOnEnter(self)
+    NEW_MESSAGES = 0
+    if #tMessages == 0 then
+        return
+    end
+
+    mnkChat.UpdateText()
+    local tooltip = libQTip:Acquire('mnkChatTooltip', 2, 'LEFT', 'LEFT')
+
+    self.tooltip = tooltip 
+    tooltip:Clear()
+
+    tooltip:AddHeader(Color(COLOR_GOLD) .. 'Name', Color(COLOR_GOLD) .. 'Message')
+
+    for i = 1, #tMessages do
+        if tMessages[i].message ~= nil then
+            local y, x = tooltip:AddLine(tMessages[i].name, '')
+            tooltip:SetCell(y, 2, tMessages[i].time..' '..tMessages[i].message, nil, 'LEFT', nil, nil, nil, nil, GetScreenWidth() / 4, nil)
+            tooltip:SetLineScript(y, 'OnMouseDown', mnkChat.DoOnMessageClick, tMessages[i].fullname)
+        end
+    end
+
+    tooltip:SetAutoHideDelay(.1, self)
+    tooltip:SmartAnchorTo(self)
+    tooltip:UpdateScrolling(500)
+    tooltip:SetBackdropBorderColor(0, 0, 0, 0)
+    tooltip:Show()
+end
+
+function mnkChat.DoOnMessageClick(self, arg, button) 
+    SetItemRef('player:'..arg, '|Hplayer:'..arg..'|h['..arg..'|h', 'LeftButton')
+end
+
+function mnkChat.UpdateText()
+    if NEW_MESSAGES > 0 then
+        mnkChat.LDB.icon = mnkLibs.Textures.icon_new
+    else
+        mnkChat.LDB.icon = mnkLibs.Textures.icon_none
+    end
+    mnkChat.LDB.text = NEW_MESSAGES
+end
+
 function mnkChat:DoOnEvent(event, ...)
     QuickJoinToastButton:SetScript("OnShow", hideFrame)
     QuickJoinToastButton:Hide() 
@@ -38,9 +121,18 @@ function mnkChat:DoOnEvent(event, ...)
         local f = _G["ChatFrame" .. i] 
         mnkChat.SetFrameSettings(f)
     end
-    if event == "CHAT_MSG_WHISPER" then
+
+    if string.sub(event, 1, 8) == 'CHAT_MSG' then
         PlaySoundFile(mnkLibs.Sounds.incoming_message, "Master")
+        mnkChat.DoOnChat(event, ...)
     elseif event == "PLAYER_LOGIN" then
+        mnkChat.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkChat', {
+            icon = mnkLibs.Textures.icon_none, 
+            type = 'data source', 
+            OnEnter = mnkChat.DoOnEnter, 
+            OnClick = mnkChat.DoOnClick
+        }) 
+
         CHAT_WHISPER_GET = ">> %s: "
         CHAT_WHISPER_INFORM_GET = "<< %s: "
         CHAT_YELL_GET = "|Hchannel:Yell|h<Y> |h %s: "
@@ -75,6 +167,9 @@ function mnkChat:DoOnEvent(event, ...)
             ToggleChatColorNamesByClassGroup(true, "CHANNEL"..iCh)
         end
     end
+    
+    mnkChat.UpdateText()
+
 end
 
 local function OnHyperlinkEnter(frame, link, ...)
@@ -230,4 +325,5 @@ mnkChat:SetScript("OnEvent", mnkChat.DoOnEvent)
 mnkChat:RegisterEvent("PLAYER_LOGIN")
 mnkChat:RegisterEvent("ADDON_LOADED")
 mnkChat:RegisterEvent("CHAT_MSG_WHISPER")
-
+mnkChat:RegisterEvent('CHAT_MSG_WHISPER')
+mnkChat:RegisterEvent('CHAT_MSG_BN_WHISPER')
