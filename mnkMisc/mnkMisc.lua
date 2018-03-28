@@ -2,12 +2,6 @@ mnkMisc = CreateFrame('Frame')
 currencyOnHand = 0
 
 function mnkMisc:DoOnEvent(event, arg1, arg2)
-    --[[    if OrderHallCommandBar then
-        OrderHallCommandBar:Hide()
-        OrderHallCommandBar.Show = OrderHallCommandBar.Hide
-    end--]]
-
-    --if addon == 'Blizzard_TalkingHeadUI' then
     if event == 'ADDON_LOADED' and arg1 == 'Blizzard_TalkingHeadUI' then
         hooksecurefunc('TalkingHeadFrame_PlayCurrent', function()
             TalkingHeadFrame_CloseImmediately()
@@ -18,13 +12,13 @@ function mnkMisc:DoOnEvent(event, arg1, arg2)
 
 
     if event == 'PLAYER_ENTERING_WORLD' then
+        mnkMisc.HideOrderCommandBar()
         SetCVar('alwaysCompareItems', 0)
         SetCVar('autoLootDefault', 1)
         SetCVar('enableFloatingCombatText', 1)
         currencyOnHand = GetMoney()
     elseif event == 'CHAT_MSG_LOOT' or event == 'CHAT_MSG_CURRENCY' or event == 'PLAYER_MONEY' then
         if event == 'CHAT_MSG_LOOT' then
-            --print('1 '..arg1)
             if arg1 ~= nil then
                 local LOOT_ITEM_PATTERN = (LOOT_ITEM_SELF):gsub('%%s', '(.+)')
                 local LOOT_ITEM_PUSH_PATTERN = (LOOT_ITEM_PUSHED_SELF):gsub('%%s', '(.+)')
@@ -158,6 +152,13 @@ function mnkMisc.QuotedStr(str)
         return '\'' .. '\''
     else
         return '\''..str..'\''
+    end
+end
+
+function mnkMisc.HideOrderCommandBar()
+	local b = _G.OrderHallCommandBar
+	if b then
+        b:Hide()
     end
 end
 
