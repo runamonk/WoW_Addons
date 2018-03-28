@@ -25,7 +25,7 @@ local function CreateHealthBar(self)
     local b = self:CreateTexture(nil, 'BORDER')
     b:SetAllPoints(h)
     b:SetColorTexture(1 / 5, 1 / 5, 1 / 5)
-    return h; 
+    return h
 end
 
 function PostCreateIcon(Auras, button)
@@ -71,7 +71,7 @@ local function CreateUnit(self)
     self:SetScript('OnEnter', UnitFrame_OnEnter)
     self:SetScript('OnLeave', UnitFrame_OnLeave)
     self:SetBackdrop({bgFile = 'Interface\\ChatFrame\\ChatFrameBackground', insets = {top = -1, bottom = -1, left = -1, right = -1}})
-    self:SetBackdropColor(0, 0, 0); 
+    self:SetBackdropColor(0, 0, 0)
     self:SetSize(160, 20)
     self.Health = CreateHealthBar(self)
     self.Health:SetHeight(20)
@@ -86,7 +86,7 @@ local function FocusUnit(self)
     self.Name = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
     self.Name:SetPoint('CENTER', self, 'CENTER')
     self:Tag(self.Name, '[mnku:name]')
-    self:SetWidth(200); 
+    self:SetWidth(200)
 end
 
 local function PartyUnit(self)
@@ -197,7 +197,7 @@ local function TargetUnit(self)
     self.RaidTargetIndicator = self.frameValues:CreateTexture(nil, 'OVERLAY')
     self.RaidTargetIndicator:SetPoint('LEFT', self, 'RIGHT', 10, 0)
     self.RaidTargetIndicator:SetSize(16, 16)
-    self:SetWidth(250); 
+    self:SetWidth(250)
     CreateCastBar(self)
 end
 
@@ -213,8 +213,8 @@ local function CreateUnits(self, unit)
     end
 end
 
-oUF:RegisterStyle('mnku', CreateUnits); 
-oUF:SetActiveStyle('mnku'); 
+oUF:RegisterStyle('mnku', CreateUnits)
+oUF:SetActiveStyle('mnku')
 oUF:Factory(function(self)
     self:Spawn('player'):SetPoint('CENTER', -300, -250)
     self:Spawn('focus'):SetPoint('TOPLEFT', oUF_mnkuPlayer, 0, 26)
@@ -265,5 +265,5 @@ function mnkUnits:DoOnEvent(event, arg1, arg2)
     end
 end
 
-mnkUnits:SetScript('OnEvent', mnkUnits.DoOnEvent); 
-mnkUnits:RegisterEvent('PLAYER_ENTERING_WORLD'); 
+mnkUnits:SetScript('OnEvent', mnkUnits.DoOnEvent)
+mnkUnits:RegisterEvent('PLAYER_ENTERING_WORLD')
