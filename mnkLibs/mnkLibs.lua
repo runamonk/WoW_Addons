@@ -21,48 +21,48 @@ mnkLibs.Sounds = {
     incoming_message = 'Interface\\AddOns\\mnkLibs\\Assets\\snd_incoming_message.ogg'
 }
 
-COLOR_GREEN = {r = 153, g = 255, b = 0}; 
-COLOR_WHITE = {r = 255, g = 255, b = 255}; 
-COLOR_GOLD = {r = 255, g = 215, b = 0}; 
-COLOR_YELLOW = {r = 255, g = 245, b = 105}; 
-COLOR_RED = {r = 204, g = 0, b = 0}; 
-COLOR_BLUE = {r = 51, g = 153, b = 255}; 
-COLOR_PURPLE = {r = 128, g = 114, b = 194}; 
-COLOR_GREY = {r = 168, g = 168, b = 168}; 
+COLOR_GREEN = {r = 153, g = 255, b = 0}
+COLOR_WHITE = {r = 255, g = 255, b = 255}
+COLOR_GOLD = {r = 255, g = 215, b = 0}
+COLOR_YELLOW = {r = 255, g = 245, b = 105}
+COLOR_RED = {r = 204, g = 0, b = 0}
+COLOR_BLUE = {r = 51, g = 153, b = 255}
+COLOR_PURPLE = {r = 128, g = 114, b = 194}
+COLOR_GREY = {r = 168, g = 168, b = 168}
 
 function PrintError(Message)
-    UIErrorsFrame:AddMessage(Message, 1.0, 0.0, 0.0); 
+    UIErrorsFrame:AddMessage(Message, 1.0, 0.0, 0.0)
 end
 
 function RGBToHex(r, g, b)
-    r = r <= 255 and r >= 0 and r or 0; 
-    g = g <= 255 and g >= 0 and g or 0; 
-    b = b <= 255 and b >= 0 and b or 0; 
-    return string.format('|cff%02x%02x%02x', r, g, b); 
+    r = r <= 255 and r >= 0 and r or 0
+    g = g <= 255 and g >= 0 and g or 0
+    b = b <= 255 and b >= 0 and b or 0
+    return string.format('|cff%02x%02x%02x', r, g, b)
 end
 
 function Color(t)
-    return RGBToHex(t.r, t.g, t.b); 
+    return RGBToHex(t.r, t.g, t.b)
 end
 
 function ToPCT(num)
-    return format(TEXT('%.1f%%'), (num * 100)); 
+    return format(TEXT('%.1f%%'), (num * 100))
 end
 
 function ReadableMemory(bytes)
     if bytes < 1024 then
-        return format('%.2f', bytes) .. ' kb'; 
+        return format('%.2f', bytes) .. ' kb'
     else
-        return format('%.2f', bytes / 1024) .. ' mb'; 
+        return format('%.2f', bytes / 1024) .. ' mb'
     end
 
 end
 
 function TruncNumber(num, places)
-    local ret = 0; 
-    local placeValue = ('%%.%df'):format(places or 0); 
+    local ret = 0
+    local placeValue = ('%%.%df'):format(places or 0)
     if not num then
-        return 0; 
+        return 0
     elseif num >= 1000000000000 then
         ret = placeValue:format(num / 1000000000000) .. 'T'; -- trillion
     elseif num >= 1000000000 then
@@ -74,20 +74,20 @@ function TruncNumber(num, places)
     else
         ret = num; -- hundreds
     end
-    return ret; 
+    return ret
 end
 
 function StripServerName(fullName)
     --PrintError(fullName)
     if fullName ~= nil then
-        local i = string.find(fullName, '-'); 
+        local i = string.find(fullName, '-')
         if i ~= nil then
-            return string.sub(fullName, 1, i - 1); 
+            return string.sub(fullName, 1, i - 1)
         else
-            return fullName; 
+            return fullName
         end
     else
-        return nil; 
+        return nil
     end
 end
 
