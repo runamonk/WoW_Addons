@@ -27,9 +27,9 @@ function mnkXP.DoOnEnter(self)
     end 
     
     tooltip:Clear()
-    tooltip:AddLine(Color(COLOR_GOLD) .. 'XP', TruncNumber(UnitXP('player'), 2) .. '/'..TruncNumber(UnitXPMax('player'), 2), Color(COLOR_BLUE)..ToPCT(UnitXP('player') / UnitXPMax('player')))
-    tooltip:AddLine(Color(COLOR_GOLD) .. 'XP Left', TruncNumber(UnitXPMax('player') - UnitXP('player'), 2), Color(COLOR_BLUE)..ToPCT((UnitXPMax('player') - UnitXP('player')) / UnitXPMax('player')))
-    tooltip:AddLine(Color(COLOR_GOLD) .. 'Rested XP', TruncNumber(extXP, 2), Color(COLOR_BLUE)..ToPCT((extXP / UnitXPMax('player'))))
+    tooltip:AddLine(Color(COLOR_GOLD) .. 'XP', TruncNumber(UnitXP('player'), 2) .. ' of '..TruncNumber(UnitXPMax('player'), 2), Color(COLOR_BLUE)..ToPCT(UnitXP('player') / UnitXPMax('player')))
+    --tooltip:AddLine(Color(COLOR_GOLD) .. 'XP Left', TruncNumber(UnitXPMax('player') - UnitXP('player'), 2), Color(COLOR_BLUE)..ToPCT((UnitXPMax('player') - UnitXP('player')) / UnitXPMax('player')))
+    tooltip:AddLine(Color(COLOR_GOLD) .. 'Rested XP', TruncNumber(extXP, 2), Color(COLOR_GREEN)..ToPCT((extXP / UnitXPMax('player'))))
 
     tooltip:SetAutoHideDelay(.1, self)
     tooltip:SmartAnchorTo(self)
@@ -50,7 +50,7 @@ function mnkXP:GetXPText()
     if UnitLevel('player') == GetMaxPlayerLevel() then
         return UnitLevel('player')
     else 
-        return UnitLevel('player')..Color(COLOR_WHITE) .. ' / '..Color(COLOR_BLUE)..currXP..Color(COLOR_WHITE) .. ' / '..Color(COLOR_GREEN)..restXP
+        return UnitLevel('player')..Color(COLOR_WHITE) .. ' - '..Color(COLOR_BLUE)..currXP..Color(COLOR_WHITE) .. ' - '..Color(COLOR_GREEN)..restXP
     end
 end
 
