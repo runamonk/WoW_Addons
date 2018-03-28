@@ -2,12 +2,13 @@ mnkMoney = CreateFrame('Frame')
 mnkMoney.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 local libQTip = LibStub('LibQTip-1.0')
 local SPACER = '       '
+local currencyOnHand = 0
 
 function mnkMoney.DoOnClick(self)
     ToggleCharacter('TokenFrame')
 end
 
-function mnkMoney:DoOnEvent(event)
+function mnkMoney:DoOnEvent(event, arg1, arg2)
     if event == 'PLAYER_LOGIN' then
         mnkMoney.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkMoney', {
             type = 'data source', 
@@ -17,7 +18,107 @@ function mnkMoney:DoOnEvent(event)
         })
         self.LDB.label = 'Money'
     end
-    
+    if event == 'PLAYER_ENTERING_WORLD' then
+        currencyOnHand = GetMoney()
+    elseif event == 'CHAT_MSG_LOOT' or event == 'CHAT_MSG_CURRENCY' or event == 'PLAYER_MONEY' then
+        --print(event)
+        if event == 'CHAT_MSG_LOOT' then
+            if arg1 ~= nil then
+                local LOOT_ITEM_PATTERN = (LOOT_ITEM_SELF):gsub('%%s', '(.+)')
+                local LOOT_ITEM_PUSH_PATTERN = (LOOT_ITEM_PUSHED_SELF):gsub('%%s', '(.+)')
+                local LOOT_ITEM_MULTIPLE_PATTERN = (LOOT_ITEM_SELF_MULTIPLE):gsub('%%s', '(.+)'):gsub('%%d', '(%%d+)')
+                local LOOT_ITEM_PUSH_MULTIPLE_PATTERN = (LOOT_ITEM_PUSHED_SELF_MULTIPLE):gsub('%%s', '(.+)'):gsub('%%d', '(%%d+)')
+                local LOOT_ITEM_CREATED_SELF_PATTERN = LOOT_ITEM_CREATED_SELF:gsub('%%s', '(.+)')
+                local l, q = arg1:match(LOOT_ITEM_MULTIPLE_PATTERN)
+
+                --print(l..' * '..q)
+                if not l then
+                    l, q = arg1:match(LOOT_ITEM_PUSH_MULTIPLE_PATTERN)
+                    if not l then
+                        q, l = 1, arg1:match(LOOT_ITEM_PATTERN)
+                        if not l then
+                            q, l = 1, arg1:match(LOOT_ITEM_PUSH_PATTERN)
+                            if not l then
+                                q, l = 1, arg1:match(LOOT_ITEM_CREATED_SELF_PATTERN)
+                            end
+                        end
+                    end
+                end -- not l
+
+                --print('2 '..l)
+                if l ~= nil then
+                    q = tonumber(q) or 0
+
+                    if l:find('battlepet') then
+                        local _, speciesID, _, rarity = (':'):split(l)
+                        local color = GetItemQualityColor(rarity)
+                        local name, icon = C_PetJournal.GetPetInfoBySpeciesID(speciesID)
+                        local s = string.format('|T%s:12|t %s', icon, color..name)
+                        CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false)
+                    else
+                        local c = ''
+                        if q > 1 then
+                            c = ' x '..q
+                        else
+                            c = ''
+                        end
+                        
+                        local itemName, _, rarity, _, _, itemType, subType, _, _, itemIcon, _ = GetItemInfo(l)
+                        if rarity > 0 then
+                            local x = 0
+                            x = GetItemCount(l)
+                            local color = GetItemQualityColor(rarity)
+                            
+                            if x > 0 then
+                                x = ' ['..x + q..']'
+                            else
+                                x = ' '
+                            end
+                            
+                            local s = string.format('|T%s:12|t %s', itemIcon, color..itemName..Color(COLOR_WHITE)..c..x)
+                            CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false)
+                        end -- if itemtype
+                    end -- else
+                end -- l
+            end -- arg1
+        end -- CHAT_MSG_LOOT
+        
+        if event == 'PLAYER_MONEY' then
+            local currency = GetMoney() or 0
+            local x = 0
+
+            if (currency ~= currencyOnHand) and ((currency > 0) or (currencyOnHand > 0)) then
+                if currency > currencyOnHand then
+                    x = currency - currencyOnHand
+                    currencyOnHand = currency
+                elseif currencyOnHand > currency then
+                    x = currencyOnHand - currency
+                    currencyOnHand = currency
+                end
+                local s = GetCoinTextureString(x) or nil
+                if s ~= nil then
+                    CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false)
+                    currencyOnHand = currency
+                end 
+            end
+        end -- PLAYER_MONEY
+
+        if event == 'CHAT_MSG_CURRENCY' then
+            local CURRENCY_PATTERN = (CURRENCY_GAINED):gsub('%%s', '(.+)')
+            local CURRENCY_MULTIPLE_PATTERN = (CURRENCY_GAINED_MULTIPLE):gsub('%%s', '(.+)'):gsub('%%d', '(%%d+)')
+            
+            local l, c = arg1:match(CURRENCY_MULTIPLE_PATTERN)
+            if not l then
+                c, l = 1, arg1:match(CURRENCY_PATTERN)
+            end
+            if l then
+                local name, i, icon = _G.GetCurrencyInfo(tonumber(l:match('currency:(%d+)')))
+                local s = string.format('|T%s:12|t %s', icon, name..Color(COLOR_WHITE) .. ' x '..c..' ['..i..']')
+                CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false)
+            end
+        end --CHAT_MSG_CURRENCY
+    end    
+
     local gold, silver, copper = mnkMoney.GetMoneyText()
     local text = 0
 
@@ -94,15 +195,25 @@ function mnkMoney.GetMoneyText()
 end
 
 mnkMoney:SetScript('OnEvent', mnkMoney.DoOnEvent)
-mnkMoney:RegisterEvent('PLAYER_LOGIN')
-mnkMoney:RegisterEvent('CURRENCY_DISPLAY_UPDATE')
-mnkMoney:RegisterEvent('MERCHANT_CLOSED')
-mnkMoney:RegisterEvent('PLAYER_MONEY')
-mnkMoney:RegisterEvent('PLAYER_TRADE_MONEY')
-mnkMoney:RegisterEvent('TRADE_MONEY_CHANGED')
-mnkMoney:RegisterEvent('SEND_MAIL_MONEY_CHANGED')
-mnkMoney:RegisterEvent('SEND_MAIL_COD_CHANGED')
+
+mnkMoney:RegisterEvent('ADDON_LOADED')
 mnkMoney:RegisterEvent('BAG_UPDATE')
-
-
-
+mnkMoney:RegisterEvent('CHAT_MSG_CURRENCY')
+mnkMoney:RegisterEvent('CHAT_MSG_LOOT')
+mnkMoney:RegisterEvent('CURRENCY_DISPLAY_UPDATE')
+-- mnkMoney:RegisterEvent('GARRISON_TALENT_COMPLETE')
+-- mnkMoney:RegisterEvent('GARRISON_TALENT_UPDATE')
+-- mnkMoney:RegisterEvent('GARRISON_UPDATE')
+-- mnkMoney:RegisterEvent('GROUP_ROSTER_UPDATE')
+mnkMoney:RegisterEvent('LOOT_OPENED')
+mnkMoney:RegisterEvent('MERCHANT_CLOSED')
+mnkMoney:RegisterEvent('MERCHANT_SHOW')
+mnkMoney:RegisterEvent('PLAYER_ENTERING_WORLD')
+mnkMoney:RegisterEvent('PLAYER_LOGIN')
+mnkMoney:RegisterEvent('PLAYER_MONEY')
+-- mnkMoney:RegisterEvent('PLAYER_REGEN_DISABLED')
+-- mnkMoney:RegisterEvent('PLAYER_REGEN_ENABLED')
+mnkMoney:RegisterEvent('PLAYER_TRADE_MONEY')
+mnkMoney:RegisterEvent('SEND_MAIL_COD_CHANGED')
+mnkMoney:RegisterEvent('SEND_MAIL_MONEY_CHANGED')
+mnkMoney:RegisterEvent('TRADE_MONEY_CHANGED')
