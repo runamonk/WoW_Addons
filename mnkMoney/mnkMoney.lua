@@ -31,7 +31,7 @@ function mnkMoney:DoOnEvent(event, arg1, arg2)
                 local LOOT_ITEM_CREATED_SELF_PATTERN = LOOT_ITEM_CREATED_SELF:gsub('%%s', '(.+)')
                 local l, q = arg1:match(LOOT_ITEM_MULTIPLE_PATTERN)
 
-                --print(l..' * '..q)
+                --print(l,' * ',q)
                 if not l then
                     l, q = arg1:match(LOOT_ITEM_PUSH_MULTIPLE_PATTERN)
                     if not l then
@@ -45,7 +45,7 @@ function mnkMoney:DoOnEvent(event, arg1, arg2)
                     end
                 end -- not l
 
-                --print('2 '..l)
+                --print('2 ',l)
                 if l ~= nil then
                     q = tonumber(q) or 0
 
@@ -53,7 +53,7 @@ function mnkMoney:DoOnEvent(event, arg1, arg2)
                         local _, speciesID, _, rarity = (':'):split(l)
                         local color = GetItemQualityColor(rarity)
                         local name, icon = C_PetJournal.GetPetInfoBySpeciesID(speciesID)
-                        local s = string.format('|T%s:12|t %s', icon, color..name)
+                        local s = string.format('|T%s:12|t %s', icon, '|c'..color..name)
                         CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false)
                     else
                         local c = ''
@@ -67,15 +67,15 @@ function mnkMoney:DoOnEvent(event, arg1, arg2)
                         if rarity > 0 then
                             local x = 0
                             x = GetItemCount(l)
-                            local color = GetItemQualityColor(rarity)
-                            
+                            local _,_,_,color = GetItemQualityColor(rarity)
+                            --print('3 ', x)
                             if x > 0 then
                                 x = ' ['..x + q..']'
                             else
                                 x = ' '
                             end
                             
-                            local s = string.format('|T%s:12|t %s', itemIcon, color..itemName..Color(COLOR_WHITE)..c..x)
+                            local s = string.format('|T%s:12|t %s', itemIcon, '|c'..color..itemName..Color(COLOR_WHITE)..c..x)
                             CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false)
                         end -- if itemtype
                     end -- else
@@ -86,16 +86,19 @@ function mnkMoney:DoOnEvent(event, arg1, arg2)
         if event == 'PLAYER_MONEY' then
             local currency = GetMoney() or 0
             local x = 0
+            local sign = nil
 
             if (currency ~= currencyOnHand) and ((currency > 0) or (currencyOnHand > 0)) then
                 if currency > currencyOnHand then
                     x = currency - currencyOnHand
                     currencyOnHand = currency
+                    sign = '+'
                 elseif currencyOnHand > currency then
                     x = currencyOnHand - currency
                     currencyOnHand = currency
+                    sign = '-'
                 end
-                local s = GetCoinTextureString(x) or nil
+                local s = sign..GetCoinTextureString(x) or nil
                 if s ~= nil then
                     CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false)
                     currencyOnHand = currency
@@ -143,11 +146,8 @@ function mnkMoney.DoOnEnter(self)
     
     local tooltip = libQTip:Acquire('mnkMoneyTooltip', 3, 'LEFT', 'LEFT', 'RIGHT')
     self.tooltip = tooltip
-
     tooltip:Clear()
-    
     tooltip:AddHeader(Color(COLOR_GOLD) .. 'Currency', SPACER, Color(COLOR_GOLD) .. 'Amount')
-
     local gold, silver, copper = mnkMoney.GetMoneyText()
     
     if gold > 0 then
