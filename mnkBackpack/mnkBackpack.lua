@@ -68,11 +68,13 @@ local function IsItemBOE(bagID, slotID)
         tip:SetOwner(UIParent, 'ANCHOR_NONE')
         tip:SetBagItem(bagID, slotID)
 
-        -- third line for equipment is the bind type/status
-        local t = tip.leftside[3]:GetText()
-        
-        if t and t:find(ITEM_BIND_ON_EQUIP) then
-            return true
+        local t = nil
+
+        for i = 1, #tip.leftside do
+            t = tip.leftside[i]:GetText()
+            if t and t:find(ITEM_BIND_ON_EQUIP) then
+                return true
+            end
         end
 
         tip:Hide()
