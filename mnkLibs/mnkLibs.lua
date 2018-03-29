@@ -41,6 +41,13 @@ function RGBToHex(r, g, b)
     return string.format('|cff%02x%02x%02x', r, g, b)
 end
 
+function round(x, n)
+    n = math.pow(10, n or 0)
+    x = x * n
+    if x >= 0 then x = math.floor(x + 0.5) else x = math.ceil(x - 0.5) end
+    return x / n
+end
+
 function Color(t)
     return RGBToHex(t.r, t.g, t.b)
 end
