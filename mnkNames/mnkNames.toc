@@ -7,4 +7,4 @@
 ## RequiredDeps: mnkLibs
 
 mnkNames.lua
-tags.lua
+Tags.lua

@@ -1,7 +1,5 @@
 local tags = oUF.Tags.Methods or oUF.Tags
 local events = oUF.TagEvents or oUF.Tags.Events
-
-local incombat = false; 
 local DEAD_TEXTURE = [[|TInterface\RaidFrame\Raid-Icon-DebuffDisease:26|t]]
 
 events['mnku:cast'] = 'UNIT_SPELLCAST_START UNIT_SPELLCAST_STOP UNIT_SPELLCAST_CHANNEL_START UNIT_SPELLCAST_CHANNEL_STOP'
