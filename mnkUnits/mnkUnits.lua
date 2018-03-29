@@ -1,8 +1,6 @@
 mnkUnits = CreateFrame('frame')
 mnkUnits.oUF = oUF or ns.oUF
 
-local playerUnit = nil
-
 local function CreateCastBar(self)
     self.Castbar = CreateFrame('StatusBar', nil, self)
     self.Castbar:SetAllPoints(self.Health)
@@ -131,6 +129,8 @@ local function PlayerUnit(self)
     self.flagCombat:SetPoint('LEFT', self.HealthValue, 'RIGHT', 1, 0)
     self.flagCombat:SetText('|cffff0000'..'×')
     self.flagCombat:Hide()
+    self:RegisterEvent('PLAYER_REGEN_ENABLED', function(unit) unit.flagCombat:Hide() end)
+    self:RegisterEvent('PLAYER_REGEN_DISABLED', function(unit) unit.flagCombat:Show() end)
     self.flagPVP = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
     self.flagPVP:SetPoint('LEFT', self.flagCombat, 'RIGHT', 0, 0)
     self:Tag(self.flagPVP, '[|cffff0000>pvp<|r]') 
@@ -160,7 +160,6 @@ local function PlayerUnit(self)
     self.Auras.PostCreateIcon = PostCreateIcon
     self:SetWidth(200)
     CreateCastBar(self)
-    playerUnit = self 
 end
 
 local function PartyUnit(self)
@@ -227,10 +226,6 @@ function mnkUnits:DoOnEvent(event, arg1, arg2)
         CompactRaidFrameContainer:UnregisterAllEvents()
         CompactRaidFrameContainer:Hide()
         CompactRaidFrameContainer:Hide()
-    elseif event == 'PLAYER_REGEN_DISABLED' and playerUnit then
-        playerUnit.flagCombat:Show()
-    elseif event == 'PLAYER_REGEN_ENABLED' and playerUnit then
-        playerUnit.flagCombat:Hide() 
     end
 end
 
@@ -271,5 +266,3 @@ end)
 
 mnkUnits:SetScript('OnEvent', mnkUnits.DoOnEvent)
 mnkUnits:RegisterEvent('PLAYER_ENTERING_WORLD')
-mnkUnits:RegisterEvent('PLAYER_REGEN_ENABLED')
-mnkUnits:RegisterEvent('PLAYER_REGEN_DISABLED')
