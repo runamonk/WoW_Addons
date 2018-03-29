@@ -1,6 +1,13 @@
 mnkUnits = CreateFrame('frame')
 mnkUnits.oUF = oUF or ns.oUF
 
+Config = {
+    showFocus = true,
+    showParty = true,
+    showPlayer = true,
+    showTarget = false
+}
+
 local function CreateCastBar(self)
     self.Castbar = CreateFrame('StatusBar', nil, self)
     self.Castbar:SetAllPoints(self.Health)
@@ -83,125 +90,132 @@ local function UpdateThreat(self, event, unit)
 end
 
 local function FocusUnit(self)
-    CreateUnit(self)
-    self.Name = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
-    self.Name:SetPoint('CENTER', self, 'CENTER')
-    self:Tag(self.Name, '[mnku:name]')
-    self:SetWidth(200)
+    if Config.showFocus then
+        CreateUnit(self)
+        self.Name = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
+        self.Name:SetPoint('CENTER', self, 'CENTER')
+        self:Tag(self.Name, '[mnku:name]')
+        self:SetWidth(200)
+    end
 end
 
 local function PlayerUnit(self)
-    CreateUnit(self)
-    self.HealthValue = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, '')
-    self.HealthValue:SetPoint('LEFT', self.Health, 1, 1)
-    self:Tag(self.HealthValue, '[mnku:status][mnku:perhp] [mnku:curhp]') 
-    self.PetHealth = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
-    self.PetHealth:SetPoint('RIGHT', self.Health, 'RIGHT', -1, 1)
-    self.PetHealth.overrideUnit = 'pet'
-    self:Tag(self.PetHealth, '[mnku:pethp]')
-    self.isResting = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, nil, nil, true)
-    self.isResting:SetPoint('LEFT', self, 'TOPLEFT', -25, -11)
-    self:Tag(self.isResting, '[|cFFFFFF00>resting<|r]')
-    
-    local t = {} 
-    for i = 1, 10 do
-        local f = CreateFrame('StatusBar', nil, self)
-        f:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
-        f:SetSize(16, 10)
-
-        local n = CreateFontString(f, mnkLibs.Fonts.oswald, 10, nil, nil, false)
-        n:SetPoint('CENTER', f, 0, 0)
-        n:SetText(i)
-        n:SetTextColor(0, 0, 0)
+    if Config.showPlayer then
+        CreateUnit(self)
+        self.HealthValue = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, '')
+        self.HealthValue:SetPoint('LEFT', self.Health, 1, 1)
+        self:Tag(self.HealthValue, '[mnku:status][mnku:perhp] [mnku:curhp]') 
+        self.PetHealth = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
+        self.PetHealth:SetPoint('RIGHT', self.Health, 'RIGHT', -1, 1)
+        self.PetHealth.overrideUnit = 'pet'
+        self:Tag(self.PetHealth, '[mnku:pethp]')
+        self.isResting = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, nil, nil, true)
+        self.isResting:SetPoint('LEFT', self, 'TOPLEFT', -25, -11)
+        self:Tag(self.isResting, '[|cFFFFFF00>resting<|r]')
         
-        if (i == 1) then
-            f:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 0, -4)
-        else
-            f:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', ((f:GetWidth() + 2) * (i - 1)), -4)
+        local t = {} 
+        for i = 1, 10 do
+            local f = CreateFrame('StatusBar', nil, self)
+            f:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
+            f:SetSize(16, 10)
+
+            local n = CreateFontString(f, mnkLibs.Fonts.oswald, 10, nil, nil, false)
+            n:SetPoint('CENTER', f, 0, 0)
+            n:SetText(i)
+            n:SetTextColor(0, 0, 0)
+            
+            if (i == 1) then
+                f:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 0, -4)
+            else
+                f:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', ((f:GetWidth() + 2) * (i - 1)), -4)
+            end
+
+            t[i] = f
         end
 
-        t[i] = f
+        self.ClassPower = t
+        self.Runes = t
+        self.flagCombat = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
+        self.flagCombat:SetPoint('LEFT', self.HealthValue, 'RIGHT', 1, 0)
+        self.flagCombat:SetText('|cffff0000'..'×')
+        self.flagCombat:Hide()
+        self:RegisterEvent('PLAYER_REGEN_ENABLED', function(unit) unit.flagCombat:Hide() end)
+        self:RegisterEvent('PLAYER_REGEN_DISABLED', function(unit) unit.flagCombat:Show() end)
+        self.flagPVP = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
+        self.flagPVP:SetPoint('LEFT', self.flagCombat, 'RIGHT', 0, 0)
+        self:Tag(self.flagPVP, '[|cffff0000>pvp<|r]') 
+        self.Power = CreateFrame('StatusBar', nil, self.Health)
+        self.Power:SetPoint('BOTTOMRIGHT')
+        self.Power:SetPoint('BOTTOMLEFT')
+        self.Power:SetHeight(2)
+        self.Power:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
+        self.Power.frequentUpdates = true
+        self.Power.colorPower = false
+        self.Power.colorClass = true
+        self.Power.colorTapping = false
+        self.Power.colorDisconnected = false
+        self.Power.colorReaction = false 
+        self.ThreatIndicator = CreateFrame('Frame', nil, self)
+        self.ThreatIndicator:SetPoint('TOPRIGHT', 2, 2)
+        self.ThreatIndicator:SetPoint('BOTTOMLEFT', -2, -2)
+        self.ThreatIndicator:SetFrameStrata('BACKGROUND')
+        SetBackdrop(self.ThreatIndicator, mnkLibs.Textures.border, 0, 0, 0, 0)
+        self.ThreatIndicator.Override = UpdateThreat
+        self.Auras = CreateFrame('Frame', nil, self)
+        self.Auras.spacing = 1
+        self.Auras.numTotal = 12
+        self.Auras:SetPoint('LEFT', self, 'LEFT', -1, 0)
+        self.Auras:SetPoint('BOTTOM', self, 'TOP', 0 , 5)
+        self.Auras:SetSize(self.Health:GetWidth(), 16)
+        self.Auras.PostCreateIcon = PostCreateIcon
+        self:SetWidth(200)
+        CreateCastBar(self)
     end
-
-    self.ClassPower = t
-    self.Runes = t
-    self.flagCombat = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
-    self.flagCombat:SetPoint('LEFT', self.HealthValue, 'RIGHT', 1, 0)
-    self.flagCombat:SetText('|cffff0000'..'×')
-    self.flagCombat:Hide()
-    self:RegisterEvent('PLAYER_REGEN_ENABLED', function(unit) unit.flagCombat:Hide() end)
-    self:RegisterEvent('PLAYER_REGEN_DISABLED', function(unit) unit.flagCombat:Show() end)
-    self.flagPVP = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
-    self.flagPVP:SetPoint('LEFT', self.flagCombat, 'RIGHT', 0, 0)
-    self:Tag(self.flagPVP, '[|cffff0000>pvp<|r]') 
-    self.Power = CreateFrame('StatusBar', nil, self.Health)
-    self.Power:SetPoint('BOTTOMRIGHT')
-    self.Power:SetPoint('BOTTOMLEFT')
-    self.Power:SetHeight(2)
-    self.Power:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
-    self.Power.frequentUpdates = true
-    self.Power.colorPower = false
-    self.Power.colorClass = true
-    self.Power.colorTapping = false
-    self.Power.colorDisconnected = false
-    self.Power.colorReaction = false 
-    self.ThreatIndicator = CreateFrame('Frame', nil, self)
-    self.ThreatIndicator:SetPoint('TOPRIGHT', 2, 2)
-    self.ThreatIndicator:SetPoint('BOTTOMLEFT', -2, -2)
-    self.ThreatIndicator:SetFrameStrata('BACKGROUND')
-    SetBackdrop(self.ThreatIndicator, mnkLibs.Textures.border, 0, 0, 0, 0)
-    self.ThreatIndicator.Override = UpdateThreat
-    self.Auras = CreateFrame('Frame', nil, self)
-    self.Auras.spacing = 1
-    self.Auras.numTotal = 12
-    self.Auras:SetPoint('LEFT', self, 'LEFT', -1, 0)
-    self.Auras:SetPoint('BOTTOM', self, 'TOP', 0 , 5)
-    self.Auras:SetSize(self.Health:GetWidth(), 16)
-    self.Auras.PostCreateIcon = PostCreateIcon
-    self:SetWidth(200)
-    CreateCastBar(self)
 end
 
 local function PartyUnit(self)
-    CreateUnit(self)
-    self.Name = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, '')
-    self.Name:SetPoint('LEFT', self.Health, 3, 0)
-    self.Name:SetPoint('RIGHT', self:GetWidth() - 2)
-    self:Tag(self.Name, '[mnku:leader][raidcolor][name]')
-    self.ResurrectIndicator = self.frameValues:CreateTexture(nil, 'OVERLAY')
-    self.ResurrectIndicator:SetPoint('CENTER', self)
-    self.ReadyCheckIndicator = self:CreateTexture()
-    self.ReadyCheckIndicator:SetPoint('LEFT', self, 'RIGHT', 3, 0)
-    self.ReadyCheckIndicator:SetSize(14, 14)
-    self.GroupRoleIndicator = self:CreateTexture(nil, 'OVERLAY')
-    self.GroupRoleIndicator:SetPoint('LEFT', self, 'RIGHT', 3, 0)
-    self.GroupRoleIndicator:SetSize(14, 14)
-    self.GroupRoleIndicator:SetAlpha(0)
-    self:HookScript('OnEnter', function() RoleIcon:SetAlpha(1) end)
-    self:HookScript('OnLeave', function() RoleIcon:SetAlpha(0) end)
+    if Config.showParty then
+        CreateUnit(self)
+        self.Name = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, '')
+        self.Name:SetPoint('LEFT', self.Health, 3, 0)
+        self.Name:SetPoint('RIGHT', self:GetWidth() - 2)
+        self:Tag(self.Name, '[mnku:leader][raidcolor][name]')
+        self.ResurrectIndicator = self.frameValues:CreateTexture(nil, 'OVERLAY')
+        self.ResurrectIndicator:SetPoint('CENTER', self)
+        self.ReadyCheckIndicator = self:CreateTexture()
+        self.ReadyCheckIndicator:SetPoint('LEFT', self, 'RIGHT', 3, 0)
+        self.ReadyCheckIndicator:SetSize(14, 14)
+        self.GroupRoleIndicator = self:CreateTexture(nil, 'OVERLAY')
+        self.GroupRoleIndicator:SetPoint('LEFT', self, 'RIGHT', 3, 0)
+        self.GroupRoleIndicator:SetSize(14, 14)
+        self.GroupRoleIndicator:SetAlpha(0)
+        self:HookScript('OnEnter', function() RoleIcon:SetAlpha(1) end)
+        self:HookScript('OnLeave', function() RoleIcon:SetAlpha(0) end)
+    end
 end
 
 local function TargetUnit(self)
-    --#TODO Can't decide when I actually want to display the target since it's redundant with my mnkNames (oUF Nameplates)
-    -- CreateUnit(self)
-    -- self.HealthValue = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, nil)
-    -- self.HealthValue:SetPoint('RIGHT', self.Health, -2, 0)
-    -- self.HealthValue:SetWordWrap(false)
-    -- self:Tag(self.HealthValue, '[mnku:curhp]')
-    -- self.Name = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, '')
-    -- self.Name:SetJustifyH('LEFT')
-    -- self.Name:SetPoint('LEFT', self.Health, 2, 0)
-    -- self.Name:SetPoint('RIGHT', self.HealthValue, 'LEFT')
-    -- self.Name:SetWordWrap(false)
-    -- self:Tag(self.Name, '[mnku:name]')
-    -- self.Level = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, nil, nil, true)
-    -- self.Level:SetPoint('LEFT', self, 'TOPLEFT', -25, -10)
-    -- self:Tag(self.Level, '[mnku:level]')
-    -- self.RaidTargetIndicator = self.frameValues:CreateTexture(nil, 'OVERLAY')
-    -- self.RaidTargetIndicator:SetPoint('LEFT', self, 'RIGHT', 10, 0)
-    -- self.RaidTargetIndicator:SetSize(16, 16)
-    -- self:SetWidth(250)
-    -- CreateCastBar(self)   
+    if Config.showTarget then
+        CreateUnit(self)
+        self.HealthValue = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, nil)
+        self.HealthValue:SetPoint('RIGHT', self.Health, -2, 0)
+        self.HealthValue:SetWordWrap(false)
+        self:Tag(self.HealthValue, '[mnku:curhp]')
+        self.Name = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, '')
+        self.Name:SetJustifyH('LEFT')
+        self.Name:SetPoint('LEFT', self.Health, 2, 0)
+        self.Name:SetPoint('RIGHT', self.HealthValue, 'LEFT')
+        self.Name:SetWordWrap(false)
+        self:Tag(self.Name, '[mnku:name]')
+        self.Level = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, nil, nil, true)
+        self.Level:SetPoint('LEFT', self, 'TOPLEFT', -25, -10)
+        self:Tag(self.Level, '[mnku:level]')
+        self.RaidTargetIndicator = self.frameValues:CreateTexture(nil, 'OVERLAY')
+        self.RaidTargetIndicator:SetPoint('LEFT', self, 'RIGHT', 10, 0)
+        self.RaidTargetIndicator:SetSize(16, 16)
+        self:SetWidth(250)
+        CreateCastBar(self)   
+    end
 end
 
 function mnkUnits.CreateUnits(self, unit)
