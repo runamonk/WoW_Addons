@@ -2,7 +2,6 @@
 local function CreateCastBar(self)
     self.Castbar = CreateFrame('StatusBar', nil, self)
     self.Castbar:SetAllPoints(self.Health)
-
     self.Castbar:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
     self.Castbar:SetStatusBarColor(0, 0, 0, 0)
     self.Castbar:SetFrameStrata('HIGH') 
