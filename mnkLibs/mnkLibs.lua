@@ -163,7 +163,15 @@ function CreateBackground(self)
     t:SetColorTexture(0, 0, 0)
 end       
 
-        
+function Status(unit)
+    if (not UnitIsConnected(unit)) then
+        return 'Offline'
+    elseif (UnitIsGhost(unit)) then
+        return 'Ghost'
+    elseif (UnitIsDead(unit)) then
+        return 'Dead'
+    end
+end        
 
         
 

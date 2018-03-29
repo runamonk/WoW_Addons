@@ -10,16 +10,6 @@ local floor = math.floor
 
 local DEAD_TEXTURE = [[|TInterface\RaidFrame\Raid-Icon-DebuffDisease:26|t]]
 
-local function Status(unit)
-    if (not UnitIsConnected(unit)) then
-        return 'Offline'
-    elseif (UnitIsGhost(unit)) then
-        return 'Ghost'
-    elseif (UnitIsDead(unit)) then
-        return 'Dead'
-    end
-end
-
 local events = {
     cast = 'UNIT_SPELLCAST_START UNIT_SPELLCAST_STOP UNIT_SPELLCAST_CHANNEL_START UNIT_SPELLCAST_CHANNEL_STOP', 
     combat = 'PLAYER_REGEN_ENABLED PLAYER_REGEN_DISABLED', 
