@@ -5,7 +5,8 @@ Config = {
     showFocus = true,
     showParty = true,
     showPlayer = true,
-    showTarget = false
+    showTarget = false,
+    showTargetTarget = false
 }
 
 local function CreateCastBar(self)
@@ -218,11 +219,23 @@ local function TargetUnit(self)
     end
 end
 
+local function TargetTargetUnit(self)
+    if Config.showTargetTarget then
+        CreateUnit(self)
+        self.Name = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
+        self.Name:SetPoint('CENTER', self, 'CENTER')
+        self:Tag(self.Name, '[mnku:name]')
+        self:SetWidth(200)
+    end
+end
+
 function mnkUnits.CreateUnits(self, unit)
     if (unit == 'player') then 
         PlayerUnit(self)
     elseif (unit == 'target') then 
         TargetUnit(self)
+    elseif (unit == 'targettarget') then
+        TargetTargetUnit(self)
     elseif (unit == 'party' or unit == 'raid') then 
         PartyUnit(self)
     elseif (unit == 'focus') then
