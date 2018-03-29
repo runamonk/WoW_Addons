@@ -1,4 +1,5 @@
 mnkUnits = CreateFrame('frame')
+mnkUnits.oUF = oUF or ns.oUF
 
 local playerUnit = nil
 
@@ -45,15 +46,41 @@ local function CreateUnit(self)
     self.frameValues:SetFrameLevel(20)
 end
 
-local function CreateUnits(self, unit)
-    if (unit == 'player') then 
-        PlayerUnit(self)
-    elseif (unit == 'target') then 
-        TargetUnit(self)
-    elseif (unit == 'party' or unit == 'raid') then 
-        PartyUnit(self)
-    elseif (unit == 'focus') then
-        FocusUnit(self)
+local function PostCreateIcon(Auras, button)
+    local count = button.count
+    count:ClearAllPoints()
+    count:SetFont(mnkLibs.Fonts.ap, 10, 'OUTLINE')
+    count:SetPoint('TOPRIGHT', button, 3, 3)
+    local timer = button.cd:GetRegions()
+    timer:SetFont(mnkLibs.Fonts.ap, 10, 'OUTLINE')
+    timer:SetPoint('BOTTOMLEFT', button, 0, 0)
+
+    button.icon:SetTexCoord(.07, .93, .07, .93)
+    button.overlay:SetTexture(mnkLibs.Textures.border)
+    button.overlay:SetTexCoord(0, 1, 0, 1)
+    button.overlay.Hide = function(self) self:SetVertexColor(0.3, 0.3, 0.3) end
+end
+
+local function PostUpdateCast(element, unit)
+    local Spark = element.Spark
+    if (not element.notInterruptible and UnitCanAttack('player', unit)) then
+        Spark:SetColorTexture(1, 0, 0)
+    else
+        Spark:SetColorTexture(1, 1, 1)
+    end
+end
+
+local function UpdateThreat(self, event, unit)
+    if (unit ~= self.unit) then
+        return
+    end
+
+    local situation = UnitThreatSituation(unit)
+    if (situation and situation > 0) then
+        local r, g, b = GetThreatStatusColor(situation)
+        self.ThreatIndicator:SetBackdropColor(r, g, b, 1)
+    else
+        self.ThreatIndicator:SetBackdropColor(0, 0, 0, 0)
     end
 end
 
@@ -63,25 +90,6 @@ local function FocusUnit(self)
     self.Name:SetPoint('CENTER', self, 'CENTER')
     self:Tag(self.Name, '[mnku:name]')
     self:SetWidth(200)
-end
-
-local function PartyUnit(self)
-    CreateUnit(self)
-    self.Name = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, '')
-    self.Name:SetPoint('LEFT', self.Health, 3, 0)
-    self.Name:SetPoint('RIGHT', self:GetWidth() - 2)
-    self:Tag(self.Name, '[mnku:leader][raidcolor][name]')
-    self.ResurrectIndicator = self.frameValues:CreateTexture(nil, 'OVERLAY')
-    self.ResurrectIndicator:SetPoint('CENTER', self)
-    self.ReadyCheckIndicator = self:CreateTexture()
-    self.ReadyCheckIndicator:SetPoint('LEFT', self, 'RIGHT', 3, 0)
-    self.ReadyCheckIndicator:SetSize(14, 14)
-    self.GroupRoleIndicator = self:CreateTexture(nil, 'OVERLAY')
-    self.GroupRoleIndicator:SetPoint('LEFT', self, 'RIGHT', 3, 0)
-    self.GroupRoleIndicator:SetSize(14, 14)
-    self.GroupRoleIndicator:SetAlpha(0)
-    self:HookScript('OnEnter', function() RoleIcon:SetAlpha(1) end)
-    self:HookScript('OnLeave', function() RoleIcon:SetAlpha(0) end)
 end
 
 local function PlayerUnit(self)
@@ -155,33 +163,28 @@ local function PlayerUnit(self)
     playerUnit = self 
 end
 
-local function PostCreateIcon(Auras, button)
-    local count = button.count
-    count:ClearAllPoints()
-    count:SetFont(mnkLibs.Fonts.ap, 10, 'OUTLINE')
-    count:SetPoint('TOPRIGHT', button, 3, 3)
-    local timer = button.cd:GetRegions()
-    timer:SetFont(mnkLibs.Fonts.ap, 10, 'OUTLINE')
-    timer:SetPoint('BOTTOMLEFT', button, 0, 0)
-
-    button.icon:SetTexCoord(.07, .93, .07, .93)
-    button.overlay:SetTexture(mnkLibs.Textures.border)
-    button.overlay:SetTexCoord(0, 1, 0, 1)
-    button.overlay.Hide = function(self) self:SetVertexColor(0.3, 0.3, 0.3) end
-end
-
-local function PostUpdateCast(element, unit)
-    local Spark = element.Spark
-    if (not element.notInterruptible and UnitCanAttack('player', unit)) then
-        Spark:SetColorTexture(1, 0, 0)
-    else
-        Spark:SetColorTexture(1, 1, 1)
-    end
+local function PartyUnit(self)
+    CreateUnit(self)
+    self.Name = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, '')
+    self.Name:SetPoint('LEFT', self.Health, 3, 0)
+    self.Name:SetPoint('RIGHT', self:GetWidth() - 2)
+    self:Tag(self.Name, '[mnku:leader][raidcolor][name]')
+    self.ResurrectIndicator = self.frameValues:CreateTexture(nil, 'OVERLAY')
+    self.ResurrectIndicator:SetPoint('CENTER', self)
+    self.ReadyCheckIndicator = self:CreateTexture()
+    self.ReadyCheckIndicator:SetPoint('LEFT', self, 'RIGHT', 3, 0)
+    self.ReadyCheckIndicator:SetSize(14, 14)
+    self.GroupRoleIndicator = self:CreateTexture(nil, 'OVERLAY')
+    self.GroupRoleIndicator:SetPoint('LEFT', self, 'RIGHT', 3, 0)
+    self.GroupRoleIndicator:SetSize(14, 14)
+    self.GroupRoleIndicator:SetAlpha(0)
+    self:HookScript('OnEnter', function() RoleIcon:SetAlpha(1) end)
+    self:HookScript('OnLeave', function() RoleIcon:SetAlpha(0) end)
 end
 
 local function TargetUnit(self)
     --#TODO Can't decide when I actually want to display the target since it's redundant with my mnkNames (oUF Nameplates)
-    -- mnkUnits.CreateUnit(self)
+    -- CreateUnit(self)
     -- self.HealthValue = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, nil)
     -- self.HealthValue:SetPoint('RIGHT', self.Health, -2, 0)
     -- self.HealthValue:SetWordWrap(false)
@@ -202,24 +205,38 @@ local function TargetUnit(self)
     -- CreateCastBar(self)   
 end
 
-local function UpdateThreat(self, event, unit)
-    if (unit ~= self.unit) then
-        return
-    end
-
-    local situation = UnitThreatSituation(unit)
-    if (situation and situation > 0) then
-        local r, g, b = GetThreatStatusColor(situation)
-        self.ThreatIndicator:SetBackdropColor(r, g, b, 1)
-    else
-        self.ThreatIndicator:SetBackdropColor(0, 0, 0, 0)
+function mnkUnits.CreateUnits(self, unit)
+    if (unit == 'player') then 
+        PlayerUnit(self)
+    elseif (unit == 'target') then 
+        TargetUnit(self)
+    elseif (unit == 'party' or unit == 'raid') then 
+        PartyUnit(self)
+    elseif (unit == 'focus') then
+        FocusUnit(self)
     end
 end
 
+function mnkUnits:DoOnEvent(event, arg1, arg2)
+    if event == 'PLAYER_ENTERING_WORLD' then
+        BuffFrame:UnregisterEvent("UNIT_AURA")
+        BuffFrame:Hide()
+        TemporaryEnchantFrame:Hide()
+        CompactRaidFrameManager:UnregisterAllEvents()
+        CompactRaidFrameManager:Hide()
+        CompactRaidFrameContainer:UnregisterAllEvents()
+        CompactRaidFrameContainer:Hide()
+        CompactRaidFrameContainer:Hide()
+    elseif event == 'PLAYER_REGEN_DISABLED' and playerUnit then
+        playerUnit.flagCombat:Show()
+    elseif event == 'PLAYER_REGEN_ENABLED' and playerUnit then
+        playerUnit.flagCombat:Hide() 
+    end
+end
 
-oUF:RegisterStyle('mnku', CreateUnits)
-oUF:SetActiveStyle('mnku')
-oUF:Factory(function(self)
+mnkUnits.oUF:RegisterStyle('mnku', mnkUnits.CreateUnits)
+mnkUnits.oUF:SetActiveStyle('mnku')
+mnkUnits.oUF:Factory(function(self)
     self:Spawn('player'):SetPoint('CENTER', -300, -250)
     self:Spawn('focus'):SetPoint('TOPLEFT', oUF_mnkuPlayer, 0, 26)
     self:Spawn('target'):SetPoint('CENTER', 300, -250)
@@ -251,24 +268,6 @@ oUF:Factory(function(self)
         end
     end
 end)
-
--- HIDE THE DEFAULT BUFF/DEBUFF FRAMES
-function mnkUnits:DoOnEvent(event, arg1, arg2)
-    if event == 'PLAYER_ENTERING_WORLD' then
-        BuffFrame:UnregisterEvent("UNIT_AURA")
-        BuffFrame:Hide()
-        TemporaryEnchantFrame:Hide()
-        CompactRaidFrameManager:UnregisterAllEvents()
-        CompactRaidFrameManager:Hide()
-        CompactRaidFrameContainer:UnregisterAllEvents()
-        CompactRaidFrameContainer:Hide()
-        CompactRaidFrameContainer:Hide()
-    elseif event == 'PLAYER_REGEN_DISABLED' and playerUnit then
-        playerUnit.flagCombat:Show()
-    elseif event == 'PLAYER_REGEN_ENABLED' and playerUnit then
-        playerUnit.flagCombat:Hide() 
-    end
-end
 
 mnkUnits:SetScript('OnEvent', mnkUnits.DoOnEvent)
 mnkUnits:RegisterEvent('PLAYER_ENTERING_WORLD')
