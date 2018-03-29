@@ -48,6 +48,14 @@ function round(x, n)
     return x / n
 end
 
+function QuotedStr(str)
+    if str == '' or str == nil then
+        return '\'' .. '\''
+    else
+        return '\''..str..'\''
+    end
+end
+
 function Color(t)
     return RGBToHex(t.r, t.g, t.b)
 end
@@ -62,7 +70,6 @@ function ReadableMemory(bytes)
     else
         return format('%.2f', bytes / 1024) .. ' mb'
     end
-
 end
 
 function TruncNumber(num, places)
@@ -99,8 +106,7 @@ function StripServerName(fullName)
 end
 
 function CreateFontString(frame, font, size, outline, layer, shadow)
-    local fs = frame:CreateFontString(nil, layer or 'OVERLAY')
-    
+    local fs = frame:CreateFontString(nil, layer or 'OVERLAY')   
     fs:SetFont(font, size, outline)
     if shadow then
         fs:SetShadowColor(0, 0, 0, 1)
@@ -129,28 +135,27 @@ function CreateDropShadow(frame, point, edge, color)
             top = -edge, 
             bottom = -edge
         }})
-        shadow:SetBackdropColor(0, 0, 0, 0)
-        shadow:SetBackdropBorderColor(unpack(color))
-    end
+    shadow:SetBackdropColor(0, 0, 0, 0)
+    shadow:SetBackdropBorderColor(unpack(color))
+end
 
 
-    function SetBackdrop(self, bgfile, inset_l, inset_r, inset_t, inset_b)
-        if not bgFile then
-            bgfile = 'Interface\\ChatFrame\\ChatFrameBackground'
-        end 
-
-        self:SetBackdrop {
-            bgFile = bgfile, 
-            tile = false, 
-            tileSize = 0, 
-            insets = {
-                left = -inset_l, 
-                right = -inset_r, 
-                top = -inset_t, 
-                bottom = -inset_b
-            }}
-            self:SetBackdropColor(0, 0, 0, 1)
-        end
+function SetBackdrop(self, bgfile, inset_l, inset_r, inset_t, inset_b)
+    if not bgFile then
+        bgfile = 'Interface\\ChatFrame\\ChatFrameBackground'
+    end 
+    self:SetBackdrop {
+        bgFile = bgfile, 
+        tile = false, 
+        tileSize = 0, 
+        insets = {
+            left = -inset_l, 
+            right = -inset_r, 
+            top = -inset_t, 
+            bottom = -inset_b
+        }}
+    self:SetBackdropColor(0, 0, 0, 1)
+end
 
 function CreateBackground(self)
     local t = self:CreateTexture(nil, 'BORDER')

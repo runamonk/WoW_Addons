@@ -32,14 +32,6 @@ function SlashCmdList.RL(msg, editbox)
     ReloadUI()
 end
 
-function mnkMisc.QuotedStr(str)
-    if str == '' or str == nil then
-        return '\'' .. '\''
-    else
-        return '\''..str..'\''
-    end
-end
-
 function mnkMisc.HideOrderCommandBar()
     local b = _G.OrderHallCommandBar
 	if b then
