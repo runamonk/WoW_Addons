@@ -111,7 +111,6 @@ local function PartyUnit(self)
 end
 
 local function PlayerUnit(self)
-    playerUnit = self
     CreateUnit(self)
     self.HealthValue = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, '')
     self.HealthValue:SetPoint('LEFT', self.Health, 1, 1)
@@ -178,7 +177,8 @@ local function PlayerUnit(self)
     self.Auras:SetSize(self.Health:GetWidth(), 16)
     self.Auras.PostCreateIcon = PostCreateIcon
     self:SetWidth(200)
-    CreateCastBar(self) 
+    CreateCastBar(self)
+    playerUnit = self 
 end
 
 local function TargetUnit(self)
@@ -262,9 +262,9 @@ function mnkUnits:DoOnEvent(event, arg1, arg2)
         CompactRaidFrameContainer:UnregisterAllEvents()
         CompactRaidFrameContainer:Hide()
         CompactRaidFrameContainer:Hide()
-    elseif event == 'PLAYER_REGEN_DISABLED' then
+    elseif event == 'PLAYER_REGEN_DISABLED' and playerUnit then
         playerUnit.flagCombat:Show()
-    elseif event == 'PLAYER_REGEN_ENABLED' then
+    elseif event == 'PLAYER_REGEN_ENABLED' and playerUnit then
         playerUnit.flagCombat:Hide() 
     end
 end
