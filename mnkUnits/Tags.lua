@@ -24,7 +24,6 @@ tags['mnku:color'] = function(unit)
         return '|cffff0000'
     end
 end
-
 tags['mnku:curhp'] = function(unit)
     if (Status(unit)) then return end
     return TruncNumber(UnitHealth(unit), 2)
