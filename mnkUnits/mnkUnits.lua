@@ -1,3 +1,4 @@
+local playerUnit = nil
 
 local function CreateCastBar(self)
     self.Castbar = CreateFrame('StatusBar', nil, self)
@@ -108,6 +109,7 @@ local function PartyUnit(self)
 end
 
 local function PlayerUnit(self)
+    playerUnit = self
     CreateUnit(self)
     self.HealthValue = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, '')
     self.HealthValue:SetPoint('LEFT', self.Health, 1, 1)
@@ -115,7 +117,7 @@ local function PlayerUnit(self)
     self.PetHealth = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
     self.PetHealth:SetPoint('RIGHT', self.Health, 'RIGHT', -1, 1)
     self.PetHealth.overrideUnit = 'pet'
-    self:CustomTag(self.PetHealth, '[mnku:pethp]')
+    self:Tag(self.PetHealth, '[mnku:pethp]')
     self.isResting = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, nil, nil, true)
     self.isResting:SetPoint('LEFT', self, 'TOPLEFT', -25, -11)
     self:Tag(self.isResting, '[|cFFFFFF00>resting<|r]')
@@ -146,7 +148,10 @@ local function PlayerUnit(self)
 
     self.flagCombat = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
     self.flagCombat:SetPoint('LEFT', self.HealthValue, 'RIGHT', 1, 0)
-    self:CustomTag(self.flagCombat, '[|cffff0000>mnku:combat<|r]')
+    self.flagCombat:SetText('|cffff0000'..'×')
+    self.flagCombat:Hide()
+
+
     self.flagPVP = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
     self.flagPVP:SetPoint('LEFT', self.flagCombat, 'RIGHT', 0, 0)
     self:Tag(self.flagPVP, '[|cffff0000>pvp<|r]') 
@@ -176,10 +181,10 @@ local function PlayerUnit(self)
     self.Auras.PostCreateIcon = PostCreateIcon
     self:SetWidth(200)
     CreateCastBar(self)
+    
 end
 
 local function TargetUnit(self)
-
     --#TODO Can't decide when I actually want to display the target since it's redundant with my mnkNames (oUF Nameplates)
     -- CreateUnit(self)
     -- self.HealthValue = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, nil)
@@ -249,7 +254,6 @@ oUF:Factory(function(self)
     end
 end)
 
-
 -- HIDE THE DEFAULT BUFF/DEBUFF FRAMES
 mnkUnits = CreateFrame('Frame')
 
@@ -263,8 +267,14 @@ function mnkUnits:DoOnEvent(event, arg1, arg2)
         CompactRaidFrameContainer:UnregisterAllEvents()
         CompactRaidFrameContainer:Hide()
         CompactRaidFrameContainer:Hide()
+    elseif event == 'PLAYER_REGEN_DISABLED' then
+        playerUnit.flagCombat:Show()
+    elseif event == 'PLAYER_REGEN_ENABLED' then
+        playerUnit.flagCombat:Hide() 
     end
 end
 
 mnkUnits:SetScript('OnEvent', mnkUnits.DoOnEvent)
 mnkUnits:RegisterEvent('PLAYER_ENTERING_WORLD')
+mnkUnits:RegisterEvent('PLAYER_REGEN_ENABLED')
+mnkUnits:RegisterEvent('PLAYER_REGEN_DISABLED')
