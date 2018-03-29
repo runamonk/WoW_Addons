@@ -271,7 +271,7 @@ function mnkStuff_Bag.CreateBackpack()
 
         if itemRarity == LE_ITEM_QUALITY_POOR then
             pocketname = 'Junk'
-        elseif string.find(itemName, 'Hearthstone') or string.find(itemName, 'Flight Master's Whistle') then
+        elseif string.find(itemName, 'Hearthstone') or string.find(itemName, 'Flight Master''s Whistle') then
             pocketname = 'Teleporters'
         end
 
