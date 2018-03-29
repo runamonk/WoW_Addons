@@ -1,3 +1,5 @@
+mnkUnits = CreateFrame('frame')
+
 local playerUnit = nil
 
 local function CreateCastBar(self)
@@ -28,7 +30,7 @@ local function CreateHealthBar(self)
     return h
 end
 
-function PostCreateIcon(Auras, button)
+local function PostCreateIcon(Auras, button)
     local count = button.count
     count:ClearAllPoints()
     count:SetFont(mnkLibs.Fonts.ap, 10, 'OUTLINE')
@@ -122,8 +124,7 @@ local function PlayerUnit(self)
     self.isResting:SetPoint('LEFT', self, 'TOPLEFT', -25, -11)
     self:Tag(self.isResting, '[|cFFFFFF00>resting<|r]')
     
-    local t = {}
-    
+    local t = {} 
     for i = 1, 10 do
         local f = CreateFrame('StatusBar', nil, self)
         f:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
@@ -145,13 +146,10 @@ local function PlayerUnit(self)
 
     self.ClassPower = t
     self.Runes = t
-
     self.flagCombat = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
     self.flagCombat:SetPoint('LEFT', self.HealthValue, 'RIGHT', 1, 0)
     self.flagCombat:SetText('|cffff0000'..'×')
     self.flagCombat:Hide()
-
-
     self.flagPVP = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
     self.flagPVP:SetPoint('LEFT', self.flagCombat, 'RIGHT', 0, 0)
     self:Tag(self.flagPVP, '[|cffff0000>pvp<|r]') 
@@ -180,13 +178,12 @@ local function PlayerUnit(self)
     self.Auras:SetSize(self.Health:GetWidth(), 16)
     self.Auras.PostCreateIcon = PostCreateIcon
     self:SetWidth(200)
-    CreateCastBar(self)
-    
+    CreateCastBar(self) 
 end
 
 local function TargetUnit(self)
     --#TODO Can't decide when I actually want to display the target since it's redundant with my mnkNames (oUF Nameplates)
-    -- CreateUnit(self)
+    -- mnkUnits.CreateUnit(self)
     -- self.HealthValue = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, nil)
     -- self.HealthValue:SetPoint('RIGHT', self.Health, -2, 0)
     -- self.HealthValue:SetWordWrap(false)
@@ -255,8 +252,6 @@ oUF:Factory(function(self)
 end)
 
 -- HIDE THE DEFAULT BUFF/DEBUFF FRAMES
-mnkUnits = CreateFrame('Frame')
-
 function mnkUnits:DoOnEvent(event, arg1, arg2)
     if event == 'PLAYER_ENTERING_WORLD' then
         BuffFrame:UnregisterEvent("UNIT_AURA")
