@@ -30,44 +30,6 @@ local function CreateHealthBar(self)
     return h
 end
 
-local function PostCreateIcon(Auras, button)
-    local count = button.count
-    count:ClearAllPoints()
-    count:SetFont(mnkLibs.Fonts.ap, 10, 'OUTLINE')
-    count:SetPoint('TOPRIGHT', button, 3, 3)
-    local timer = button.cd:GetRegions()
-    timer:SetFont(mnkLibs.Fonts.ap, 10, 'OUTLINE')
-    timer:SetPoint('BOTTOMLEFT', button, 0, 0)
-
-    button.icon:SetTexCoord(.07, .93, .07, .93)
-    button.overlay:SetTexture(mnkLibs.Textures.border)
-    button.overlay:SetTexCoord(0, 1, 0, 1)
-    button.overlay.Hide = function(self) self:SetVertexColor(0.3, 0.3, 0.3) end
-end
-
-local function PostUpdateCast(element, unit)
-    local Spark = element.Spark
-    if (not element.notInterruptible and UnitCanAttack('player', unit)) then
-        Spark:SetColorTexture(1, 0, 0)
-    else
-        Spark:SetColorTexture(1, 1, 1)
-    end
-end
-
-local function UpdateThreat(self, event, unit)
-    if (unit ~= self.unit) then
-        return
-    end
-
-    local situation = UnitThreatSituation(unit)
-    if (situation and situation > 0) then
-        local r, g, b = GetThreatStatusColor(situation)
-        self.ThreatIndicator:SetBackdropColor(r, g, b, 1)
-    else
-        self.ThreatIndicator:SetBackdropColor(0, 0, 0, 0)
-    end
-end
-
 local function CreateUnit(self)
     self:RegisterForClicks('AnyUp')
     self:SetScript('OnEnter', UnitFrame_OnEnter)
@@ -81,6 +43,18 @@ local function CreateUnit(self)
     self.Health:SetPoint('TOPLEFT')
     self.frameValues = CreateFrame('Frame', nil, self)
     self.frameValues:SetFrameLevel(20)
+end
+
+local function CreateUnits(self, unit)
+    if (unit == 'player') then 
+        PlayerUnit(self)
+    elseif (unit == 'target') then 
+        TargetUnit(self)
+    elseif (unit == 'party' or unit == 'raid') then 
+        PartyUnit(self)
+    elseif (unit == 'focus') then
+        FocusUnit(self)
+    end
 end
 
 local function FocusUnit(self)
@@ -181,6 +155,30 @@ local function PlayerUnit(self)
     playerUnit = self 
 end
 
+local function PostCreateIcon(Auras, button)
+    local count = button.count
+    count:ClearAllPoints()
+    count:SetFont(mnkLibs.Fonts.ap, 10, 'OUTLINE')
+    count:SetPoint('TOPRIGHT', button, 3, 3)
+    local timer = button.cd:GetRegions()
+    timer:SetFont(mnkLibs.Fonts.ap, 10, 'OUTLINE')
+    timer:SetPoint('BOTTOMLEFT', button, 0, 0)
+
+    button.icon:SetTexCoord(.07, .93, .07, .93)
+    button.overlay:SetTexture(mnkLibs.Textures.border)
+    button.overlay:SetTexCoord(0, 1, 0, 1)
+    button.overlay.Hide = function(self) self:SetVertexColor(0.3, 0.3, 0.3) end
+end
+
+local function PostUpdateCast(element, unit)
+    local Spark = element.Spark
+    if (not element.notInterruptible and UnitCanAttack('player', unit)) then
+        Spark:SetColorTexture(1, 0, 0)
+    else
+        Spark:SetColorTexture(1, 1, 1)
+    end
+end
+
 local function TargetUnit(self)
     --#TODO Can't decide when I actually want to display the target since it's redundant with my mnkNames (oUF Nameplates)
     -- mnkUnits.CreateUnit(self)
@@ -204,17 +202,20 @@ local function TargetUnit(self)
     -- CreateCastBar(self)   
 end
 
-local function CreateUnits(self, unit)
-    if (unit == 'player') then 
-        PlayerUnit(self)
-    elseif (unit == 'target') then 
-        TargetUnit(self)
-    elseif (unit == 'party' or unit == 'raid') then 
-        PartyUnit(self)
-    elseif (unit == 'focus') then
-        FocusUnit(self)
+local function UpdateThreat(self, event, unit)
+    if (unit ~= self.unit) then
+        return
+    end
+
+    local situation = UnitThreatSituation(unit)
+    if (situation and situation > 0) then
+        local r, g, b = GetThreatStatusColor(situation)
+        self.ThreatIndicator:SetBackdropColor(r, g, b, 1)
+    else
+        self.ThreatIndicator:SetBackdropColor(0, 0, 0, 0)
     end
 end
+
 
 oUF:RegisterStyle('mnku', CreateUnits)
 oUF:SetActiveStyle('mnku')
