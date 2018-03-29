@@ -38,18 +38,15 @@ function mnkXP.DoOnEnter(self)
 end
 
 function mnkXP:GetXPText()
-    local extXP = GetXPExhaustion()
-    
-    if extXP == nil then
-        extXP = 0
-    end
-    
-    local restXP = format(TEXT('%.1f%%'), ((extXP / UnitXPMax('player')) * 100))
+    local iRestXP = (((GetXPExhaustion() or 0) / UnitXPMax('player')) * 100)
+    local restXP = format(TEXT('%.1f%%'), iRestXP)
     local currXP = format(TEXT('%.1f%%'), ((UnitXP('player') / UnitXPMax('player')) * 100))
 
     if UnitLevel('player') == GetMaxPlayerLevel() then
         return UnitLevel('player')
-    else 
+    elseif iRestXP < 1 then -- only show rested xp when you have at least 1% of total, it looks silly otherwise.
+        return UnitLevel('player')..Color(COLOR_WHITE) .. ' - '..Color(COLOR_BLUE)..currXP
+    else
         return UnitLevel('player')..Color(COLOR_WHITE) .. ' - '..Color(COLOR_BLUE)..currXP..Color(COLOR_WHITE) .. ' - '..Color(COLOR_GREEN)..restXP
     end
 end
