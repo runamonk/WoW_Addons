@@ -1,5 +1,6 @@
 mnkUnits = CreateFrame('frame')
 mnkUnits.oUF = oUF or ns.oUF
+--Tags are in mnkLibs\mnkuTags
 
 Config = {
     showFocus = true,

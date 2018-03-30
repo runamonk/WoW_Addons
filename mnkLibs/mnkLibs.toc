@@ -13,3 +13,4 @@ Libs\AceGUI-3.0\AceGUI-3.0.xml
 Libs\oUF\oUF.xml
 
 mnkLibs.lua
+mnkuTags.lua
