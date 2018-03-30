@@ -1,5 +1,6 @@
 mnkNames = CreateFrame("Frame")
 mnkNames.oUF = oUF or ns.oUF
+--Tags are in mnkLibs\mnkuTags
 
 local cvars = {
     nameplateGlobalScale = .8, 
@@ -44,21 +45,21 @@ function mnkNames.CreateStyle(self, unit)
     self.Health.bg:SetAllPoints(self.Health)
     self.Health.bg:SetAlpha(0.20)
     self.Health.bg:SetTexture(mnkLibs.Textures.bar)
-    self.HealthValue = CreateFontString(self.Health, mnkLibs.Fonts.oswald, cfg_font_height, nil)
+    self.HealthValue = CreateFontString(self.Health, mnkLibs.Fonts.oswald, cfg_font_height, nil, nil, true)
     self.HealthValue:SetPoint('RIGHT', self.Health, -2, 0)
     self.HealthValue:SetWordWrap(false)
-    self:Tag(self.HealthValue, '[mnknames:curhp]')
+    self:Tag(self.HealthValue, '[mnku:curhp]')
     self.Name = CreateFontString(self.Health, mnkLibs.Fonts.oswald, cfg_font_height, nil, nil, true)
     self.Name:SetPoint("LEFT", self.Health, 4, 0)
     self.Name:SetJustifyH("LEFT")
     self.Name:SetWidth(cfg_name_width)
-    self:Tag(self.Name, '[mnknames:name]')
+    self:Tag(self.Name, '[mnku:name]')
     self.Level = CreateFontString(self.Health, mnkLibs.Fonts.oswald, cfg_font_height, nil, nil, true)
     self.Level:SetPoint("LEFT", self.Health, -20, 0)
     self.Level:SetJustifyH("LEFT")
     self.Level:SetWidth(25)
     self.Level:SetHeight(25)
-    self:Tag(self.Level, '[mnknames:level]')
+    self:Tag(self.Level, '[mnku:level]')
     self.RaidTargetIndicator = self:CreateTexture(nil, 'OVERLAY')
     self.RaidTargetIndicator:SetPoint('LEFT', self, 'RIGHT', 8, 0)
     self.RaidTargetIndicator:SetSize(16, 16)

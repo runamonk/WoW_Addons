@@ -8,7 +8,7 @@
 ## X-SavedVariables: mnkUnits
 ## X-SlashCmdList: /mnkUnits, /mu
 ## X-oUF: mnkUnits
+## Tags are in mnkLibs\mnkuTags
 
 oUF_MovableFrames.lua
-Tags.lua
 mnkUnits.lua

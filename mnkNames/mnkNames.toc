@@ -5,6 +5,5 @@
 ## Notes: Minimalistic oUF Nameplates Layout
 ## X-oUF: mnkNames
 ## RequiredDeps: mnkLibs
-
+## Tags are in mnkLibs\mnkuTags
 mnkNames.lua
-Tags.lua
