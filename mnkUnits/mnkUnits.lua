@@ -3,11 +3,12 @@ mnkUnits.oUF = oUF or ns.oUF
 --Tags are in mnkLibs\mnkuTags
 
 Config = {
-    showFocus = true,
-    showParty = true,
-    showPlayer = true,
-    showTarget = false,
-    showTargetTarget = false
+    showfocus = true,
+    showparty = true,
+    showplayer = true,
+    showpet = true,
+    showtarget = false,
+    showtargettarget = false
 }
 
 local function CreateCastBar(self)
@@ -90,26 +91,34 @@ local function UpdateThreat(self, event, unit)
     end
 end
 
-local function FocusUnit(self)
-    if Config.showFocus then
+local function MinimalUnit(self)
+    if Config['show'..self.unit] then 
         CreateUnit(self)
         self.Name = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
         self.Name:SetPoint('CENTER', self, 'CENTER')
         self:Tag(self.Name, '[mnku:name]')
-        self:SetWidth(200)
+        self:SetWidth(200) 
+    end   
+end
+
+local function PetUnit(self)
+    if Config.showpet then
+        CreateUnit(self)
+        self.PetHealth = CreateFontString(self.Health, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
+        self.PetHealth:SetPoint('LEFT', self, 2, 0)
+        self:Tag(self.PetHealth, '[mnku:pethp]')
+        self:SetSize(36, oUF_mnkUnitsPlayer:GetHeight())
+        self:SetScale(oUF_mnkUnitsPlayer:GetScale())
     end
 end
 
 local function PlayerUnit(self)
-    if Config.showPlayer then
+    if Config.showplayer then
         CreateUnit(self)
         self.HealthValue = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, '')
         self.HealthValue:SetPoint('LEFT', self.Health, 1, 1)
         self:Tag(self.HealthValue, '[mnku:status][mnku:perhp] [mnku:curhp]') 
-        self.PetHealth = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
-        self.PetHealth:SetPoint('RIGHT', self.Health, 'RIGHT', -1, 1)
-        self.PetHealth.overrideUnit = 'pet'
-        self:Tag(self.PetHealth, '[mnku:pethp]')
+
         self.isResting = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, nil, nil, true)
         self.isResting:SetPoint('LEFT', self, 'TOPLEFT', -25, -11)
         self:Tag(self.isResting, '[|cFFFFFF00>resting<|r]')
@@ -175,7 +184,7 @@ local function PlayerUnit(self)
 end
 
 local function PartyUnit(self)
-    if Config.showParty then
+    if Config.showparty then
         CreateUnit(self)
         self.Name = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, '')
         self.Name:SetPoint('LEFT', self.Health, 3, 0)
@@ -196,7 +205,7 @@ local function PartyUnit(self)
 end
 
 local function TargetUnit(self)
-    if Config.showTarget then
+    if Config.showtarget then
         CreateUnit(self)
         self.HealthValue = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, nil)
         self.HealthValue:SetPoint('RIGHT', self.Health, -2, 0)
@@ -219,27 +228,17 @@ local function TargetUnit(self)
     end
 end
 
-local function TargetTargetUnit(self)
-    if Config.showTargetTarget then
-        CreateUnit(self)
-        self.Name = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
-        self.Name:SetPoint('CENTER', self, 'CENTER')
-        self:Tag(self.Name, '[mnku:name]')
-        self:SetWidth(200)
-    end
-end
-
 function mnkUnits.CreateUnits(self, unit)
-    if (unit == 'player') then 
+    if (unit == 'pet') then
+        PetUnit(self)
+    elseif (unit == 'player') then 
         PlayerUnit(self)
     elseif (unit == 'target') then 
         TargetUnit(self)
-    elseif (unit == 'targettarget') then
-        TargetTargetUnit(self)
     elseif (unit == 'party' or unit == 'raid') then 
         PartyUnit(self)
-    elseif (unit == 'focus') then
-        FocusUnit(self)
+    elseif (unit == 'focus') or (unit == 'targettarget') or unit:find('boss') or unit:find('arena') then
+        MinimalUnit(self)
     end
 end
 
@@ -256,14 +255,14 @@ function mnkUnits:DoOnEvent(event, arg1, arg2)
     end
 end
 
-mnkUnits.oUF:RegisterStyle('mnku', mnkUnits.CreateUnits)
-mnkUnits.oUF:SetActiveStyle('mnku')
+mnkUnits.oUF:RegisterStyle('mnkUnits', mnkUnits.CreateUnits)
+mnkUnits.oUF:SetActiveStyle('mnkUnits')
 mnkUnits.oUF:Factory(function(self)
     self:Spawn('player'):SetPoint('CENTER', -300, -250)
-    self:Spawn('focus'):SetPoint('TOPLEFT', oUF_mnkuPlayer, 0, 26)
+    self:Spawn('pet'):SetPoint('LEFT', oUF_mnkUnitsPlayer, 'RIGHT', 5, 0)
+    self:Spawn('focus'):SetPoint('TOPLEFT', oUF_mnkUnitsPlayer, 0, 26)
     self:Spawn('target'):SetPoint('CENTER', 300, -250)
-    --self:Spawn('targettarget'):SetPoint('TOPRIGHT', oUF_mnkuTarget, 0, 26)
-    
+    self:Spawn('targettarget'):SetPoint('TOPRIGHT', oUF_mnkUnitsTarget, 0, 26)
     self:SpawnHeader(nil, nil, 'custom [group:party] show; [@raid3,exists] show; [@raid26,exists] hide; hide', 
         'showParty', true, 
         'showRaid', true, 
@@ -285,8 +284,8 @@ mnkUnits.oUF:Factory(function(self)
             boss:SetPoint('TOPRIGHT', -50, -100)
             arena:SetPoint('TOPRIGHT', -50, -100)
         else
-            boss:SetPoint('TOP', _G['oUF_mnkuBoss' .. index - 1], 'BOTTOM', 0, -6)
-            arena:SetPoint('TOP', _G['oUF_mnkuArena' .. index - 1], 'BOTTOM', 0, -6)
+            boss:SetPoint('TOP', _G['oUF_mnkUnitsBoss' .. index - 1], 'BOTTOM', 0, -6)
+            arena:SetPoint('TOP', _G['oUF_mnkUnitsArena' .. index - 1], 'BOTTOM', 0, -6)
         end
     end
 end)
