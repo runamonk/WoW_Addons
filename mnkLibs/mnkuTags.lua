@@ -1,6 +1,6 @@
 local tags = oUF.Tags.Methods or oUF.Tags
 local events = oUF.TagEvents or oUF.Tags.Events
-local DEAD_TEXTURE = [[|TInterface\RaidFrame\Raid-Icon-DebuffDisease:26|t]]
+local DEAD_TEXTURE = '|TInterface\\RaidFrame\\Raid-Icon-DebuffDisease:18|t'
 
 events['mnku:cast'] = 'UNIT_SPELLCAST_START UNIT_SPELLCAST_STOP UNIT_SPELLCAST_CHANNEL_START UNIT_SPELLCAST_CHANNEL_STOP'
 events['mnku:curhp'] = 'UNIT_HEALTH_FREQUENT UNIT_MAXHEALTH'
@@ -19,7 +19,7 @@ tags['mnku:color'] = function(unit)
     if (UnitIsTapDenied(unit) or not UnitIsConnected(unit)) then
         return '|cff999999'
     elseif (not UnitIsPlayer(unit) and reaction) then
-        return RGBToHex(_COLORS.reaction[reaction])
+        return Hex(_COLORS.reaction[reaction])
     elseif (UnitFactionGroup(unit) and UnitIsEnemy(unit, 'player') and UnitIsPVP(unit)) then
         return '|cffff0000'
     end
@@ -70,7 +70,6 @@ tags['mnku:perhp'] = function(unit)
 end
 tags['mnku:pethp'] = function(unit)
     if (UnitIsUnit(unit, 'vehicle')) then return end
-
     local cur = UnitHealth(unit)
     local max = UnitHealthMax(unit)
     if (cur > 0) then
