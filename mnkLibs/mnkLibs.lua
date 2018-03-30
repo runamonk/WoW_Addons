@@ -12,6 +12,7 @@ mnkLibs.Textures = {
     background = 'Interface\\AddOns\\mnkLibs\\Assets\\background', 
     bar = 'Interface\\AddOns\\mnkLibs\\Assets\\bar', 
     border = 'Interface\\AddOns\\mnkLibs\\Assets\\border', 
+    chatframe = 'Interface\\ChatFrame\\ChatFrameBackground',
     combo_diamond = 'Interface\\AddOns\\mnkLibs\\Assets\\combo_diamond',
     combo_round = 'Interface\\AddOns\\mnkLibs\\Assets\\combo_round',
     icon_new = 'Interface\\AddOns\\mnkLibs\\Assets\\icon_new', 

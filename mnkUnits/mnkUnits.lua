@@ -40,6 +40,17 @@ local function CreateHealthBar(self)
     return h
 end
 
+local function CreateBottomPanel()
+    local p = CreateFrame('Frame', 'mnkBottom', UIParent)
+    SetBackdrop(p, nil, 1, 1, 1, 1)
+    p:SetBackdropColor(0, 0, 0, 0.8)
+    p:SetHeight(170)
+    p:SetWidth(UIParent:GetWidth())
+    p:SetPoint('BOTTOM',0,0)
+    p:SetFrameStrata('BACKGROUND')
+    p:Show()
+end
+
 local function CreateUnit(self)
     self:RegisterForClicks('AnyUp')
     self:SetScript('OnEnter', UnitFrame_OnEnter)
@@ -235,6 +246,7 @@ function mnkUnits:DoOnEvent(event, arg1, arg2)
         CompactRaidFrameContainer:UnregisterAllEvents()
         CompactRaidFrameContainer:Hide()
         CompactRaidFrameContainer:Hide()
+        CreateBottomPanel()
     end
 end
 
