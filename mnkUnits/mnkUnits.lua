@@ -1,5 +1,6 @@
 mnkUnits = CreateFrame('frame')
 mnkUnits.oUF = oUF or ns.oUF
+local _, playerClass = UnitClass('player')
 --Tags are in mnkLibs\mnkuTags
 
 Config = {
@@ -132,8 +133,12 @@ local function PlayerUnit(self)
         local t = {} 
         for i = 1, 10 do
             local f = CreateFrame('StatusBar', nil, self)
-            f:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
-            f:SetSize(16, 10)
+            if playerClass  == 'WARLOCK' then
+                f:SetStatusBarTexture(mnkLibs.Textures.combo_diamond)
+            else
+                f:SetStatusBarTexture(mnkLibs.Textures.combo_round)
+            end
+            f:SetSize(16, 16)
 
             local n = CreateFontString(f, mnkLibs.Fonts.oswald, 10, nil, nil, false)
             n:SetPoint('CENTER', f, 0, 0)
