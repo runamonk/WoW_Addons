@@ -1,4 +1,5 @@
 mnkNames = CreateFrame("Frame")
+mnkNames.oUF = oUF or ns.oUF
 
 local cvars = {
     nameplateGlobalScale = .8, 
@@ -127,6 +128,6 @@ function mnkNames.OnNameplatesCallback(self)
     end
 end
 
-oUF:RegisterStyle("mnkNames", mnkNames.CreateStyle)
-oUF:SetActiveStyle("mnkNames")
-oUF:SpawnNamePlates("mnkNames", mnkNames.OnNameplatesCallback, cvars)
+mnkNames.oUF:RegisterStyle("mnkNames", mnkNames.CreateStyle)
+mnkNames.oUF:SetActiveStyle("mnkNames")
+mnkNames.oUF:SpawnNamePlates("mnkNames", mnkNames.OnNameplatesCallback, cvars)

@@ -38,8 +38,8 @@ function mnkXP.DoOnEnter(self)
 end
 
 function mnkXP:GetXPText()
-    local iRestXP = round((((GetXPExhaustion() or 0) / UnitXPMax('player')) * 100),0)
-    local restXP = format(TEXT('%.0f%%'), iRestXP)
+    local iRestXP = (((GetXPExhaustion() or 0) / UnitXPMax('player')) * 100) 
+    local restXP = format(TEXT('%.1f%%'), iRestXP)
     local currXP = format(TEXT('%.1f%%'), ((UnitXP('player') / UnitXPMax('player')) * 100))
 
     if UnitLevel('player') == GetMaxPlayerLevel() then
