@@ -51,8 +51,10 @@ tags['mnku:name'] = function(unit)
         return format('|cff%s%s|r', color, name)
     end
     name = UnitName(unit)
-    -- local color = _TAGS['mnku:color'](unit)
-    -- name = color and format('%s%s|r', color, name) or name
+    if unit == 'target' then
+        local color = _TAGS['raidcolor'](unit)
+        name = color and format('%s%s|r', color, name) or name
+    end
     local rare = _TAGS['shortclassification'](unit)
     return rare and format('%s |cff0090ff%s|r', name, rare) or name
 end

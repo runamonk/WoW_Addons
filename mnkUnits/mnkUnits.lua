@@ -95,7 +95,8 @@ local function MinimalUnit(self)
     if Config['show'..self.unit] then 
         CreateUnit(self)
         self.Name = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
-        self.Name:SetPoint('CENTER', self, 'CENTER')
+        self.Name:SetAllPoints(self)
+        self.Name:SetJustifyH("CENTER")
         self:Tag(self.Name, '[mnku:name]')
         self:SetWidth(200) 
     end   
