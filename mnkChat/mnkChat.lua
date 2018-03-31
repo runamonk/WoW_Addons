@@ -120,11 +120,14 @@ function mnkChat:DoOnEvent(event, ...)
 
     for i = 1, NUM_CHAT_WINDOWS do
         local f = _G["ChatFrame" .. i]
+        _G["ChatFrame"..i.."TabText"]:SetFont(mnkLibs.Fonts.oswald, 18, '')
+        _G["ChatFrame"..i.."TabText"]:SetTextColor(1,1,1)
+        _G["ChatFrame"..i.."TabText"]:SetVertexColor(1,1,1)
+        _G["ChatFrame"..i.."TabText"].SetTextColor = function () return end
+        _G["ChatFrame"..i.."TabText"].SetVertexColor = function () return end
+
         -- remove the tab textures.
-        for index, value in pairs(tabs) do
-            local texture = _G["ChatFrame" .. i..'Tab'..value]
-            texture:SetTexture("")
-        end
+        for index, value in pairs(tabs) do _G["ChatFrame" .. i..'Tab'..value]:SetTexture(nil) end
                 
         mnkChat.SetFrameSettings(f)
     end
