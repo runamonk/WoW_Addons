@@ -34,6 +34,7 @@ ChatFontNormal:SetShadowColor(0,0,0)
 hooks.FCF_OpenTemporaryWindow = FCF_OpenTemporaryWindow
 FCF_OpenTemporaryWindow = function(chatType, ...)
     local frame = hooks.FCF_OpenTemporaryWindow(chatType, ...)
+
     mnkChat.SetFrameSettings(frame)
     return frame
 end
@@ -122,25 +123,7 @@ function mnkChat:DoOnEvent(event, ...)
     --FriendsMicroButton:Hide()
     ChatFrameMenuButton:Hide() 
 
-    for i = 1, NUM_CHAT_WINDOWS do
-        local f = _G["ChatFrame" .. i]
-        _G["ChatFrame" .. i]:SetFont(mnkLibs.Fonts.ap, 14, '')
-        _G["ChatFrame" .. i].SetFont = function () return end
-        _G["ChatFrame"..i.."TabText"]:SetFont(mnkLibs.Fonts.oswald, 18, '')
-        _G["ChatFrame"..i.."TabText"]:SetShadowOffset(1,1)
-        _G["ChatFrame"..i.."TabText"]:SetShadowColor(0,0,0)
-        _G["ChatFrame"..i.."TabText"].SetShadowOffset = function () return end
-        _G["ChatFrame"..i.."TabText"].SetShadowColor = function () return end
-        _G["ChatFrame"..i.."TabText"]:SetTextColor(1,1,1)
-        _G["ChatFrame"..i.."TabText"]:SetVertexColor(1,1,1)
-        _G["ChatFrame"..i.."TabText"].SetTextColor = function () return end
-        _G["ChatFrame"..i.."TabText"].SetVertexColor = function () return end
-
-        -- remove the tab textures.
-        for index, value in pairs(tabs) do _G["ChatFrame" .. i..'Tab'..value]:SetTexture(nil) end
-                
-        mnkChat.SetFrameSettings(f)
-    end
+    for i = 1, NUM_CHAT_WINDOWS do mnkChat.SetFrameSettings(_G["ChatFrame" .. i]) end
 
     if string.sub(event, 1, 8) == 'CHAT_MSG' then
         PlaySoundFile(mnkLibs.Sounds.incoming_message, "Master")
@@ -189,7 +172,6 @@ function mnkChat:DoOnEvent(event, ...)
     end
     
     mnkChat.UpdateText()
-
 end
 
 local function OnHyperlinkEnter(frame, link, ...)
@@ -229,6 +211,22 @@ function mnkChat.SetFrameSettings(frame)
         _G[frame:GetName() .. "EditBox"]:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", -5, 0)
         _G[frame:GetName() .. "EditBox"]:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", 5, 0)
     end
+
+
+    _G[frame:GetName()]:SetFont(mnkLibs.Fonts.ap, 14, '')
+    _G[frame:GetName()].SetFont = function () return end
+    _G[frame:GetName().."TabText"]:SetFont(mnkLibs.Fonts.oswald, 18, '')
+    _G[frame:GetName().."TabText"]:SetShadowOffset(1,1)
+    _G[frame:GetName().."TabText"]:SetShadowColor(0,0,0)
+    _G[frame:GetName().."TabText"].SetShadowOffset = function () return end
+    _G[frame:GetName().."TabText"].SetShadowColor = function () return end
+    _G[frame:GetName().."TabText"]:SetTextColor(1,1,1)
+    _G[frame:GetName().."TabText"]:SetVertexColor(1,1,1)
+    _G[frame:GetName().."TabText"].SetTextColor = function () return end
+    _G[frame:GetName().."TabText"].SetVertexColor = function () return end
+    
+    -- remove the tab textures.
+    for index, value in pairs(tabs) do _G[frame:GetName()..'Tab'..value]:SetTexture(nil) end
 
 end
 
