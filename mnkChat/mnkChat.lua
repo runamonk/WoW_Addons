@@ -11,6 +11,7 @@ local hooks = {}
 local color = "0099FF"
 local foundurl = false
 local hideFrame = function (self) self:Hide() end
+local tabs = {"Left","Middle","Right","SelectedLeft","SelectedRight","SelectedMiddle","HighlightLeft","HighlightMiddle","HighlightRight"}
 SLASH_CLEAR_CHAT1 = "/clear"
 
 local StickyTypeChannels = {
@@ -118,7 +119,13 @@ function mnkChat:DoOnEvent(event, ...)
     ChatFrameMenuButton:Hide() 
 
     for i = 1, NUM_CHAT_WINDOWS do
-        local f = _G["ChatFrame" .. i] 
+        local f = _G["ChatFrame" .. i]
+        -- remove the tab textures.
+        for index, value in pairs(tabs) do
+            local texture = _G["ChatFrame" .. i..'Tab'..value]
+            texture:SetTexture("")
+        end
+                
         mnkChat.SetFrameSettings(f)
     end
 
