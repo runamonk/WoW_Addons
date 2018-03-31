@@ -207,20 +207,15 @@ function mnkChat.SetFrameSettings(frame)
 
     if GetCVar("chatStyle") == "classic" then
         _G[frame:GetName() .. "EditBox"]:ClearAllPoints()
-        _G[frame:GetName() .. "EditBox"]:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", -5, 0)
-        _G[frame:GetName() .. "EditBox"]:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", 5, 0)
-    else
-        _G[frame:GetName() .. "EditBox"]:ClearAllPoints()
-        _G[frame:GetName() .. "EditBox"]:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", -8, 0)
-        _G[frame:GetName() .. "EditBox"]:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", 8, 0)
+        _G[frame:GetName() .. "EditBox"]:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", 0, -3)
+        _G[frame:GetName() .. "EditBox"]:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", 3, 0)
     end
 
     SetBackdrop(_G[frame:GetName() .. "EditBox"],nil,1,1,1,1)
     local tex = { _G[frame:GetName() .. "EditBox"]:GetRegions()}
     for t = 6, #tex do tex[t]:SetAlpha(0) end
-    
     CreateBackground(_G[frame:GetName() .. "EditBox"])
-    --Hide the bone border
+
     _G[frame:GetName() .. "EditBoxLeft"]:Hide()
     _G[frame:GetName() .. "EditBoxMid"]:Hide()
     _G[frame:GetName() .. "EditBoxRight"]:Hide()
@@ -238,7 +233,6 @@ function mnkChat.SetFrameSettings(frame)
     
     -- remove the tab textures.
     for index, value in pairs(tabs) do _G[frame:GetName()..'Tab'..value]:SetTexture(nil) end
-
 end
 
 FloatingChatFrame_OnMouseScroll = function(self, dir)
