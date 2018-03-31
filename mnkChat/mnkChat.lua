@@ -127,6 +127,10 @@ function mnkChat:DoOnEvent(event, ...)
         _G["ChatFrame" .. i]:SetFont(mnkLibs.Fonts.ap, 14, '')
         _G["ChatFrame" .. i].SetFont = function () return end
         _G["ChatFrame"..i.."TabText"]:SetFont(mnkLibs.Fonts.oswald, 18, '')
+        _G["ChatFrame"..i.."TabText"]:SetShadowOffset(1,1)
+        _G["ChatFrame"..i.."TabText"]:SetShadowColor(0,0,0)
+        _G["ChatFrame"..i.."TabText"].SetShadowOffset = function () return end
+        _G["ChatFrame"..i.."TabText"].SetShadowColor = function () return end
         _G["ChatFrame"..i.."TabText"]:SetTextColor(1,1,1)
         _G["ChatFrame"..i.."TabText"]:SetVertexColor(1,1,1)
         _G["ChatFrame"..i.."TabText"].SetTextColor = function () return end
