@@ -26,6 +26,10 @@ local StickyTypeChannels = {
     CHANNEL = 1, 
 }
 
+ChatFontNormal:SetFont(mnkLibs.Fonts.ap, 14, '')
+ChatFontNormal:SetShadowOffset(1,1)
+ChatFontNormal:SetShadowColor(0,0,0)
+
 -- Stolen straight from PhanxChat.
 hooks.FCF_OpenTemporaryWindow = FCF_OpenTemporaryWindow
 FCF_OpenTemporaryWindow = function(chatType, ...)
@@ -120,6 +124,8 @@ function mnkChat:DoOnEvent(event, ...)
 
     for i = 1, NUM_CHAT_WINDOWS do
         local f = _G["ChatFrame" .. i]
+        _G["ChatFrame" .. i]:SetFont(mnkLibs.Fonts.ap, 14, '')
+        _G["ChatFrame" .. i].SetFont = function () return end
         _G["ChatFrame"..i.."TabText"]:SetFont(mnkLibs.Fonts.oswald, 18, '')
         _G["ChatFrame"..i.."TabText"]:SetTextColor(1,1,1)
         _G["ChatFrame"..i.."TabText"]:SetVertexColor(1,1,1)
