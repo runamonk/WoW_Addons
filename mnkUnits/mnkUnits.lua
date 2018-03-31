@@ -145,6 +145,8 @@ local function PlayerUnit(self)
         for i = 1, 10 do
             local f = CreateFrame('StatusBar', nil, self)
             if playerClass  == 'WARLOCK' then
+                f:SetStatusBarTexture(mnkLibs.Textures.combo_pentaarrow)
+            elseif playerClass == 'MAGE' then
                 f:SetStatusBarTexture(mnkLibs.Textures.combo_diamond)
             else
                 f:SetStatusBarTexture(mnkLibs.Textures.combo_round)
