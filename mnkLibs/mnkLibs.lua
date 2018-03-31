@@ -3,25 +3,26 @@ oUF = ns.oUF
 
 mnkLibs = CreateFrame('Frame')
 mnkLibs.Fonts = {
-    oswald = 'Interface\\AddOns\\mnkLibs\\Fonts\\oswald.ttf', 
-    abf = 'Interface\\AddOns\\mnkLibs\\Fonts\\abf.ttf', 
-    ap = 'Interface\\AddOns\\mnkLibs\\Fonts\\ap.ttf'
+    oswald  = 'Interface\\AddOns\\mnkLibs\\Fonts\\oswald.ttf', 
+    abf     = 'Interface\\AddOns\\mnkLibs\\Fonts\\abf.ttf', 
+    ap      = 'Interface\\AddOns\\mnkLibs\\Fonts\\ap.ttf'
 }
 
 mnkLibs.Textures = {
-    background = 'Interface\\AddOns\\mnkLibs\\Assets\\background', 
-    bar = 'Interface\\AddOns\\mnkLibs\\Assets\\bar', 
-    border = 'Interface\\AddOns\\mnkLibs\\Assets\\border', 
-    chatframe = 'Interface\\ChatFrame\\ChatFrameBackground',
-    combo_diamond = 'Interface\\AddOns\\mnkLibs\\Assets\\combo_diamond',
-    combo_round = 'Interface\\AddOns\\mnkLibs\\Assets\\combo_round',
-    icon_new = 'Interface\\AddOns\\mnkLibs\\Assets\\icon_new', 
-    icon_none = 'Interface\\AddOns\\mnkLibs\\Assets\\icon_none'
+    background          = 'Interface\\AddOns\\mnkLibs\\Assets\\background', 
+    bar                 = 'Interface\\AddOns\\mnkLibs\\Assets\\bar', 
+    border              = 'Interface\\AddOns\\mnkLibs\\Assets\\border', 
+    chatframe           = 'Interface\\ChatFrame\\ChatFrameBackground',
+    combo_diamond       = 'Interface\\AddOns\\mnkLibs\\Assets\\combo_diamond',
+    combo_pentaarrow    = 'Interface\\AddOns\\mnkLibs\\Assets\\combo_pentaarrow',
+    combo_round         = 'Interface\\AddOns\\mnkLibs\\Assets\\combo_round',
+    icon_new            = 'Interface\\AddOns\\mnkLibs\\Assets\\icon_new', 
+    icon_none           = 'Interface\\AddOns\\mnkLibs\\Assets\\icon_none'
 }
 
 mnkLibs.Sounds = {
-    friend_online = 'Interface\\AddOns\\mnkLibs\\Assets\\snd_friend_online.ogg', 
-    incoming_message = 'Interface\\AddOns\\mnkLibs\\Assets\\snd_incoming_message.ogg'
+    friend_online       = 'Interface\\AddOns\\mnkLibs\\Assets\\snd_friend_online.ogg', 
+    incoming_message    = 'Interface\\AddOns\\mnkLibs\\Assets\\snd_incoming_message.ogg'
 }
 
 COLOR_GREEN = {r = 153, g = 255, b = 0}
