@@ -107,10 +107,7 @@ local function PostCreateIcon(Auras, button)
     button.overlay:SetTexture(mnkLibs.Textures.border)
     button.overlay:SetTexCoord(0, 1, 0, 1)
     button.overlay.Hide = function(self) self:SetVertexColor(0.3, 0.3, 0.3) end
-    button.auras = Auras
-    button:SetScript('OnClick', function(self, btn)
-        CancelUnitBuff('player', self:GetName():match('%d'))
-    end)
+    button:SetScript('OnClick', function(self, button) CancelUnitBuff('player', self:GetName():match('%d')) end)
 end
 
 local function PostUpdateCast(element, unit)
