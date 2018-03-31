@@ -145,9 +145,11 @@ end
 
 local function PetUnit(self)
     if Config.showpet then
-        CreateUnit(self)
-        self.PetHealth = CreateFontString(self.Health, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
-        self.PetHealth:SetPoint('LEFT', self, 2, 0)
+        self:RegisterForClicks('AnyUp')
+        self:SetScript('OnEnter', UnitFrame_OnEnter)
+        self:SetScript('OnLeave', UnitFrame_OnLeave)
+        self.PetHealth = CreateFontString(self, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
+        self.PetHealth:SetPoint('CENTER', self, 0, 0)
         self:Tag(self.PetHealth, '[mnku:pethp]')
         self:SetSize(36, oUF_mnkUnitsPlayer:GetHeight())
         self:SetScale(oUF_mnkUnitsPlayer:GetScale())
