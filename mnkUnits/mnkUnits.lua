@@ -226,8 +226,8 @@ local function PlayerUnit(self)
         self.ThreatIndicator.Override = UpdateThreat
         self.Auras = CreateFrame('Frame', nil, self)
         self.Auras.spacing = 1
-        self.Auras.numTotal = 12
-        self.Auras:SetPoint('LEFT', self, 'LEFT', -1, 0)
+        self.Auras.numTotal = 14
+        self.Auras:SetPoint('LEFT', self, 'LEFT', -9, 0)
         self.Auras:SetPoint('BOTTOM', self, 'TOP', 0 , 5)
         self.Auras:SetSize(self.Health:GetWidth(), 16)
         self.Auras.PostCreateIcon = PostCreateIcon
