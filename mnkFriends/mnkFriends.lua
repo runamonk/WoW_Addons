@@ -64,14 +64,14 @@ function mnkFriends.DoOnEnter(self)
         local _, presenceName, battleTag, _, toonName, toonID, _, isOnline, lastOnline, _, _, _, noteText, _, _, _ = BNGetFriendInfo(x)
 
         if isOnline then
-            local _, _, client, _, _, _, _, class, _, zoneName, level, _, _, _, _, _, _, _, _ = BNGetGameAccountInfo(toonID)
+            local _, _, client, realmName, _, _, _, class, _, zoneName, level, _, _, _, _, _, _, _, _ = BNGetGameAccountInfo(toonID)
 
             --unknown, toonName, client, realmName, realmID, faction, race, class, unknown, zoneName, level, gameText, broadcastText, broadcastTime, unknown, presenceID
             --local  _, _, client, _, _, _, _, class, _, zoneName, level, _, _, _, _, _ = BNGetToonInfo(toonID);
 
             if client == 'WoW' then 
                 local y, x = tooltip:AddLine(string.format('|T%s:16|t', WOW_ICON)..format('|cff%s%s', colors[class:gsub(' ', ''):upper()] or 'ffffff', presenceName..' ('..toonName..')'), level, zoneName, noteText)
-                tooltip:SetLineScript(y, 'OnMouseDown', mnkFriends.DoOnMouseDown, toonName)
+                tooltip:SetLineScript(y, 'OnMouseDown', mnkFriends.DoOnMouseDown, toonName..'-'..realmName)
             else
                 local y, x = tooltip:AddLine(string.format('|T%s:16|t', BNET_ICON)..presenceName, '', '', noteText)
                 tooltip:SetLineScript(y, 'OnMouseDown', mnkFriends.DoOnMouseDown, presenceName)
