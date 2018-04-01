@@ -13,6 +13,7 @@ function mnkDurability:DoOnEvent(event)
             OnClick = mnkDurability.DoOnClick
         })
         self.LDB.label = 'Durability'
+        
     elseif event == 'MERCHANT_SHOW' then
         local c = GetRepairAllCost()
 
@@ -24,7 +25,15 @@ function mnkDurability:DoOnEvent(event)
         --guild repairs.
         --GetGuildBankWithdrawMoney()
         --RepairAllItems(1)   
+    elseif event == 'PLAYER_ENTERING_WORLD' then
+        mnkDurability:RegisterEvent('UPDATE_INVENTORY_DURABILITY')
+        mnkDurability:RegisterEvent('UPDATE_INVENTORY_ALERTS')
+        --mnkDurability:RegisterEvent('UNIT_INVENTORY_CHANGED')
+        mnkDurability:RegisterEvent('EQUIPMENT_SWAP_FINISHED')
+        mnkDurability:RegisterEvent('ITEM_UPGRADE_MASTER_UPDATE')
+        mnkDurability:RegisterEvent('MERCHANT_SHOW')        
     end
+
     self.LDB.text = self.GetText()
 end
 
@@ -165,7 +174,6 @@ function mnkDurability:GetText()
     local Current = 0
     local Lowest = 100
     local Percent = 100
-
     
     mnkDurability.AddInventory(1, 'Head')
     mnkDurability.AddInventory(2, 'Neck')
@@ -207,9 +215,4 @@ end
 
 mnkDurability:SetScript('OnEvent', mnkDurability.DoOnEvent)
 mnkDurability:RegisterEvent('PLAYER_LOGIN')
-mnkDurability:RegisterEvent('UPDATE_INVENTORY_DURABILITY')
-mnkDurability:RegisterEvent('UPDATE_INVENTORY_ALERTS')
-mnkDurability:RegisterEvent('UNIT_INVENTORY_CHANGED')
-mnkDurability:RegisterEvent('EQUIPMENT_SWAP_FINISHED')
-mnkDurability:RegisterEvent('ITEM_UPGRADE_MASTER_UPDATE')
-mnkDurability:RegisterEvent('MERCHANT_SHOW')
+mnkDurability:RegisterEvent('PLAYER_ENTERING_WORLD')
