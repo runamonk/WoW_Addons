@@ -9,7 +9,17 @@ Config = {
     showplayer = true,
     showpet = true,
     showtarget = true,
-    showtargettarget = false
+    showtargettarget = false,
+    showboss1 = true,
+    showboss2 = true,
+    showboss3 = true,
+    showboss4 = true,
+    showboss5 = true,
+    showarena1 = true,
+    showarena2 = true,
+    showarena3 = true,
+    showarena4 = true,
+    showarena5 = true
 }
 
 local function CreateCastBar(self)
@@ -271,6 +281,36 @@ function mnkUnits.CreateUnits(self, unit)
     end
 end
 
+--Based on code from Phanx, thanks Phanx!
+local function UpdateMirrorBars()
+    for i = 1, 3 do
+        local barname = "MirrorTimer" .. i
+        local bar = _G[barname]
+
+        for _, region in pairs({ bar:GetRegions() }) do
+            if region.GetTexture and region:GetTexture() == "SolidTexture" then
+                region:Hide()
+            end
+        end
+        bar:SetParent(UIParent)
+        bar:SetWidth(200)
+        bar:SetHeight(20)
+        bar.bar = bar:GetChildren()
+        bar.bg, bar.text, bar.border = bar:GetRegions()
+        bar.bar:SetAllPoints(bar)
+        bar.bar:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
+        bar.bg:ClearAllPoints()
+        bar.bg:SetAllPoints(bar)
+        bar.bg:SetTexture(mnkLibs.Textures.background)
+        bar.bg:SetVertexColor(0.2, 0.2, 0.2, 1)
+        bar.text:ClearAllPoints()
+        bar.text:SetPoint("LEFT", bar, 4, 0)
+        bar.text:SetFont(mnkLibs.Fonts.oswald, 18, 'OUTLINE')
+        bar.border:Hide()
+        SetBackdrop(bar, nil, 1, 1, 1, 1)
+    end
+end
+
 function mnkUnits:DoOnEvent(event, arg1, arg2)
     if event == 'PLAYER_ENTERING_WORLD' then
         BuffFrame:UnregisterEvent("UNIT_AURA")
@@ -282,6 +322,7 @@ function mnkUnits:DoOnEvent(event, arg1, arg2)
         CompactRaidFrameContainer:Hide()
         CompactRaidFrameContainer:Hide()
         CreateBottomPanel()
+        UpdateMirrorBars()
     end
 end
 
