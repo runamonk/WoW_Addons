@@ -32,12 +32,17 @@ tags['mnku:leader'] = function(unit)
     return UnitIsGroupLeader(unit) and '|cffffff00!|r'
 end
 tags['mnku:level'] = function(unit)
-     local l = UnitLevel(unit)
-     local d = GetQuestDifficultyColor(l)
+    local l = UnitLevel(unit)
+    local d = GetQuestDifficultyColor(l)
+    local s = nil
 
-     if l <= 0 then l = '??' end
-
-     return string.format('|cff%02x%02x%02x%s|r', d.r * 255, d.g * 255, d.b * 255, l)
+    if l <= 0 then 
+        l = '??'
+        s = Color(COLOR_RED)..l
+    else
+        s = Hex(d)..l
+    end
+    return s     
 end
 tags['mnku:name'] = function(unit)
     -- local name, _, _, _, _, _, _, _, notInterruptible = UnitCastingInfo(unit)
