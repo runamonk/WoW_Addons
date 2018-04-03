@@ -4,7 +4,8 @@ mnkDurability.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 local LibQTip = LibStub('LibQTip-1.0')
 local t = {}
 
-function mnkDurability:DoOnEvent(event)
+function mnkDurability:DoOnEvent(event, arg1)
+   
     if event == 'PLAYER_LOGIN' then
         mnkDurability.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkDurability', {
             icon = 'Interface\\Icons\\Inv_chest_plate15.blp', 
@@ -13,25 +14,24 @@ function mnkDurability:DoOnEvent(event)
             OnClick = mnkDurability.DoOnClick
         })
         self.LDB.label = 'Durability'
-        
     elseif event == 'MERCHANT_SHOW' then
         local c = GetRepairAllCost()
 
         if GetMoney() >= c and c > 0 then
             RepairAllItems()
             print('Gear repaired for: '..GetCoinTextureString(c))
-        end
-
+        
         --guild repairs.
         --GetGuildBankWithdrawMoney()
         --RepairAllItems(1)   
+        end
+        -- UNIT_INVENTORY_CHANGED happens a jillion times. We only need it to happen for player, at least then we know that
+        -- player's items have been loaded and we can actually get item info and durability info. Then unregister it. Otherwise it will fire
+        -- so much it will kill the clients fps and loading times.
     elseif event == 'PLAYER_ENTERING_WORLD' then
-        mnkDurability:RegisterEvent('UPDATE_INVENTORY_DURABILITY')
-        mnkDurability:RegisterEvent('UPDATE_INVENTORY_ALERTS')
-        --mnkDurability:RegisterEvent('UNIT_INVENTORY_CHANGED')
-        mnkDurability:RegisterEvent('EQUIPMENT_SWAP_FINISHED')
-        mnkDurability:RegisterEvent('ITEM_UPGRADE_MASTER_UPDATE')
-        mnkDurability:RegisterEvent('MERCHANT_SHOW')        
+        mnkDurability:RegisterEvent('UNIT_INVENTORY_CHANGED')    
+    elseif event == 'UNIT_INVENTORY_CHANGED' and arg1 == 'player' then
+        mnkDurability:UnregisterEvent('UNIT_INVENTORY_CHANGED')
     end
 
     self.LDB.text = self.GetText()
@@ -83,7 +83,6 @@ function mnkDurability.DoOnEnter(self)
 end
 
 function mnkDurability.DoOnMouseDown(self, arg, button) 
-    --ChatFrame_SendSmartTell(arg);
     ChatEdit_InsertLink(arg)
 end
 
@@ -170,6 +169,7 @@ function mnkDurability.GetItemLevel(slotID)
 end
 
 function mnkDurability:GetText()
+    t = {}
     local Total = 0
     local Current = 0
     local Lowest = 100
@@ -216,3 +216,8 @@ end
 mnkDurability:SetScript('OnEvent', mnkDurability.DoOnEvent)
 mnkDurability:RegisterEvent('PLAYER_LOGIN')
 mnkDurability:RegisterEvent('PLAYER_ENTERING_WORLD')
+mnkDurability:RegisterEvent('UPDATE_INVENTORY_DURABILITY')
+mnkDurability:RegisterEvent('UPDATE_INVENTORY_ALERTS')
+mnkDurability:RegisterEvent('EQUIPMENT_SWAP_FINISHED')
+mnkDurability:RegisterEvent('ITEM_UPGRADE_MASTER_UPDATE')
+mnkDurability:RegisterEvent('MERCHANT_SHOW')   
