@@ -188,14 +188,6 @@ local function PlayerUnit(self)
             local f = CreateFrame('StatusBar', nil, self)
             f:SetStatusBarTexture(mnkLibs.Textures.combo_round)
             f:SetSize(16, 16)
-            -- if playerClass  == 'WARLOCK' then
-            --     f:SetStatusBarTexture(mnkLibs.Textures.combo_pentaarrow)
-            -- elseif playerClass == 'MAGE' then
-            --     f:SetStatusBarTexture(mnkLibs.Textures.combo_diamond)
-            -- else
-            --    f:SetStatusBarTexture(mnkLibs.Textures.combo_round)
-            --end
-            
 
             local n = CreateFontString(f, mnkLibs.Fonts.oswald, 10, nil, nil, false)
             n:SetPoint('CENTER', f, 0, 0)
