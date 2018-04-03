@@ -258,8 +258,8 @@ local function PartyUnit(self)
         self.GroupRoleIndicator:SetPoint('LEFT', self, 'RIGHT', 3, 0)
         self.GroupRoleIndicator:SetSize(14, 14)
         self.GroupRoleIndicator:SetAlpha(0)
-        self:HookScript('OnEnter', function() RoleIcon:SetAlpha(1) end)
-        self:HookScript('OnLeave', function() RoleIcon:SetAlpha(0) end)
+        self:HookScript('OnEnter', function() self.GroupRoleIndicator:SetAlpha(1) end)
+        self:HookScript('OnLeave', function() self.GroupRoleIndicator:SetAlpha(0) end)
     end
 end
 
