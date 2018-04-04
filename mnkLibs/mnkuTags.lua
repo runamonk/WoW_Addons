@@ -14,6 +14,7 @@ events['mnku:status']   = 'UNIT_CONNECTION UNIT_HEALTH'
 tags['mnku:cast'] = function(unit)
     return UnitCastingInfo(unit) or UnitChannelInfo(unit)
 end
+
 tags['mnku:color'] = function(unit)
     local reaction = UnitReaction(unit, 'player')
     if (UnitIsTapDenied(unit) or not UnitIsConnected(unit)) then
@@ -24,13 +25,16 @@ tags['mnku:color'] = function(unit)
         return '|cffff0000'
     end
 end
+
 tags['mnku:curhp'] = function(unit)
     if (Status(unit)) then return end
     return TruncNumber(UnitHealth(unit), 2)
 end
+
 tags['mnku:leader'] = function(unit)
     return UnitIsGroupLeader(unit) and '|cffffff00!|r'
 end
+
 tags['mnku:level'] = function(unit)
     local l = UnitLevel(unit)
     local d = GetQuestDifficultyColor(l)
@@ -44,6 +48,7 @@ tags['mnku:level'] = function(unit)
     end
     return s     
 end
+
 tags['mnku:name'] = function(unit)
     -- local name, _, _, _, _, _, _, _, notInterruptible = UnitCastingInfo(unit)
     -- if (name) then
@@ -63,6 +68,7 @@ tags['mnku:name'] = function(unit)
     local rare = _TAGS['shortclassification'](unit)
     return rare and format('%s |cff0090ff%s|r', name, rare) or name
 end
+
 tags['mnku:perhp'] = function(unit)
     if (Status(unit)) then return end
 
@@ -75,6 +81,7 @@ tags['mnku:perhp'] = function(unit)
         return DEAD_TEXTURE
     end
 end
+
 tags['mnku:pethp'] = function(unit)
     if (UnitIsUnit(unit, 'vehicle')) then return end
     local cur = UnitHealth(unit)
@@ -85,6 +92,7 @@ tags['mnku:pethp'] = function(unit)
         return DEAD_TEXTURE
     end
 end
+
 tags['mnku:status'] = function(unit)
     return Status(unit)
 end

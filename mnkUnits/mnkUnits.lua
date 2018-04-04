@@ -90,21 +90,6 @@ local function CreateBottomPanel()
     pbackRight:Show()  
 end
 
-local function CreateUnit(self)
-    self:RegisterForClicks('AnyUp')
-    self:SetScript('OnEnter', UnitFrame_OnEnter)
-    self:SetScript('OnLeave', UnitFrame_OnLeave)
-    self:SetBackdrop({bgFile = 'Interface\\ChatFrame\\ChatFrameBackground', insets = {top = -1, bottom = -1, left = -1, right = -1}})
-    self:SetBackdropColor(0, 0, 0)
-    self:SetSize(160, 20)
-    self.Health = CreateHealthBar(self)
-    self.Health:SetHeight(20)
-    self.Health:SetPoint('TOPRIGHT')
-    self.Health:SetPoint('TOPLEFT')
-    self.frameValues = CreateFrame('Frame', nil, self)
-    self.frameValues:SetFrameLevel(20)
-end
-
 local function PostCreateIcon(Auras, button)
     local count = button.count
     count:ClearAllPoints()
@@ -129,6 +114,19 @@ local function PostUpdateCast(element, unit)
     end
 end
 
+local function SetFlagVis(self)
+    if UnitIsAFK(self.unit) then
+        self.flagAFK:Show()
+    else
+        self.flagAFK:Hide()   
+    end
+    if UnitIsDND(self.unit) then
+        self.flagDND:Show()
+    else
+        self.flagDND:Hide()   
+    end          
+end
+
 local function UpdateThreat(self, event, unit)
     if (unit ~= self.unit) then
         return
@@ -143,6 +141,21 @@ local function UpdateThreat(self, event, unit)
     end
 end
 
+local function CreateUnit(self)
+    self:RegisterForClicks('AnyUp')
+    self:SetScript('OnEnter', UnitFrame_OnEnter)
+    self:SetScript('OnLeave', UnitFrame_OnLeave)
+    self:SetBackdrop({bgFile = 'Interface\\ChatFrame\\ChatFrameBackground', insets = {top = -1, bottom = -1, left = -1, right = -1}})
+    self:SetBackdropColor(0, 0, 0)
+    self:SetSize(160, 20)
+    self.Health = CreateHealthBar(self)
+    self.Health:SetHeight(20)
+    self.Health:SetPoint('TOPRIGHT')
+    self.Health:SetPoint('TOPLEFT')
+    self.frameValues = CreateFrame('Frame', nil, self)
+    self.frameValues:SetFrameLevel(20)
+end
+
 local function MinimalUnit(self)
     if Config['show'..self.unit] then 
         CreateUnit(self)
@@ -150,7 +163,7 @@ local function MinimalUnit(self)
         self.Name:SetAllPoints(self)
         self.Name:SetJustifyH("CENTER")
         self:Tag(self.Name, '[mnku:name]')
-        self:SetWidth(200) 
+        self:SetWidth(200)
     end   
 end
 
@@ -173,15 +186,20 @@ local function PlayerUnit(self)
         self.HealthValue = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, '')
         self.HealthValue:SetPoint('LEFT', self.Health, 1, 1)
         self:Tag(self.HealthValue, '[mnku:status][mnku:perhp] [mnku:curhp]') 
-
         self.isResting = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, nil, nil, true)
         self.isResting:SetPoint('RIGHT', self, 'RIGHT', 0, 1)
         self:Tag(self.isResting, '[|cFFFFFF00>resting<|r]')
-        
         self.flagPVP = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
         self.flagPVP:SetPoint('RIGHT', self.isResting, 'LEFT', -2, 0)
         self:Tag(self.flagPVP, '[|cffff0000>pvp<|r]') 
+        self.flagAFK = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
+        self.flagAFK:SetPoint('RIGHT', self.flagPVP, 'LEFT', 1, 0)
+        self.flagAFK:SetText(Color(COLOR_BLUE)..'AFK')
+        self.flagDND = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
+        self.flagDND:SetPoint('RIGHT', self.flagPVP, 'LEFT', 1, 0)
+        self.flagDND:SetText(Color(COLOR_BLUE)..'DND')
         
+        SetFlagVis(self)
 
         local t = {} 
         for i = 1, 10 do
@@ -212,7 +230,9 @@ local function PlayerUnit(self)
         self.flagCombat:Hide()
         self:RegisterEvent('PLAYER_REGEN_ENABLED', function(unit) unit.flagCombat:Hide() end)
         self:RegisterEvent('PLAYER_REGEN_DISABLED', function(unit) unit.flagCombat:Show() end)
+        self:RegisterEvent('PLAYER_FLAGS_CHANGED', function(self) SetFlagVis(self) end)
 
+        -- #TODO tracker PLAYER_FLAGS_CHANGED. for dnd/afk check UnitIsAFK/UnitIsDND
         self.Power = CreateFrame('StatusBar', nil, self.Health)
         self.Power:SetPoint('BOTTOMRIGHT')
         self.Power:SetPoint('BOTTOMLEFT')
