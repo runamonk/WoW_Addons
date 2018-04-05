@@ -52,7 +52,7 @@ end
 
 local function CreateBottomPanel()
     local pback = CreateFrame('Frame', 'mnkBottom', UIParent)
-    SetBackdrop(pback, nil, nil, false, 1, 1, 1, 1)
+    SetBackdrop(pback, nil, nil, 1, 1, 1, 1)
     pback:SetBackdropColor(0, 0, 0, 0.8)
     pback:SetHeight(170)
     pback:SetWidth(UIParent:GetWidth())
@@ -62,7 +62,7 @@ local function CreateBottomPanel()
     pback:Show()
 
     local pplayer = CreateFrame('Frame', 'mnkBottom', UIParent)
-    SetBackdrop(pplayer, nil, nil, false, 1, 1, 1, 1)
+    SetBackdrop(pplayer, nil, nil, 1, 1, 1, 1)
     pplayer:SetBackdropColor(0, 0, 0, 0.8)
     pplayer:SetHeight(60)
     pplayer:SetWidth(300)
@@ -72,7 +72,7 @@ local function CreateBottomPanel()
     pplayer:Show()
 
     local pbackLeft = CreateFrame('Frame', 'mnkButtonsLeft', pback)
-    SetBackdrop(pbackLeft, nil, nil, false, 1, 1, 1, 1)
+    SetBackdrop(pbackLeft, nil, nil, 1, 1, 1, 1)
     pbackLeft:SetBackdropColor(1/5, 1/5, 1/5, 0.8)
     pbackLeft:SetHeight(130)
     pbackLeft:SetWidth(469)
@@ -82,7 +82,7 @@ local function CreateBottomPanel()
     pbackLeft:Show()  
 
     local pbackRight = CreateFrame('Frame', 'mnkButtonsRight', pback)
-    SetBackdrop(pbackRight, nil, nil, false, 1, 1, 1, 1)
+    SetBackdrop(pbackRight, nil, nil, 1, 1, 1, 1)
     pbackRight:SetBackdropColor(1/5, 1/5, 1/5, 0.8)
     pbackRight:SetHeight(130)
     pbackRight:SetWidth(469)
@@ -251,7 +251,7 @@ local function PlayerUnit(self)
         self.ThreatIndicator:SetPoint('TOPRIGHT', 2, 2)
         self.ThreatIndicator:SetPoint('BOTTOMLEFT', -2, -2)
         self.ThreatIndicator:SetFrameStrata('BACKGROUND')
-        SetBackdrop(self.ThreatIndicator, mnkLibs.Textures.background, nil,  false, 0, 0, 0, 0)
+        SetBackdrop(self.ThreatIndicator, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
         self.ThreatIndicator.Override = UpdateThreat
         self.Auras = CreateFrame('Frame', nil, self)
         self.Auras.spacing = 1
@@ -324,7 +324,7 @@ local function UpdateMirrorBars()
         bar.text:SetPoint("LEFT", bar, 4, 0)
         bar.text:SetFont(mnkLibs.Fonts.oswald, 18, 'OUTLINE')
         bar.border:Hide()
-        SetBackdrop(bar, nil, nil, false, 1, 1, 1, 1)
+        SetBackdrop(bar, nil, nil, 1, 1, 1, 1)
     end
 end
 
