@@ -81,7 +81,7 @@ local function CreateBottomPanel()
     pbackLeft:SetPoint('BOTTOM', 0, 0)
     pbackLeft:SetPoint('LEFT', 530, 0)
     pbackLeft:SetFrameStrata('LOW')
-    CreateBorder(pbackLeft, 0, 0, 0, 0, {classColor.r, classColor.g, classColor.b, .5})
+    CreateBorder(pbackLeft, 0, -1, 0, 0, {classColor.r, classColor.g, classColor.b, .5})
     pbackLeft:Show()  
 
     local pbackRight = CreateFrame('Frame', 'mnkButtonsRight', pback)
@@ -92,7 +92,7 @@ local function CreateBottomPanel()
     pbackRight:SetPoint('BOTTOM', 0, 0)
     pbackRight:SetPoint('LEFT', 1235, 0)
     pbackRight:SetFrameStrata('LOW')
-    CreateBorder(pbackRight, 0, 0, 0, 0, {classColor.r, classColor.g, classColor.b, .5})
+    CreateBorder(pbackRight, 0, -1, 0, 0, {classColor.r, classColor.g, classColor.b, .5})
     pbackRight:Show()  
 end
 
