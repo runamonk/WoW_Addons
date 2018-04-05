@@ -143,13 +143,15 @@ function CreateDropShadow(frame, point, edge, color)
     shadow:SetBackdropBorderColor(unpack(color))
 end
 
-
-function SetBackdrop(self, bgfile, inset_l, inset_r, inset_t, inset_b)
+function SetBackdrop(self, bgfile, edgefile, border, inset_l, inset_r, inset_t, inset_b)
     if not bgFile then
         bgfile = 'Interface\\ChatFrame\\ChatFrameBackground'
-    end 
+    end
+
     self:SetBackdrop {
-        bgFile = bgfile, 
+        bgFile = bgfile,
+        edgeFile = edgefile, 
+        edgeSize = 1,
         tile = false, 
         tileSize = 0, 
         insets = {
@@ -158,7 +160,22 @@ function SetBackdrop(self, bgfile, inset_l, inset_r, inset_t, inset_b)
             top = -inset_t, 
             bottom = -inset_b
         }}
+        if border then
+            CreateBorder(self, 0, 0, 0, 0, {1,0,0})
+        end
+
     self:SetBackdropColor(0, 0, 0, 1)
+end
+
+function CreateBorder(parent, top, bottom, left, right, color)
+    parent.border = CreateFrame("Frame", nil, parent)
+    parent.border:SetPoint('TOP', top, top)
+    parent.border:SetPoint('BOTTOM', bottom, bottom)
+    parent.border:SetPoint('LEFT', left, left)
+    parent.border:SetPoint('RIGHT', right, right)
+    
+    parent.border:SetBackdrop({ edgeFile = [[Interface\Buttons\WHITE8x8]], edgeSize = 1 })
+    parent.border:SetBackdropBorderColor(unpack(color)) 
 end
 
 function CreateBackground(self)
