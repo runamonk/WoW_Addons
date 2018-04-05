@@ -52,25 +52,27 @@ end
 
 local function CreateBottomPanel()
     local pback = CreateFrame('Frame', 'mnkBottom', UIParent)
-    SetBackdrop(pback, nil, 1, 1, 1, 1)
+    SetBackdrop(pback, nil, nil, false, 1, 1, 1, 1)
     pback:SetBackdropColor(0, 0, 0, 0.8)
     pback:SetHeight(170)
     pback:SetWidth(UIParent:GetWidth())
     pback:SetPoint('BOTTOM',0,0)
     pback:SetFrameStrata('BACKGROUND')
+    CreateBorder(pback, 1, -3, -3, 3, {1/5, 1/5, 1/5, 0.8})
     pback:Show()
 
     local pplayer = CreateFrame('Frame', 'mnkBottom', UIParent)
-    SetBackdrop(pplayer, nil, 1, 1, 1, 1)
+    SetBackdrop(pplayer, nil, nil, false, 1, 1, 1, 1)
     pplayer:SetBackdropColor(0, 0, 0, 0.8)
     pplayer:SetHeight(60)
     pplayer:SetWidth(300)
-    pplayer:SetPoint('BOTTOM',0,170)
+    pplayer:SetPoint('BOTTOM',0,171)
     pplayer:SetFrameStrata('BACKGROUND')
+    CreateBorder(pplayer, 1, -1, -1, 1, {1/5, 1/5, 1/5, 0.8})
     pplayer:Show()
 
     local pbackLeft = CreateFrame('Frame', 'mnkButtonsLeft', pback)
-    SetBackdrop(pbackLeft, nil, 1, 1, 1, 1)
+    SetBackdrop(pbackLeft, nil, nil, false, 1, 1, 1, 1)
     pbackLeft:SetBackdropColor(1/5, 1/5, 1/5, 0.8)
     pbackLeft:SetHeight(130)
     pbackLeft:SetWidth(469)
@@ -80,7 +82,7 @@ local function CreateBottomPanel()
     pbackLeft:Show()  
 
     local pbackRight = CreateFrame('Frame', 'mnkButtonsRight', pback)
-    SetBackdrop(pbackRight, nil, 1, 1, 1, 1)
+    SetBackdrop(pbackRight, nil, nil, false, 1, 1, 1, 1)
     pbackRight:SetBackdropColor(1/5, 1/5, 1/5, 0.8)
     pbackRight:SetHeight(130)
     pbackRight:SetWidth(469)
@@ -147,6 +149,7 @@ local function CreateUnit(self)
     self:SetScript('OnLeave', UnitFrame_OnLeave)
     self:SetBackdrop({bgFile = 'Interface\\ChatFrame\\ChatFrameBackground', insets = {top = -1, bottom = -1, left = -1, right = -1}})
     self:SetBackdropColor(0, 0, 0)
+
     self:SetSize(160, 20)
     self.Health = CreateHealthBar(self)
     self.Health:SetHeight(20)
@@ -213,9 +216,9 @@ local function PlayerUnit(self)
             n:SetTextColor(0, 0, 0)
             
             if (i == 1) then
-                f:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 0, -4)
+                f:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 0, -2)
             else
-                f:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', ((f:GetWidth() + 2) * (i - 1)), -4)
+                f:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', ((f:GetWidth() + 2) * (i - 1)), -2)
             end
             
             t[i] = f
@@ -248,7 +251,7 @@ local function PlayerUnit(self)
         self.ThreatIndicator:SetPoint('TOPRIGHT', 2, 2)
         self.ThreatIndicator:SetPoint('BOTTOMLEFT', -2, -2)
         self.ThreatIndicator:SetFrameStrata('BACKGROUND')
-        SetBackdrop(self.ThreatIndicator, mnkLibs.Textures.border, 0, 0, 0, 0)
+        SetBackdrop(self.ThreatIndicator, mnkLibs.Textures.background, nil,  false, 0, 0, 0, 0)
         self.ThreatIndicator.Override = UpdateThreat
         self.Auras = CreateFrame('Frame', nil, self)
         self.Auras.spacing = 1
@@ -321,7 +324,7 @@ local function UpdateMirrorBars()
         bar.text:SetPoint("LEFT", bar, 4, 0)
         bar.text:SetFont(mnkLibs.Fonts.oswald, 18, 'OUTLINE')
         bar.border:Hide()
-        SetBackdrop(bar, nil, 1, 1, 1, 1)
+        SetBackdrop(bar, nil, nil, false, 1, 1, 1, 1)
     end
 end
 

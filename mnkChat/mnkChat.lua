@@ -211,11 +211,11 @@ function mnkChat.SetFrameSettings(frame)
         _G[frame:GetName() .. "EditBox"]:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", 3, 0)
     end
 
-    SetBackdrop(_G[frame:GetName() .. "EditBox"],nil,1,1,1,1)
+    SetBackdrop(_G[frame:GetName() .. "EditBox"],nil,nil,false,1,3,3,3)
     local tex = { _G[frame:GetName() .. "EditBox"]:GetRegions()}
     for t = 6, #tex do tex[t]:SetAlpha(0) end
     CreateBackground(_G[frame:GetName() .. "EditBox"])
-
+    CreateBorder(_G[frame:GetName() .. "EditBox"], 0, 0, 0, 0, {1/5, 1/5, 1/5, 0.8})
     _G[frame:GetName() .. "EditBoxLeft"]:Hide()
     _G[frame:GetName() .. "EditBoxMid"]:Hide()
     _G[frame:GetName() .. "EditBoxRight"]:Hide()
