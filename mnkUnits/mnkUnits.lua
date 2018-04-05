@@ -186,6 +186,7 @@ end
 local function PlayerUnit(self)
     if Config.showplayer then
         CreateUnit(self)
+        self:SetSize(160, 22)
         self.HealthValue = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, '')
         self.HealthValue:SetPoint('LEFT', self.Health, 1, 1)
         self:Tag(self.HealthValue, '[mnku:status][mnku:perhp] [mnku:curhp]') 
@@ -247,6 +248,17 @@ local function PlayerUnit(self)
         self.Power.colorTapping = false
         self.Power.colorDisconnected = false
         self.Power.colorReaction = false 
+        self.AdditionalPower = CreateFrame('StatusBar', nil,  self.Power)
+        self.AdditionalPower:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
+        self.AdditionalPower:SetHeight(2)
+        self.AdditionalPower:SetPoint('TOP',self.Power, 'BOTTOM', 0, 0)
+        self.AdditionalPower:SetPoint('LEFT')
+        self.AdditionalPower:SetPoint('RIGHT')
+        self.AdditionalPower.colorPower = true
+        self.AdditionalPower.bg = self.AdditionalPower:CreateTexture(nil, 'BACKGROUND')
+        self.AdditionalPower.bg:SetAllPoints(self.AdditionalPower)
+        self.AdditionalPower.bg:SetTexture(1, 1, 1, 1)
+
         self.ThreatIndicator = CreateFrame('Frame', nil, self)
         self.ThreatIndicator:SetPoint('TOPRIGHT', 2, 2)
         self.ThreatIndicator:SetPoint('BOTTOMLEFT', -2, -2)
