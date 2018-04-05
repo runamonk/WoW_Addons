@@ -53,7 +53,6 @@ local function CreateHealthBar(self)
 end
 
 local function CreateBottomPanel()
-    print(classColor.r, classColor.g, classColor.b, 1)
     local pback = CreateFrame('Frame', 'mnkBottom', UIParent)
     SetBackdrop(pback, nil, nil, 1, 1, 1, 1)
     pback:SetBackdropColor(0, 0, 0, 0.8)
