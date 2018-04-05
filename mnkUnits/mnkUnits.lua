@@ -259,7 +259,7 @@ local function PlayerUnit(self)
         self.ThreatIndicator = CreateFrame('Frame', nil, self.Health)
         self.ThreatIndicator:SetSize((self:GetWidth()/2), 1)
         self.ThreatIndicator:SetPoint('CENTER', self, 0, -6)
-        self.ThreatIndicator:SetFrameStrata('HIGH')
+        self.ThreatIndicator:SetFrameStrata('LOW')
         SetBackdrop(self.ThreatIndicator, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
         self.ThreatIndicator.Override = UpdateThreat
         self.Auras = CreateFrame('Frame', nil, self)
