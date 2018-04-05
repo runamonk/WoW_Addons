@@ -251,10 +251,6 @@ FloatingChatFrame_OnMouseScroll = function(self, dir)
     end
 end
 
-function string.color(text, color)
-    return "|cff"..color..text.."|r"
-end
-
 function string.link(text, type, value, color)
     return "|H"..type..":"..tostring(value) .. "|h"..tostring(text):color(color or "ffffff") .. "|h"
 end

@@ -1,6 +1,8 @@
 mnkUnits = CreateFrame('frame')
 mnkUnits.oUF = oUF or ns.oUF
 local _, playerClass = UnitClass('player')
+local classColor = {}
+classColor.r, classColor.g, classColor.b, _ = GetClassColor(playerClass)
 --Tags are in mnkLibs\mnkuTags
 
 Config = {
@@ -51,6 +53,7 @@ local function CreateHealthBar(self)
 end
 
 local function CreateBottomPanel()
+    print(classColor.r, classColor.g, classColor.b, 1)
     local pback = CreateFrame('Frame', 'mnkBottom', UIParent)
     SetBackdrop(pback, nil, nil, 1, 1, 1, 1)
     pback:SetBackdropColor(0, 0, 0, 0.8)
@@ -58,17 +61,19 @@ local function CreateBottomPanel()
     pback:SetWidth(UIParent:GetWidth())
     pback:SetPoint('BOTTOM',0,0)
     pback:SetFrameStrata('BACKGROUND')
-    CreateBorder(pback, 1, -3, -3, 3, {1/5, 1/5, 1/5, 0.8})
+    --CreateBorder(pback, 1, -3, -3, 3, {1/5, 1/5, 1/5, 0.8})
+    CreateBorder(pback, 1, -3, -3, 3, {classColor.r, classColor.g, classColor.b, 1})
+    
     pback:Show()
 
     local pplayer = CreateFrame('Frame', 'mnkBottom', UIParent)
     SetBackdrop(pplayer, nil, nil, 1, 1, 1, 1)
     pplayer:SetBackdropColor(0, 0, 0, 0.8)
     pplayer:SetHeight(60)
-    pplayer:SetWidth(300)
+    pplayer:SetWidth(290)
     pplayer:SetPoint('BOTTOM',0,171)
     pplayer:SetFrameStrata('BACKGROUND')
-    CreateBorder(pplayer, 1, -1, -1, 1, {1/5, 1/5, 1/5, 0.8})
+    CreateBorder(pplayer, 1, -1, -1, 1, {classColor.r, classColor.g, classColor.b, 1})
     pplayer:Show()
 
     local pbackLeft = CreateFrame('Frame', 'mnkButtonsLeft', pback)
@@ -186,7 +191,8 @@ end
 local function PlayerUnit(self)
     if Config.showplayer then
         CreateUnit(self)
-        self:SetSize(160, 22)
+        
+        self:SetSize(200, 22)
         self.HealthValue = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, '')
         self.HealthValue:SetPoint('LEFT', self.Health, 1, 1)
         self:Tag(self.HealthValue, '[mnku:status][mnku:perhp] [mnku:curhp]') 
@@ -236,26 +242,21 @@ local function PlayerUnit(self)
         self:RegisterEvent('PLAYER_REGEN_DISABLED', function(unit) unit.flagCombat:Show() end)
         self:RegisterEvent('PLAYER_FLAGS_CHANGED', function(self) SetFlagVis(self) end)
         self.Power = CreateFrame('StatusBar', nil, self.Health)
-        self.Power:SetPoint('BOTTOMRIGHT')
-        self.Power:SetPoint('BOTTOMLEFT')
-        self.Power:SetHeight(2)
         self.Power:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
+        self.Power:SetSize(self:GetWidth(), 3)
+        self.Power:SetPoint('LEFT', self, 0, -9)
         self.Power.frequentUpdates = true
-        self.Power.colorPower = false
-        self.Power.colorClass = true
-        self.Power.colorTapping = false
-        self.Power.colorDisconnected = false
-        self.Power.colorReaction = false 
-        self.AdditionalPower = CreateFrame('StatusBar', nil,  self.Power)
+        self.Power.colorPower = true
+        SetBackdrop(self.Power, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
+        self.Power:SetBackdropColor(1/7, 1/7, 1/7, 1)
+        self.AdditionalPower = CreateFrame('StatusBar', nil, self.Health)
         self.AdditionalPower:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
-        self.AdditionalPower:SetHeight(2)
-        self.AdditionalPower:SetPoint('TOP',self.Power, 'BOTTOM', 0, 0)
-        self.AdditionalPower:SetPoint('LEFT')
-        self.AdditionalPower:SetPoint('RIGHT')
+        self.AdditionalPower:SetSize(self:GetWidth(), 3)
+        self.AdditionalPower:SetPoint('LEFT', self, 0, -12)
+        self.AdditionalPower.frequentUpdates = true
         self.AdditionalPower.colorPower = true
-        self.AdditionalPower.bg = self.AdditionalPower:CreateTexture(nil, 'BACKGROUND')
-        self.AdditionalPower.bg:SetAllPoints(self.AdditionalPower)
-        self.AdditionalPower.bg:SetTexture(1, 1, 1, 1)
+        SetBackdrop(self.AdditionalPower, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
+        self.AdditionalPower:SetBackdropColor(1/7, 1/7, 1/7, 1)
         self.ThreatIndicator = CreateFrame('Frame', nil, self)
         self.ThreatIndicator:SetPoint('TOPRIGHT', 2, 2)
         self.ThreatIndicator:SetPoint('BOTTOMLEFT', -2, -2)
@@ -269,7 +270,7 @@ local function PlayerUnit(self)
         self.Auras:SetPoint('BOTTOM', self, 'TOP', 0 , 5)
         self.Auras:SetSize(self.Health:GetWidth(), 16)
         self.Auras.PostCreateIcon = PostCreateIcon
-        self:SetWidth(200)
+        
         CreateCastBar(self)
     end
 end
