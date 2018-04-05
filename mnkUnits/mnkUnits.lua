@@ -60,9 +60,7 @@ local function CreateBottomPanel()
     pback:SetWidth(UIParent:GetWidth())
     pback:SetPoint('BOTTOM',0,0)
     pback:SetFrameStrata('BACKGROUND')
-    --CreateBorder(pback, 1, -3, -3, 3, {1/5, 1/5, 1/5, 0.8})
-    CreateBorder(pback, 1, -3, -3, 3, {classColor.r, classColor.g, classColor.b, 1})
-    
+    CreateBorder(pback, 1, -3, -3, 3, {classColor.r, classColor.g, classColor.b, .5}) 
     pback:Show()
 
     local pplayer = CreateFrame('Frame', 'mnkBottom', UIParent)
@@ -72,7 +70,7 @@ local function CreateBottomPanel()
     pplayer:SetWidth(290)
     pplayer:SetPoint('BOTTOM',0,171)
     pplayer:SetFrameStrata('BACKGROUND')
-    CreateBorder(pplayer, 1, -1, -1, 1, {classColor.r, classColor.g, classColor.b, 1})
+    CreateBorder(pplayer, 1, -1, -1, 1, {classColor.r, classColor.g, classColor.b, .5})
     pplayer:Show()
 
     local pbackLeft = CreateFrame('Frame', 'mnkButtonsLeft', pback)
@@ -83,6 +81,7 @@ local function CreateBottomPanel()
     pbackLeft:SetPoint('BOTTOM', 0, 0)
     pbackLeft:SetPoint('LEFT', 530, 0)
     pbackLeft:SetFrameStrata('LOW')
+    CreateBorder(pbackLeft, 0, 0, 0, 0, {classColor.r, classColor.g, classColor.b, .5})
     pbackLeft:Show()  
 
     local pbackRight = CreateFrame('Frame', 'mnkButtonsRight', pback)
@@ -93,6 +92,7 @@ local function CreateBottomPanel()
     pbackRight:SetPoint('BOTTOM', 0, 0)
     pbackRight:SetPoint('LEFT', 1235, 0)
     pbackRight:SetFrameStrata('LOW')
+    CreateBorder(pbackRight, 0, 0, 0, 0, {classColor.r, classColor.g, classColor.b, .5})
     pbackRight:Show()  
 end
 
@@ -265,7 +265,7 @@ local function PlayerUnit(self)
         self.Auras = CreateFrame('Frame', nil, self)
         self.Auras.spacing = 1
         self.Auras.numTotal = 14
-        self.Auras:SetPoint('LEFT', self, 'LEFT', -9, 0)
+        self.Auras:SetPoint('LEFT', self, 'LEFT', -7, 0)
         self.Auras:SetPoint('BOTTOM', self, 'TOP', 0 , 5)
         self.Auras:SetSize(self.Health:GetWidth(), 16)
         self.Auras.PostCreateIcon = PostCreateIcon
