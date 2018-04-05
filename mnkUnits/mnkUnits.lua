@@ -235,8 +235,6 @@ local function PlayerUnit(self)
         self:RegisterEvent('PLAYER_REGEN_ENABLED', function(unit) unit.flagCombat:Hide() end)
         self:RegisterEvent('PLAYER_REGEN_DISABLED', function(unit) unit.flagCombat:Show() end)
         self:RegisterEvent('PLAYER_FLAGS_CHANGED', function(self) SetFlagVis(self) end)
-
-        -- #TODO tracker PLAYER_FLAGS_CHANGED. for dnd/afk check UnitIsAFK/UnitIsDND
         self.Power = CreateFrame('StatusBar', nil, self.Health)
         self.Power:SetPoint('BOTTOMRIGHT')
         self.Power:SetPoint('BOTTOMLEFT')
@@ -258,7 +256,6 @@ local function PlayerUnit(self)
         self.AdditionalPower.bg = self.AdditionalPower:CreateTexture(nil, 'BACKGROUND')
         self.AdditionalPower.bg:SetAllPoints(self.AdditionalPower)
         self.AdditionalPower.bg:SetTexture(1, 1, 1, 1)
-
         self.ThreatIndicator = CreateFrame('Frame', nil, self)
         self.ThreatIndicator:SetPoint('TOPRIGHT', 2, 2)
         self.ThreatIndicator:SetPoint('BOTTOMLEFT', -2, -2)
