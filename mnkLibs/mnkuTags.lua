@@ -50,23 +50,25 @@ tags['mnku:level'] = function(unit)
 end
 
 tags['mnku:name'] = function(unit)
-    -- local name, _, _, _, _, _, _, _, notInterruptible = UnitCastingInfo(unit)
-    -- if (name) then
-    --     local color = notInterruptible and 'ff9000' or 'ff0000'
-    --     return format('|cff%s%s|r', color, name)
-    -- end
-    -- name, _, _, _, _, _, _, notInterruptible = UnitChannelInfo(unit)
-    -- if (name) then
-    --     local color = notInterruptible and 'ff9000' or 'ff0000'
-    --     return format('|cff%s%s|r', color, name)
-    -- end
-    name = UnitName(unit)
-    if unit == 'target' then
-        local color = _TAGS['raidcolor'](unit)
-        name = color and format('%s%s|r', color, name) or name
+    local name = UnitName(unit)
+    local rare = _TAGS['shortclassification'](unit) or ''
+    local canInterrupt = select(9, UnitCastingInfo(unit))
+
+    if canInterrupt ~= nil then 
+        canInterrupt = (not canInterrupt) 
+    end  
+    if canInterrupt == nil then
+        canInterrupt = select(8, UnitChannelInfo(unit))
+        if canInterrupt ~= nil then canInterrupt = (not canInterrupt) end
     end
-    local rare = _TAGS['shortclassification'](unit)
-    return rare and format('%s |cff0090ff%s|r', name, rare) or name
+
+    if canInterrupt then     
+        name = Color(COLOR_RED)..name 
+    else
+        name = Color(COLOR_WHITE)..name..rare
+    end
+
+    return name
 end
 
 tags['mnku:perhp'] = function(unit)
