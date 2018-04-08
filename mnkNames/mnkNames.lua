@@ -81,6 +81,8 @@ function mnkNames.CreateStyle(self, unit)
     self.Castbar.Text:SetHeight(cfg_font_height)
     self.Castbar.Text:SetWidth(cfg_name_width)
     self.Castbar.Text:SetPoint("CENTER", self.Castbar, 0, 0)
+    self.Castbar.PostCastInterruptible = mnkNames.PostCastInterruptible
+    self.Castbar.PostCastStart = mnkNames.PostCastInterruptible
     self.Debuffs = CreateFrame("Frame", nil, self)
     self.Debuffs:SetSize((cfg_debuffs_num * (cfg_debuffs_size + 9)) / cfg_debuffs_rows, (cfg_debuffs_size + 9) * cfg_debuffs_rows)
     self.Debuffs.num = cfg_debuffs_num
@@ -97,6 +99,15 @@ function mnkNames.CreateStyle(self, unit)
     self:SetScale(1)
     SetBackdrop(self, nil, nil, 1, 1, 1, 1)
     CreateDropShadow(self, 1, 1, {0, 0, 0, 1})
+end
+
+function mnkNames.PostCastInterruptible(element, unit)
+    -- only show the castbar for spells I can interrupt and for units that are not tapped.
+    if (not element.notInterruptible and UnitCanAttack('player', unit)) and (not UnitIsTapDenied(unit)) then
+        element:Show()
+    else
+        element:Hide()
+	end
 end
 
 function mnkNames.PostCreateIcon(Auras, button)
