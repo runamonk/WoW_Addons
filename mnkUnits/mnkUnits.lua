@@ -154,7 +154,7 @@ local function CreateUnit(self)
     self:SetBackdrop({bgFile = 'Interface\\ChatFrame\\ChatFrameBackground', insets = {top = -1, bottom = -1, left = -1, right = -1}})
     self:SetBackdropColor(0, 0, 0)
 
-    self:SetSize(160, 20)
+    self:SetSize(200, 20)
     self.Health = CreateHealthBar(self)
     self.Health:SetHeight(20)
     self.Health:SetPoint('TOPRIGHT')
@@ -282,7 +282,7 @@ local function PartyUnit(self)
         self.Name:SetPoint('RIGHT', self:GetWidth() - 2)
         self:Tag(self.Name, '[mnku:leader][raidcolor][name]')
         self.HealthValue = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, '')
-        self.HealthValue:SetPoint('RIGHT', self.Health, 1, 0)
+        self.HealthValue:SetPoint('RIGHT', self.Health, -2, 0)
         self:Tag(self.HealthValue, '[mnku:curhp]') 
 
         self.ResurrectIndicator = self.frameValues:CreateTexture(nil, 'OVERLAY')
@@ -372,8 +372,8 @@ mnkUnits.oUF:Factory(function(self)
         'groupBy', 'ASSIGNEDROLE', 
         'groupingOrder', 'TANK,HEALER,DAMAGER', 
         'oUF-initialConfigFunction', [[
-        self:SetHeight(19)
-        self:SetWidth(126)
+        self:SetHeight(20)
+        self:SetWidth(200)
         ]]
     ):SetPoint('TOPLEFT', 25, -50)
 
