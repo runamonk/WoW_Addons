@@ -200,7 +200,7 @@ end
 local function PlayerUnit(self)
     if Config.showplayer then
         CreateUnit(self)
-        
+        CreateCastBar(self)
         self:SetSize(200, 26)
         self.HealthValue = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
         self.HealthValue:SetPoint('LEFT', self.Health, 1, 1)
@@ -216,10 +216,8 @@ local function PlayerUnit(self)
         self.flagAFK:SetText(Color(COLOR_BLUE)..'AFK')
         self.flagDND = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
         self.flagDND:SetPoint('RIGHT', self.flagPVP, 'LEFT', -2, 0)
-        self.flagDND:SetText(Color(COLOR_BLUE)..'DND')
-        
+        self.flagDND:SetText(Color(COLOR_BLUE)..'DND') 
         SetFlagVis(self)
-
         local t = {} 
         for i = 1, 10 do
             local f = CreateFrame('StatusBar', nil, self)
@@ -279,8 +277,6 @@ local function PlayerUnit(self)
         self.Auras:SetPoint('BOTTOM', self, 'TOP', 0 , 5)
         self.Auras:SetSize(self.Health:GetWidth(), 16)
         self.Auras.PostCreateIcon = PostCreateIcon
-        
-        CreateCastBar(self)
     end
 end
 
