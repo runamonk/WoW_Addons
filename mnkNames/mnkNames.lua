@@ -77,7 +77,7 @@ function mnkNames.CreateStyle(self, unit)
     self.Castbar:SetWidth(cfg_frame_width)
     self.Castbar:SetHeight(cfg_frame_height)
     self.Castbar:SetPoint("TOPLEFT", self.Health, "BOTTOMLEFT", 0, -5)
-    self.Castbar.Text = CreateFontString(self.Castbar, mnkLibs.Fonts.oswald, cfg_font_height, 'THINOUTLINE')
+    self.Castbar.Text = CreateFontString(self.Castbar, mnkLibs.Fonts.oswald, cfg_font_height, nil, nil, true)
     self.Castbar.Text:SetHeight(cfg_font_height)
     self.Castbar.Text:SetWidth(cfg_name_width)
     self.Castbar.Text:SetPoint("CENTER", self.Castbar, 0, 0)
@@ -104,9 +104,9 @@ end
 function mnkNames.PostCastInterruptible(element, unit)
     -- only show the castbar for spells I can interrupt and for units that are not tapped.
     if (not element.notInterruptible and UnitCanAttack('player', unit)) and (not UnitIsTapDenied(unit)) then
-        element:Show()
+        element:SetStatusBarColor(0, 1, 0, 1)
     else
-        element:Hide()
+        element:SetStatusBarColor(1/5, 1/5, 1/5, 0.3)
 	end
 end
 
