@@ -25,9 +25,18 @@ Config = {
 }
 
 local function CreateCastBar(self)
-    self.Castbar = CreateFrame('StatusBar', nil, self)
-    self.Castbar:SetPoint('BOTTOM', self, 'TOP', 0, 5)
-    self.Castbar:SetSize(self:GetWidth(), 20)
+    self.castbarbg = CreateFrame('Frame', nil, self)
+    self.castbarbg:SetPoint('LEFT', self, 'LEFT', -1, 0)
+    self.castbarbg:SetPoint('BOTTOM', self, 'TOP', 0, 2)
+    SetBackdrop(self.castbarbg, nil, nil, 1, 1, 1, 1)
+    self.castbarbg:SetBackdropColor(1/2,1/2,1/2,1)
+    self.castbarbg:SetFrameStrata('MEDIUM')
+    self.castbarbg:SetSize(self:GetWidth()+2, 20)
+    self.castbarbg:Hide()
+
+    self.Castbar = CreateFrame('StatusBar', nil, self.castbarbg)
+    self.Castbar:SetAllPoints()
+    self.Castbar:SetSize(self.castbarbg:GetSize())
     self.Castbar:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
 
     if UnitIsPlayer(self.unit) then
@@ -39,17 +48,13 @@ local function CreateCastBar(self)
     end
 
     self.Castbar:SetFrameStrata('HIGH') 
-    self.Castbar.PostCastStart = function(element, unit) element.bg:Show() end
-    self.Castbar.PostCastStop = function(element, unit) element.bg:Hide() end
+    self.Castbar.PostCastStart = function(element, unit) element:GetParent():Show() end
+    self.Castbar.PostCastStop = function(element, unit) element:GetParent():Hide() end
+    self.Castbar.PostChannelStart = function(element, unit) element:GetParent():Show() end
+    self.Castbar.PostChannelStop = function(element, unit) element:GetParent():Hide() end
     self.Castbar.Spark = self.Castbar:CreateTexture(nil, 'OVERLAY')
     self.Castbar.Spark:SetSize(1, self.Health:GetHeight())
-    self.Castbar.Spark:SetColorTexture(classColor.r, classColor.g, classColor.b, 1)
-    self.Castbar.bg = CreateFrame('Frame', nil, self)
-    self.Castbar.bg:SetAllPoints(self.Castbar)
-    SetBackdrop(self.Castbar.bg, nil, nil, 1, 1, 1, 1)
-    self.Castbar.bg:SetBackdropColor(1/5, 1/5, 1/5, 1)
-    self.Castbar.bg:SetFrameStrata('MEDIUM')
-    self.Castbar.bg:Hide()
+    self.Castbar.Spark:SetColorTexture(1, 0, 0, 1)
 end
 
 local function CreateHealthBar(self)
