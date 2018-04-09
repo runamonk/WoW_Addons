@@ -26,24 +26,30 @@ Config = {
 
 local function CreateCastBar(self)
     self.Castbar = CreateFrame('StatusBar', nil, self)
-    self.Castbar:SetAllPoints(self.Health)
+    self.Castbar:SetPoint('BOTTOM', self, 'TOP', 0, 5)
+    self.Castbar:SetSize(self:GetWidth(), 20)
     self.Castbar:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
+
     if UnitIsPlayer(self.unit) then
         self.Castbar:SetStatusBarColor(classColor.r/7, classColor.g/7, classColor.b/7)
-        self.Castbar.Text = CreateFontString(self.Castbar, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
+        self.Castbar.Text = CreateFontString(self.Castbar, mnkLibs.Fonts.oswald, 16,  nil, nil, true)
         self.Castbar.Text:SetPoint('LEFT', self.Castbar, 2, 0)
     else
         self.Castbar:SetStatusBarColor(0, 0, 0)
     end
+
     self.Castbar:SetFrameStrata('HIGH') 
-    self.Castbar.PostCastStart = PostUpdateCast
-    self.Castbar.PostCastInterruptible = PostUpdateCast
-    self.Castbar.PostCastNotInterruptible = PostUpdateCast
-    self.Castbar.PostChannelStart = PostUpdateCast
+    self.Castbar.PostCastStart = function(element, unit) element.bg:Show() end
+    self.Castbar.PostCastStop = function(element, unit) element.bg:Hide() end
     self.Castbar.Spark = self.Castbar:CreateTexture(nil, 'OVERLAY')
     self.Castbar.Spark:SetSize(1, self.Health:GetHeight())
     self.Castbar.Spark:SetColorTexture(classColor.r, classColor.g, classColor.b, 1)
-    self.Castbar.Spark:SetBlendMode('ADD')
+    self.Castbar.bg = CreateFrame('Frame', nil, self)
+    self.Castbar.bg:SetAllPoints(self.Castbar)
+    SetBackdrop(self.Castbar.bg, nil, nil, 1, 1, 1, 1)
+    self.Castbar.bg:SetBackdropColor(1/5, 1/5, 1/5, 1)
+    self.Castbar.bg:SetFrameStrata('MEDIUM')
+    self.Castbar.bg:Hide()
 end
 
 local function CreateHealthBar(self)
@@ -58,7 +64,7 @@ local function CreateHealthBar(self)
     h.frequentUpdates = true
     local b = self:CreateTexture(nil, 'BORDER')
     b:SetAllPoints(h)
-    b:SetColorTexture(1 / 5, 1 / 5, 1 / 5)
+    b:SetColorTexture(1/4,0,0)
     return h
 end
 
@@ -119,15 +125,6 @@ local function PostCreateIcon(Auras, button)
     button.overlay:SetTexCoord(0, 1, 0, 1)
     button.overlay.Hide = function(self) self:SetVertexColor(0.3, 0.3, 0.3) end
     button:SetScript('OnClick', function(self, button) CancelUnitBuff('player', self:GetName():match('%d')) end)
-end
-
-local function PostUpdateCast(element, unit)
-    local Spark = element.Spark
-    if (not element.notInterruptible and UnitCanAttack('player', unit)) then
-        Spark:SetColorTexture(1, 0, 0)
-    else
-        Spark:SetColorTexture(1, 1, 1)
-    end
 end
 
 local function SetFlagVis(self)
