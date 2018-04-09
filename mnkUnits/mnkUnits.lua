@@ -28,7 +28,13 @@ local function CreateCastBar(self)
     self.Castbar = CreateFrame('StatusBar', nil, self)
     self.Castbar:SetAllPoints(self.Health)
     self.Castbar:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
-    self.Castbar:SetStatusBarColor(0, 0, 0, 0)
+    if UnitIsPlayer(self.unit) then
+        self.Castbar:SetStatusBarColor(classColor.r/7, classColor.g/7, classColor.b/7)
+        self.Castbar.Text = CreateFontString(self.Castbar, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
+        self.Castbar.Text:SetPoint('LEFT', self.Castbar, 2, 0)
+    else
+        self.Castbar:SetStatusBarColor(0, 0, 0)
+    end
     self.Castbar:SetFrameStrata('HIGH') 
     self.Castbar.PostCastStart = PostUpdateCast
     self.Castbar.PostCastInterruptible = PostUpdateCast
@@ -36,14 +42,18 @@ local function CreateCastBar(self)
     self.Castbar.PostChannelStart = PostUpdateCast
     self.Castbar.Spark = self.Castbar:CreateTexture(nil, 'OVERLAY')
     self.Castbar.Spark:SetSize(1, self.Health:GetHeight())
-    self.Castbar.Spark:SetColorTexture(1, 1/8, 1/8)
+    self.Castbar.Spark:SetColorTexture(classColor.r, classColor.g, classColor.b, 1)
     self.Castbar.Spark:SetBlendMode('ADD')
 end
 
 local function CreateHealthBar(self)
     local h = CreateFrame('StatusBar', nil, self)
     h:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
-    h:SetStatusBarColor(0, 0, 0)
+    if UnitIsPlayer(self.unit) then
+        h:SetStatusBarColor(classColor.r/5, classColor.g/5, classColor.b/5)
+    else
+        h:SetStatusBarColor(0, 0, 0)
+    end
     h:SetReverseFill(false) 
     h.frequentUpdates = true
     local b = self:CreateTexture(nil, 'BORDER')
@@ -166,7 +176,7 @@ end
 local function MinimalUnit(self)
     if Config['show'..self.unit] then 
         CreateUnit(self)
-        self.Name = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
+        self.Name = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
         self.Name:SetAllPoints(self)
         self.Name:SetJustifyH("CENTER")
         self:Tag(self.Name, '[mnku:name]')
@@ -179,7 +189,7 @@ local function PetUnit(self)
         self:RegisterForClicks('AnyUp')
         self:SetScript('OnEnter', UnitFrame_OnEnter)
         self:SetScript('OnLeave', UnitFrame_OnLeave)
-        self.PetHealth = CreateFontString(self, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
+        self.PetHealth = CreateFontString(self, mnkLibs.Fonts.oswald, 18, nil, nil, true)
         self.PetHealth:SetPoint('CENTER', self, 0, 0)
         self:Tag(self.PetHealth, '[mnku:pethp]')
         self:SetSize(36, oUF_mnkUnitsPlayer:GetHeight())
@@ -192,19 +202,19 @@ local function PlayerUnit(self)
         CreateUnit(self)
         
         self:SetSize(200, 26)
-        self.HealthValue = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, '')
+        self.HealthValue = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
         self.HealthValue:SetPoint('LEFT', self.Health, 1, 1)
         self:Tag(self.HealthValue, '[mnku:status][mnku:perhp] [mnku:curhp]') 
         self.isResting = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, nil, nil, true)
         self.isResting:SetPoint('RIGHT', self.Health, 'RIGHT', 0, 0)
         self:Tag(self.isResting, '[|cFFFFFF00>resting<|r]')
-        self.flagPVP = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
+        self.flagPVP = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
         self.flagPVP:SetPoint('RIGHT', self.isResting, 'LEFT', -2, 0)
         self:Tag(self.flagPVP, '[|cffff0000>pvp<|r]') 
-        self.flagAFK = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
+        self.flagAFK = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
         self.flagAFK:SetPoint('RIGHT', self.flagPVP, 'LEFT', -2, 0)
         self.flagAFK:SetText(Color(COLOR_BLUE)..'AFK')
-        self.flagDND = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
+        self.flagDND = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
         self.flagDND:SetPoint('RIGHT', self.flagPVP, 'LEFT', -2, 0)
         self.flagDND:SetText(Color(COLOR_BLUE)..'DND')
         
@@ -233,7 +243,7 @@ local function PlayerUnit(self)
 
         self.ClassPower = t
         self.Runes = t
-        self.flagCombat = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, 'OVERLAY')
+        self.flagCombat = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
         self.flagCombat:SetPoint('LEFT', self.HealthValue, 'RIGHT', 1, 0)
         self.flagCombat:SetText('|cffff0000'..'×')
         self.flagCombat:Hide()
@@ -277,11 +287,11 @@ end
 local function PartyUnit(self)
     if Config.showparty then
         CreateUnit(self)
-        self.Name = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, '')
+        self.Name = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, nil, nil, true)
         self.Name:SetPoint('LEFT', self.Health, 3, 0)
         self.Name:SetPoint('RIGHT', self:GetWidth() - 2)
         self:Tag(self.Name, '[mnku:leader][raidcolor][name]')
-        self.HealthValue = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, '')
+        self.HealthValue = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
         self.HealthValue:SetPoint('RIGHT', self.Health, -2, 0)
         self:Tag(self.HealthValue, '[mnku:curhp]') 
 
