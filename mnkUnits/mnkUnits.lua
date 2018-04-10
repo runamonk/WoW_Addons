@@ -27,24 +27,21 @@ Config = {
 local function CreateCastBar(self)
     self.castbarbg = CreateFrame('Frame', nil, self)
     self.castbarbg:SetPoint('LEFT', self, 'LEFT', -1, 0)
-    self.castbarbg:SetPoint('BOTTOM', self, 'TOP', 0, 2)
+    self.castbarbg:SetPoint('BOTTOM', self, 'TOP', 0, 4)
     SetBackdrop(self.castbarbg, nil, nil, 1, 1, 1, 1)
-    self.castbarbg:SetBackdropColor(1/2,1/2,1/2,1)
+    self.castbarbg:SetBackdropColor(classColor.r/2, classColor.g/2, classColor.b/2, 1)
     self.castbarbg:SetFrameStrata('MEDIUM')
-    self.castbarbg:SetSize(self:GetWidth()+2, 20)
+    self.castbarbg:SetSize(self:GetWidth()+2, 18)
     self.castbarbg:Hide()
 
     self.Castbar = CreateFrame('StatusBar', nil, self.castbarbg)
     self.Castbar:SetAllPoints()
-    self.Castbar:SetSize(self.castbarbg:GetSize())
     self.Castbar:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
+    self.Castbar:SetStatusBarColor(1/4, 1/4, 1/4, 1)
 
     if UnitIsPlayer(self.unit) then
-        self.Castbar:SetStatusBarColor(classColor.r/7, classColor.g/7, classColor.b/7)
         self.Castbar.Text = CreateFontString(self.Castbar, mnkLibs.Fonts.oswald, 16,  nil, nil, true)
         self.Castbar.Text:SetPoint('LEFT', self.Castbar, 2, 0)
-    else
-        self.Castbar:SetStatusBarColor(0, 0, 0)
     end
 
     self.Castbar:SetFrameStrata('HIGH') 
@@ -163,8 +160,8 @@ local function CreateUnit(self)
     self:RegisterForClicks('AnyUp')
     self:SetScript('OnEnter', UnitFrame_OnEnter)
     self:SetScript('OnLeave', UnitFrame_OnLeave)
-    self:SetBackdrop({bgFile = 'Interface\\ChatFrame\\ChatFrameBackground', insets = {top = -1, bottom = -1, left = -1, right = -1}})
-    self:SetBackdropColor(0, 0, 0)
+    SetBackdrop(self, nil, nil, 1, 1, 1, 1)
+    self:SetBackdropColor(1/6, 1/6, 1/6)
 
     self:SetSize(200, 20)
     self.Health = CreateHealthBar(self)
@@ -182,7 +179,6 @@ local function MinimalUnit(self)
         self.Name:SetAllPoints(self)
         self.Name:SetJustifyH("CENTER")
         self:Tag(self.Name, '[mnku:name]')
-        self:SetWidth(200)
     end   
 end
 
