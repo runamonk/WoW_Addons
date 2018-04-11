@@ -106,7 +106,7 @@ function mnkNames.PostCastInterruptible(element, unit)
     if (not element.notInterruptible and UnitCanAttack('player', unit)) and (not UnitIsTapDenied(unit)) then
         element:SetStatusBarColor(0, 1, 0, 1)
     else
-        element:SetStatusBarColor(1/5, 1/5, 1/5, 0.3)
+        element:SetStatusBarColor(1/3, 1/3, 1/3, 1)
 	end
 end
 
