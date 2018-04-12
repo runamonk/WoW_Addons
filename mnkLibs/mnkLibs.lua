@@ -9,6 +9,8 @@ mnkLibs.Fonts = {
 }
 
 mnkLibs.Textures = {
+    arrow_down          = 'Interface\\AddOns\\mnkLibs\\Assets\\arrow_down',
+    arrow_down_pushed   = 'Interface\\AddOns\\mnkLibs\\Assets\\arrow_down_pushed',
     background          = 'Interface\\AddOns\\mnkLibs\\Assets\\background', 
     bar                 = 'Interface\\AddOns\\mnkLibs\\Assets\\bar', 
     border              = 'Interface\\AddOns\\mnkLibs\\Assets\\border', 
