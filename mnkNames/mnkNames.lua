@@ -115,9 +115,11 @@ function mnkNames.PostCreateIcon(Auras, button)
     count:ClearAllPoints()
     count:SetFont(mnkLibs.Fonts.ap, 10, 'OUTLINE')
     count:SetPoint('TOPRIGHT', button, 3, 3)
+    
     local timer = button.cd:GetRegions()
     timer:SetFont(mnkLibs.Fonts.ap, 10, 'OUTLINE')
     timer:SetPoint('BOTTOMLEFT', button, 0, 0)
+
     button.icon:SetTexCoord(.07, .93, .07, .93)
     button.overlay:SetTexture(mnkLibs.Textures.border)
     button.overlay:SetTexCoord(0, 1, 0, 1)
