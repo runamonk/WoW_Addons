@@ -42,10 +42,6 @@ end
 -- Hide dragon heads
 MainMenuBarLeftEndCap:Hide()
 MainMenuBarRightEndCap:Hide()
---change leaveVehicle Button to match my layout.
-MainMenuBarVehicleLeaveButton:SetNormalTexture(mnkLibs.Textures.arrow_down)
-MainMenuBarVehicleLeaveButton:SetPushedTexture(mnkLibs.Textures.arrow_down_pushed)
---HighlightTexture
 
 --Hide open all mail button, it's buggy.
 OpenAllMail:Hide()
