@@ -175,6 +175,7 @@ local function MinimalUnit(self)
         self.Name = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
         self.Name:SetAllPoints(self)
         self.Name:SetJustifyH("CENTER")
+        self.Name:SetWordWrap(false)
         self:Tag(self.Name, '[mnku:name]')
     end   
 end
@@ -334,12 +335,13 @@ local function UpdateMirrorBars()
         bar.bg:ClearAllPoints()
         bar.bg:SetAllPoints(bar)
         bar.bg:SetTexture(mnkLibs.Textures.background)
-        bar.bg:SetVertexColor(1, 1, 1, 1)
+        bar.bg:SetVertexColor(0, 0, 0, 1)
         bar.text:ClearAllPoints()
         bar.text:SetPoint("LEFT", bar, 4, 0)
         bar.text:SetFont(mnkLibs.Fonts.oswald, 18, 'OUTLINE')
         bar.border:Hide()
         SetBackdrop(bar, nil, nil, 1, 1, 1, 1)
+        bar:SetBackdropColor(1, 1, 1, 1)
     end
 end
 

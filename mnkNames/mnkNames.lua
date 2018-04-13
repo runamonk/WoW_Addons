@@ -50,6 +50,7 @@ function mnkNames.CreateStyle(self, unit)
     self.HealthValue:SetWordWrap(false)
     self:Tag(self.HealthValue, '[mnku:curhp]')
     self.Name = CreateFontString(self.Health, mnkLibs.Fonts.oswald, cfg_font_height, nil, nil, true)
+    self.Name:SetWordWrap(false)
     self.Name:SetPoint("LEFT", self.Health, 4, 0)
     self.Name:SetJustifyH("LEFT")
     self.Name:SetWidth(cfg_name_width-(self.HealthValue:GetWidth()+8))
@@ -111,14 +112,22 @@ function mnkNames.PostCastInterruptible(element, unit)
 end
 
 function mnkNames.PostCreateIcon(Auras, button)
-    local count = button.count
-    count:ClearAllPoints()
-    count:SetFont(mnkLibs.Fonts.ap, 10, 'OUTLINE')
-    count:SetPoint('TOPRIGHT', button, 3, 3)
-    
-    local timer = button.cd:GetRegions()
-    timer:SetFont(mnkLibs.Fonts.ap, 10, 'OUTLINE')
-    timer:SetPoint('BOTTOMLEFT', button, 0, 0)
+    -- local count = button.count
+    -- count:ClearAllPoints()
+    -- count:SetFont(mnkLibs.Fonts.ap, 10, 'OUTLINE')
+    -- count:SetPoint('TOPRIGHT', button, 3, 3)
+  
+    -- local region = button.cd:GetRegions()
+    -- timer = region.SetText and region
+    -- --local timer = button.cd:GetRegions()
+    -- timer:ClearAllPoints()
+    -- timer.ClearAllPoints = donothing
+    -- timer:SetFont(mnkLibs.Fonts.ap, 10, 'OUTLINE')
+    -- timer.SetFont = donothing
+    -- timer:SetPoint('BOTTOMLEFT', button, 0, 0)
+    -- timer.SetPoint = donothing
+    -- timer.SetTextColor = donothing
+    -- timer.SetVertexColor = donothing
 
     button.icon:SetTexCoord(.07, .93, .07, .93)
     button.overlay:SetTexture(mnkLibs.Textures.border)

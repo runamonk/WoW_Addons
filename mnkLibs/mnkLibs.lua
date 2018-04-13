@@ -36,6 +36,10 @@ COLOR_BLUE = {r = 51, g = 153, b = 255}
 COLOR_PURPLE = {r = 128, g = 114, b = 194}
 COLOR_GREY = {r = 168, g = 168, b = 168}
 
+function donothing()
+   return
+end
+
 function string.color(text, color)
     return "|c"..color..text.."|r"
 end
