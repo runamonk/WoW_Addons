@@ -266,6 +266,7 @@ local function PlayerUnit(self)
         SetBackdrop(self.ThreatIndicator, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
         self.ThreatIndicator.Override = UpdateThreat
         self.Auras = CreateFrame('Frame', nil, self)
+        self.Auras.onlyShowPlayer = true
         self.Auras.spacing = 1
         self.Auras.numTotal = 14
         self.Auras:SetPoint('LEFT', self, 'LEFT', -2, 0)
