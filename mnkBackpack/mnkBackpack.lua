@@ -1,4 +1,4 @@
--- Backpack external layout based on code by p3lim.
+-- Backpack external layout based on code by P3lim.
 local addonName = ...
 local COLUMNS = 12; 
 
@@ -185,34 +185,34 @@ end)
 
 Backpack:On('PostCreateMoney', function(Money)
     Money:ClearAllPoints()
-    Money:SetPoint('BOTTOMRIGHT', -5, 5)
+    Money:SetPoint('BOTTOMRIGHT', -7, 7)
     Money:SetFont(mnkLibs.Fonts.ap, 16, '')
     Money:SetShadowOffset(0, 0)
 end)
 
 local function OnSearchOpen(self)
     self.Icon:Hide()
-    self:SetFrameLevel(self:GetFrameLevel() + 1)
 end
 
 local function OnSearchClosed(self)
     local SearchBox = self:GetParent()
     SearchBox.Icon:Show()
-    SearchBox:SetFrameLevel(SearchBox:GetFrameLevel() - 1)
 end
 
 Backpack:On('PostCreateSearch', function(SearchBox)
-    SearchBox:SetBackdrop(BACKDROP)
-    SearchBox:SetBackdropColor(0, 0, 0, 0.9)
-    SearchBox:SetBackdropBorderColor(0, 0, 0)
     SearchBox:HookScript('OnClick', OnSearchOpen)
-
+    SearchBox:SetFrameLevel(SearchBox:GetParent():GetFrameLevel() + 1)
+    SearchBox:SetAlpha(1)
+    SearchBox.SetAlpha = donothing
+    
     local SearchBoxIcon = SearchBox:CreateTexture('$parentIcon', 'OVERLAY')
     SearchBoxIcon:SetPoint('CENTER')
     SearchBoxIcon:SetSize(16, 16)
     SearchBoxIcon:SetTexture(ICON_TEXTURES)
     SearchBoxIcon:SetTexCoord(0.75, 1, 0.75, 1)
     SearchBox.Icon = SearchBoxIcon
+    SearchBox.Icon:SetAlpha(1)
+    SearchBox.Icon.SetAlpha = donothing
 
     local Editbox = SearchBox.Editbox
     Editbox:SetFont(mnkLibs.Fonts.ap, 16, '')
