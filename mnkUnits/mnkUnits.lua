@@ -33,17 +33,14 @@ local function CreateCastBar(self)
     self.castbarbg:SetFrameStrata('MEDIUM')
     self.castbarbg:SetSize(self:GetWidth()+2, 18)
     self.castbarbg:Hide()
-
     self.Castbar = CreateFrame('StatusBar', nil, self.castbarbg)
     self.Castbar:SetAllPoints()
     self.Castbar:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
     self.Castbar:SetStatusBarColor(1/4, 1/4, 1/4, 1)
-
     if UnitIsPlayer(self.unit) then
         self.Castbar.Text = CreateFontString(self.Castbar, mnkLibs.Fonts.oswald, 16,  nil, nil, true)
         self.Castbar.Text:SetPoint('LEFT', self.Castbar, 2, 0)
     end
-
     self.Castbar:SetFrameStrata('HIGH') 
     self.Castbar.PostCastStart = function(element, unit) element:GetParent():Show() end
     self.Castbar.PostCastStop = function(element, unit) element:GetParent():Hide() end
