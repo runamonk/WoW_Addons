@@ -52,23 +52,7 @@ end
 tags['mnku:name'] = function(unit)
     local name = UnitName(unit)
     local rare = _TAGS['shortclassification'](unit) or ''
-    local canInterrupt = select(9, UnitCastingInfo(unit))
-
-    if canInterrupt ~= nil then 
-        canInterrupt = (not canInterrupt) 
-    end  
-    if canInterrupt == nil then
-        canInterrupt = select(8, UnitChannelInfo(unit))
-        if canInterrupt ~= nil then canInterrupt = (not canInterrupt) end
-    end
-
-    if canInterrupt then     
-        name = Color(COLOR_RED)..name 
-    else
-        name = Color(COLOR_WHITE)..name..rare
-    end
-
-    return name
+    return Color(COLOR_WHITE)..name..rare
 end
 
 tags['mnku:perhp'] = function(unit)

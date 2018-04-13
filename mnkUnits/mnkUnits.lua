@@ -396,5 +396,9 @@ mnkUnits.oUF:Factory(function(self)
     end
 end)
 
+--change leaveVehicle Button to match my layout.
+MainMenuBarVehicleLeaveButton:SetNormalTexture(mnkLibs.Textures.arrow_down)
+MainMenuBarVehicleLeaveButton:SetPushedTexture(mnkLibs.Textures.arrow_down_pushed)
+
 mnkUnits:SetScript('OnEvent', mnkUnits.DoOnEvent)
 mnkUnits:RegisterEvent('PLAYER_ENTERING_WORLD')
