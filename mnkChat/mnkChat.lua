@@ -220,16 +220,16 @@ function mnkChat.SetFrameSettings(frame)
     _G[frame:GetName() .. "EditBoxMid"]:Hide()
     _G[frame:GetName() .. "EditBoxRight"]:Hide()
     _G[frame:GetName()]:SetFont(mnkLibs.Fonts.ap, 14, '')
-    _G[frame:GetName()].SetFont = function () return end
+    _G[frame:GetName()].SetFont = donothing
     _G[frame:GetName().."TabText"]:SetFont(mnkLibs.Fonts.oswald, 18, '')
     _G[frame:GetName().."TabText"]:SetShadowOffset(1,1)
     _G[frame:GetName().."TabText"]:SetShadowColor(0,0,0)
-    _G[frame:GetName().."TabText"].SetShadowOffset = function () return end
-    _G[frame:GetName().."TabText"].SetShadowColor = function () return end
+    _G[frame:GetName().."TabText"].SetShadowOffset = donothing
+    _G[frame:GetName().."TabText"].SetShadowColor = donothing
     _G[frame:GetName().."TabText"]:SetTextColor(1,1,1)
     _G[frame:GetName().."TabText"]:SetVertexColor(1,1,1)
-    _G[frame:GetName().."TabText"].SetTextColor = function () return end
-    _G[frame:GetName().."TabText"].SetVertexColor = function () return end
+    _G[frame:GetName().."TabText"].SetTextColor = donothing
+    _G[frame:GetName().."TabText"].SetVertexColor = donothing
     
     -- remove the tab textures.
     for index, value in pairs(tabs) do _G[frame:GetName()..'Tab'..value]:SetTexture(nil) end
