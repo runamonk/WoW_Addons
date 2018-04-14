@@ -95,6 +95,7 @@ function mnkNames.CreateStyle(self, unit)
     self.Debuffs['growth-y'] = "UP"
     self.Debuffs.onlyShowPlayer = true
     self.Debuffs.PostCreateIcon = mnkNames.PostCreateIcon
+    self.Debuffs.PostUpdateIcon = mnkNames.PostUpdateIcon
     self:SetSize(cfg_frame_width, cfg_frame_height)
     self:SetPoint("CENTER", 0, 0)
     self:SetScale(1)
@@ -111,28 +112,36 @@ function mnkNames.PostCastInterruptible(element, unit)
 	end
 end
 
+function mnkNames.GetButtonTimer(button)
+    local timer
+    local region = button.cd:GetRegions()
+    timer = region.SetText and region
+    timer:ClearAllPoints()
+    timer.ClearAllPoints = donothing
+    timer:SetFont(mnkLibs.Fonts.ap, 10, 'OUTLINE')
+    timer.SetFont = donothing
+    timer:SetPoint('BOTTOMLEFT', button, 0, 0)
+    timer.SetPoint = donothing
+    timer.SetTextColor = donothing
+    timer.SetVertexColor = donothing
+    return timer
+end
+
 function mnkNames.PostCreateIcon(Auras, button)
-    -- local count = button.count
-    -- count:ClearAllPoints()
-    -- count:SetFont(mnkLibs.Fonts.ap, 10, 'OUTLINE')
-    -- count:SetPoint('TOPRIGHT', button, 3, 3)
-  
-    -- local region = button.cd:GetRegions()
-    -- timer = region.SetText and region
-    -- --local timer = button.cd:GetRegions()
-    -- timer:ClearAllPoints()
-    -- timer.ClearAllPoints = donothing
-    -- timer:SetFont(mnkLibs.Fonts.ap, 10, 'OUTLINE')
-    -- timer.SetFont = donothing
-    -- timer:SetPoint('BOTTOMLEFT', button, 0, 0)
-    -- timer.SetPoint = donothing
-    -- timer.SetTextColor = donothing
-    -- timer.SetVertexColor = donothing
+    if not button.timer then
+        button.timer = mnkNames.GetButtonTimer(button)
+    end
 
     button.icon:SetTexCoord(.07, .93, .07, .93)
     button.overlay:SetTexture(mnkLibs.Textures.border)
     button.overlay:SetTexCoord(0, 1, 0, 1)
     button.overlay.Hide = function(self) self:SetVertexColor(0.3, 0.3, 0.3) end
+end
+
+function mnkNames.PostUpdateIcon(element, unit, button, index, offset)
+    if not button.timer then
+        button.timer = mnkNames.GetButtonTimer(button)
+    end
 end
 
 function mnkNames.OnNameplatesCallback(self)
