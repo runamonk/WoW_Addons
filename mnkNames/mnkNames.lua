@@ -94,6 +94,7 @@ function mnkNames.CreateStyle(self, unit)
     self.Debuffs["growth-x"] = "RIGHT"
     self.Debuffs['growth-y'] = "UP"
     self.Debuffs.onlyShowPlayer = true
+    self.Debuffs.disableCooldown = true
     self.Debuffs.PostCreateIcon = mnkNames.PostCreateIcon
     self.Debuffs.PostUpdateIcon = mnkNames.PostUpdateIcon
     self:SetSize(cfg_frame_width, cfg_frame_height)
@@ -112,36 +113,46 @@ function mnkNames.PostCastInterruptible(element, unit)
 	end
 end
 
-function mnkNames.GetButtonTimer(button)
-    local timer
-    local region = button.cd:GetRegions()
-    timer = region.SetText and region
-    timer:ClearAllPoints()
-    timer.ClearAllPoints = donothing
-    timer:SetFont(mnkLibs.Fonts.ap, 10, 'OUTLINE')
-    timer.SetFont = donothing
-    timer:SetPoint('BOTTOMLEFT', button, 0, 0)
-    timer.SetPoint = donothing
-    timer.SetTextColor = donothing
-    timer.SetVertexColor = donothing
-    return timer
+function mnkNames.timer_OnUpdate(button, elapsed)
+	if button.timercount then
+		button.timercount = max(button.timercount - elapsed, 0)
+
+		if button.timercount > 0 then
+            button.timer:SetFormattedText("%.0f", button.timercount)
+            if button.timercount <= 3 then
+                button.timer:SetTextColor(1, 0, 0)
+            else
+    		    button.timer:SetTextColor(1, 1, 1)
+            end
+        else
+			button.timer:SetText()
+		end
+	end
 end
 
 function mnkNames.PostCreateIcon(Auras, button)
-    if not button.timer then
-        button.timer = mnkNames.GetButtonTimer(button)
-    end
-
+    button.count = CreateFontString(button, mnkLibs.Fonts.ap, 10,  nil, nil, true)
+    button.count:ClearAllPoints()
+    button.count:SetPoint('TOPRIGHT', button, 0, 0)
+    button.timer = CreateFontString(button, mnkLibs.Fonts.ap, 10,  nil, nil, true)
+    button.timer:ClearAllPoints()
+    button.timer:SetPoint('BOTTOMLEFT', button, 0, 0)
     button.icon:SetTexCoord(.07, .93, .07, .93)
     button.overlay:SetTexture(mnkLibs.Textures.border)
     button.overlay:SetTexCoord(0, 1, 0, 1)
     button.overlay.Hide = function(self) self:SetVertexColor(0.3, 0.3, 0.3) end
 end
 
-function mnkNames.PostUpdateIcon(element, unit, button, index, offset)
-    if not button.timer then
-        button.timer = mnkNames.GetButtonTimer(button)
+function mnkNames.PostUpdateIcon(element, unit, button, index)
+    local _, _, _, _, _, duration, expirationTime = UnitAura(unit, index, button.filter)
+
+    if duration and duration > 0 then
+        button.timercount = expirationTime - GetTime()
+    else
+        button.timercount = math.huge
     end
+
+    button:SetScript('OnUpdate', function(self, elapsed) mnkNames.timer_OnUpdate(self, elapsed) end)
 end
 
 function mnkNames.OnNameplatesCallback(self)
