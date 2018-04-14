@@ -131,10 +131,10 @@ function mnkNames.timer_OnUpdate(button, elapsed)
 end
 
 function mnkNames.PostCreateIcon(Auras, button)
-    button.count = CreateFontString(button, mnkLibs.Fonts.ap, 10,  nil, nil, true)
+    button.count = CreateFontString(button, mnkLibs.Fonts.ap, 12,  nil, nil, true)
     button.count:ClearAllPoints()
     button.count:SetPoint('TOPRIGHT', button, 0, 0)
-    button.timer = CreateFontString(button, mnkLibs.Fonts.ap, 10,  nil, nil, true)
+    button.timer = CreateFontString(button, mnkLibs.Fonts.ap, 16,  nil, nil, true)
     button.timer:ClearAllPoints()
     button.timer:SetPoint('BOTTOMLEFT', button, 0, 0)
     button.icon:SetTexCoord(.07, .93, .07, .93)
