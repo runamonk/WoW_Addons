@@ -179,7 +179,7 @@ function mnkMoney.DoOnEnter(self)
     table.sort(t, sort_func)
 
     for i = 1, #t do
-        tooltip:AddLine(t[i].icon..t[i].name, SPACER, TruncNumber(t[i].count))
+        tooltip:AddLine(t[i].icon..t[i].name, SPACER, TruncNumber(t[i].count,2))
     end
 
     tooltip:SetAutoHideDelay(.1, self)
