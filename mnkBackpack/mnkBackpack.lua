@@ -172,6 +172,7 @@ Backpack:Override('UpdateSlot', function(Slot)
             end
         else
             Slot.ItemLevel:Hide()
+            Slot.boe:Hide()
         end
         if (itemQuestID or questItem) then
             Slot:SetBackdropBorderColor(1, 1, 0)
@@ -180,6 +181,9 @@ Backpack:Override('UpdateSlot', function(Slot)
         else
             Slot:SetBackdropBorderColor(0, 0, 0)
         end
+    else
+        Slot.ItemLevel:Hide()
+        Slot.boe:Hide()
     end
 end)
 
