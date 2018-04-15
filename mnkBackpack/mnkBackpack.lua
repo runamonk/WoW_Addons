@@ -88,7 +88,6 @@ local function SkinContainer(Container)
     Container.Title:SetPoint('TOPLEFT', 6, -5)
     Container.Title:SetText(Container.name)
     Container.columns = COLUMNS; 
-    Container.enableMouse = true
     Container:EnableMouse(true)
 
     local Anchor = CreateFrame('Frame', '$parentAnchor', Container)
