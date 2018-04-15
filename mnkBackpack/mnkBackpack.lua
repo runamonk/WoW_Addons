@@ -99,10 +99,20 @@ local function SkinContainer(Container)
     Container:SetBackdropBorderColor(0.2, 0.2, 0.2)
     Container.extraPaddingY = 16 -- needs a little extra because of the title
     Container:SetFrameStrata('HIGH'); 
-    --Container:SetScale(0.9)
 
     if (Container == Backpack) then
         Container.extraPaddingY = 36 -- needs more space for the footer
+        local button = CreateFrame('button', nil, Container)
+        button:SetPoint('BOTTOMLEFT', 3, 1)
+        button:SetSize(21, 21)
+        button:HookScript('OnClick', function () Backpack:Hide() end )
+        button:Show()
+        local buttonClose = button:CreateTexture('$parentIcon', 'OVERLAY')
+        buttonClose:SetAllPoints()
+        buttonClose:SetTexture(ICON_TEXTURES)
+        buttonClose:SetTexCoord(0, 0.25, 0, 0.25)
+        buttonClose:SetVertexColor(1, 0.1, 0.1)
+        Backpack.buttonClose = button
     end
 end
 
@@ -196,14 +206,17 @@ end)
 
 local function OnSearchOpen(self)
     self.Icon:Hide()
+    Backpack.buttonClose:Hide()
 end
 
 local function OnSearchClosed(self)
     local SearchBox = self:GetParent()
     SearchBox.Icon:Show()
+    Backpack.buttonClose:Show()
 end
 
 Backpack:On('PostCreateSearch', function(SearchBox)
+    SearchBox:SetPoint('LEFT', SearchBox:GetParent(), 'LEFT', 10, 0)
     SearchBox:HookScript('OnClick', OnSearchOpen)
     SearchBox:SetFrameLevel(SearchBox:GetParent():GetFrameLevel() + 1)
     SearchBox:SetAlpha(1)
@@ -224,7 +237,7 @@ Backpack:On('PostCreateSearch', function(SearchBox)
     Editbox:HookScript('OnEscapePressed', OnSearchClosed)
 
     local EditboxIcon = Editbox:CreateTexture('$parentIcon', 'OVERLAY')
-    EditboxIcon:SetPoint('RIGHT', Editbox, 'LEFT', -4, 0)
+    EditboxIcon:SetPoint('RIGHT', Editbox, 'LEFT', 0, 0)
     EditboxIcon:SetSize(16, 16)
     EditboxIcon:SetTexture(ICON_TEXTURES)
     EditboxIcon:SetTexCoord(0.75, 1, 0.75, 1)
