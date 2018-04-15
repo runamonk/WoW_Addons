@@ -103,15 +103,16 @@ local function SkinContainer(Container)
     if (Container == Backpack) then
         Container.extraPaddingY = 36 -- needs more space for the footer
         local button = CreateFrame('button', nil, Container)
+        button:SetFrameLevel(Container:GetFrameLevel() + 2)
         button:SetPoint('BOTTOMLEFT', 3, 1)
-        button:SetSize(21, 21)
+        button:SetSize(16, 16)
         button:HookScript('OnClick', function () Backpack:Hide() end )
         button:Show()
-        local buttonClose = button:CreateTexture('$parentIcon', 'OVERLAY')
-        buttonClose:SetAllPoints()
-        buttonClose:SetTexture(ICON_TEXTURES)
-        buttonClose:SetTexCoord(0, 0.25, 0, 0.25)
-        buttonClose:SetVertexColor(1, 0.1, 0.1)
+        button.Texture = button:CreateTexture('$parentIcon', 'OVERLAY')
+        button.Texture:SetAllPoints()
+        button.Texture:SetTexture(ICON_TEXTURES)
+        button.Texture:SetTexCoord(0, 0.25, 0, 0.25)
+        button.Texture:SetVertexColor(1, 0.1, 0.1)
         Backpack.buttonClose = button
     end
 end
@@ -199,37 +200,52 @@ end)
 
 Backpack:On('PostCreateMoney', function(Money)
     Money:ClearAllPoints()
-    Money:SetPoint('BOTTOMRIGHT', -7, 7)
+    Money:SetPoint('BOTTOMRIGHT', -4, 3)
     Money:SetFont(mnkLibs.Fonts.ap, 16, '')
     Money:SetShadowOffset(0, 0)
 end)
 
 local function OnSearchOpen(self)
-    self.Icon:Hide()
+    local SearchBox = self:GetParent()
+    SearchBox:SetPoint('LEFT', 0, 0)
+    SearchBox:SetWidth(SearchBox:GetParent():GetWidth()-50)
+    SearchBox.searchButton:Hide()
+    SearchBox.Editbox:Show()
+    SearchBox.Editbox.Icon:Show()
     Backpack.buttonClose:Hide()
 end
 
 local function OnSearchClosed(self)
     local SearchBox = self:GetParent()
-    SearchBox.Icon:Show()
+    SearchBox:ClearAllPoints()
+    SearchBox:SetPoint('BOTTOM', 0, 2)
+    SearchBox:SetSize(18,18)
+    SearchBox.Editbox:SetText('')
+    SearchBox.Editbox.Icon:Hide()
+    SearchBox.Editbox:Hide()
+    SearchBox.searchButton:Show()
     Backpack.buttonClose:Show()
 end
 
 Backpack:On('PostCreateSearch', function(SearchBox)
-    SearchBox:SetPoint('LEFT', SearchBox:GetParent(), 'LEFT', 10, 0)
-    SearchBox:HookScript('OnClick', OnSearchOpen)
+    SearchBox:ClearAllPoints()
+    SearchBox:SetPoint('BOTTOM', 0, 2)
+    SearchBox:SetSize(16,16)
     SearchBox:SetFrameLevel(SearchBox:GetParent():GetFrameLevel() + 1)
     SearchBox:SetAlpha(1)
     SearchBox.SetAlpha = donothing
-    
-    local SearchBoxIcon = SearchBox:CreateTexture('$parentIcon', 'OVERLAY')
-    SearchBoxIcon:SetPoint('CENTER')
-    SearchBoxIcon:SetSize(16, 16)
-    SearchBoxIcon:SetTexture(ICON_TEXTURES)
-    SearchBoxIcon:SetTexCoord(0.75, 1, 0.75, 1)
-    SearchBox.Icon = SearchBoxIcon
-    SearchBox.Icon:SetAlpha(1)
-    SearchBox.Icon.SetAlpha = donothing
+
+    local button = CreateFrame('button', nil, SearchBox)
+    button:SetPoint('CENTER', 0, -1)
+    button:SetSize(16, 16)
+    button:SetFrameLevel(SearchBox:GetParent():GetFrameLevel() + 2)
+    button:HookScript('OnClick', OnSearchOpen)
+    button:Show()
+    local buttonSearch = button:CreateTexture('$parentIcon', 'OVERLAY')
+    buttonSearch:SetAllPoints()
+    buttonSearch:SetTexture(ICON_TEXTURES)
+    buttonSearch:SetTexCoord(0.75, 1, 0.75, 1)
+    SearchBox.searchButton = button
 
     local Editbox = SearchBox.Editbox
     Editbox:SetFont(mnkLibs.Fonts.ap, 16, '')
@@ -237,7 +253,7 @@ Backpack:On('PostCreateSearch', function(SearchBox)
     Editbox:HookScript('OnEscapePressed', OnSearchClosed)
 
     local EditboxIcon = Editbox:CreateTexture('$parentIcon', 'OVERLAY')
-    EditboxIcon:SetPoint('RIGHT', Editbox, 'LEFT', 0, 0)
+    EditboxIcon:SetPoint('RIGHT', Editbox, 'LEFT', -5, 0)
     EditboxIcon:SetSize(16, 16)
     EditboxIcon:SetTexture(ICON_TEXTURES)
     EditboxIcon:SetTexCoord(0.75, 1, 0.75, 1)
