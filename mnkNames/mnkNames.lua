@@ -26,7 +26,7 @@ local cfg_font_height = 15
 local cfg_debuffs_num = 6
 local cfg_debuffs_rows = 1
 local cfg_debuffs_size = 24
-local cfg_debuffs_spacing = 1
+local cfg_debuffs_spacing = 5
 local lastNameplate = nil
 
 function mnkNames.CreateStyle(self, unit)
