@@ -144,7 +144,7 @@ function mnkNames.PostCreateIcon(Auras, button)
     button.timer:ClearAllPoints()
     button.timer:SetPoint('BOTTOMLEFT', button, 0, 0)
     button.icon:SetTexCoord(.07, .93, .07, .93)
-    CreateBorder(button, 1,-1,-1,1, {1,1,1,1})
+    CreateBorder(button, 1,-1,-1,1, {0,0,0,1})
 end
 
 function mnkNames.PostUpdateIcon(element, unit, button, index)
