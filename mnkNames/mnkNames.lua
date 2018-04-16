@@ -125,8 +125,10 @@ function mnkNames.timer_OnUpdate(button, elapsed)
             button.timer:SetFormattedText("%.0f", button.timercount)
             if button.timercount <= 3 then
                 button.timer:SetTextColor(1, 0, 0)
+                button.border:SetBackdropBorderColor(1,0,0,1)
             else
-    		    button.timer:SetTextColor(1, 1, 1)
+                button.timer:SetTextColor(1, 1, 1)
+                button.border:SetBackdropBorderColor(0,0,0,1)
             end
         else
 			button.timer:SetText()
@@ -142,9 +144,7 @@ function mnkNames.PostCreateIcon(Auras, button)
     button.timer:ClearAllPoints()
     button.timer:SetPoint('BOTTOMLEFT', button, 0, 0)
     button.icon:SetTexCoord(.07, .93, .07, .93)
-    button.overlay:SetTexture(mnkLibs.Textures.border)
-    button.overlay:SetTexCoord(0, 1, 0, 1)
-    button.overlay.Hide = function(self) self:SetVertexColor(0.3, 0.3, 0.3) end
+    CreateBorder(button, 1,-1,-1,1, {1,1,1,1})
 end
 
 function mnkNames.PostUpdateIcon(element, unit, button, index)
