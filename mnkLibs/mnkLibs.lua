@@ -119,40 +119,6 @@ function StripServerName(fullName)
     end
 end
 
-function CreateFontString(frame, font, size, outline, layer, shadow)
-    local fs = frame:CreateFontString(nil, layer or 'OVERLAY')   
-    fs:SetFont(font, size, outline)
-    if shadow then
-        fs:SetShadowColor(0, 0, 0, 1)
-        fs:SetShadowOffset(1, -1)
-    else
-        fs:SetShadowColor(0, 0, 0, 0)
-        fs:SetShadowOffset(0, 0)
-    end
-    return fs
-end
-
-function CreateDropShadow(frame, point, edge, color)
-    local shadow = CreateFrame('Frame', nil, frame)
-    shadow:SetFrameLevel(0)
-    shadow:SetPoint('TOPLEFT', frame, 'TOPLEFT', -point, point)
-    shadow:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', point, -point)
-    shadow:SetBackdrop({
-        bgFile = 'Interface\\Tooltips\\UI-Tooltip-Background', 
-        edgeFile = mnkLibs.Textures.border, 
-        tile = false, 
-        tileSize = 32, 
-        edgeSize = edge, 
-        insets = {
-            left = -edge, 
-            right = -edge, 
-            top = -edge, 
-            bottom = -edge
-        }})
-    shadow:SetBackdropColor(0, 0, 0, 0)
-    shadow:SetBackdropBorderColor(unpack(color))
-end
-
 function SetBackdrop(self, bgfile, edgefile, inset_l, inset_r, inset_t, inset_b)
     if not bgFile then
         bgfile = 'Interface\\ChatFrame\\ChatFrameBackground'
@@ -189,6 +155,52 @@ function CreateBackground(self)
     t:SetColorTexture(0, 0, 0)
 end       
 
+function CreateDropShadow(frame, point, edge, color)
+    local shadow = CreateFrame('Frame', nil, frame)
+    shadow:SetFrameLevel(0)
+    shadow:SetPoint('TOPLEFT', frame, 'TOPLEFT', -point, point)
+    shadow:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', point, -point)
+    shadow:SetBackdrop({
+        bgFile = 'Interface\\Tooltips\\UI-Tooltip-Background', 
+        edgeFile = mnkLibs.Textures.border, 
+        tile = false, 
+        tileSize = 32, 
+        edgeSize = edge, 
+        insets = {
+            left = -edge, 
+            right = -edge, 
+            top = -edge, 
+            bottom = -edge
+        }})
+    shadow:SetBackdropColor(0, 0, 0, 0)
+    shadow:SetBackdropBorderColor(unpack(color))
+end
+
+function CreateFontString(frame, font, size, outline, layer, shadow)
+    local fs = frame:CreateFontString(nil, layer or 'OVERLAY')   
+    fs:SetFont(font, size, outline)
+    if shadow then
+        fs:SetShadowColor(0, 0, 0, 1)
+        fs:SetShadowOffset(1, -1)
+    else
+        fs:SetShadowColor(0, 0, 0, 0)
+        fs:SetShadowOffset(0, 0)
+    end
+    return fs
+end
+
+function CreateTooltip(self, tooltiptext)
+    self:SetScript('OnEnter', function (self)
+        if(self.tooltipText) then
+            GameTooltip:SetOwner(self, self.tooltipAnchor or 'ANCHOR_TOP')
+            GameTooltip:SetText(self.tooltipText)
+            GameTooltip:Show()
+        end
+    end)
+    self:SetScript('OnLeave', GameTooltip_Hide)
+    self.tooltipText = tooltiptext   
+end
+
 function Status(unit)
     if (not UnitIsConnected(unit)) then
         return 'Offline'
@@ -198,6 +210,10 @@ function Status(unit)
         return 'Dead'
     end
 end        
+
+
+
+
 
         
 

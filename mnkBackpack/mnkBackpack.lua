@@ -100,21 +100,23 @@ local function SkinContainer(Container)
     Container:SetBackdropBorderColor(0.2, 0.2, 0.2)
     Container.extraPaddingY = 16 -- needs a little extra because of the title
     Container:SetFrameStrata('HIGH'); 
-
-    if (Container == Backpack) then
+    if (Container == BackpackBank) then
+        Container:SetBackdropColor(1/8, 1/8, 1/8, 1)
+    elseif (Container == Backpack) then
+        Container:SetBackdropColor(1/8, 1/8, 1/8, 1)
         Container.extraPaddingY = 36 -- needs more space for the footer
-        local button = CreateFrame('button', nil, Container)
-        button:SetFrameLevel(Container:GetFrameLevel() + 2)
-        button:SetPoint('BOTTOMLEFT', 3, 1)
-        button:SetSize(16, 16)
-        button:HookScript('OnClick', function () Backpack:Hide() end )
-        button:Show()
-        button.Texture = button:CreateTexture('$parentIcon', 'OVERLAY')
-        button.Texture:SetAllPoints()
-        button.Texture:SetTexture(ICON_TEXTURES)
-        button.Texture:SetTexCoord(0, 0.25, 0, 0.25)
-        button.Texture:SetVertexColor(1, 0.1, 0.1)
-        Backpack.buttonClose = button
+        Backpack.buttonClose = CreateFrame('button', nil, Container)
+        CreateTooltip(Backpack.buttonClose,'Click to close backpack.')
+        Backpack.buttonClose:SetFrameLevel(Container:GetFrameLevel() + 2)
+        Backpack.buttonClose:SetPoint('BOTTOMLEFT', 3, 1)
+        Backpack.buttonClose:SetSize(16, 16)
+        Backpack.buttonClose:HookScript('OnClick', function () Backpack:Hide() end )
+        Backpack.buttonClose:Show()
+        Backpack.buttonClose.Texture = Backpack.buttonClose:CreateTexture('$parentIcon', 'OVERLAY')
+        Backpack.buttonClose.Texture:SetAllPoints()
+        Backpack.buttonClose.Texture:SetTexture(ICON_TEXTURES)
+        Backpack.buttonClose.Texture:SetTexCoord(0, 0.25, 0, 0.25)
+        Backpack.buttonClose.Texture:SetVertexColor(1, 0.1, 0.1)
     end
 end
 
@@ -235,7 +237,8 @@ Backpack:On('PostCreateSearch', function(SearchBox)
     SearchBox:SetFrameLevel(SearchBox:GetParent():GetFrameLevel() + 1)
     SearchBox:SetAlpha(1)
     SearchBox.SetAlpha = donothing
-    SearchBox.searchButton = CreateFrame('button', nil, SearchBox)
+    SearchBox.searchButton = CreateFrame('button', nil, SearchBox) 
+    CreateTooltip(SearchBox.searchButton, 'Click to search, press ESC to cancel.')
     SearchBox.searchButton:SetPoint('CENTER', 0, -1)
     SearchBox.searchButton:SetSize(16, 16)
     SearchBox.searchButton:SetFrameLevel(SearchBox:GetParent():GetFrameLevel() + 2)
