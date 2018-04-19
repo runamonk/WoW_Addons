@@ -127,7 +127,7 @@ local function PostCreateIcon(Auras, button)
     button:SetScript('OnClick', function(self, button) CancelUnitBuff('player', self:GetName():match('%d')) end)
 end
 
-local function SetFlagVis(self)
+local function SetPlayerStatusFlag(self)
     if UnitIsAFK(self.unit) then
         self.flagAFK:Show()
     else
@@ -214,7 +214,7 @@ local function PlayerUnit(self)
         self.flagDND = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
         self.flagDND:SetPoint('RIGHT', self.flagPVP, 'LEFT', -2, 0)
         self.flagDND:SetText(Color(COLOR_BLUE)..'DND') 
-        SetFlagVis(self)
+        SetPlayerStatusFlag(self)
         local t = {} 
         for i = 1, 10 do
             local f = CreateFrame('StatusBar', nil, self)
@@ -244,7 +244,7 @@ local function PlayerUnit(self)
         self.flagCombat:Hide()
         self:RegisterEvent('PLAYER_REGEN_ENABLED', function(unit) unit.flagCombat:Hide() end)
         self:RegisterEvent('PLAYER_REGEN_DISABLED', function(unit) unit.flagCombat:Show() end)
-        self:RegisterEvent('PLAYER_FLAGS_CHANGED', function(self) SetFlagVis(self) end)
+        self:RegisterEvent('PLAYER_FLAGS_CHANGED', function(self) SetPlayerStatusFlag(self) end)
         self.Power = CreateFrame('StatusBar', nil, self.Health)
         self.Power:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
         self.Power:SetSize(self:GetWidth(), 3)
