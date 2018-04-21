@@ -10,7 +10,7 @@ function mnkNuisance:DoOnEvent(event, arg1)
     if event == 'PLAYER_LOGIN' then
         mnkNuisance.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkNuisance', {
             icon = '', 
-            label = Color(COLOR_GOLD) .. 'Block Groups', 
+            label = mnkLibs.Color(COLOR_GOLD)..'Block Groups', 
             type = 'data source', 
             OnClick = mnkNuisance.DoOnClick, 
             OnEnter = mnkNuisance.DoOnEnter
@@ -20,20 +20,20 @@ function mnkNuisance:DoOnEvent(event, arg1)
         if bBlockEnabled == true then
             CancelPetDuel()
             StaticPopup_Hide('PET_BATTLE_PVP_DUEL_REQUESTED')
-            PrintError('Pet duel declined automtically.')
+            mnkLibs.PrintError('Pet duel declined automtically.')
         end
     elseif event == 'DUEL_REQUESTED' then
         if bBlockEnabled == true then
             CancelDuel()
             StaticPopup_Hide('DUEL_REQUESTED')
-            PrintError('Duel declined automtically.')
+            mnkLibs.PrintError('Duel declined automtically.')
         end
     elseif (event == 'PARTY_INVITE_REQUEST') then
         if bBlockEnabled == true then
             if mnkNuisance.IsFriend(arg1) == false and mnkNuisance.InGuild(arg1) == false then
                 DeclineGroup()
                 StaticPopup_Hide('PARTY_INVITE')
-                PrintError('Declined group invite from '..arg1)
+                mnkLibs.PrintError('Declined group invite from '..arg1)
                 --SendChatMessage('No Thanks.', 'WHISPER', nil, arg1)
                 BlockThisSession = (BlockThisSession + 1)
                 mnkNuisance.SetIcon()
@@ -66,7 +66,7 @@ function mnkNuisance.IsFriend(chatUser)
         for x = 1, i do
             local name = GetFriendInfo(i)
             if name ~= nil then
-                if StripServerName(name) == StripServerName(chatUser) then
+                if mnkLibs.formatPlayerName(name) == mnkLibs.formatPlayerName(chatUser) then
                     print('mnkNuisnace: Allowing invite request from friend '..chatUser)
                     return true
                 end
@@ -80,7 +80,7 @@ function mnkNuisance.IsFriend(chatUser)
             if toonName ~= nil then
                 --print(toonName)
                 --print(chatUser)
-                if isOnline and StripServerName(toonName) == StripServerName(chatUser) then
+                if isOnline and mnkLibs.formatPlayerName(toonName) == mnkLibs.formatPlayerName(chatUser) then
                     print('mnkNuisnace: Allowing invite request from battle.net friend '..chatUser)
                     return true
                 end
@@ -98,8 +98,8 @@ function mnkNuisance.InGuild(chatUser)
         for i = 1, iOnline do
             local name, _, _, _, _, _, _, _, online, _, _, _, _, _ = GetGuildRosterInfo(i)
 
-            --PrintError(online, ' n:', string.sub(name, 1, string.find(name, '-')-1)), ' c:', chatUser)
-            if online and (StripServerName(name) == StripServerName(chatUser)) then
+            --mnkLibs.PrintError(online, ' n:', string.sub(name, 1, string.find(name, '-')-1)), ' c:', chatUser)
+            if online and (mnkLibs.formatPlayerName(name) == mnkLibs.formatPlayerName(chatUser)) then
                 print('mnkNuisnace: Allowing invite request from guildie '..name)
                 return true
             end
@@ -111,10 +111,10 @@ end
 function mnkNuisance.SetIcon()
     if bBlockEnabled == true then
         mnkNuisance.LDB.icon = 'Interface\\Icons\\Achievement_dungeon_naxxramas_10man'
-        mnkNuisance.LDB.text = Color(COLOR_GREEN) .. 'ON' .. ' ('..BlockThisSession..')'
+        mnkNuisance.LDB.text = mnkLibs.Color(COLOR_GREEN)..'ON'..' ('..BlockThisSession..')'
     else
         mnkNuisance.LDB.icon = 'Interface\\Icons\\Achievement_dungeon_naxxramas'
-        mnkNuisance.LDB.text = Color(COLOR_RED) .. 'OFF'
+        mnkNuisance.LDB.text = mnkLibs.Color(COLOR_RED)..'OFF'
     end
 end
 

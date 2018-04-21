@@ -31,7 +31,7 @@ end
 
 function mnkPC.UpdateText()
     local down, up, lagHome, lagWorld = GetNetStats()
-    mnkPC.LDB.text = math.floor(GetFramerate()) .. ' fps / '..lagWorld..' ms'
+    mnkPC.LDB.text = math.floor(GetFramerate())..' fps / '..lagWorld..' ms'
 end
 
 mnkPC:SetScript('OnEvent', mnkPC.DoOnEvent)

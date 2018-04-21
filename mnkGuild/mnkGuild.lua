@@ -37,7 +37,7 @@ function mnkGuild.DoOnEnter(self)
         GuildRoster()
         
         local GuildName = GetGuildInfo('player')
-        tooltip:AddHeader(Color(COLOR_GOLD)..GuildName)
+        tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..GuildName)
         --local l = tooltip:AddLine();
         --tooltip:SetCell(l, 1, GetGuildRosterMOTD(), 5);
         
@@ -47,7 +47,7 @@ function mnkGuild.DoOnEnter(self)
 
 
         tooltip:AddHeader(' ')
-        tooltip:AddHeader(Color(COLOR_GOLD) .. 'Name', Color(COLOR_GOLD) .. 'Level', Color(COLOR_GOLD) .. 'Rank', Color(COLOR_GOLD) .. 'Zone', Color(COLOR_GOLD) .. 'Note')
+        tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Name', mnkLibs.Color(COLOR_GOLD)..'Level', mnkLibs.Color(COLOR_GOLD)..'Rank', mnkLibs.Color(COLOR_GOLD)..'Zone', mnkLibs.Color(COLOR_GOLD)..'Note')
         
         for i = 1, #t do
             local y = tooltip:AddLine(t[i].ClassNameStatus, t[i].level, t[i].rank, t[i].zone, t[i].note)
@@ -85,9 +85,9 @@ function mnkGuild.GetStatus(statusid)
     if statusid == 0 then
         return ''
     elseif statusid == 1 then
-        return Color(COLOR_GREEN) .. '<Away>'
+        return mnkLibs.Color(COLOR_GREEN)..'<Away>'
     elseif statusid == 2 then
-        return Color(COLOR_RED) .. '<Busy>'
+        return mnkLibs.Color(COLOR_RED)..'<Busy>'
     else
         return ''
     end
@@ -104,7 +104,7 @@ function mnkGuild.UpdateText()
 
         if guildName ~= nil then
 
-            mnkGuild.LDB.label = Color(COLOR_GREEN)..guildName
+            mnkGuild.LDB.label = mnkLibs.Color(COLOR_GREEN)..guildName
             mnkGuild.LDB.text = iOnline..'/'..iTotal
             local x = 0
 
@@ -117,14 +117,14 @@ function mnkGuild.UpdateText()
                     local c1, c2, c3, c4 = unpack(CLASS_ICON_TCOORDS[classFileName])
                     local classIcon = string.format('|TInterface\\GLUES\\CHARACTERCREATE\\UI-CHARACTERCREATE-CLASSES:16:16:0:0:256:256:%s:%s:%s:%s|t', c1 * 256, c2 * 256, c3 * 256, c4 * 256)
                     t[x] = {}
-                    t[x].ClassNameStatus = classIcon..format('|cff%s%s', colors[class:gsub(' ', ''):upper()] or 'ffffff', StripServerName(name))..mnkGuild.GetStatus(status)
+                    t[x].ClassNameStatus = classIcon..format('|cff%s%s', colors[class:gsub(' ', ''):upper()] or 'ffffff', mnkLibs.formatPlayerName(name))..mnkGuild.GetStatus(status)
                     t[x].name = name
                     t[x].level = level
                     t[x].rank = rank
                     t[x].zone = zone
                     t[x].note = note
                     if isMobile then
-                        t[x].ClassNameStatus = t[x].ClassNameStatus..Color(COLOR_WHITE) .. '*'
+                        t[x].ClassNameStatus = t[x].ClassNameStatus..mnkLibs.Color(COLOR_WHITE)..'*'
                     end
                 end
             end

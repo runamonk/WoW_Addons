@@ -28,7 +28,7 @@ end
 
 tags['mnku:curhp'] = function(unit)
     if (Status(unit)) then return end
-    return TruncNumber(UnitHealth(unit), 2)
+    return mnkLibs.formatNumber(UnitHealth(unit), 2)
 end
 
 tags['mnku:leader'] = function(unit)
@@ -42,7 +42,7 @@ tags['mnku:level'] = function(unit)
 
     if l <= 0 then 
         l = '??'
-        s = Color(COLOR_RED)..l
+        s = mnklibs.Color(COLOR_RED)..l
     else
         s = Hex(d)..l
     end
@@ -52,7 +52,7 @@ end
 tags['mnku:name'] = function(unit)
     local name = UnitName(unit)
     local rare = _TAGS['shortclassification'](unit) or ''
-    return Color(COLOR_WHITE)..name..rare
+    return mnkLibs.Color(COLOR_WHITE)..name..rare
 end
 
 tags['mnku:perhp'] = function(unit)
@@ -82,3 +82,13 @@ end
 tags['mnku:status'] = function(unit)
     return Status(unit)
 end
+
+function Status(unit)
+    if (not UnitIsConnected(unit)) then
+        return 'Offline'
+    elseif (UnitIsGhost(unit)) then
+        return 'Ghost'
+    elseif (UnitIsDead(unit)) then
+        return 'Dead'
+    end
+end       

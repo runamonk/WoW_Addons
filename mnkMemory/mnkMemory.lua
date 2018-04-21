@@ -27,7 +27,7 @@ function mnkMemory.DoOnEnter(self)
     local taddons = {}
 
     tooltip:Clear()
-    tooltip:AddHeader(Color(COLOR_GOLD) .. 'Addon', SPACER, Color(COLOR_GOLD) .. 'Memory')
+    tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Addon', SPACER, mnkLibs.Color(COLOR_GOLD)..'Memory')
 
     UpdateAddOnMemoryUsage()
     for i = 1, GetNumAddOns() do
@@ -47,7 +47,7 @@ function mnkMemory.DoOnEnter(self)
     end
 
     for i = 1, x do
-        tooltip:AddLine(taddons[i].name, SPACER, ReadableMemory(taddons[i].mem))
+        tooltip:AddLine(taddons[i].name, SPACER, mnkLibs.formatMemory(taddons[i].mem))
     end
     local l = tooltip:AddLine()
     tooltip:SetCell(l, 1, 'Displaying highest 10 addons.', 3)
@@ -75,7 +75,7 @@ function mnkMemory.UpdateText()
     for i = 1, GetNumAddOns() do
         memTotal = memTotal + GetAddOnMemoryUsage(i)
     end
-    mnkMemory.LDB.text = ReadableMemory(memTotal)
+    mnkMemory.LDB.text = mnkLibs.formatMemory(memTotal)
 end
 
 mnkMemory:SetScript('OnEvent', mnkMemory.DoOnEvent)
