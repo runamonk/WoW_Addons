@@ -27,9 +27,9 @@ function mnkXP.DoOnEnter(self)
     end 
     
     tooltip:Clear()
-    tooltip:AddLine(Color(COLOR_GOLD) .. 'XP', TruncNumber(UnitXP('player'), 2) .. ' of '..TruncNumber(UnitXPMax('player'), 2), Color(COLOR_BLUE)..ToPCT(UnitXP('player') / UnitXPMax('player')))
-    --tooltip:AddLine(Color(COLOR_GOLD) .. 'XP Left', TruncNumber(UnitXPMax('player') - UnitXP('player'), 2), Color(COLOR_BLUE)..ToPCT((UnitXPMax('player') - UnitXP('player')) / UnitXPMax('player')))
-    tooltip:AddLine(Color(COLOR_GOLD) .. 'Rested XP', TruncNumber(extXP, 2), Color(COLOR_GREEN)..ToPCT((extXP / UnitXPMax('player'))))
+    tooltip:AddLine(mnkLibs.Color(COLOR_GOLD)..'XP', mnkLibs.formatNumber(UnitXP('player'), 2)..' of '..mnkLibs.formatNumber(UnitXPMax('player'), 2), mnkLibs.Color(COLOR_BLUE)..mnkLibs.formatNumToPercentage(UnitXP('player') / UnitXPMax('player')))
+    --tooltip:AddLine(mnkLibs.Color(COLOR_GOLD)..'XP Left', TruncNumber(UnitXPMax('player') - UnitXP('player'), 2), mnkLibs.Color(COLOR_BLUE)..mnkLibs.formatNumToPercentage((UnitXPMax('player') - UnitXP('player')) / UnitXPMax('player')))
+    tooltip:AddLine(mnkLibs.Color(COLOR_GOLD)..'Rested XP', mnkLibs.formatNumber(extXP, 2), mnkLibs.Color(COLOR_GREEN)..mnkLibs.formatNumToPercentage((extXP / UnitXPMax('player'))))
 
     tooltip:SetAutoHideDelay(.1, self)
     tooltip:SmartAnchorTo(self)
@@ -45,9 +45,9 @@ function mnkXP:GetXPText()
     if UnitLevel('player') == GetMaxPlayerLevel() then
         return UnitLevel('player')
     elseif iRestXP < 1 then -- only show rested xp when you have at least 1% of total, it looks silly otherwise.
-        return UnitLevel('player')..Color(COLOR_WHITE) .. ' - '..Color(COLOR_BLUE)..currXP
+        return UnitLevel('player')..mnkLibs.Color(COLOR_WHITE)..' - '..mnkLibs.Color(COLOR_BLUE)..currXP
     else
-        return UnitLevel('player')..Color(COLOR_WHITE) .. ' - '..Color(COLOR_BLUE)..currXP..Color(COLOR_WHITE) .. ' - '..Color(COLOR_GREEN)..restXP
+        return UnitLevel('player')..mnkLibs.Color(COLOR_WHITE)..' - '..mnkLibs.Color(COLOR_BLUE)..currXP..mnkLibs.Color(COLOR_WHITE)..' - '..mnkLibs.Color(COLOR_GREEN)..restXP
     end
 end
 

@@ -87,7 +87,7 @@ function mnkReputation.DoOnClick(self, button)
             if header ~= tblAllFactions[i].header then
                 header = tblAllFactions[i].header
                 local s = (tblAllFactions[i].max - tblAllFactions[i].current)
-                mnkReputation.AddLabel(sFactions, header, ' ('..tblAllFactions[i].standing..' - '..tostring(s) .. ')')
+                mnkReputation.AddLabel(sFactions, header, ' ('..tblAllFactions[i].standing..' - '..tostring(s)..')')
             end
             mnkReputation.AddCheckbox(sFactions, mnkReputation.InTable(tblFactions, tblAllFactions[i].name), tblAllFactions[i].name, tblAllFactions[i].standingid, tblAllFactions[i].standing, mnkReputation.GetRepLeft(tblAllFactions[i].max - tblAllFactions[i].current))
         end
@@ -120,21 +120,21 @@ function mnkReputation.DoOnEnter(self)
     else 
         table.sort(tblAllFactions, function(a, b) return a.name < b.name end)
 
-        tooltip:AddHeader(Color(COLOR_GOLD) .. 'Name', Color(COLOR_GOLD) .. 'Reputation', Color(COLOR_GOLD) .. 'To go')
+        tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Name', mnkLibs.Color(COLOR_GOLD)..'Reputation', mnkLibs.Color(COLOR_GOLD)..'To go')
 
         for i = 1, #tblAllFactions do
             if mnkReputation.InTable(tblFactions, tblAllFactions[i].name) == true then
                 if tblAllFactions[i].header == '.Guild.' then
-                    tooltip:AddLine(Color(mnkReputation.GetFactionColor(tblAllFactions[i].standingid)) .. '<'..tblAllFactions[i].name..'>', tblAllFactions[i].standing, mnkReputation.GetRepLeft(tblAllFactions[i].max - tblAllFactions[i].current))
+                    tooltip:AddLine(mnkLibs.Color(mnkReputation.GetFactionColor(tblAllFactions[i].standingid))..'<'..tblAllFactions[i].name..'>', tblAllFactions[i].standing, mnkReputation.GetRepLeft(tblAllFactions[i].max - tblAllFactions[i].current))
                 else 
-                    tooltip:AddLine(Color(mnkReputation.GetFactionColor(tblAllFactions[i].standingid))..tblAllFactions[i].name, tblAllFactions[i].standing, mnkReputation.GetRepLeft(tblAllFactions[i].max - tblAllFactions[i].current))
+                    tooltip:AddLine(mnkLibs.Color(mnkReputation.GetFactionColor(tblAllFactions[i].standingid))..tblAllFactions[i].name, tblAllFactions[i].standing, mnkReputation.GetRepLeft(tblAllFactions[i].max - tblAllFactions[i].current))
                 end
             end
         end
         
         tooltip:AddLine(' ')
         local y, x = tooltip:AddLine()
-        tooltip:SetCell(y, 1, Color(COLOR_PURPLE) .. 'Exalted: '..Color(COLOR_WHITE)..iExalted..Color(COLOR_GREEN) .. ' Honored/Revered: '..Color(COLOR_WHITE)..iHonored..Color(COLOR_RED) .. ' Hated: '..Color(COLOR_WHITE)..iHated, 'LEFT', 3)
+        tooltip:SetCell(y, 1, mnkLibs.Color(COLOR_PURPLE)..'Exalted: '..mnkLibs.Color(COLOR_WHITE)..iExalted..mnkLibs.Color(COLOR_GREEN)..' Honored/Revered: '..mnkLibs.Color(COLOR_WHITE)..iHonored..mnkLibs.Color(COLOR_RED)..' Hated: '..mnkLibs.Color(COLOR_WHITE)..iHated, 'LEFT', 3)
     end
 
     mnkReputation.AddTabards(tooltip)
@@ -149,7 +149,7 @@ end
 function mnkReputation.AddCheckbox(scrollbox, checked, name, standingid, standing, rating)
     local c = libAG:Create('CheckBox')
     c:SetValue(checked)
-    c:SetLabel(name..' ['..Color(mnkReputation.GetFactionColor(standingid))..standing..Color(COLOR_WHITE) .. '] '..Color(COLOR_WHITE)..rating)
+    c:SetLabel(name..' ['..Color(mnkReputation.GetFactionColor(standingid))..standing..Color(COLOR_WHITE)..'] '..Color(COLOR_WHITE)..rating)
     c:SetUserData('name', name)
     c:SetWidth(400)
     scrollbox:AddChild(c)
@@ -169,7 +169,7 @@ end
 function mnkReputation.AddTabards(t)
     if #tblTabards > 0 then
         t:AddLine(' ')
-        t:AddHeader(Color(COLOR_GOLD) .. 'Tabard Name', '', '')
+        t:AddHeader(Color(COLOR_GOLD)..'Tabard Name', '', '')
         local i = 0
         for i = 1, #tblTabards do
             local y = t:AddLine()
@@ -215,7 +215,7 @@ function mnkReputation.GetAllFactions()
         
         if isHeader then
             header = name
-            --PrintError(name, ' ', hasRep);
+            --mnkLibs.PrintError(name, ' ', hasRep);
         end
 
         if isHeader and isCollapsed then
@@ -298,7 +298,7 @@ function mnkReputation.GetFirstEmptyBagSlot()
     for b = 0, NUM_BAG_SLOTS do
         i, t = GetContainerNumFreeSlots(b)
         if i > 0 and t == 0 then
-            --PrintError(b, ' ', i, ' ', t)
+            --mnkLibs.PrintError(b, ' ', i, ' ', t)
             --bags are numbered 19 to 23
             return b + 19
         end
@@ -310,7 +310,7 @@ function mnkReputation.GetRepLeft(amt)
     if amt == 0 or amt == 1 then
         return ''
     else
-        return TruncNumber(amt, 0)
+        return mnkLibs.formatNumber(amt, 0)
     end
 end
 
@@ -411,7 +411,7 @@ function mnkReputation.UpdateTable(t, scrollbox)
 end
 
 function mnkReputation.UpdateText()
-    mnkReputation.LDB.text = Color(COLOR_PURPLE)..iExalted..Color(COLOR_WHITE) .. ' / '..Color(COLOR_GREEN)..iHonored..Color(COLOR_WHITE) .. ' / '..Color(COLOR_RED)..iHated
+    mnkReputation.LDB.text = mnkLibs.Color(COLOR_PURPLE)..iExalted..mnkLibs.Color(COLOR_WHITE)..' / '..mnkLibs.Color(COLOR_GREEN)..iHonored..mnkLibs.Color(COLOR_WHITE)..' / '..mnkLibs.Color(COLOR_RED)..iHated
 end
 
 mnkReputation:SetScript('OnEvent', mnkReputation.DoOnEvent)

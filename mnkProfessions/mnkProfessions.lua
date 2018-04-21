@@ -32,7 +32,7 @@ function mnkProfessions.DoOnEnter(self)
 
     tooltip:Clear()
     
-    tooltip:AddHeader(Color(COLOR_GOLD) .. 'Profession', SPACER, Color(COLOR_GOLD) .. 'Level')
+    tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Profession', SPACER, mnkLibs.Color(COLOR_GOLD)..'Level')
 
     local prof1, prof2, archaeology, fishing, cooking, firstAid = GetProfessions()
 
@@ -77,9 +77,9 @@ function mnkProfessions.GetProfText(p)
     if p ~= nil then
         local _, icon, skillLevel, maxSkillLevel, _, _, _, _, _, _ = GetProfessionInfo(p)
         if skillLevel == maxSkillLevel then
-            return string.format('|T%s:20|t', icon) .. ' '..Color(COLOR_GOLD)..maxSkillLevel
+            return string.format('|T%s:20|t', icon) ..' '..mnkLibs.Color(COLOR_GOLD)..maxSkillLevel
         else 
-            return string.format('|T%s:20|t', icon) .. ' '..Color(COLOR_GOLD)..skillLevel..'/'..maxSkillLevel
+            return string.format('|T%s:20|t', icon) ..' '..mnkLibs.Color(COLOR_GOLD)..skillLevel..'/'..maxSkillLevel
         end
     else
         return ''

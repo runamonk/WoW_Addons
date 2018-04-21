@@ -36,110 +36,18 @@ COLOR_BLUE = {r = 51, g = 153, b = 255}
 COLOR_PURPLE = {r = 128, g = 114, b = 194}
 COLOR_GREY = {r = 168, g = 168, b = 168}
 
-function donothing()
-   return
+function mnkLibs.Color(t)
+    return mnkLibs.convertRGBtoHex(t.r, t.g, t.b)
 end
 
-function string.color(text, color)
-    return "|c"..color..text.."|r"
-end
-
-function PrintError(Message)
-    UIErrorsFrame:AddMessage(Message, 1.0, 0.0, 0.0)
-end
-
-function RGBToHex(r, g, b)
+function mnkLibs.convertRGBtoHex(r, g, b)
     r = r <= 255 and r >= 0 and r or 0
     g = g <= 255 and g >= 0 and g or 0
     b = b <= 255 and b >= 0 and b or 0
     return string.format('|cff%02x%02x%02x', r, g, b)
 end
 
-function round(x, n)
-    n = math.pow(10, n or 0)
-    x = x * n
-    if x >= 0 then x = math.floor(x + 0.5) else x = math.ceil(x - 0.5) end
-    return x / n
-end
-
-function QuotedStr(str)
-    if str == '' or str == nil then
-        return '\'' .. '\''
-    else
-        return '\''..str..'\''
-    end
-end
-
-function Color(t)
-    return RGBToHex(t.r, t.g, t.b)
-end
-
-function ToPCT(num)
-    return format(TEXT('%.1f%%'), (num * 100))
-end
-
-function ReadableMemory(bytes)
-    if bytes < 1024 then
-        return format('%.2f', bytes) .. ' kb'
-    else
-        return format('%.2f', bytes / 1024) .. ' mb'
-    end
-end
-
-function TruncNumber(num, places)
-    local ret = 0
-    local placeValue = ('%%.%df'):format(places or 0)
-    if not num then
-        return 0
-    elseif num >= 1000000000000 then
-        ret = placeValue:format(num / 1000000000000) .. 'T'; -- trillion
-    elseif num >= 1000000000 then
-        ret = placeValue:format(num / 1000000000) .. 'B'; -- billion
-    elseif num >= 1000000 then
-        ret = placeValue:format(num / 1000000) .. 'M'; -- million
-    elseif num >= 1000 then
-        ret = placeValue:format(num / 1000) .. 'K'; -- thousand
-    else
-        ret = num; -- hundreds
-    end
-    return ret
-end
-
-function StripServerName(fullName)
-    --PrintError(fullName)
-    if fullName ~= nil then
-        local i = string.find(fullName, '-')
-        if i ~= nil then
-            return string.sub(fullName, 1, i - 1)
-        else
-            return fullName
-        end
-    else
-        return nil
-    end
-end
-
-function SetBackdrop(self, bgfile, edgefile, inset_l, inset_r, inset_t, inset_b)
-    if not bgFile then
-        bgfile = 'Interface\\ChatFrame\\ChatFrameBackground'
-    end
-
-    self:SetBackdrop {
-        bgFile = bgfile,
-        edgeFile = edgefile, 
-        edgeSize = 1,
-        tile = false, 
-        tileSize = 0, 
-        insets = {
-            left = -inset_l, 
-            right = -inset_r, 
-            top = -inset_t, 
-            bottom = -inset_b
-        }}
-    self:SetBackdropColor(0, 0, 0, 1)
-end
-
-function CreateBorder(parent, top, bottom, left, right, color)
+function mnkLibs.createBorder(parent, top, bottom, left, right, color)
     parent.border = CreateFrame("Frame", nil, parent)
     parent.border:SetPoint('TOP', top, top)
     parent.border:SetPoint('BOTTOM', bottom, bottom)
@@ -149,13 +57,7 @@ function CreateBorder(parent, top, bottom, left, right, color)
     parent.border:SetBackdropBorderColor(unpack(color)) 
 end
 
-function CreateBackground(self)
-    local t = self:CreateTexture(nil, 'BORDER')
-    t:SetAllPoints(self)
-    t:SetColorTexture(0, 0, 0)
-end       
-
-function CreateDropShadow(frame, point, edge, color)
+function mnkLibs.createDropShadow(frame, point, edge, color)
     local shadow = CreateFrame('Frame', nil, frame)
     shadow:SetFrameLevel(0)
     shadow:SetPoint('TOPLEFT', frame, 'TOPLEFT', -point, point)
@@ -176,7 +78,7 @@ function CreateDropShadow(frame, point, edge, color)
     shadow:SetBackdropBorderColor(unpack(color))
 end
 
-function CreateFontString(frame, font, size, outline, layer, shadow)
+function mnkLibs.createFontString(frame, font, size, outline, layer, shadow)
     local fs = frame:CreateFontString(nil, layer or 'OVERLAY')   
     fs:SetFont(font, size, outline)
     if shadow then
@@ -189,7 +91,105 @@ function CreateFontString(frame, font, size, outline, layer, shadow)
     return fs
 end
 
-function CreateTooltip(self, tooltiptext)
+function mnkLibs.createTexture(self, type, color)
+    local t = self:CreateTexture(nil, type)
+    t:SetAllPoints(self)
+    t:SetColorTexture(unpack(color))
+end   
+
+function mnkLibs.donothing()
+    return
+ end
+
+function mnkLibs.formatNumber(num, places)
+    local ret = 0
+    local placeValue = ('%%.%df'):format(places or 0)
+    if not num then
+        return 0
+    elseif num >= 1000000000000 then
+        ret = placeValue:format(num / 1000000000000)..'T'; -- trillion
+    elseif num >= 1000000000 then
+        ret = placeValue:format(num / 1000000000)..'B'; -- billion
+    elseif num >= 1000000 then
+        ret = placeValue:format(num / 1000000)..'M'; -- million
+    elseif num >= 1000 then
+        ret = placeValue:format(num / 1000)..'K'; -- thousand
+    else
+        ret = num; -- hundreds
+    end
+    return ret
+end
+
+function mnkLibs.formatNumToPercentage(num)
+    return format(TEXT('%.1f%%'), (num * 100))
+end
+
+function mnkLibs.formatMemory(bytes)
+    if bytes < 1024 then
+        return format('%.2f', bytes)..' kb'
+    else
+        return format('%.2f', bytes / 1024)..' mb'
+    end
+end
+
+function mnkLibs.formatPlayerName(fullName)
+    if fullName ~= nil then
+        local i = string.find(fullName, '-')
+        if i ~= nil then
+            return string.sub(fullName, 1, i - 1)
+        else
+            return fullName
+        end
+    else
+        return nil
+    end
+end
+
+function formatTime(s)
+    local day, hour, minute = 86400, 3600, 60
+  
+    if s >= day then
+      return format('%dd', floor(s/day + 0.5))
+    elseif s >= hour then
+      return format('%dh', floor(s/hour + 0.5))
+    elseif s >= minute then
+      return format('%dm', floor(s/minute + 0.5))
+    end
+    return format('%d', mod(s, minute))
+  end
+
+function mnkLibs.PrintError(Message)
+    UIErrorsFrame:AddMessage(Message, 1.0, 0.0, 0.0)
+end
+
+function mnkLibs.round(x, n)
+    n = math.pow(10, n or 0)
+    x = x * n
+    if x >= 0 then x = math.floor(x + 0.5) else x = math.ceil(x - 0.5) end
+    return x / n
+end
+
+function mnkLibs.setBackdrop(self, bgfile, edgefile, inset_l, inset_r, inset_t, inset_b)
+    if not bgFile then
+        bgfile = 'Interface\\ChatFrame\\ChatFrameBackground'
+    end
+
+    self:SetBackdrop {
+        bgFile = bgfile,
+        edgeFile = edgefile, 
+        edgeSize = 1,
+        tile = false, 
+        tileSize = 0, 
+        insets = {
+            left = -inset_l, 
+            right = -inset_r, 
+            top = -inset_t, 
+            bottom = -inset_b
+        }}
+    self:SetBackdropColor(0, 0, 0, 1)
+end
+
+function mnkLibs.setTooltip(self, tooltiptext)
     self:SetScript('OnEnter', function (self)
         if(self.tooltipText) then
             GameTooltip:SetOwner(self, self.tooltipAnchor or 'ANCHOR_TOP')
@@ -199,17 +199,7 @@ function CreateTooltip(self, tooltiptext)
     end)
     self:SetScript('OnLeave', GameTooltip_Hide)
     self.tooltipText = tooltiptext   
-end
-
-function Status(unit)
-    if (not UnitIsConnected(unit)) then
-        return 'Offline'
-    elseif (UnitIsGhost(unit)) then
-        return 'Ghost'
-    elseif (UnitIsDead(unit)) then
-        return 'Dead'
-    end
-end        
+end 
 
 
 

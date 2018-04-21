@@ -28,7 +28,7 @@ function mnkFavoriteMounts.DoOnEnter(self)
     local c = 0
 
     if #tblMountIDs > 0 then
-        tooltip:AddHeader(Color(COLOR_GOLD) .. 'Favorites')
+        tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Favorites')
         
         for i = 1, #tblMountIDs do
             local mName, spellID, mIcon, active, isUsable, _, isFavorite, _, _, hideOnChar, isCollected, mountID = C_MountJournal.GetMountInfoByID(tblMountIDs[i])
@@ -46,13 +46,13 @@ function mnkFavoriteMounts.DoOnEnter(self)
         table.sort(tblMounts, sort_func)
 
         for i = 1, #tblMounts do
-            local y = tooltip:AddLine(string.format('|T%s:16|t', tblMounts[i].mIcon) .. ' '..tblMounts[i].mName)
+            local y = tooltip:AddLine(string.format('|T%s:16|t', tblMounts[i].mIcon)..' '..tblMounts[i].mName)
             tooltip:SetLineScript(y, 'OnMouseDown', mnkFavoriteMounts.DoOnMouseDown, tblMounts[i].mID)
         end 
     end
 
     if (c == 0) then
-        tooltip:AddLine(Color(COLOR_GOLD) .. 'No favorite mounts defined.')
+        tooltip:AddLine(mnkLibs.Color(COLOR_GOLD)..'No favorite mounts defined.')
     end
 
     tooltip:SetAutoHideDelay(.1, self)

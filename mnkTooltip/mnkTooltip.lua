@@ -19,7 +19,7 @@ end
 local function OnTooltipSetSpell(self)
     local id = select(3, self:GetSpell())
     if id ~= nil and id ~= '' then
-        GameTooltip:AddLine(Color(COLOR_WHITE) .. 'Spell ID: '..id)
+        GameTooltip:AddLine(mnkLibs.Color(COLOR_WHITE)..'Spell ID: '..id)
     end
 end
 
@@ -35,9 +35,9 @@ local function OnTooltipSetUnit()
                 cls = ''
             else
                 if cls == 'rare' then
-                    cls = Color(COLOR_RED) .. ' (RARE)'
+                    cls = mnkLibs.Color(COLOR_RED)..' (RARE)'
                 else
-                    cls = Color(COLOR_PURPLE) .. ' (RARE ELITE)'
+                    cls = mnkLibs.Color(COLOR_PURPLE)..' (RARE ELITE)'
                 end
             end
 
@@ -45,8 +45,8 @@ local function OnTooltipSetUnit()
                 
                 if UnitIsTapDenied(unit) then
                     local unitName, _ = UnitName(unit)
-                    GameTooltipTextLeft1:SetFormattedText(Color(COLOR_GREY)..unitName..cls)
-                    GameTooltip:AddLine(Color(COLOR_WHITE) .. '<<Tapped>>')
+                    GameTooltipTextLeft1:SetFormattedText(mnkLibs.Color(COLOR_GREY)..unitName..cls)
+                    GameTooltip:AddLine(mnkLibs.Color(COLOR_WHITE)..'<<Tapped>>')
                 else
                     local unitName, _ = UnitName(unit)
                     if unitName ~= nil then
@@ -57,7 +57,7 @@ local function OnTooltipSetUnit()
                 if UnitIsPlayer(unit) then
                     local _, unitClass = UnitClass(unit)
                     local unitName, _ = UnitName(unit)
-                    unitName = StripServerName(unitName)
+                    unitName = mnkLibs.formatPlayerName(unitName)
 
                     if color then
                         GameTooltipTextLeft1:SetFormattedText(format('|cff%s%s', colors[unitClass:gsub(' ', ''):upper()] or 'ffffff', unitName))
@@ -67,19 +67,19 @@ local function OnTooltipSetUnit()
 
                     local guildName, _, _ = GetGuildInfo(unit)
                     if guildName ~= nil then
-                        guildName = StripServerName(guildName)
-                        GameTooltipTextLeft2:SetFormattedText(Color(COLOR_GREEN) .. '<'..guildName..'>')
+                        guildName = mnkLibs.formatPlayerName(guildName)
+                        GameTooltipTextLeft2:SetFormattedText(mnkLibs.Color(COLOR_GREEN)..'<'..guildName..'>')
                     end
 
-                    local unitTarget = unit .. 'target'
+                    local unitTarget = unit..'target'
                     if UnitExists(unitTarget) then
                         if UnitIsPlayer(unitTarget) then
                             local targetName, _ = UnitName(unitTarget)
 
                             if UnitIsUnit(targetName, 'player') then
-                                GameTooltip:AddLine(Color(COLOR_WHITE) .. 'Target: <<YOU>>')
+                                GameTooltip:AddLine(mnkLibs.Color(COLOR_WHITE)..'Target: <<YOU>>')
                             else
-                                GameTooltip:AddLine(Color(COLOR_WHITE) .. 'Target: '..targetName)
+                                GameTooltip:AddLine(mnkLibs.Color(COLOR_WHITE)..'Target: '..targetName)
                             end
                         end
                     end

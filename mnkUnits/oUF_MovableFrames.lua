@@ -21,7 +21,7 @@ local _BACKDROP = {
 -- I could use the title field in the TOC, but people tend to put color and
 -- other shit there, so we'll just use the folder name:
 local slashGlobal = _NAME:gsub('%s+', '_'):gsub('[^%a%d_]+', ''):upper()
-slashGlobal = slashGlobal .. '_OMF'
+slashGlobal = slashGlobal..'_OMF'
 
 local print_fmt = string.format('|cff33ff99%s:|r', _TITLE)
 local print = function(...)
@@ -61,10 +61,10 @@ local getPoint = function(obj, anchor)
 		local TOP = UIHeight * 2 / 3
 
 		if(Oy >= TOP) then
-			point = 'TOP' .. (point or '')
+			point = 'TOP'..(point or '')
 			y = obj:GetTop() - UIHeight
 		elseif(Oy <= BOTTOM) then
-			point = 'BOTTOM' .. (point or '')
+			point = 'BOTTOM'..(point or '')
 			y = obj:GetBottom()
 		else
 			if(not point) then point = 'CENTER' end
@@ -294,7 +294,7 @@ do
 			for i=2, n do
 				local inp = validName(select(i, ...))
 				if(inp) then
-					name = (name or '') .. inp
+					name = (name or '')..inp
 				end
 			end
 		end
@@ -560,7 +560,7 @@ do
 		subtitle:SetNonSpaceWrap(true)
 		subtitle:SetWordWrap(true)
 		subtitle:SetJustifyH'LEFT'
-		subtitle:SetFormattedText('Type %s to toggle frame anchors.', _G['SLASH_' .. slashGlobal .. 1])
+		subtitle:SetFormattedText('Type %s to toggle frame anchors.', _G['SLASH_'..slashGlobal..1])
 
 		local scroll = CreateFrame("ScrollFrame", nil, self)
 		scroll:SetPoint('TOPLEFT', subtitle, 'BOTTOMLEFT', 0, -8)
@@ -692,7 +692,7 @@ do
 			local OnChar = function(self, key)
 				local text = self:GetText()
 				if(
-					not tonumber(text .. '0') or
+					not tonumber(text..'0') or
 					(not tonumber(key) and key ~= '-' and key ~= '.') or
 					(self.onlyAboveZero and key == '-' and not (self:GetNumber() < 0))
 				) then
@@ -992,7 +992,7 @@ local slashList = GetAddOnMetadata(_NAME, 'X-SlashCmdList'):gsub('%s+', '')
 local handleCmds = function(...)
 	for i=1, select('#', ...) do
 		local cmd = select(i, ...)
-		_G['SLASH_' ..slashGlobal .. i] = cmd
+		_G['SLASH_' ..slashGlobal..i] = cmd
 	end
 end
 handleCmds(string.split(',', slashList))

@@ -30,7 +30,7 @@ function mnkGearSets.DoOnEnter(self)
 
         self.tooltip = tooltip
         tooltip:Clear()
-        tooltip:AddHeader(Color(COLOR_GOLD) .. 'Name')
+        tooltip:AddHeader(Color(COLOR_GOLD)..'Name')
 
         for i = 1, x do
             local name, icon, _ = GetEquipmentSetInfo(i)

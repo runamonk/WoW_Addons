@@ -32,7 +32,7 @@ function mnkFriends.DoOnEnter(self)
 
     local x = mnkFriends.GetNumFriendsOnline()
     if x > 0 then
-        tooltip:AddHeader(Color(COLOR_GOLD) .. 'Name', Color(COLOR_GOLD) .. 'Level', Color(COLOR_GOLD) .. 'Zone', Color(COLOR_GOLD) .. 'Note')
+        tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Name', mnkLibs.Color(COLOR_GOLD)..'Level', mnkLibs.Color(COLOR_GOLD)..'Zone', mnkLibs.Color(COLOR_GOLD)..'Note')
     else
         local l = tooltip:AddLine()
         tooltip:SetCell(l, 1, 'No friends are online.', 5)

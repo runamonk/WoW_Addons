@@ -28,18 +28,18 @@ local function CreateCastBar(self)
     self.castbarbg = CreateFrame('Frame', nil, self)
     self.castbarbg:SetPoint('LEFT', self, 'LEFT', -1, 0)
     self.castbarbg:SetPoint('BOTTOM', self, 'TOP', 0, 4)
-    SetBackdrop(self.castbarbg, nil, nil, 0, 0, 0, 0)
+    mnkLibs.setBackdrop(self.castbarbg, nil, nil, 0, 0, 0, 0)
     self.castbarbg:SetBackdropColor(0, 0, 0, 1)
     self.castbarbg:SetFrameStrata('MEDIUM')
     self.castbarbg:SetSize(self:GetWidth()+2, 18)
-    CreateBorder(self.castbarbg, 1,-1,-1,1, {1,1,1,1})
+    mnkLibs.createBorder(self.castbarbg, 1,-1,-1,1, {1,1,1,1})
     self.castbarbg:Hide()
     self.Castbar = CreateFrame('StatusBar', nil, self.castbarbg)
     self.Castbar:SetAllPoints()
     self.Castbar:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
     self.Castbar:SetStatusBarColor(1/2, 1/2, 1/2, 1)
     if UnitIsPlayer(self.unit) then
-        self.Castbar.Text = CreateFontString(self.Castbar, mnkLibs.Fonts.oswald, 16,  nil, nil, true)
+        self.Castbar.Text = mnkLibs.createFontString(self.Castbar, mnkLibs.Fonts.oswald, 16,  nil, nil, true)
         self.Castbar.Text:SetPoint('LEFT', self.Castbar, 2, 0)
     end
     self.Castbar:SetFrameStrata('HIGH') 
@@ -70,61 +70,90 @@ end
 
 local function CreateBottomPanel()
     local pback = CreateFrame('Frame', 'mnkBottom', UIParent)
-    SetBackdrop(pback, nil, nil, 1, 1, 1, 1)
+    mnkLibs.setBackdrop(pback, nil, nil, 1, 1, 1, 1)
     pback:SetBackdropColor(0, 0, 0, 0.8)
     pback:SetHeight(170)
     pback:SetWidth(UIParent:GetWidth())
     pback:SetPoint('BOTTOM',0,0)
     pback:SetFrameStrata('BACKGROUND')
-    CreateBorder(pback, 1, -3, -3, 3, {classColor.r, classColor.g, classColor.b, .5}) 
+    mnkLibs.createBorder(pback, 1, -3, -3, 3, {classColor.r, classColor.g, classColor.b, .5}) 
     pback:Show()
 
     local pplayer = CreateFrame('Frame', 'mnkBottom', UIParent)
-    SetBackdrop(pplayer, nil, nil, 1, 1, 1, 1)
+    mnkLibs.setBackdrop(pplayer, nil, nil, 1, 1, 1, 1)
     pplayer:SetBackdropColor(0, 0, 0, 0.8)
     pplayer:SetHeight(64)
     pplayer:SetWidth(281)
     pplayer:SetPoint('BOTTOM',0,171)
     pplayer:SetFrameStrata('BACKGROUND')
-    CreateBorder(pplayer, 1, -1, -1, 1, {classColor.r, classColor.g, classColor.b, .5})
+    mnkLibs.createBorder(pplayer, 1, -1, -1, 1, {classColor.r, classColor.g, classColor.b, .5})
     pplayer:Show()
 
     local pbackLeft = CreateFrame('Frame', 'mnkButtonsLeft', pback)
-    SetBackdrop(pbackLeft, nil, nil, 1, 1, 1, 1)
+    mnkLibs.setBackdrop(pbackLeft, nil, nil, 1, 1, 1, 1)
     pbackLeft:SetBackdropColor(1/5, 1/5, 1/5, 0.8)
     pbackLeft:SetHeight(130)
     pbackLeft:SetWidth(469)
     pbackLeft:SetPoint('BOTTOM', 0, 0)
     pbackLeft:SetPoint('LEFT', 530, 0)
     pbackLeft:SetFrameStrata('LOW')
-    CreateBorder(pbackLeft, 0, -1, 0, 0, {classColor.r, classColor.g, classColor.b, .5})
+    mnkLibs.createBorder(pbackLeft, 0, -1, 0, 0, {classColor.r, classColor.g, classColor.b, .5})
     pbackLeft:Show()  
 
     local pbackRight = CreateFrame('Frame', 'mnkButtonsRight', pback)
-    SetBackdrop(pbackRight, nil, nil, 1, 1, 1, 1)
+    mnkLibs.setBackdrop(pbackRight, nil, nil, 1, 1, 1, 1)
     pbackRight:SetBackdropColor(1/5, 1/5, 1/5, 0.8)
     pbackRight:SetHeight(130)
     pbackRight:SetWidth(469)
     pbackRight:SetPoint('BOTTOM', 0, 0)
     pbackRight:SetPoint('LEFT', 1235, 0)
     pbackRight:SetFrameStrata('LOW')
-    CreateBorder(pbackRight, 0, -1, 0, 0, {classColor.r, classColor.g, classColor.b, .5})
+    mnkLibs.createBorder(pbackRight, 0, -1, 0, 0, {classColor.r, classColor.g, classColor.b, .5})
     pbackRight:Show()  
 end
 
+local function timer_OnUpdate(button, elapsed)
+    if (button.timercount and button.timercount ~= math.huge) then
+        button.timercount = max(button.timercount - elapsed, 0)
+        if button.timercount > 0 then
+            button.timer:SetText(formatTime(button.timercount))
+            if button.timercount <= 3 then
+                button.timer:SetTextColor(1, 0, 0)
+                button.border:SetBackdropBorderColor(1,0,0,1)
+            else
+                button.timer:SetTextColor(1, 1, 1)
+                button.border:SetBackdropBorderColor(0,0,0,1)
+            end
+        else
+			button.timer:SetText()
+		end
+    else
+        button.border:SetBackdropBorderColor(0,0,0,1)
+        button.timer:SetText()
+    end
+end
+
 local function PostCreateIcon(Auras, button)
-    local count = button.count
-    count:ClearAllPoints()
-    count:SetFont(mnkLibs.Fonts.ap, 10, 'OUTLINE')
-    count:SetPoint('TOPRIGHT', button, 3, 3)
-    local timer = button.cd:GetRegions()
-    timer:SetFont(mnkLibs.Fonts.ap, 8, 'OUTLINE')
-    timer:SetPoint('BOTTOMLEFT', button, 1, 1)
+    button.count = mnkLibs.createFontString(button, mnkLibs.Fonts.ap, 10,  nil, nil, true)
+    button.count:ClearAllPoints()
+    button.count:SetPoint('TOPRIGHT', button, 0, 0)
+    button.timer = mnkLibs.createFontString(button, mnkLibs.Fonts.ap, 10,  nil, nil, true)
+    button.timer:ClearAllPoints()
+    button.timer:SetPoint('BOTTOMLEFT', button, 0, 0)
     button.icon:SetTexCoord(.07, .93, .07, .93)
-    button.overlay:SetTexture(mnkLibs.Textures.border)
-    button.overlay:SetTexCoord(0, 1, 0, 1)
-    button.overlay.Hide = function(self) self:SetVertexColor(0.3, 0.3, 0.3) end
     button:SetScript('OnClick', function(self, button) CancelUnitBuff('player', self:GetName():match('%d')) end)
+    mnkLibs.createBorder(button, 1,-1,-1,1, {0,0,0,1})
+end
+
+local function PostUpdateIcon(element, unit, button, index)
+    local _, _, _, _, _, duration, expirationTime = UnitAura(unit, index, button.filter)
+    
+    if duration and (duration > 0) and (expirationTime > 0) then
+        button.timercount = expirationTime - GetTime()
+    else
+        button.timercount = math.huge
+    end
+    button:SetScript('OnUpdate', function(self, elapsed) timer_OnUpdate(self, elapsed) end)
 end
 
 local function SetPlayerStatusFlag(self)
@@ -158,7 +187,7 @@ local function CreateUnit(self)
     self:RegisterForClicks('AnyUp')
     self:SetScript('OnEnter', UnitFrame_OnEnter)
     self:SetScript('OnLeave', UnitFrame_OnLeave)
-    SetBackdrop(self, nil, nil, 1, 1, 1, 1)
+    mnkLibs.setBackdrop(self, nil, nil, 1, 1, 1, 1)
     self:SetBackdropColor(1/6, 1/6, 1/6)
 
     self:SetSize(200, 20)
@@ -173,7 +202,7 @@ end
 local function MinimalUnit(self)
     if Config['show'..self.unit] then 
         CreateUnit(self)
-        self.Name = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
+        self.Name = mnkLibs.createFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
         self.Name:SetAllPoints(self)
         self.Name:SetJustifyH("CENTER")
         self.Name:SetWordWrap(false)
@@ -186,7 +215,7 @@ local function PetUnit(self)
         self:RegisterForClicks('AnyUp')
         self:SetScript('OnEnter', UnitFrame_OnEnter)
         self:SetScript('OnLeave', UnitFrame_OnLeave)
-        self.PetHealth = CreateFontString(self, mnkLibs.Fonts.oswald, 18, nil, nil, true)
+        self.PetHealth = mnkLibs.createFontString(self, mnkLibs.Fonts.oswald, 18, nil, nil, true)
         self.PetHealth:SetPoint('CENTER', self, 0, 0)
         self:Tag(self.PetHealth, '[mnku:pethp]')
         self:SetSize(36, oUF_mnkUnitsPlayer:GetHeight())
@@ -199,21 +228,21 @@ local function PlayerUnit(self)
         CreateUnit(self)
         CreateCastBar(self)
         self:SetSize(200, 26)
-        self.HealthValue = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
+        self.HealthValue = mnkLibs.createFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
         self.HealthValue:SetPoint('LEFT', self.Health, 1, 1)
         self:Tag(self.HealthValue, '[mnku:status][mnku:perhp] [mnku:curhp]') 
-        self.isResting = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, nil, nil, true)
+        self.isResting = mnkLibs.createFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, nil, nil, true)
         self.isResting:SetPoint('RIGHT', self.Health, 'RIGHT', 0, 0)
         self:Tag(self.isResting, '[|cFFFFFF00>resting<|r]')
-        self.flagPVP = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
+        self.flagPVP = mnkLibs.createFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
         self.flagPVP:SetPoint('RIGHT', self.isResting, 'LEFT', -2, 0)
         self:Tag(self.flagPVP, '[|cffff0000>pvp<|r]') 
-        self.flagAFK = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
+        self.flagAFK = mnkLibs.createFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
         self.flagAFK:SetPoint('RIGHT', self.flagPVP, 'LEFT', -2, 0)
-        self.flagAFK:SetText(Color(COLOR_BLUE)..'AFK')
-        self.flagDND = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
+        self.flagAFK:SetText(mnkLibs.Color(COLOR_BLUE)..'AFK')
+        self.flagDND = mnkLibs.createFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
         self.flagDND:SetPoint('RIGHT', self.flagPVP, 'LEFT', -2, 0)
-        self.flagDND:SetText(Color(COLOR_BLUE)..'DND') 
+        self.flagDND:SetText(mnkLibs.Color(COLOR_BLUE)..'DND') 
         SetPlayerStatusFlag(self)
         local t = {} 
         for i = 1, 10 do
@@ -221,7 +250,7 @@ local function PlayerUnit(self)
             f:SetStatusBarTexture(mnkLibs.Textures.combo_round)
             f:SetSize(16, 16)
 
-            local n = CreateFontString(f, mnkLibs.Fonts.oswald, 10, nil, nil, false)
+            local n = mnkLibs.createFontString(f, mnkLibs.Fonts.oswald, 10, nil, nil, false)
             n:SetPoint('CENTER', f, 0, 0)
             n:SetText(i)
             n:SetTextColor(0, 0, 0)
@@ -238,7 +267,7 @@ local function PlayerUnit(self)
 
         self.ClassPower = t
         self.Runes = t
-        self.flagCombat = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
+        self.flagCombat = mnkLibs.createFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
         self.flagCombat:SetPoint('LEFT', self.HealthValue, 'RIGHT', 1, 0)
         self.flagCombat:SetText('|cffff0000'..'×')
         self.flagCombat:Hide()
@@ -251,7 +280,7 @@ local function PlayerUnit(self)
         self.Power:SetPoint('LEFT', self, 0, -9)
         self.Power.frequentUpdates = true
         self.Power.colorPower = true
-        SetBackdrop(self.Power, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
+        mnkLibs.setBackdrop(self.Power, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
         self.Power:SetBackdropColor(1/7, 1/7, 1/7, 1)
         self.AdditionalPower = CreateFrame('StatusBar', nil, self.Health)
         self.AdditionalPower:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
@@ -259,29 +288,31 @@ local function PlayerUnit(self)
         self.AdditionalPower:SetPoint('LEFT', self, 0, -12)
         self.AdditionalPower.frequentUpdates = true
         self.AdditionalPower.colorPower = true
-        SetBackdrop(self.AdditionalPower, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
+        mnkLibs.setBackdrop(self.AdditionalPower, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
         self.AdditionalPower:SetBackdropColor(1/7, 1/7, 1/7, 1)
         self.ThreatIndicator = CreateFrame('Frame', nil, self.Health)
         self.ThreatIndicator:SetSize((self:GetWidth()/2), 1)
         self.ThreatIndicator:SetPoint('CENTER', self, 0, -6)
         self.ThreatIndicator:SetFrameStrata('LOW')
-        SetBackdrop(self.ThreatIndicator, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
+        mnkLibs.setBackdrop(self.ThreatIndicator, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
         self.ThreatIndicator.Override = UpdateThreat
         self.Auras = CreateFrame('Frame', nil, self)
         self.Auras.onlyShowPlayer = true
-        self.Auras.spacing = 1
+        self.Auras.disableCooldown = true
+        self.Auras.spacing = 3
         self.Auras.numTotal = 14
-        self.Auras:SetPoint('LEFT', self, 'LEFT', -2, 0)
+        self.Auras:SetPoint('LEFT', self, 'LEFT', -1, 0)
         self.Auras:SetPoint('BOTTOM', self, 'TOP', 0 , 5)
         self.Auras:SetSize(self.Health:GetWidth(), 16)
         self.Auras.PostCreateIcon = PostCreateIcon
+        self.Auras.PostUpdateIcon = PostUpdateIcon   
     end
 end
 
 local function PartyUnit(self)
     if Config.showparty then
         CreateUnit(self)
-        self.Name = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, nil, nil, true)
+        self.Name = mnkLibs.createFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, nil, nil, true)
         self.Name:SetPoint('LEFT', self.Health, 3, 0)
         self.Name:SetPoint('RIGHT', self:GetWidth() - 2)
         self:Tag(self.Name, '[mnku:leader][raidcolor][name]')
@@ -296,7 +327,7 @@ local function PartyUnit(self)
         self.RaidTargetIndicator = self.frameValues:CreateTexture(nil, 'OVERLAY')
         self.RaidTargetIndicator:SetPoint('LEFT', self.Name, 'RIGHT', 5, 0)
         self.RaidTargetIndicator:SetSize(14, 14)
-        self.HealthValue = CreateFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
+        self.HealthValue = mnkLibs.createFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
         self.HealthValue:SetPoint('RIGHT', self.GroupRoleIndicator, 'LEFT', -3, 0)
         self:Tag(self.HealthValue, '[mnku:curhp]') 
     end
@@ -317,7 +348,7 @@ end
 --Based on code from Phanx, thanks Phanx!
 local function UpdateMirrorBars()
     for i = 1, 3 do
-        local barname = "MirrorTimer" .. i
+        local barname = "MirrorTimer"..i
         local bar = _G[barname]
 
         for _, region in pairs({ bar:GetRegions() }) do
@@ -341,7 +372,7 @@ local function UpdateMirrorBars()
         bar.text:SetFont(mnkLibs.Fonts.oswald, 18)
         bar.text:SetTextColor(1/3, 1/3, 1/3)
         bar.border:Hide()
-        CreateBorder(bar, 1,-1,-1,1, {1,1,1,1})
+        mnkLibs.createBorder(bar, 1,-1,-1,1, {1,1,1,1})
     end
 end
 
@@ -382,15 +413,15 @@ mnkUnits.oUF:Factory(function(self)
     ):SetPoint('TOPLEFT', 25, -50)
 
     for index = 1, MAX_BOSS_FRAMES or 5 do
-        local boss = self:Spawn('boss' .. index)
-        local arena = self:Spawn('arena' .. index)
+        local boss = self:Spawn('boss'..index)
+        local arena = self:Spawn('arena'..index)
 
         if (index == 1) then
             boss:SetPoint('TOPRIGHT', -50, -100)
             arena:SetPoint('TOPRIGHT', -50, -100)
         else
-            boss:SetPoint('TOP', _G['oUF_mnkUnitsBoss' .. index - 1], 'BOTTOM', 0, -6)
-            arena:SetPoint('TOP', _G['oUF_mnkUnitsArena' .. index - 1], 'BOTTOM', 0, -6)
+            boss:SetPoint('TOP', _G['oUF_mnkUnitsBoss'..index - 1], 'BOTTOM', 0, -6)
+            arena:SetPoint('TOP', _G['oUF_mnkUnitsArena'..index - 1], 'BOTTOM', 0, -6)
         end
     end
 end)

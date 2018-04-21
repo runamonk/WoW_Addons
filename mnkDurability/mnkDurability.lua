@@ -50,7 +50,7 @@ function mnkDurability.DoOnEnter(self)
     local Total = 0
     local Current = 0
     
-    tooltip:AddHeader(Color(COLOR_GOLD) .. 'Slot', Color(COLOR_GOLD) .. 'Name', Color(COLOR_GOLD) .. 'Durability', Color(COLOR_GOLD) .. 'Level')
+    tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Slot', mnkLibs.Color(COLOR_GOLD)..'Name', mnkLibs.Color(COLOR_GOLD)..'Durability', mnkLibs.Color(COLOR_GOLD)..'Level')
     
     for i in pairs(t) do 
         Current = (Current + t[i].Current)
@@ -59,7 +59,7 @@ function mnkDurability.DoOnEnter(self)
             pct = '-'
         else
             if (t[i].Max > 0) then
-                pct = math.floor((t[i].Current / t[i].Max) * 100) .. '%'
+                pct = math.floor((t[i].Current / t[i].Max) * 100)..'%'
             else
                 pct = '-'
             end
@@ -68,8 +68,7 @@ function mnkDurability.DoOnEnter(self)
         local y, x = tooltip:AddLine(t[i].Text, t[i].ItemName, pct, t[i].Level)
         tooltip:SetLineScript(y, 'OnMouseDown', mnkDurability.DoOnMouseDown, t[i].ItemLink)
         tooltip:SetLineScript(y, 'OnEnter', mnkDurability.DoOnMouseEnter, t[i].ItemLink)
-        tooltip:SetLineScript(y, 'OnLeave', mnkDurability.DoOnMouseLeave, t[i].ItemLink)
-        
+        tooltip:SetLineScript(y, 'OnLeave', mnkDurability.DoOnMouseLeave, t[i].ItemLink)  
     end
     
     tooltip:AddLine(' ')
@@ -88,7 +87,6 @@ end
 
 function mnkDurability.DoOnMouseEnter(self, arg, button)
     if arg ~= nil then
-        -- --PrintError(self:GetWidth())
         GameTooltip_SetDefaultAnchor(GameTooltip, self)
         GameTooltip:SetHyperlink(arg)
         GameTooltip:Show()
@@ -207,9 +205,9 @@ function mnkDurability:GetText()
     Percent = math.floor((Current / Total) * 100)
 
     if (Lowest ~= Percent) then
-        return Lowest..'%/'..Percent..'%'..Color(COLOR_WHITE) .. ' i'..Color(COLOR_GOLD)..math.floor(mnkDurability.GetAvgILevel())
+        return Lowest..'%/'..Percent..'%'..mnkLibs.Color(COLOR_WHITE) ..' i'..mnkLibs.Color(COLOR_GOLD)..math.floor(mnkDurability.GetAvgILevel())
     else
-        return Percent..'%'..Color(COLOR_WHITE) .. ' i'..Color(COLOR_GOLD)..math.floor(mnkDurability.GetAvgILevel())
+        return Percent..'%'..mnkLibs.Color(COLOR_WHITE)..' i'..mnkLibs.Color(COLOR_GOLD)..math.floor(mnkDurability.GetAvgILevel())
     end
 end
 

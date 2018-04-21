@@ -75,7 +75,7 @@ function mnkMoney:DoOnEvent(event, arg1, arg2)
                                 x = ' '
                             end
                             
-                            local s = string.format('|T%s:12|t %s', itemIcon, '|c'..color..itemName..Color(COLOR_WHITE)..c..x)
+                            local s = string.format('|T%s:12|t %s', itemIcon, '|c'..color..itemName..mnkLibs.Color(COLOR_WHITE)..c..x)
                             CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false)
                         end -- if itemtype
                     end -- else
@@ -116,7 +116,7 @@ function mnkMoney:DoOnEvent(event, arg1, arg2)
             end
             if l then
                 local name, i, icon = _G.GetCurrencyInfo(tonumber(l:match('currency:(%d+)')))
-                local s = string.format('|T%s:12|t %s', icon, name..Color(COLOR_WHITE) .. ' x '..c..' ['..i..']')
+                local s = string.format('|T%s:12|t %s', icon, name..mnkLibs.Color(COLOR_WHITE)..' x '..c..' ['..i..']')
                 CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false)
             end
         end --CHAT_MSG_CURRENCY
@@ -127,7 +127,7 @@ function mnkMoney:DoOnEvent(event, arg1, arg2)
 
     if gold > 0 then
         self.LDB.icon = 'Interface\\MoneyFrame\\UI-GoldIcon'
-        text = TruncNumber(gold, 2)
+        text = mnkLibs.formatNumber(gold, 2)
     elseif silver > 0 then
         self.LDB.icon = 'Interface\\MoneyFrame\\UI-SilverIcon'
         text = silver
@@ -147,11 +147,11 @@ function mnkMoney.DoOnEnter(self)
     local tooltip = libQTip:Acquire('mnkMoneyTooltip', 3, 'LEFT', 'LEFT', 'RIGHT')
     self.tooltip = tooltip
     tooltip:Clear()
-    tooltip:AddHeader(Color(COLOR_GOLD) .. 'Currency', SPACER, Color(COLOR_GOLD) .. 'Amount')
+    tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Currency', SPACER, mnkLibs.Color(COLOR_GOLD)..'Amount')
     local gold, silver, copper = mnkMoney.GetMoneyText()
     
     if gold > 0 then
-        tooltip:AddLine(format('|T%s:16|t %s', 'Interface\\MoneyFrame\\UI-GoldIcon', 'Gold'), SPACER, TruncNumber(gold, 2))
+        tooltip:AddLine(format('|T%s:16|t %s', 'Interface\\MoneyFrame\\UI-GoldIcon', 'Gold'), SPACER, mnkLibs.formatNumber(gold, 2))
     elseif silver > 0 then
         tooltip:AddLine(format('|T%s:16|t %s', 'Interface\\MoneyFrame\\UI-SilverIcon', 'Silver'), SPACER, format('%d', silver))
     elseif copper > 0 then
@@ -179,7 +179,7 @@ function mnkMoney.DoOnEnter(self)
     table.sort(t, sort_func)
 
     for i = 1, #t do
-        tooltip:AddLine(t[i].icon..t[i].name, SPACER, TruncNumber(t[i].count,2))
+        tooltip:AddLine(t[i].icon..t[i].name, SPACER, mnkLibs.formatNumber(t[i].count,2))
     end
 
     tooltip:SetAutoHideDelay(.1, self)

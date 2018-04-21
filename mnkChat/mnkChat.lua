@@ -42,13 +42,13 @@ end
 function mnkChat.DoOnChat(event, message, playername, _, _, _, playerstatus, _, _, _, lineid, _, guid, pid)
 
     if message ~= nil then
-        CombatText_AddMessage(StripServerName(playername) .. ': '..message, CombatText_StandardScroll, 255, 0, 0, nil, false)
+        CombatText_AddMessage(mnkLibs.formatPlayerName(playername)..': '..message, CombatText_StandardScroll, 255, 0, 0, nil, false)
         table.insert(tMessages, 1, {time, name, message})
         tMessages[1].time = date('%I:%M:%S:%p')
         if string.find(playername, '-') == nil then
             tMessages[1].name = playername
         else
-            tMessages[1].name = StripServerName(playername)
+            tMessages[1].name = mnkLibs.formatPlayerName(playername)
         end
         tMessages[1].fullname = playername
         tMessages[1].message = message
@@ -85,7 +85,7 @@ function mnkChat.DoOnEnter(self)
     self.tooltip = tooltip 
     tooltip:Clear()
 
-    tooltip:AddHeader(Color(COLOR_GOLD) .. 'Name', Color(COLOR_GOLD) .. 'Message')
+    tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Name', mnkLibs.Color(COLOR_GOLD)..'Message')
 
     for i = 1, #tMessages do
         if tMessages[i].message ~= nil then
@@ -123,7 +123,7 @@ function mnkChat:DoOnEvent(event, ...)
     --FriendsMicroButton:Hide()
     ChatFrameMenuButton:Hide() 
 
-    for i = 1, NUM_CHAT_WINDOWS do mnkChat.SetFrameSettings(_G["ChatFrame" .. i]) end
+    for i = 1, NUM_CHAT_WINDOWS do mnkChat.SetFrameSettings(_G["ChatFrame"..i]) end
 
     if string.sub(event, 1, 8) == 'CHAT_MSG' then
         PlaySoundFile(mnkLibs.Sounds.incoming_message, "Master")
@@ -195,41 +195,40 @@ function mnkChat.SetFrameSettings(frame)
     frame:SetScript("OnHyperlinkEnter", OnHyperlinkEnter)
     frame:SetScript("OnHyperlinkLeave", OnHyperlinkLeave)
 
-    _G[frame:GetName() .. "ButtonFrameUpButton"]:Hide()
-    _G[frame:GetName() .. "ButtonFrameUpButton"]:SetScript("OnShow", hideFrame)
-    _G[frame:GetName() .. "ButtonFrameDownButton"]:Hide()
-    _G[frame:GetName() .. "ButtonFrameDownButton"]:SetScript("OnShow", hideFrame);
-    _G[frame:GetName() .. "ButtonFrame"]:Hide()
-    _G[frame:GetName() .. "ButtonFrame"]:SetScript("OnShow", hideFrame)
-    _G[frame:GetName() .. "ButtonFrameMinimizeButton"]:Hide()
-    _G[frame:GetName() .. "ButtonFrameMinimizeButton"]:SetScript("OnShow", hideFrame)
-    _G[frame:GetName() .. "EditBox"]:SetAltArrowKeyMode(false)
+    _G[frame:GetName().."ButtonFrameUpButton"]:Hide()
+    _G[frame:GetName().."ButtonFrameUpButton"]:SetScript("OnShow", hideFrame)
+    _G[frame:GetName().."ButtonFrameDownButton"]:Hide()
+    _G[frame:GetName().."ButtonFrameDownButton"]:SetScript("OnShow", hideFrame);
+    _G[frame:GetName().."ButtonFrame"]:Hide()
+    _G[frame:GetName().."ButtonFrame"]:SetScript("OnShow", hideFrame)
+    _G[frame:GetName().."ButtonFrameMinimizeButton"]:Hide()
+    _G[frame:GetName().."ButtonFrameMinimizeButton"]:SetScript("OnShow", hideFrame)
+    _G[frame:GetName().."EditBox"]:SetAltArrowKeyMode(false)
 
     if GetCVar("chatStyle") == "classic" then
-        _G[frame:GetName() .. "EditBox"]:ClearAllPoints()
-        _G[frame:GetName() .. "EditBox"]:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", 0, -3)
-        _G[frame:GetName() .. "EditBox"]:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", 3, 0)
+        _G[frame:GetName().."EditBox"]:ClearAllPoints()
+        _G[frame:GetName().."EditBox"]:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", 0, -3)
+        _G[frame:GetName().."EditBox"]:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", 3, 0)
     end
-
-    SetBackdrop(_G[frame:GetName() .. "EditBox"],nil,nil,1,3,3,3)
-    local tex = { _G[frame:GetName() .. "EditBox"]:GetRegions()}
+    mnkLibs.setBackdrop(_G[frame:GetName().."EditBox"],nil,nil,1,3,3,3)
+    local tex = { _G[frame:GetName().."EditBox"]:GetRegions()}
     for t = 6, #tex do tex[t]:SetAlpha(0) end
-    CreateBackground(_G[frame:GetName() .. "EditBox"])
-    CreateBorder(_G[frame:GetName() .. "EditBox"], 0, 0, 0, 0, {1/5, 1/5, 1/5, 0.8})
-    _G[frame:GetName() .. "EditBoxLeft"]:Hide()
-    _G[frame:GetName() .. "EditBoxMid"]:Hide()
-    _G[frame:GetName() .. "EditBoxRight"]:Hide()
+    mnkLibs.createTexture(_G[frame:GetName().."EditBox"], 'BACKGROUND', {0,0,0,1})
+    mnkLibs.createBorder(_G[frame:GetName().."EditBox"], 0, 0, 0, 0, {1/5, 1/5, 1/5, 0.8})
+    _G[frame:GetName().."EditBoxLeft"]:Hide()
+    _G[frame:GetName().."EditBoxMid"]:Hide()
+    _G[frame:GetName().."EditBoxRight"]:Hide()
     _G[frame:GetName()]:SetFont(mnkLibs.Fonts.ap, 14, '')
-    _G[frame:GetName()].SetFont = donothing
+    _G[frame:GetName()].SetFont = mnkLibs.donothing
     _G[frame:GetName().."TabText"]:SetFont(mnkLibs.Fonts.oswald, 18, '')
     _G[frame:GetName().."TabText"]:SetShadowOffset(1,1)
     _G[frame:GetName().."TabText"]:SetShadowColor(0,0,0)
-    _G[frame:GetName().."TabText"].SetShadowOffset = donothing
-    _G[frame:GetName().."TabText"].SetShadowColor = donothing
+    _G[frame:GetName().."TabText"].SetShadowOffset = mnkLibs.donothing
+    _G[frame:GetName().."TabText"].SetShadowColor = mnkLibs.donothing
     _G[frame:GetName().."TabText"]:SetTextColor(1,1,1)
     _G[frame:GetName().."TabText"]:SetVertexColor(1,1,1)
-    _G[frame:GetName().."TabText"].SetTextColor = donothing
-    _G[frame:GetName().."TabText"].SetVertexColor = donothing
+    _G[frame:GetName().."TabText"].SetTextColor = mnkLibs.donothing
+    _G[frame:GetName().."TabText"].SetVertexColor = mnkLibs.donothing
     
     -- remove the tab textures.
     for index, value in pairs(tabs) do _G[frame:GetName()..'Tab'..value]:SetTexture(nil) end
@@ -252,12 +251,12 @@ FloatingChatFrame_OnMouseScroll = function(self, dir)
 end
 
 function string.link(text, type, value, color)
-    return "|H"..type..":"..tostring(value) .. "|h"..tostring(text):color(color or "ffffff") .. "|h"
+    return "|H"..type..":"..tostring(value).."|h"..tostring(text):color(color or "ffffff").."|h"
 end
 
 local function highlighturl(before, url, after)
     foundurl = true
-    return " "..string.link("["..url.."]", "url", url, color) .. " "
+    return " "..string.link("["..url.."]", "url", url, color).." "
 end
 
 local function searchforurl(frame, text, ...)
@@ -323,7 +322,7 @@ local orig = ChatFrame_OnHyperlinkShow
 function ChatFrame_OnHyperlinkShow(frame, link, text, button)
     local type, value = link:match("(%a+):(.+)")
     if (type == "url") then
-        local eb = _G[frame:GetName() .. 'EditBox']
+        local eb = _G[frame:GetName()..'EditBox']
         
         eb:Show()
         eb:SetText(value)
