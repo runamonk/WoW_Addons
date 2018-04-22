@@ -111,21 +111,19 @@ function mnkNames.CastbarSpellUpdate(element, unit)
     if (not element.notInterruptible and UnitCanAttack('player', unit)) and (not UnitIsTapDenied(unit)) then
         element:SetStatusBarColor(0, 1, 0, 1)
     else
-        element:SetStatusBarColor(1/3, 1/3, 1/3, 1)
+        element:SetStatusBarColor(1/2, 0, 0, 1)
 	end
 end
 
 function mnkNames.timer_OnUpdate(button, elapsed)
 	if button.timercount then
 		button.timercount = max(button.timercount - elapsed, 0)
-
+        
 		if button.timercount > 0 then
             button.timer:SetFormattedText("%.0f", button.timercount)
             if button.timercount <= 3 then
-                button.timer:SetTextColor(1, 0, 0)
                 button.border:SetBackdropBorderColor(1,0,0,1)
             else
-                button.timer:SetTextColor(1, 1, 1)
                 button.border:SetBackdropBorderColor(0,0,0,1)
             end
         else
@@ -141,6 +139,7 @@ function mnkNames.PostCreateIcon(Auras, button)
     button.timer = mnkLibs.createFontString(button, mnkLibs.Fonts.ap, 16,  nil, nil, true)
     button.timer:ClearAllPoints()
     button.timer:SetPoint('BOTTOMLEFT', button, 0, 0)
+    button.timer:SetTextColor(1, 1, 1)
     button.icon:SetTexCoord(.07, .93, .07, .93)
     mnkLibs.createBorder(button, 1,-1,-1,1, {0,0,0,1})
 end
