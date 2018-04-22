@@ -297,13 +297,15 @@ local function PlayerUnit(self)
         mnkLibs.setBackdrop(self.ThreatIndicator, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
         self.ThreatIndicator.Override = UpdateThreat
         self.Auras = CreateFrame('Frame', nil, self)
-        self.Auras.onlyShowPlayer = true
+        --self.Auras.onlyShowPlayer = true
         self.Auras.disableCooldown = true
+        self.Auras["growth-x"] = "RIGHT"
+        self.Auras['growth-y'] = "UP"
         self.Auras.spacing = 3
-        self.Auras.numTotal = 14
+        self.Auras.numTotal = 18
         self.Auras:SetPoint('LEFT', self, 'LEFT', -1, 0)
         self.Auras:SetPoint('BOTTOM', self, 'TOP', 0 , 5)
-        self.Auras:SetSize(self.Health:GetWidth(), 16)
+        self.Auras:SetSize(self.Health:GetWidth(), 24)
         self.Auras.PostCreateIcon = PostCreateIcon
         self.Auras.PostUpdateIcon = PostUpdateIcon   
     end
