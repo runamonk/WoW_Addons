@@ -21,7 +21,7 @@ LibStub('LibDropDown'):RegisterStyle(addonName, {
 Backpack.Dropdown:SetStyle(addonName)
 Backpack.Dropdown:SetFrameLevel(Backpack:GetFrameLevel() + 2)
 
-local function GetItemLevel(bagID, slotID)
+local function GetItemLevel(bagID, slotID, slot)
     local link = GetContainerItemLink(bagID, slotID)
     if link then 
         local tip, leftside = CreateFrame('GameTooltip', 'mnkBackpackScanTooltip'), {}
@@ -32,22 +32,25 @@ local function GetItemLevel(bagID, slotID)
             tip:AddFontStrings(L, R)
             leftside[i] = L
         end
-        tip.leftside = leftside
         tip:ClearLines()
-
+        tip.leftside = leftside
         tip:SetOwner(UIParent, 'ANCHOR_NONE')
+        --print(link, ' ', slot.itemLevel)
+        if bagID < 0 then
+            tip:SetHyperlink(link)
+        end
         tip:SetBagItem(bagID, slotID)
-
+        tip:Show()
         for l = 1, #tip.leftside do
             local t = tip.leftside[l]:GetText()
             if t and t:find('Item Level') then
                 local _, i = string.find(t, 'Item Level%s%d')
-                return string.sub(t, i) or 0
+                return string.sub(t, i) or nil
             end
         end
-        return 0
+        return nil
     else
-        return 0
+        return nil
     end
 end
 
@@ -125,9 +128,11 @@ local function SkinSlot(Slot)
     Slot:SetBackdrop(BACKDROP)
     Slot:SetBackdropColor(0.1, 0.1, 0.1, 1)
     Slot:SetBackdropBorderColor(0, 0, 0)
-    Slot.ItemLevel = mnkLibs.createFontString(Slot, mnkLibs.Fonts.ap, 20, nil, nil, true)
+    Slot.ItemLevel = mnkLibs.createFontString(Slot, mnkLibs.Fonts.ap, 18, nil, nil, true)
     Slot.ItemLevel:SetPoint('CENTER', 0, 0)
     Slot.ItemLevel:SetJustifyH('CENTER')
+    Slot.ItemLevel:SetShadowOffset(2, -2)
+
     Slot.Icon:ClearAllPoints()
     Slot.Icon:SetPoint('TOPLEFT', 1, -1)
     Slot.Icon:SetPoint('BOTTOMRIGHT', -1, 1)
@@ -176,8 +181,19 @@ Backpack:Override('UpdateSlot', function(Slot)
             --GetDetailedItemLevelInfo() is returning weird ilevels. Parsing the item tooltip instead. Slower but more reliable.
             --ItemLevel:SetFormattedText('|c%s%s|r', hex, Slot.itemLevel)
             --ItemLevel:Show()
-            ItemLevel:SetFormattedText('|c%s%s|r', hex, GetItemLevel(Slot.bagID, Slot.slotID))
-            ItemLevel:Show()
+
+            local ilvl = GetItemLevel(Slot.bagID, Slot.slotID, Slot)
+            if ilvl then
+                ItemLevel:SetFormattedText('|c%s%s|r', hex, ilvl)
+                --ItemLevel:SetText(ilvl)
+                ItemLevel:SetTextColor(1, 1, 1, 1)
+                ItemLevel:Show()
+            else
+                ItemLevel:SetText()
+                ItemLevel:Hide()
+            end
+
+            --print(itemName, ' ', ilvl)
             local b = IsItemBOE(Slot.bagID, Slot.slotID)
             if b then
                 Slot.boe:Show()
