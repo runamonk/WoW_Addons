@@ -149,7 +149,7 @@ end
 function mnkReputation.AddCheckbox(scrollbox, checked, name, standingid, standing, rating)
     local c = libAG:Create('CheckBox')
     c:SetValue(checked)
-    c:SetLabel(name..' ['..Color(mnkReputation.GetFactionColor(standingid))..standing..Color(COLOR_WHITE)..'] '..Color(COLOR_WHITE)..rating)
+    c:SetLabel(name..' ['..mnkLibs.Color(mnkReputation.GetFactionColor(standingid))..standing..mnkLibs.Color(COLOR_WHITE)..'] '..mnkLibs.Color(COLOR_WHITE)..rating)
     c:SetUserData('name', name)
     c:SetWidth(400)
     scrollbox:AddChild(c)
@@ -161,7 +161,7 @@ function mnkReputation.AddLabel(scrollbox, name, standing)
     scrollbox:AddChild(c)
 
     local c = libAG:Create('Label')
-    c:SetText(Color(COLOR_GOLD)..name..standing)
+    c:SetText(mnkLibs.Color(COLOR_GOLD)..name..standing)
     c:SetWidth(400)
     scrollbox:AddChild(c)
 end
@@ -169,7 +169,7 @@ end
 function mnkReputation.AddTabards(t)
     if #tblTabards > 0 then
         t:AddLine(' ')
-        t:AddHeader(Color(COLOR_GOLD)..'Tabard Name', '', '')
+        t:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Tabard Name', '', '')
         local i = 0
         for i = 1, #tblTabards do
             local y = t:AddLine()
