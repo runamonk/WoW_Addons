@@ -36,6 +36,8 @@ local function GetItemLevel(bagID, slotID, slot)
         tip.leftside = leftside
         tip:SetOwner(UIParent, 'ANCHOR_NONE')
         --print(link, ' ', slot.itemLevel)
+        -- Weird issue with the tooltip not refilling/painting with the details of a bank item. This
+        -- resolves that issue and it makes no sense why.
         if bagID < 0 then
             tip:SetHyperlink(link)
         end
