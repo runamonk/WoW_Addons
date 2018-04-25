@@ -207,14 +207,15 @@ function mnkChat.SetFrameSettings(frame)
 
     if GetCVar("chatStyle") == "classic" then
         _G[frame:GetName().."EditBox"]:ClearAllPoints()
-        _G[frame:GetName().."EditBox"]:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", 0, -3)
-        _G[frame:GetName().."EditBox"]:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", 3, 0)
+        _G[frame:GetName().."EditBox"]:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", 0, -4)
+        _G[frame:GetName().."EditBox"]:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", 4, 0)
     end
-    mnkLibs.setBackdrop(_G[frame:GetName().."EditBox"],nil,nil,1,3,3,3)
+
     local tex = { _G[frame:GetName().."EditBox"]:GetRegions()}
     for t = 6, #tex do tex[t]:SetAlpha(0) end
-    mnkLibs.createTexture(_G[frame:GetName().."EditBox"], 'BACKGROUND', {0,0,0,1})
-    mnkLibs.createBorder(_G[frame:GetName().."EditBox"], 0, 0, 0, 0, {1/5, 1/5, 1/5, 0.8})
+    mnkLibs.createTexture(_G[frame:GetName().."EditBox"], 'BACKGROUND', {1/6, 1/6, 1/6, 1})
+    mnkLibs.createBorder(_G[frame:GetName().."EditBox"], 0, 0, 0, 0, {1/4, 1/4, 1/4, 1})
+
     _G[frame:GetName().."EditBoxLeft"]:Hide()
     _G[frame:GetName().."EditBoxMid"]:Hide()
     _G[frame:GetName().."EditBoxRight"]:Hide()
