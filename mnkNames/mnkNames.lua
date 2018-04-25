@@ -118,8 +118,7 @@ end
 function mnkNames.timer_OnUpdate(button, elapsed)
 	if button.timercount then
 		button.timercount = max(button.timercount - elapsed, 0)
-        
-		if button.timercount > 0 then
+		if button.timercount > 0 and button.timercount ~= math.huge then
             button.timer:SetFormattedText("%.0f", button.timercount)
             if button.timercount <= 3 then
                 button.border:SetBackdropBorderColor(1,0,0,1)

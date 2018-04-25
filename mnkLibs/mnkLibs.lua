@@ -78,11 +78,16 @@ function mnkLibs.createDropShadow(frame, point, edge, color)
     shadow:SetBackdropBorderColor(unpack(color))
 end
 
-function mnkLibs.createFontString(frame, font, size, outline, layer, shadow)
+function mnkLibs.createFontString(frame, font, size, outline, layer, shadow, shadowcolor) 
     local fs = frame:CreateFontString(nil, layer or 'OVERLAY')   
     fs:SetFont(font, size, outline)
+
     if shadow then
-        fs:SetShadowColor(0, 0, 0, 1)
+        if not shadowcolor then
+            shadowcolor = {0, 0, 0, 1}
+        end
+
+        fs:SetShadowColor(shadowcolor)
         fs:SetShadowOffset(1, -1)
     else
         fs:SetShadowColor(0, 0, 0, 0)
