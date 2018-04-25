@@ -180,15 +180,17 @@ Backpack:Override('UpdateSlot', function(Slot)
         local _, _, _, _, _, itemClass, itemSubClass = GetItemInfoInstant(itemID)
         if (itemQuality >= LE_ITEM_QUALITY_UNCOMMON and (itemClass == LE_ITEM_CLASS_WEAPON or itemClass == LE_ITEM_CLASS_ARMOR or (itemClass == LE_ITEM_CLASS_GEM and itemSubClass == 11))) then
             local ItemLevel = Slot.ItemLevel
+            
             --GetDetailedItemLevelInfo() is returning weird ilevels. Parsing the item tooltip instead. Slower but more reliable.
             --ItemLevel:SetFormattedText('|c%s%s|r', hex, Slot.itemLevel)
             --ItemLevel:Show()
 
             local ilvl = GetItemLevel(Slot.bagID, Slot.slotID, Slot)
             if ilvl then
-                ItemLevel:SetFormattedText('|c%s%s|r', hex, ilvl)
-                --ItemLevel:SetText(ilvl)
+                --ItemLevel:SetFormattedText('|c%s%s|r', hex, ilvl)
+                ItemLevel:SetText(ilvl)
                 ItemLevel:SetTextColor(1, 1, 1, 1)
+                ItemLevel:SetShadowColor(r/5, g/5, b/5, 1)
                 ItemLevel:Show()
             else
                 ItemLevel:SetText()
