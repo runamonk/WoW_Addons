@@ -204,7 +204,7 @@ local function MinimalUnit(self)
         CreateUnit(self)
         self.Name = mnkLibs.createFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
         self.Name:SetAllPoints(self)
-        self.Name:SetJustifyH("CENTER")
+        self.Name:SetJustifyH('CENTER')
         self.Name:SetWordWrap(false)
         self:Tag(self.Name, '[mnku:name]')
     end   
@@ -299,8 +299,8 @@ local function PlayerUnit(self)
         self.Auras = CreateFrame('Frame', nil, self)
         --self.Auras.onlyShowPlayer = true
         self.Auras.disableCooldown = true
-        self.Auras["growth-x"] = "RIGHT"
-        self.Auras['growth-y'] = "UP"
+        self.Auras['growth-x'] = 'RIGHT'
+        self.Auras['growth-y'] = 'UP'
         self.Auras.spacing = 3
         self.Auras.numTotal = 18
         self.Auras:SetPoint('LEFT', self, 'LEFT', -1, 0)
@@ -336,11 +336,12 @@ local function PartyUnit(self)
 end
 
 function mnkUnits.CreateUnits(self, unit)
+    if not unit then return end
     if (unit == 'pet') then
         PetUnit(self)
     elseif (unit == 'player') then 
         PlayerUnit(self)
-    elseif (unit == 'party' or unit == 'raid') then 
+    elseif (unit == 'party') or (unit == 'raid') then 
         PartyUnit(self)
     elseif (unit == 'focus') or (unit == 'target') or (unit == 'targettarget') or unit:find('boss') or unit:find('arena') then
         MinimalUnit(self)
@@ -350,11 +351,11 @@ end
 --Based on code from Phanx, thanks Phanx!
 local function UpdateMirrorBars()
     for i = 1, 3 do
-        local barname = "MirrorTimer"..i
+        local barname = 'MirrorTimer'..i
         local bar = _G[barname]
 
         for _, region in pairs({ bar:GetRegions() }) do
-            if region.GetTexture and region:GetTexture() == "SolidTexture" then
+            if region.GetTexture and region:GetTexture() == 'SolidTexture' then
                 region:Hide()
             end
         end
@@ -370,7 +371,7 @@ local function UpdateMirrorBars()
         bar.bg:SetTexture(mnkLibs.Textures.background)
         bar.bg:SetVertexColor(0, 0, 0, 1)
         bar.text:ClearAllPoints()
-        bar.text:SetPoint("LEFT", bar, 4, 0)
+        bar.text:SetPoint('LEFT', bar, 4, 0)
         bar.text:SetFont(mnkLibs.Fonts.oswald, 18)
         bar.text:SetTextColor(1/3, 1/3, 1/3)
         bar.border:Hide()
@@ -380,7 +381,7 @@ end
 
 function mnkUnits:DoOnEvent(event, arg1, arg2)
     if event == 'PLAYER_ENTERING_WORLD' then
-        BuffFrame:UnregisterEvent("UNIT_AURA")
+        BuffFrame:UnregisterEvent('UNIT_AURA')
         BuffFrame:Hide()
         TemporaryEnchantFrame:Hide()
         CompactRaidFrameManager:UnregisterAllEvents()
@@ -401,18 +402,32 @@ mnkUnits.oUF:Factory(function(self)
     self:Spawn('focus'):SetPoint('TOPLEFT', oUF_mnkUnitsPlayer, 0, 26)
     self:Spawn('target'):SetPoint('TOPLEFT', 25, -25)
     self:Spawn('targettarget'):SetPoint('TOPRIGHT', oUF_mnkUnitsTarget, 0, 26)
-    self:SpawnHeader(nil, nil, 'custom [group:party] show; [@raid3,exists] show; [@raid26,exists] hide; hide', 
+    self:SpawnHeader('party', nil, 'custom show; [group:party,nogroup:raid][@raid6,noexists,group:raid] show; hide',
         'showParty', true, 
-        'showRaid', true, 
         'showPlayer', true, 
         'yOffset', -6, 
         'groupBy', 'ASSIGNEDROLE', 
         'groupingOrder', 'TANK,HEALER,DAMAGER', 
-        'oUF-initialConfigFunction', [[
-        self:SetHeight(20)
-        self:SetWidth(200)
-        ]]
+        'oUF-initialConfigFunction', [[ self:SetHeight(20) self:SetWidth(200) ]]
     ):SetPoint('TOPLEFT', 25, -50)
+    self:SpawnHeader('raid', nil, 'custom show; [@raid2,exists] show; hide',
+        'showRaid', true,
+        'showSolo', false,
+        'showPlayer', true,
+        'showParty', false,
+        'yOffset', 3,
+        'groupFilter', '1,2,3,4,5',
+        'groupBy', 'GROUP',
+        'groupingOrder', '1,2,3,4,5,6',
+        'sortMethod', 'INDEX',
+        'maxColumns', 2,
+        'unitsPerColumn', 30,
+        'columnSpacing', 5,
+        'point', 'BOTTOM',
+        'startingIndex',1,
+        'columnAnchorPoint', 'LEFT',
+        'oUF-initialConfigFunction', [[ self:SetHeight(20) self:SetWidth(200) ]]
+    ):SetPoint('TOPLEFT', nil, 25, -150)
 
     for index = 1, MAX_BOSS_FRAMES or 5 do
         local boss = self:Spawn('boss'..index)
