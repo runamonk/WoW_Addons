@@ -403,8 +403,9 @@ mnkUnits.oUF:Factory(function(self)
     self:Spawn('target'):SetPoint('TOPLEFT', 25, -25)
     self:Spawn('targettarget'):SetPoint('TOPRIGHT', oUF_mnkUnitsTarget, 0, 26)
     self:SpawnHeader('party', nil, 'custom show; [group:party,nogroup:raid][@raid6,noexists,group:raid] show; hide',
-        'showParty', true, 
-        'showPlayer', true, 
+        'showParty', false, 
+        'showPlayer', false,
+        'showRaid', false, 
         'yOffset', -6, 
         'groupBy', 'ASSIGNEDROLE', 
         'groupingOrder', 'TANK,HEALER,DAMAGER', 
@@ -417,7 +418,8 @@ mnkUnits.oUF:Factory(function(self)
         'showParty', false,
         'yOffset', 3,
         'groupFilter', '1,2,3,4,5',
-        'groupBy', 'GROUP',
+        --'groupBy', 'GROUP, ASSIGNEDROLE',
+        'groupBy', 'group, TANK,HEALER,DAMAGER', 
         'groupingOrder', '1,2,3,4,5,6',
         'sortMethod', 'INDEX',
         'maxColumns', 2,
