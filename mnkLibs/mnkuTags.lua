@@ -42,7 +42,7 @@ tags['mnku:level'] = function(unit)
 
     if l <= 0 then 
         l = '??'
-        s = mnklibs.Color(COLOR_RED)..l
+        s = mnkLibs.Color(COLOR_RED)..l
     else
         s = Hex(d)..l
     end
