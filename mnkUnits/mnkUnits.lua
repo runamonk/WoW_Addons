@@ -189,8 +189,11 @@ local function CreateUnit(self)
     self:SetScript('OnLeave', UnitFrame_OnLeave)
     mnkLibs.setBackdrop(self, nil, nil, 1, 1, 1, 1)
     self:SetBackdropColor(1/6, 1/6, 1/6)
-
-    self:SetSize(200, 20)
+    
+    -- this isn't needed for party or raid, they set their own defaults and sometimes this causes a taint.
+    if self.unit ~= 'party' and self.unit ~= 'raid' then
+        self:SetSize(200, 20)
+    end
     self.Health = CreateHealthBar(self)
     self.Health:SetHeight(20)
     self.Health:SetPoint('TOPRIGHT')
