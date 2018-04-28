@@ -207,8 +207,9 @@ function mnkChat.SetFrameSettings(frame)
 
     if GetCVar("chatStyle") == "classic" then
         _G[frame:GetName().."EditBox"]:ClearAllPoints()
-        _G[frame:GetName().."EditBox"]:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", 0, -4)
-        _G[frame:GetName().."EditBox"]:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", 4, 0)
+        _G[frame:GetName().."EditBox"]:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", 0, 0)
+        _G[frame:GetName().."EditBox"]:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", 0, 0)
+        _G[frame:GetName().."EditBox"]:SetHeight(25)
     end
 
     local tex = { _G[frame:GetName().."EditBox"]:GetRegions()}
