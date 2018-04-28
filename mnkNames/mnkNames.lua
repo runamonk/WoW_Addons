@@ -87,7 +87,6 @@ function mnkNames.CreateStyle(self, unit)
     self.Castbar.PostCastNotInterruptible = mnkNames.CastbarSpellUpdate
     self.Castbar.PostCastStart = mnkNames.CastbarSpellUpdate
     self.Castbar.PostChannelStart = mnkNames.CastbarSpellUpdate
-
     self.Debuffs = CreateFrame("Frame", nil, self)
     self.Debuffs:SetSize((cfg_debuffs_num * (cfg_debuffs_size + 9)) / cfg_debuffs_rows, (cfg_debuffs_size + 9) * cfg_debuffs_rows)
     self.Debuffs.num = cfg_debuffs_num
@@ -167,6 +166,35 @@ function mnkNames.OnNameplatesCallback(self)
     end
 end
 
+function mnkNames.DoOnEvent(self, event, unit)
+    -- Hide the default castbar when the personal bar is visible. 
+    if event == "NAME_PLATE_UNIT_ADDED" then
+        if UnitIsUnit(unit, "player") then
+            mnkNames.SetCastbarVis(false)
+        else
+            mnkNames.SetCastbarVis(true)    
+        end
+    elseif event == "NAME_PLATE_UNIT_REMOVED" then
+        mnkNames.SetCastbarVis(true)
+    end    
+end
+
+function mnkNames.SetCastbarVis(bool)
+    if bool == false then
+        CastingBarFrame:Hide()
+        CastingBarFrame:SetScript('OnShow', function(self) self:Hide() end)
+    else
+        CastingBarFrame:Show()
+        CastingBarFrame:SetScript('OnShow', nil)
+    end
+end
+
+
 mnkNames.oUF:RegisterStyle("mnkNames", mnkNames.CreateStyle)
 mnkNames.oUF:SetActiveStyle("mnkNames")
 mnkNames.oUF:SpawnNamePlates("mnkNames", mnkNames.OnNameplatesCallback, cvars)
+
+mnkNames:SetScript('OnEvent', mnkNames.DoOnEvent)
+mnkNames:RegisterEvent('PLAYER_ENTERING_WORLD')
+mnkNames:RegisterEvent('NAME_PLATE_UNIT_ADDED')
+mnkNames:RegisterEvent('NAME_PLATE_UNIT_REMOVED')
