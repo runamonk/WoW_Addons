@@ -181,11 +181,10 @@ end
 
 function mnkNames.SetCastbarVis(bool)
     if bool == false then
+        CastingBarFrame.Show = CastingBarFrame.Hide
         CastingBarFrame:Hide()
-        CastingBarFrame:SetScript('OnShow', function(self) self:Hide() end)
     else
-        CastingBarFrame:Show()
-        CastingBarFrame:SetScript('OnShow', nil)
+        CastingBarFrame.Show = nil     
     end
 end
 
