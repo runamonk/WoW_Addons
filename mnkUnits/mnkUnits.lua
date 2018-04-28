@@ -320,15 +320,25 @@ local function PartyUnit(self)
         self.Name = mnkLibs.createFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, nil, nil, true)
         self.Name:SetPoint('LEFT', self.Health, 3, 0)
         self.Name:SetPoint('RIGHT', self:GetWidth() - 2)
-        self:Tag(self.Name, '[mnku:leader][raidcolor][name]')
+        self:Tag(self.Name, '[group]  [mnku:leader][raidcolor][name]')
         self.ResurrectIndicator = self.frameValues:CreateTexture(nil, 'OVERLAY')
         self.ResurrectIndicator:SetPoint('CENTER', self)
         self.ReadyCheckIndicator = self.frameValues:CreateTexture()
         self.ReadyCheckIndicator:SetPoint('LEFT', self, 'RIGHT', 3, 0)
         self.ReadyCheckIndicator:SetSize(16, 16)
         self.GroupRoleIndicator = self.frameValues:CreateTexture(nil, 'OVERLAY')
-        self.GroupRoleIndicator:SetPoint('LEFT', self, 'RIGHT', -16, 0)
+        self.GroupRoleIndicator:SetPoint('RIGHT', self, 'RIGHT', -3, 0)
         self.GroupRoleIndicator:SetSize(16, 16)
+        self.RaidRoleIndicator = self.frameValues:CreateTexture(nil, 'OVERLAY')
+        self.RaidRoleIndicator:SetPoint('RIGHT', self.GroupRoleIndicator, 'RIGHT', 0, 0)
+        self.RaidRoleIndicator:SetSize(16, 16)
+        self.RaidRoleIndicator.PostUpdate = function(self, role) 
+                                                if role then 
+                                                    self:GetParent():GetParent().GroupRoleIndicator:SetAlpha(0) 
+                                                else 
+                                                    self:GetParent():GetParent().GroupRoleIndicator:SetAlpha(1) 
+                                                end
+                                            end
         self.RaidTargetIndicator = self.frameValues:CreateTexture(nil, 'OVERLAY')
         self.RaidTargetIndicator:SetPoint('LEFT', self.Name, 'RIGHT', 5, 0)
         self.RaidTargetIndicator:SetSize(14, 14)
@@ -382,7 +392,15 @@ local function UpdateMirrorBars()
     end
 end
 
-function mnkUnits:DoOnEvent(event, arg1, arg2)
+local function SetPlayerCastbarVis(bool)
+    if bool == false then
+        oUF_mnkUnitsPlayer.castbarbg:SetAlpha(0)
+    else
+        oUF_mnkUnitsPlayer.castbarbg:SetAlpha(1)
+    end
+end
+
+function mnkUnits:DoOnEvent(event, unit)
     if event == 'PLAYER_ENTERING_WORLD' then
         BuffFrame:UnregisterEvent('UNIT_AURA')
         BuffFrame:Hide()
@@ -394,7 +412,15 @@ function mnkUnits:DoOnEvent(event, arg1, arg2)
         CompactRaidFrameContainer:Hide()
         CreateBottomPanel()
         UpdateMirrorBars()
-    end
+    elseif event == "NAME_PLATE_UNIT_ADDED" then -- hide player castbar when the personal bar is visible, there is a castbar there.
+        if UnitIsUnit(unit, "player") then
+            SetPlayerCastbarVis(false)
+        else
+            SetPlayerCastbarVis(true)    
+        end
+    elseif event == "NAME_PLATE_UNIT_REMOVED" then
+        SetPlayerCastbarVis(true)
+    end    
 end
 
 mnkUnits.oUF:RegisterStyle('mnkUnits', mnkUnits.CreateUnits)
@@ -405,30 +431,28 @@ mnkUnits.oUF:Factory(function(self)
     self:Spawn('focus'):SetPoint('TOPLEFT', oUF_mnkUnitsPlayer, 0, 26)
     self:Spawn('target'):SetPoint('TOPLEFT', 25, -25)
     self:Spawn('targettarget'):SetPoint('TOPRIGHT', oUF_mnkUnitsTarget, 0, 26)
-    self:SpawnHeader('party', nil, 'custom show; [group:party,nogroup:raid][@raid6,noexists,group:raid] show; hide',
-        'showParty', false, 
+
+    --self:SpawnHeader('party', nil, 'custom [@raid2,exists][@raid3,exists][@raid6,exists][@raid26,exists] hide;show',
+    self:SpawnHeader('party', nil, 'solo,party',
+        'showParty', true, 
         'showPlayer', false,
-        'showRaid', false, 
-        'yOffset', -6, 
-        'groupBy', 'ASSIGNEDROLE', 
-        'groupingOrder', 'TANK,HEALER,DAMAGER', 
+        'showRaid', false,
+        'yOffset', -3,
         'oUF-initialConfigFunction', [[ self:SetHeight(20) self:SetWidth(200) ]]
     ):SetPoint('TOPLEFT', 25, -50)
-    self:SpawnHeader('raid', nil, 'custom show; [@raid2,exists] show; hide',
+    self:SpawnHeader('raid', nil, 'raid',
         'showRaid', true,
         'showSolo', false,
         'showPlayer', true,
         'showParty', false,
-        'yOffset', 3,
-        'groupFilter', '1,2,3,4,5',
-        --'groupBy', 'GROUP, ASSIGNEDROLE',
-        'groupBy', 'group, TANK,HEALER,DAMAGER', 
-        'groupingOrder', '1,2,3,4,5,6',
-        'sortMethod', 'INDEX',
+        'yOffset', -3,
+        'groupFilter', '1,2,3,4,5,6,7,8',
+        'groupBy', 'ASSIGNEDROLE',
+        'groupingOrder', 'MAINTANK, MAINASSIST, TANK, HEALER, DAMAGER, NONE',
         'maxColumns', 2,
-        'unitsPerColumn', 30,
+        'unitsPerColumn', 40,
         'columnSpacing', 5,
-        'point', 'BOTTOM',
+        'point', 'TOP',
         'startingIndex',1,
         'columnAnchorPoint', 'LEFT',
         'oUF-initialConfigFunction', [[ self:SetHeight(20) self:SetWidth(200) ]]
@@ -454,3 +478,5 @@ MainMenuBarVehicleLeaveButton:SetPushedTexture(mnkLibs.Textures.arrow_down_pushe
 
 mnkUnits:SetScript('OnEvent', mnkUnits.DoOnEvent)
 mnkUnits:RegisterEvent('PLAYER_ENTERING_WORLD')
+mnkUnits:RegisterEvent('NAME_PLATE_UNIT_ADDED')
+mnkUnits:RegisterEvent('NAME_PLATE_UNIT_REMOVED')
