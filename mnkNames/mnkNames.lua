@@ -87,6 +87,7 @@ function mnkNames.CreateStyle(self, unit)
     self.Castbar.PostCastNotInterruptible = mnkNames.CastbarSpellUpdate
     self.Castbar.PostCastStart = mnkNames.CastbarSpellUpdate
     self.Castbar.PostChannelStart = mnkNames.CastbarSpellUpdate
+
     self.Debuffs = CreateFrame("Frame", nil, self)
     self.Debuffs:SetSize((cfg_debuffs_num * (cfg_debuffs_size + 9)) / cfg_debuffs_rows, (cfg_debuffs_size + 9) * cfg_debuffs_rows)
     self.Debuffs.num = cfg_debuffs_num
@@ -111,7 +112,7 @@ function mnkNames.CastbarSpellUpdate(element, unit)
         element:SetStatusBarColor(0, 1, 0, 1)
     else
         element:SetStatusBarColor(1/2, 0, 0, 1)
-	end
+    end
 end
 
 function mnkNames.timer_OnUpdate(button, elapsed)
@@ -166,15 +167,11 @@ function mnkNames.OnNameplatesCallback(self)
     end
 end
 
-function mnkNames.DoOnEvent(self, event, unit)
+function mnkNames.DoOnEvent(self, event, unit, frame)
     -- Hide the default castbar when the personal bar is visible. 
-    if event == "NAME_PLATE_UNIT_ADDED" then
-        if UnitIsUnit(unit, "player") then
-            mnkNames.SetCastbarVis(false)
-        else
-            mnkNames.SetCastbarVis(true)    
-        end
-    elseif event == "NAME_PLATE_UNIT_REMOVED" then
+    if event == 'NAME_PLATE_UNIT_ADDED' and UnitIsUnit(unit, "player") then
+        mnkNames.SetCastbarVis(false)
+    elseif event == 'NAME_PLATE_UNIT_REMOVED' and UnitIsUnit(unit, "player")  then
         mnkNames.SetCastbarVis(true)
     end    
 end
@@ -184,7 +181,7 @@ function mnkNames.SetCastbarVis(bool)
         CastingBarFrame.Show = CastingBarFrame.Hide
         CastingBarFrame:Hide()
     else
-        CastingBarFrame.Show = nil     
+       CastingBarFrame.Show = nil     
     end
 end
 
