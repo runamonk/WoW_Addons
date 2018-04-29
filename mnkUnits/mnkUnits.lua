@@ -8,6 +8,7 @@ classColor.r, classColor.g, classColor.b, _ = GetClassColor(playerClass)
 Config = {
     showfocus = true,
     showparty = true,
+    showraid = true, 
     showplayer = true,
     showpet = true,
     showtarget = true,
@@ -315,7 +316,7 @@ local function PlayerUnit(self)
 end
 
 local function PartyUnit(self)
-    if Config.showparty then
+    if (self.unit == 'party' and Config.showparty) or (self.unit == 'raid' and Config.showraid) then
         CreateUnit(self)
         self.Name = mnkLibs.createFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, nil, nil, true)
         self.Name:SetPoint('LEFT', self.Health, 3, 0)
