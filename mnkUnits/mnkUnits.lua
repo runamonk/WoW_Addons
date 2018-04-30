@@ -158,6 +158,7 @@ local function PostUpdateIcon(element, unit, button, index)
 end
 
 local function SetPlayerStatusFlag(self)
+    --print('afk: ', UnitIsAFK(self.unit))
     if UnitIsAFK(self.unit) then
         self.flagAFK:Show()
     else
@@ -278,6 +279,7 @@ local function PlayerUnit(self)
         self:RegisterEvent('PLAYER_REGEN_ENABLED', function(unit) unit.flagCombat:Hide() end)
         self:RegisterEvent('PLAYER_REGEN_DISABLED', function(unit) unit.flagCombat:Show() end)
         self:RegisterEvent('PLAYER_FLAGS_CHANGED', function(self) SetPlayerStatusFlag(self) end)
+        self:RegisterEvent('PLAYER_ENTERING_WORLD', function(self) SetPlayerStatusFlag(self) end)
         self.Power = CreateFrame('StatusBar', nil, self.Health)
         self.Power:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
         self.Power:SetSize(self:GetWidth(), 3)
