@@ -106,9 +106,9 @@ local function SkinContainer(Container)
     Container.extraPaddingY = 16 -- needs a little extra because of the title
     Container:SetFrameStrata('HIGH'); 
     if (Container == BackpackBank) then
-        Container:SetBackdropColor(1/8, 1/8, 1/8, 1)
+        Container:SetBackdropColor(1/5, 1/8, 1/8, 1)
     elseif (Container == Backpack) then
-        Container:SetBackdropColor(1/8, 1/8, 1/8, 1)
+        Container:SetBackdropColor(1/8, 1/5, 1/8, 1)
         Container.extraPaddingY = 36 -- needs more space for the footer
         Backpack.buttonClose = CreateFrame('button', nil, Container)
         mnkLibs.setTooltip(Backpack.buttonClose,'Click to close backpack.')
