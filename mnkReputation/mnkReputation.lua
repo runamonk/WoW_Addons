@@ -126,6 +126,8 @@ function mnkReputation.DoOnEnter(self)
             if mnkReputation.InTable(tblFactions, tblAllFactions[i].name) == true then
                 if tblAllFactions[i].header == '.Guild.' then
                     tooltip:AddLine(mnkLibs.Color(mnkReputation.GetFactionColor(tblAllFactions[i].standingid))..'<'..tblAllFactions[i].name..'>', tblAllFactions[i].standing, mnkReputation.GetRepLeft(tblAllFactions[i].max - tblAllFactions[i].current))
+                elseif tblAllFactions[i].hasreward then
+                    tooltip:AddLine(mnkLibs.Color(COLOR_GOLD)..tblAllFactions[i].name, tblAllFactions[i].standing, mnkReputation.GetRepLeft(tblAllFactions[i].max - tblAllFactions[i].current))
                 else 
                     tooltip:AddLine(mnkLibs.Color(mnkReputation.GetFactionColor(tblAllFactions[i].standingid))..tblAllFactions[i].name, tblAllFactions[i].standing, mnkReputation.GetRepLeft(tblAllFactions[i].max - tblAllFactions[i].current))
                 end
@@ -209,10 +211,9 @@ function mnkReputation.GetAllFactions()
     iHonored = 0
 
     for i = 1, x do
-        local name, _, standingId, _, max, current, _, _, isHeader, isCollapsed, hasRep, _, _ = GetFactionInfo(i)
-
+        local name, _, standingId, _, max, current, _, _, isHeader, isCollapsed, hasRep, _, _,  factionID = GetFactionInfo(i)
         --name, description, standingID, barMin, barMax, barValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild = GetFactionInfo(factionIndex)
-        
+        local pReward = false
         if isHeader then
             header = name
             --mnkLibs.PrintError(name, ' ', hasRep);
@@ -231,8 +232,27 @@ function mnkReputation.GetAllFactions()
             elseif standingId >= 4 and standingId <= 7 then
                 iHonored = iHonored + 1
             end
+            local isParagon = C_Reputation.IsFactionParagon(factionID)
+            --print(name, ' ', isParagon)
+            if isParagon then
+                local pCurrent, pMax, _, pReward = C_Reputation.GetFactionParagonInfo(factionID);
+                --print(name, ' : ', pCurrent, ' ', pMax, ' ', pReward)
+                -- if pCurrent is greater than 10000, the first character is paragon level.
+                if pCurrent >= pMax then
+                    current = string.sub(tostring(pCurrent), #tostring(pCurrent)-3,#tostring(pCurrent))
+                else
+                    current = pCurrent
+                end
+                
+                max = pMax
+                --print(name, ' ', current, ' ', pMax)
 
-
+                if pReward then
+                    mnkLibs.PrintError('Reputation reward available from '..name)
+                end
+                
+            end
+            
             idx = idx + 1
             tblAllFactions[idx] = {}
             if header == 'Guild' then
@@ -245,6 +265,7 @@ function mnkReputation.GetAllFactions()
             tblAllFactions[idx].current = current
             tblAllFactions[idx].max = max
             tblAllFactions[idx].hasrep = hasRep
+            tblAllFactions[idx].hasreward = pReward
         end
     end
 
@@ -310,7 +331,7 @@ function mnkReputation.GetRepLeft(amt)
     if amt == 0 or amt == 1 then
         return ''
     else
-        return mnkLibs.formatNumber(amt, 0)
+        return amt --mnkLibs.formatNumber(amt, 0)
     end
 end
 
