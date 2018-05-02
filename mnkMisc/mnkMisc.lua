@@ -7,6 +7,7 @@ function mnkMisc:DoOnEvent(event, arg1, arg2)
     if event == 'ADDON_LOADED' then
         local b = _G.OrderHallCommandBar
         if b then
+            --print('OrderHallCommandBar Hidden.')
             b:HookScript("OnShow", function() mnkMisc.HideOrderCommandBar() end)
             b:Hide()
         end
