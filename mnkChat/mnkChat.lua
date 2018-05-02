@@ -2,9 +2,9 @@ mnkChat = CreateFrame("Frame")
 mnkChat.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 local libQTip = LibStub('LibQTip-1.0')
 
-tMessages = {}
-MAX_MESSAGES = 10
-NEW_MESSAGES = 0
+local tMessages = {}
+local MAX_MESSAGES = 10
+local NEW_MESSAGES = 0
 
 
 local hooks = {}

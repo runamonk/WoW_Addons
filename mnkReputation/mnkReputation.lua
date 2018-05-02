@@ -28,13 +28,19 @@ function mnkReputation:DoOnEvent(event, arg1)
         
         mnkReputation.LDB.label = 'Factions'
     end
-    if (event == 'PLAYER_LOGIN') or (event == 'CHAT_MSG_COMBAT_FACTION_CHANGE') then
+    if (event == 'CHAT_MSG_COMBAT_FACTION_CHANGE') or (event == 'UPDATE_FACTION') or (event == 'PLAYER_ENTERING_WORLD') then
         if (event == 'CHAT_MSG_COMBAT_FACTION_CHANGE') and (arg1 ~= nil) then
             CombatText_AddMessage(arg1, CombatText_StandardScroll, 255, 255, 255, nil, false)
         end
         mnkReputation.GetAllFactions()
         mnkReputation.UpdateText()
     end
+    -- if we get a bag update, we could have just accepted our paragon bonus reward. Rebuild factions.
+    if (event == 'BAG_UPDATE' and bEnteredWorld) then
+        mnkReputation.GetAllFactions()
+        mnkReputation.UpdateText()
+    end
+
     if (event == 'PLAYER_ENTERING_WORLD') or (event == 'BAG_UPDATE') then
         if event == 'PLAYER_ENTERING_WORLD' and not bEnteredWorld then
             bEnteredWorld = true
@@ -212,11 +218,10 @@ function mnkReputation.GetAllFactions()
 
     for i = 1, x do
         local name, _, standingId, _, max, current, _, _, isHeader, isCollapsed, hasRep, _, _,  factionID = GetFactionInfo(i)
+        local pCurrent, pMax, _, pReward = nil
         --name, description, standingID, barMin, barMax, barValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild = GetFactionInfo(factionIndex)
-        local pReward = false
         if isHeader then
             header = name
-            --mnkLibs.PrintError(name, ' ', hasRep);
         end
 
         if isHeader and isCollapsed then
@@ -233,24 +238,20 @@ function mnkReputation.GetAllFactions()
                 iHonored = iHonored + 1
             end
             local isParagon = C_Reputation.IsFactionParagon(factionID)
-            --print(name, ' ', isParagon)
             if isParagon then
-                local pCurrent, pMax, _, pReward = C_Reputation.GetFactionParagonInfo(factionID);
-                --print(name, ' : ', pCurrent, ' ', pMax, ' ', pReward)
+                pCurrent, pMax, _, pReward = C_Reputation.GetFactionParagonInfo(factionID);
                 -- if pCurrent is greater than 10000, the first character is paragon level.
                 if pCurrent >= pMax then
                     current = string.sub(tostring(pCurrent), #tostring(pCurrent)-3,#tostring(pCurrent))
                 else
                     current = pCurrent
                 end
-                
                 max = pMax
-                --print(name, ' ', current, ' ', pMax)
-
                 if pReward then
                     mnkLibs.PrintError('Reputation reward available from '..name)
                 end
-                
+            else
+                pReward = false 
             end
             
             idx = idx + 1
@@ -442,5 +443,6 @@ mnkReputation:RegisterEvent('CHAT_MSG_COMBAT_FACTION_CHANGE')
 mnkReputation:RegisterEvent('PLAYER_ENTERING_WORLD')
 mnkReputation:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 mnkReputation:RegisterEvent('BAG_UPDATE')
+mnkReputation:RegisterEvent('UPDATE_FACTION')
 
 
