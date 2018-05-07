@@ -47,6 +47,12 @@ local function GetItemLevel(bagID, slotID, slot)
             local t = tip.leftside[l]:GetText()
             if t and t:find('Item Level') then
                 local _, i = string.find(t, 'Item Level%s%d')
+                -- check for boosted levels ie Chromeie scenarios.
+                local _, x = string.find(t, " (", 1, true)
+                --print(t, ' ', x)
+                if x then
+                    return string.sub(t, i, x-2) or nil
+                end
                 return string.sub(t, i) or nil
             end
         end
