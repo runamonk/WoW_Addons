@@ -5,6 +5,6 @@
 ## X-Embeds: LibDataBroker-1.1
 ## Version: 1
 ## Dependencies: mnkLibs
-## SavedVariablesPerCharacter: tblFactions, AutoTabard
+## SavedVariablesPerCharacter: tblFactionsWatchedDB, AutoTabardName
 
 mnkReputation.lua
