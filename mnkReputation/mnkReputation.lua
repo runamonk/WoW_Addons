@@ -19,6 +19,32 @@ local iExalted = 0
 local iHated = 0
 local iHonored = 0
 
+local function GetFactionColor(standingid)
+    --[[
+1 - Hated
+2 - Hostile
+3 - Unfriendly
+4 - Neutral
+5 - Friendly
+6 - Honored
+7 - Revered
+8 - Exalted
+]]--
+
+    if standingid == 8 then
+        return COLOR_PURPLE
+    elseif standingid >= 1 and standingid <= 3 then
+        return COLOR_RED
+    elseif standingid == 4 then
+        return COLOR_YELLOW
+    elseif standingid >= 5 and standingid <= 7 then
+        return COLOR_GREEN
+    else
+        return COLOR_WHITE
+    end
+end
+
+
 function mnkReputation:DoOnEvent(event, arg1)
     if event == 'PLAYER_LOGIN' then
         mnkReputation.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkReputation', {
@@ -115,36 +141,43 @@ end
 
 function StatusBarCell:InitializeCell()
     self.bar = CreateFrame('StatusBar',nil, self)
-    self.bar:SetSize(150, 12)
+    self.bar:SetSize(350, 16)
     self.bar:SetPoint('CENTER')
     self.bar:SetMinMaxValues(0, 100)
     self.bar:SetPoint('LEFT', self, 'LEFT', 1, 0)
     self.bar:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
     self.bar:SetStatusBarColor(1/3, 1/3, 1/3, 1)
-    self.fsStanding = self.bar:CreateFontString(nil, 'OVERLAY')
-    self.fsStanding:SetPoint('LEFT', self.bar, 'LEFT')
-    self.fsStanding:SetWidth(75)
-	self.fsStanding:SetFontObject(_G.GameTooltipText)
-    self.fsStanding:SetShadowColor(0, 0, 0)
-    self.fsStanding:SetShadowOffset(1, -1)
-    self.fsStanding:SetDrawLayer('OVERLAY')
-	self.fsStanding:SetJustifyH('LEFT')
-	self.fsStanding:SetTextColor(1, 1, 1)
+    self.fsName = self.bar:CreateFontString(nil, 'OVERLAY')
+    self.fsName:SetPoint('LEFT', self.bar, 'LEFT', 5, 0)
+    self.fsName:SetWidth(250)
+	self.fsName:SetFontObject(_G.GameTooltipText)
+    self.fsName:SetShadowColor(0, 0, 0)
+    self.fsName:SetShadowOffset(1, -1)
+    self.fsName:SetDrawLayer('OVERLAY')
+	self.fsName:SetJustifyH('LEFT')
+    self.fsName:SetTextColor(1, 1, 1)
     self.fsTogo = self.bar:CreateFontString(nil, 'OVERLAY')
     self.fsTogo:SetPoint('RIGHT', self.bar, 'RIGHT')
-    self.fsTogo:SetWidth(75)
+    self.fsTogo:SetWidth(100)
 	self.fsTogo:SetFontObject(_G.GameTooltipText)
     self.fsTogo:SetShadowColor(0, 0, 0)
     self.fsTogo:SetShadowOffset(1, -1)
     self.fsTogo:SetDrawLayer('OVERLAY')
 	self.fsTogo:SetJustifyH('RIGHT')
 	self.fsTogo:SetTextColor(1, 1, 1)
-	self.r, self.g, self.b = 1, 1, 1
 end
 
 function StatusBarCell:SetupCell(tooltip, data, justification, font, r, g, b)
-    self.fsStanding:SetText(data.standing)
-    self.fsTogo:SetText(mnkReputation.GetRepLeft(data.max - data.current))
+    if data.header == '.Guild.' then
+        self.fsName:SetText(mnkLibs.Color(COLOR_GREEN)..'<'..mnkLibs.Color(GetFactionColor(data.standingid))..data.name..mnkLibs.Color(COLOR_GREEN)..'>')
+    elseif data.hasreward then
+        self.fsName:SetText(mnkLibs.Color(COLOR_GOLD)..data.name)
+    else
+        self.fsName:SetText(mnkLibs.Color(GetFactionColor(data.standingid))..data.name)
+    end
+    self.fsTogo:SetText(mnkLibs.Color(GetFactionColor(data.standingid))..strsub(data.standing,1,1)..mnkLibs.Color(COLOR_WHITE)..'/'..mnkReputation.GetRepLeft(data.max - data.current))
+    local c = GetFactionColor(data.standingid)
+    self.bar:SetStatusBarColor(c.r/255/3, c.g/255/3, c.b/255/3, 1)
     self.bar:SetValue(math.min((data.current / data.max) * 100, 100))
     return self.bar:GetWidth() + 2, self.bar:GetHeight() + 2
 end
@@ -172,20 +205,12 @@ function mnkReputation.DoOnEnter(self)
     else 
         table.sort(tblAllFactions, function(a, b) return a.name < b.name end)
 
-        tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Name', mnkLibs.Color(COLOR_GOLD)..'Reputation')
+        tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Name', nil)
 
         for i = 1, #tblAllFactions do
             if mnkReputation.InTable(tblFactionsWatchedDB, tblAllFactions[i].name) == true then
-
-                if tblAllFactions[i].header == '.Guild.' then
-                    y, _ = tooltip:AddLine(mnkLibs.Color(mnkReputation.GetFactionColor(tblAllFactions[i].standingid))..'<'..tblAllFactions[i].name..'>')
-                elseif tblAllFactions[i].hasreward then
-                    y, _ = tooltip:AddLine(mnkLibs.Color(COLOR_GOLD)..tblAllFactions[i].name)
-                else
-                    y, _ = tooltip:AddLine(mnkLibs.Color(mnkReputation.GetFactionColor(tblAllFactions[i].standingid))..tblAllFactions[i].name)
-                end
-
-                tooltip:SetCell(y, 2, tblAllFactions[i], StatusBarCellProvider)
+                y, _ = tooltip:AddLine()
+                tooltip:SetCell(y, 1, tblAllFactions[i], 2 , StatusBarCellProvider)
             end
         end
         
@@ -237,7 +262,8 @@ function mnkReputation.AddTabards(t)
             end
         end
         t:AddLine(' ')
-        t:AddLine('Click on a tabard to auto equip in instances.')
+        local y, _ = t:AddLine()
+        t:SetCell(y, 1, 'Click on a tabard to auto equip in instances.', 2)
     end
 end
 
@@ -382,32 +408,6 @@ function mnkReputation.GetRepLeft(amt)
         return ''
     else
         return amt --mnkLibs.formatNumber(amt, 0)
-    end
-end
-
-
-function mnkReputation.GetFactionColor(standingid)
-    --[[
-1 - Hated
-2 - Hostile
-3 - Unfriendly
-4 - Neutral
-5 - Friendly
-6 - Honored
-7 - Revered
-8 - Exalted
-]]--
-
-    if standingid == 8 then
-        return COLOR_PURPLE
-    elseif standingid >= 1 and standingid <= 3 then
-        return COLOR_RED
-    elseif standingid == 4 then
-        return COLOR_YELLOW
-    elseif standingid >= 5 and standingid <= 7 then
-        return COLOR_GREEN
-    else
-        return COLOR_WHITE
     end
 end
 
