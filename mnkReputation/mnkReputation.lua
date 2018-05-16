@@ -18,6 +18,8 @@ local sFactions = nil
 local iExalted = 0
 local iHated = 0
 local iHonored = 0
+local iRevered = 0
+local iNeutral = 0
 
 local function GetFactionColor(standingid)
     --[[
@@ -37,8 +39,10 @@ local function GetFactionColor(standingid)
         return COLOR_RED
     elseif standingid == 4 then
         return COLOR_YELLOW
-    elseif standingid >= 5 and standingid <= 7 then
+    elseif standingid >= 5 and standingid <= 6 then
         return COLOR_GREEN
+    elseif standingid == 7 then
+        return COLOR_BLUE
     else
         return COLOR_WHITE
     end
@@ -175,7 +179,7 @@ function StatusBarCell:SetupCell(tooltip, data, justification, font, r, g, b)
     else
         self.fsName:SetText(mnkLibs.Color(GetFactionColor(data.standingid))..data.name)
     end
-    self.fsTogo:SetText(mnkLibs.Color(GetFactionColor(data.standingid))..strsub(data.standing,1,1)..mnkLibs.Color(COLOR_WHITE)..'/'..mnkReputation.GetRepLeft(data.max - data.current))
+    self.fsTogo:SetText(mnkLibs.Color(GetFactionColor(data.standingid))..mnkReputation.GetRepLeft(data.max - data.current))
     local c = GetFactionColor(data.standingid)
     self.bar:SetStatusBarColor(c.r/255/3, c.g/255/3, c.b/255/3, 1)
     self.bar:SetValue(math.min((data.current / data.max) * 100, 100))
@@ -216,7 +220,11 @@ function mnkReputation.DoOnEnter(self)
         
         tooltip:AddLine(' ')
         local y, x = tooltip:AddLine()
-        tooltip:SetCell(y, 1, mnkLibs.Color(COLOR_PURPLE)..'Exalted: '..mnkLibs.Color(COLOR_WHITE)..iExalted..mnkLibs.Color(COLOR_GREEN)..' Honored/Revered: '..mnkLibs.Color(COLOR_WHITE)..iHonored..mnkLibs.Color(COLOR_RED)..' Hated: '..mnkLibs.Color(COLOR_WHITE)..iHated, 'LEFT', 2)
+        tooltip:SetCell(y, 1, mnkLibs.Color(COLOR_PURPLE)..'Exalted: '..mnkLibs.Color(COLOR_WHITE)..iExalted..
+                              mnkLibs.Color(COLOR_BLUE)..' Revered: '..mnkLibs.Color(COLOR_WHITE)..iRevered..
+                              mnkLibs.Color(COLOR_GREEN)..' Honored: '..mnkLibs.Color(COLOR_WHITE)..iHonored..
+                              mnkLibs.Color(COLOR_YELLOW)..' Neutral: '..mnkLibs.Color(COLOR_WHITE)..iNeutral..
+                              mnkLibs.Color(COLOR_RED)..' Hated: '..mnkLibs.Color(COLOR_WHITE)..iHated, 'LEFT', 2)
     end
 
     mnkReputation.AddTabards(tooltip)
@@ -290,6 +298,8 @@ function mnkReputation.GetAllFactions()
     iExalted = 0
     iHated = 0
     iHonored = 0
+    iRevered = 0
+    iNeutral = 0
 
     for i = 1, x do
         local name, _, standingId, _, max, current, _, _, isHeader, isCollapsed, hasRep, _, _,  factionID = GetFactionInfo(i)
@@ -309,8 +319,12 @@ function mnkReputation.GetAllFactions()
                 iExalted = iExalted + 1
             elseif standingId >= 1 and standingId <= 3 then
                 iHated = iHated + 1
-            elseif standingId >= 4 and standingId <= 7 then
+            elseif standingId == 4 then
+                iNeutral = iNeutral + 1
+            elseif standingId >= 5 and standingId <= 6 then
                 iHonored = iHonored + 1
+            elseif standingId == 7 then
+                iRevered = iRevered + 1
             end
             local isParagon = C_Reputation.IsFactionParagon(factionID)
             if isParagon then
