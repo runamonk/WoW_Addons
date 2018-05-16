@@ -151,6 +151,8 @@ function StatusBarCell:InitializeCell()
     self.bar:SetPoint('LEFT', self, 'LEFT', 1, 0)
     self.bar:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
     self.bar:SetStatusBarColor(1/3, 1/3, 1/3, 1)
+    mnkLibs.setBackdrop(self.bar, nil, nil, 0.5, 0.5, 0.5, 0.5)
+
     self.fsName = self.bar:CreateFontString(nil, 'OVERLAY')
     self.fsName:SetPoint('LEFT', self.bar, 'LEFT', 5, 0)
     self.fsName:SetWidth(250)
@@ -161,7 +163,7 @@ function StatusBarCell:InitializeCell()
 	self.fsName:SetJustifyH('LEFT')
     self.fsName:SetTextColor(1, 1, 1)
     self.fsTogo = self.bar:CreateFontString(nil, 'OVERLAY')
-    self.fsTogo:SetPoint('RIGHT', self.bar, 'RIGHT')
+    self.fsTogo:SetPoint('RIGHT', self.bar, 'RIGHT', -5, 0)
     self.fsTogo:SetWidth(100)
 	self.fsTogo:SetFontObject(_G.GameTooltipText)
     self.fsTogo:SetShadowColor(0, 0, 0)
@@ -209,7 +211,7 @@ function mnkReputation.DoOnEnter(self)
     else 
         table.sort(tblAllFactions, function(a, b) return a.name < b.name end)
 
-        tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Name', nil)
+        tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Factions', nil)
 
         for i = 1, #tblAllFactions do
             if mnkReputation.InTable(tblFactionsWatchedDB, tblAllFactions[i].name) == true then
@@ -239,7 +241,7 @@ end
 function mnkReputation.AddCheckbox(scrollbox, checked, name, standingid, standing, rating)
     local c = libAG:Create('CheckBox')
     c:SetValue(checked)
-    c:SetLabel(name..' ['..mnkLibs.Color(mnkReputation.GetFactionColor(standingid))..standing..mnkLibs.Color(COLOR_WHITE)..'] '..mnkLibs.Color(COLOR_WHITE)..rating)
+    c:SetLabel(name..' ['..mnkLibs.Color(GetFactionColor(standingid))..standing..mnkLibs.Color(COLOR_WHITE)..'] '..mnkLibs.Color(COLOR_WHITE)..rating)
     c:SetUserData('name', name)
     c:SetWidth(400)
     scrollbox:AddChild(c)
