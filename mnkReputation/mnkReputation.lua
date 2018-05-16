@@ -5,7 +5,6 @@ local libQTip = LibStub('LibQTip-1.0')
 local libAG = LibStub('AceGUI-3.0')
 local fConfig = nil
 local StatusBarCellProvider, StatusBarCell = libQTip:CreateCellProvider()
---local StatusBarCell = {}
 
 local bEnteredWorld = false
 
@@ -22,16 +21,14 @@ local iRevered = 0
 local iNeutral = 0
 
 local function GetFactionColor(standingid)
-    --[[
-1 - Hated
-2 - Hostile
-3 - Unfriendly
-4 - Neutral
-5 - Friendly
-6 - Honored
-7 - Revered
-8 - Exalted
-]]--
+-- 1 - Hated
+-- 2 - Hostile
+-- 3 - Unfriendly
+-- 4 - Neutral
+-- 5 - Friendly
+-- 6 - Honored
+-- 7 - Revered
+-- 8 - Exalted
 
     if standingid == 8 then
         return COLOR_PURPLE
@@ -151,7 +148,7 @@ function StatusBarCell:InitializeCell()
     self.bar:SetPoint('LEFT', self, 'LEFT', 1, 0)
     self.bar:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
     self.bar:SetStatusBarColor(1/3, 1/3, 1/3, 1)
-    mnkLibs.setBackdrop(self.bar, nil, nil, 0.5, 0.5, 0.5, 0.5)
+    mnkLibs.setBackdrop(self.bar, nil, nil, 0, 0, 0, 0)
 
     self.fsName = self.bar:CreateFontString(nil, 'OVERLAY')
     self.fsName:SetPoint('LEFT', self.bar, 'LEFT', 5, 0)
