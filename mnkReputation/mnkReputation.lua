@@ -45,47 +45,6 @@ local function GetFactionColor(standingid)
     end
 end
 
-
-function mnkReputation:DoOnEvent(event, arg1)
-    if event == 'PLAYER_LOGIN' then
-        mnkReputation.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkReputation', {
-            icon = 'Interface\\Icons\\Inv_misc_bone_skull_02.blp', 
-            type = 'data source', 
-            OnEnter = mnkReputation.DoOnEnter, 
-            OnClick = mnkReputation.DoOnClick
-        })
-        
-        mnkReputation.LDB.label = 'Factions'
-    end
-    if (event == 'CHAT_MSG_COMBAT_FACTION_CHANGE') or (event == 'UPDATE_FACTION') or (event == 'PLAYER_ENTERING_WORLD') then
-        if (event == 'CHAT_MSG_COMBAT_FACTION_CHANGE') and (arg1 ~= nil) then
-            CombatText_AddMessage(arg1, CombatText_StandardScroll, 255, 255, 255, nil, false)
-        end
-        mnkReputation.GetAllFactions()
-        mnkReputation.UpdateText()
-    end
-    -- if we get a bag update, we could have just accepted our paragon bonus reward. Rebuild factions.
-    if (event == 'BAG_UPDATE' and bEnteredWorld) then
-        mnkReputation.GetAllFactions()
-        mnkReputation.UpdateText()
-    end
-
-    if (event == 'PLAYER_ENTERING_WORLD') or (event == 'BAG_UPDATE') or (event == 'PARTY_MEMBERS_CHANGED') then
-        if event == 'PLAYER_ENTERING_WORLD' and not bEnteredWorld then
-            bEnteredWorld = true
-        end
-        if ((event == 'PLAYER_ENTERING_WORLD' or event == 'PARTY_MEMBERS_CHANGED') and (AutoTabardName ~= nil)) then
-            mnkReputation.CheckTabard()
-        end
-        if bEnteredWorld then
-            mnkReputation.GetAllTabards()
-        end
-    end
-    if (event == 'ZONE_CHANGED_NEW_AREA') and (AutoTabardName ~= nil) then
-        mnkReputation.CheckTabard()
-    end
-end
-
 function mnkReputation.DoOnClick(self, button)
     if button == 'RightButton' then
         --if fConfig ~= nil then
@@ -140,59 +99,6 @@ function mnkReputation.DoOnConfigClose(frame)
     --fConfig = nil;
 end
 
-function StatusBarCell:InitializeCell()
-    self.bar = CreateFrame('StatusBar',nil, self)
-    self.bar:SetSize(350, 16)
-    self.bar:SetPoint('CENTER')
-    self.bar:SetMinMaxValues(0, 100)
-    self.bar:SetPoint('LEFT', self, 'LEFT', 1, 0)
-    self.bar:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
-    self.bar:SetStatusBarColor(1/3, 1/3, 1/3, 1)
-    mnkLibs.setBackdrop(self.bar, nil, nil, 0, 0, 0, 0)
-
-    self.fsName = self.bar:CreateFontString(nil, 'OVERLAY')
-    self.fsName:SetPoint('LEFT', self.bar, 'LEFT', 5, 0)
-    self.fsName:SetWidth(250)
-	self.fsName:SetFontObject(_G.GameTooltipText)
-    self.fsName:SetShadowColor(0, 0, 0)
-    self.fsName:SetShadowOffset(1, -1)
-    self.fsName:SetDrawLayer('OVERLAY')
-	self.fsName:SetJustifyH('LEFT')
-    self.fsName:SetTextColor(1, 1, 1)
-    self.fsTogo = self.bar:CreateFontString(nil, 'OVERLAY')
-    self.fsTogo:SetPoint('RIGHT', self.bar, 'RIGHT', -5, 0)
-    self.fsTogo:SetWidth(100)
-	self.fsTogo:SetFontObject(_G.GameTooltipText)
-    self.fsTogo:SetShadowColor(0, 0, 0)
-    self.fsTogo:SetShadowOffset(1, -1)
-    self.fsTogo:SetDrawLayer('OVERLAY')
-	self.fsTogo:SetJustifyH('RIGHT')
-	self.fsTogo:SetTextColor(1, 1, 1)
-end
-
-function StatusBarCell:SetupCell(tooltip, data, justification, font, r, g, b)
-    if data.header == '.Guild.' then
-        self.fsName:SetText(mnkLibs.Color(COLOR_GREEN)..'<'..mnkLibs.Color(GetFactionColor(data.standingid))..data.name..mnkLibs.Color(COLOR_GREEN)..'>')
-    elseif data.hasreward then
-        self.fsName:SetText(mnkLibs.Color(COLOR_GOLD)..data.name)
-    else
-        self.fsName:SetText(mnkLibs.Color(GetFactionColor(data.standingid))..data.name)
-    end
-    self.fsTogo:SetText(mnkLibs.Color(GetFactionColor(data.standingid))..mnkReputation.GetRepLeft(data.max - data.current))
-    local c = GetFactionColor(data.standingid)
-    self.bar:SetStatusBarColor(c.r/255/3, c.g/255/3, c.b/255/3, 1)
-    self.bar:SetValue(math.min((data.current / data.max) * 100, 100))
-    return self.bar:GetWidth() + 2, self.bar:GetHeight() + 2
-end
-
-function StatusBarCell:ReleaseCell()
-
-end
-
-function StatusBarCell:getContentHeight()
-    return self.bar:GetHeight() + 2
-end
-
 function mnkReputation.DoOnEnter(self)
     local color = COLOR_WHITE
     local tooltip = libQTip:Acquire('mnkReputationToolTip', 2, 'LEFT', 'LEFT')
@@ -233,6 +139,91 @@ function mnkReputation.DoOnEnter(self)
     tooltip:UpdateScrolling(500)
     tooltip:SetBackdropBorderColor(0, 0, 0, 0)
     tooltip:Show()
+end
+
+function mnkReputation:DoOnEvent(event, arg1)
+    if event == 'PLAYER_LOGIN' then
+        mnkReputation.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkReputation', {
+            icon = 'Interface\\Icons\\Inv_misc_bone_skull_02.blp', 
+            type = 'data source', 
+            OnEnter = mnkReputation.DoOnEnter, 
+            OnClick = mnkReputation.DoOnClick
+        })
+        
+        mnkReputation.LDB.label = 'Factions'
+    end
+    if (event == 'CHAT_MSG_COMBAT_FACTION_CHANGE') or (event == 'UPDATE_FACTION') or (event == 'PLAYER_ENTERING_WORLD') or (event == 'CHAT_MSG_LOOT') then
+        if (event == 'CHAT_MSG_COMBAT_FACTION_CHANGE') and (arg1 ~= nil) then
+            CombatText_AddMessage(arg1, CombatText_StandardScroll, 255, 255, 255, nil, false)
+        end
+        mnkReputation.GetAllFactions(event)
+        mnkReputation.UpdateText()
+    end
+    if (event == 'PLAYER_ENTERING_WORLD') or (event == 'PARTY_MEMBERS_CHANGED') then
+        if event == 'PLAYER_ENTERING_WORLD' and not bEnteredWorld then
+            bEnteredWorld = true
+        end
+        if ((event == 'PLAYER_ENTERING_WORLD' or event == 'PARTY_MEMBERS_CHANGED') and (AutoTabardName ~= nil)) then
+            mnkReputation.CheckTabard()
+        end
+        if bEnteredWorld then
+            mnkReputation.GetAllTabards()
+        end
+    end
+    if (event == 'ZONE_CHANGED_NEW_AREA') and (AutoTabardName ~= nil) then
+        mnkReputation.CheckTabard()
+    end
+end
+
+function StatusBarCell:InitializeCell()
+    self.bar = CreateFrame('StatusBar',nil, self)
+    self.bar:SetSize(350, 16)
+    self.bar:SetPoint('CENTER')
+    self.bar:SetMinMaxValues(0, 100)
+    self.bar:SetPoint('LEFT', self, 'LEFT', 1, 0)
+    self.bar:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
+    self.fsName = self.bar:CreateFontString(nil, 'OVERLAY')
+    self.fsName:SetPoint('LEFT', self.bar, 'LEFT', 5, 0)
+    self.fsName:SetWidth(250)
+	self.fsName:SetFontObject(_G.GameTooltipText)
+    self.fsName:SetShadowColor(0, 0, 0)
+    self.fsName:SetShadowOffset(1, -1)
+    self.fsName:SetDrawLayer('OVERLAY')
+	self.fsName:SetJustifyH('LEFT')
+    self.fsName:SetTextColor(1, 1, 1)
+    self.fsTogo = self.bar:CreateFontString(nil, 'OVERLAY')
+    self.fsTogo:SetPoint('RIGHT', self.bar, 'RIGHT', -5, 0)
+    self.fsTogo:SetWidth(100)
+	self.fsTogo:SetFontObject(_G.GameTooltipText)
+    self.fsTogo:SetShadowColor(0, 0, 0)
+    self.fsTogo:SetShadowOffset(1, -1)
+    self.fsTogo:SetDrawLayer('OVERLAY')
+	self.fsTogo:SetJustifyH('RIGHT')
+	self.fsTogo:SetTextColor(1, 1, 1)
+end
+
+function StatusBarCell:SetupCell(tooltip, data, justification, font, r, g, b)
+    if data.header == '.Guild.' then
+        self.fsName:SetText(mnkLibs.Color(COLOR_GREEN)..'<'..mnkLibs.Color(GetFactionColor(data.standingid))..data.name..mnkLibs.Color(COLOR_GREEN)..'>')
+    elseif data.hasreward then
+        self.fsName:SetText(mnkLibs.Color(COLOR_GOLD)..data.name)
+    else
+        self.fsName:SetText(mnkLibs.Color(GetFactionColor(data.standingid))..data.name)
+    end
+    self.fsTogo:SetText(mnkLibs.Color(GetFactionColor(data.standingid))..mnkReputation.GetRepLeft(data.max - data.current))
+    
+    local c = GetFactionColor(data.standingid)
+    self.bar:SetStatusBarColor(c.r/255/2, c.g/255/2, c.b/255/2, 1)
+    self.bar:SetValue(math.min((data.current / data.max) * 100, 100))
+    return self.bar:GetWidth(), self.bar:GetHeight()
+end
+
+function StatusBarCell:ReleaseCell()
+
+end
+
+function StatusBarCell:getContentHeight()
+    return self.bar:GetHeight()
 end
 
 function mnkReputation.AddCheckbox(scrollbox, checked, name, standingid, standing, rating)
@@ -287,7 +278,7 @@ function mnkReputation.EquipTabard()
     EquipItemByName(AutoTabardName)
 end
 
-function mnkReputation.GetAllFactions()
+function mnkReputation.GetAllFactions(event)
     table.wipe(tblAllFactions)
 
     local x = GetNumFactions()
@@ -302,7 +293,8 @@ function mnkReputation.GetAllFactions()
 
     for i = 1, x do
         local name, _, standingId, _, max, current, _, _, isHeader, isCollapsed, hasRep, _, _,  factionID = GetFactionInfo(i)
-        local pCurrent, pMax, _, pReward = nil
+        local pCurrent, pMax = 0
+        local pReward = false
         --name, description, standingID, barMin, barMax, barValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild = GetFactionInfo(factionIndex)
         if isHeader then
             header = name
@@ -329,17 +321,19 @@ function mnkReputation.GetAllFactions()
             if isParagon then
                 pCurrent, pMax, _, pReward = C_Reputation.GetFactionParagonInfo(factionID);
                 -- if pCurrent is greater than 10000, the first character is paragon level.
-                if pCurrent >= pMax then
-                    current = string.sub(tostring(pCurrent), #tostring(pCurrent)-3,#tostring(pCurrent))
-                else
-                    current = pCurrent
+                -- if event == 'CHAT_MSG_LOOT' then
+                --     print(name, 'pReward:', pReward)
+                -- end
+                if pCurrent and pMax then
+                    if pCurrent >= pMax then
+                        current = string.sub(tostring(pCurrent), #tostring(pCurrent)-3,#tostring(pCurrent))
+                    else
+                        current = pCurrent
+                    end
+                    max = pMax
+                -- else
+                --     print('GetFactionParagonInfo() returned nil.', ' name:', name, ' pCurrent:', pCurrent, ' pMax:', pMax, ' factionID:', factionID)
                 end
-                max = pMax
-                if pReward then
-                    mnkLibs.PrintError('Reputation reward available from '..name)
-                end
-            else
-                pReward = false 
             end
             
             idx = idx + 1
@@ -504,7 +498,7 @@ mnkReputation:RegisterEvent('PLAYER_ENTERING_WORLD')
 mnkReputation:RegisterEvent('CHAT_MSG_COMBAT_FACTION_CHANGE')
 mnkReputation:RegisterEvent('PLAYER_ENTERING_WORLD')
 mnkReputation:RegisterEvent('ZONE_CHANGED_NEW_AREA')
-mnkReputation:RegisterEvent('BAG_UPDATE')
+mnkReputation:RegisterEvent('CHAT_MSG_LOOT')
 mnkReputation:RegisterEvent('UPDATE_FACTION')
 mnkReputation:RegisterEvent('PARTY_MEMBERS_CHANGED')
 
