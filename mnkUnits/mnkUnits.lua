@@ -137,7 +137,7 @@ end
 local function PostCreateIcon(Auras, button)
     button.count = mnkLibs.createFontString(button, mnkLibs.Fonts.ap, 10,  nil, nil, true)
     button.count:ClearAllPoints()
-    button.count:SetPoint('TOPRIGHT', button, 0, 0)
+    button.count:SetPoint('TOPRIGHT', button, 0, 2)
     button.timer = mnkLibs.createFontString(button, mnkLibs.Fonts.ap, 10,  nil, nil, true)
     button.timer:ClearAllPoints()
     button.timer:SetPoint('BOTTOMLEFT', button, 0, 0)
