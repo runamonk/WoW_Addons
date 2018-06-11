@@ -39,8 +39,10 @@ local function GetItemLevel(bagID, slotID, slot)
         -- Weird issue with the tooltip not refilling/painting with the details of a bank item. This
         -- resolves that issue and it makes no sense why.
         if bagID < 0 then
+            tip:ClearLines()
             tip:SetHyperlink(link)
         end
+        tip:ClearLines()
         tip:SetBagItem(bagID, slotID)
         tip:Show()
         for l = 1, #tip.leftside do
