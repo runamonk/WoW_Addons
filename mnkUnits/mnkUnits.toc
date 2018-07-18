@@ -1,6 +1,6 @@
-## Interface: 70300
+## Interface: 80000
 ## Author: runamonk
-## Version: 70300.1
+## Version: 1
 ## Title: mnkUnits
 ## Notes: Minimalistic layout, Modified verison of oUF_P3lim
 ## SavedVariables: mnkUnits

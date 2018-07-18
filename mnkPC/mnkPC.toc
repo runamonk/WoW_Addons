@@ -1,4 +1,4 @@
-## Interface: 70300
+## Interface: 80000
 ## Title: mnkPC
 ## Notes: Display FPS and Latency in a broker display
 ## Author: runamonk

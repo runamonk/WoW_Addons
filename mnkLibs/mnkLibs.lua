@@ -126,7 +126,7 @@ function mnkLibs.formatNumber(num, places)
 end
 
 function mnkLibs.formatNumToPercentage(num)
-    return format(TEXT('%.1f%%'), (num * 100))
+    return format('%.1f%%', (num * 100))
 end
 
 function mnkLibs.formatMemory(bytes)

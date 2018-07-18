@@ -159,11 +159,11 @@ function mnkReputation:DoOnEvent(event, arg1)
         mnkReputation.GetAllFactions(event)
         mnkReputation.UpdateText()
     end
-    if (event == 'PLAYER_ENTERING_WORLD') or (event == 'PARTY_MEMBERS_CHANGED') then
+    if (event == 'PLAYER_ENTERING_WORLD') or (event == ' GROUP_ROSTER_UPDATE') then
         if event == 'PLAYER_ENTERING_WORLD' and not bEnteredWorld then
             bEnteredWorld = true
         end
-        if ((event == 'PLAYER_ENTERING_WORLD' or event == 'PARTY_MEMBERS_CHANGED') and (AutoTabardName ~= nil)) then
+        if ((event == 'PLAYER_ENTERING_WORLD' or event == ' GROUP_ROSTER_UPDATE') and (AutoTabardName ~= nil)) then
             mnkReputation.CheckTabard()
         end
         if bEnteredWorld then
@@ -500,6 +500,6 @@ mnkReputation:RegisterEvent('PLAYER_ENTERING_WORLD')
 mnkReputation:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 mnkReputation:RegisterEvent('CHAT_MSG_LOOT')
 mnkReputation:RegisterEvent('UPDATE_FACTION')
-mnkReputation:RegisterEvent('PARTY_MEMBERS_CHANGED')
+mnkReputation:RegisterEvent('GROUP_ROSTER_UPDATE')
 
 

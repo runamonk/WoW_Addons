@@ -39,8 +39,8 @@ end
 
 function mnkXP:GetXPText()
     local iRestXP = (((GetXPExhaustion() or 0) / UnitXPMax('player')) * 100) 
-    local restXP = format(TEXT('%.1f%%'), iRestXP)
-    local currXP = format(TEXT('%.1f%%'), ((UnitXP('player') / UnitXPMax('player')) * 100))
+    local restXP = format('%.1f%%', iRestXP)
+    local currXP = format('%.1f%%', ((UnitXP('player') / UnitXPMax('player')) * 100))
 
     if UnitLevel('player') == GetMaxPlayerLevel() then
         return UnitLevel('player')

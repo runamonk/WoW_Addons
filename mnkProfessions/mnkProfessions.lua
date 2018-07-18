@@ -151,7 +151,7 @@ end
 mnkProfessions:SetScript('OnEvent', mnkProfessions.DoOnEvent)
 mnkProfessions:RegisterEvent('PLAYER_LOGIN')
 mnkProfessions:RegisterEvent('CHAT_MSG_SKILL')
-mnkProfessions:RegisterEvent('TRADE_SKILL_UPDATE')
+--mnkProfessions:RegisterEvent('TRADE_SKILL_UPDATE')
 mnkProfessions:RegisterEvent('SKILL_LINES_CHANGED')
 
 
