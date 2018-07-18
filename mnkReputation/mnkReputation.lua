@@ -141,7 +141,8 @@ function mnkReputation.DoOnEnter(self)
     tooltip:Show()
 end
 
-function mnkReputation:DoOnEvent(event, arg1)
+function mnkReputation:DoOnEvent(event, arg1, arg2)
+    --print(event, 'arg1: ', arg1, ' arg2: ', arg2)
     if event == 'PLAYER_LOGIN' then
         mnkReputation.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkReputation', {
             icon = 'Interface\\Icons\\Inv_misc_bone_skull_02.blp', 
@@ -159,11 +160,13 @@ function mnkReputation:DoOnEvent(event, arg1)
         mnkReputation.GetAllFactions(event)
         mnkReputation.UpdateText()
     end
-    if (event == 'PLAYER_ENTERING_WORLD') or (event == ' GROUP_ROSTER_UPDATE') then
+    if (event == 'PLAYER_ENTERING_WORLD') or (event == 'GROUP_ROSTER_UPDATE') or (event == 'BAG_UPDATE') then
         if event == 'PLAYER_ENTERING_WORLD' and not bEnteredWorld then
             bEnteredWorld = true
         end
-        if ((event == 'PLAYER_ENTERING_WORLD' or event == ' GROUP_ROSTER_UPDATE') and (AutoTabardName ~= nil)) then
+        -- IsInInstance() during the player_entering_world event causes taint issues.
+        --if ((event == 'PLAYER_ENTERING_WORLD' or event == 'GROUP_ROSTER_UPDATE') and (AutoTabardName ~= nil)) then
+        if (event == 'GROUP_ROSTER_UPDATE') and (AutoTabardName ~= nil) then
             mnkReputation.CheckTabard()
         end
         if bEnteredWorld then
@@ -501,5 +504,6 @@ mnkReputation:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 mnkReputation:RegisterEvent('CHAT_MSG_LOOT')
 mnkReputation:RegisterEvent('UPDATE_FACTION')
 mnkReputation:RegisterEvent('GROUP_ROSTER_UPDATE')
+mnkReputation:RegisterEvent('BAG_UPDATE')
 
 
