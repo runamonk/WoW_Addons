@@ -23,7 +23,7 @@ function mnkGearSets.DoOnClick(self, button)
 end
 
 function mnkGearSets.DoOnEnter(self)
-    local x = GetNumEquipmentSets()
+    local x = C_EquipmentSet.GetNumEquipmentSets()
 
     if x > 0 then
         local tooltip = LibQTip:Acquire('mnkGearSetsTooltip', 1, 'LEFT', 'LEFT')
@@ -49,7 +49,7 @@ function mnkGearSets.DoOnSetClick(self, arg, button)
 end
 
 function mnkGearSets.UpdateText()
-    mnkGearSets.LDB.text = GetNumEquipmentSets()
+    mnkGearSets.LDB.text = C_EquipmentSet.GetNumEquipmentSets()
 end
 
 mnkGearSets:SetScript('OnEvent', mnkGearSets.DoOnEvent)

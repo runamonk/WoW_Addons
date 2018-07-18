@@ -1,4 +1,4 @@
-## Interface: 70300
+## Interface: 80000
 ## Title: mnkReps
 ## Notes: Show reputation for specific factions in LDB display. Also auto switches tabards.
 ## Author: runamonk

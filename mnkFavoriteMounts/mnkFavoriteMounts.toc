@@ -1,4 +1,4 @@
-## Interface: 70300
+## Interface: 80000
 ## Title: mnkFavoriteMounts
 ## Notes: Access favorite mounts from a broker display.
 ## Author: runamonk

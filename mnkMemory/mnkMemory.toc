@@ -1,4 +1,4 @@
-## Interface: 70300
+## Interface: 80000
 ## Title: mnkMemory
 ## Notes: Display addon memory usage in a broker display
 ## Author: runamonk

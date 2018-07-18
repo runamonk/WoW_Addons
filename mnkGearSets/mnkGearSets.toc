@@ -1,4 +1,4 @@
-## Interface: 70000
+## Interface: 80000
 ## Title: mnkGearSets
 ## Notes: Allows switching between gear equipment sets
 ## Author: runamonk

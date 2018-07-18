@@ -121,7 +121,12 @@ function mnkChat:DoOnEvent(event, ...)
     --FriendsMicroButton:SetScript("OnShow", hideFrame)
     ChatFrameMenuButton:SetScript("OnShow", hideFrame) 
     --FriendsMicroButton:Hide()
-    ChatFrameMenuButton:Hide() 
+    ChatFrameMenuButton:Hide()
+
+    ChatFrame1ButtonFrame:Hide()
+    ChatFrame1ButtonFrame:SetScript("OnShow", hideFrame) 
+    ChatFrameChannelButton:Hide()
+    ChatFrameChannelButton:SetScript("OnShow", hideFrame) 
 
     for i = 1, NUM_CHAT_WINDOWS do mnkChat.SetFrameSettings(_G["ChatFrame"..i]) end
 
@@ -194,11 +199,11 @@ function mnkChat.SetFrameSettings(frame)
     frame:SetFading(false) 
     frame:SetScript("OnHyperlinkEnter", OnHyperlinkEnter)
     frame:SetScript("OnHyperlinkLeave", OnHyperlinkLeave)
+    frame.ScrollToBottomButton:Hide()
+    frame.ScrollToBottomButton:SetScript("OnShow", hideFrame)
+    frame.ScrollBar:Hide()
+    frame.ScrollBar:SetScript("OnShow", hideFrame)
 
-    _G[frame:GetName().."ButtonFrameUpButton"]:Hide()
-    _G[frame:GetName().."ButtonFrameUpButton"]:SetScript("OnShow", hideFrame)
-    _G[frame:GetName().."ButtonFrameDownButton"]:Hide()
-    _G[frame:GetName().."ButtonFrameDownButton"]:SetScript("OnShow", hideFrame);
     _G[frame:GetName().."ButtonFrame"]:Hide()
     _G[frame:GetName().."ButtonFrame"]:SetScript("OnShow", hideFrame)
     _G[frame:GetName().."ButtonFrameMinimizeButton"]:Hide()

@@ -1,4 +1,4 @@
-## Interface: 70000
+## Interface: 80000
 ## Title: mnkChat
 ## Notes: Minor chat modifications
 ## Author: runamonk

@@ -1,4 +1,4 @@
-## Interface: 70000
+## Interface: 80000
 ## Title: mnkDurability
 ## Notes: Display current durability in a broker display
 ## Author: runamonk

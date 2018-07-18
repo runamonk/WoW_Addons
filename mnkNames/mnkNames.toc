@@ -1,6 +1,6 @@
-## Interface: 70300
+## Interface: 80000
 ## Author: runamonk
-## Version: 70300.1
+## Version: 1
 ## Title: mnkNames
 ## Notes: Minimalistic oUF Nameplates Layout
 ## X-oUF: mnkNames

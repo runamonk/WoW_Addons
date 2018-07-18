@@ -1,4 +1,4 @@
-## Interface: 70300
+## Interface: 80000
 ## Title: mnkMoney
 ## Notes: Display money in a broker display
 ## Author: runamonk
