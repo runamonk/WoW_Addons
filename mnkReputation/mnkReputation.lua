@@ -6,7 +6,7 @@ local libAG = LibStub('AceGUI-3.0')
 local fConfig = nil
 local StatusBarCellProvider, StatusBarCell = libQTip:CreateCellProvider()
 
-local bEnteredWorld = false
+--local bEnteredWorld = false
 
 tblFactionsWatchedDB = {}
 AutoTabardName = nil
@@ -142,7 +142,7 @@ function mnkReputation.DoOnEnter(self)
 end
 
 function mnkReputation:DoOnEvent(event, arg1, arg2)
-    --print(event, 'arg1: ', arg1, ' arg2: ', arg2)
+    
     if event == 'PLAYER_LOGIN' then
         mnkReputation.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkReputation', {
             icon = 'Interface\\Icons\\Inv_misc_bone_skull_02.blp', 
@@ -161,15 +161,14 @@ function mnkReputation:DoOnEvent(event, arg1, arg2)
         mnkReputation.UpdateText()
     end
     if (event == 'PLAYER_ENTERING_WORLD') or (event == 'GROUP_ROSTER_UPDATE') or (event == 'BAG_UPDATE') then
-        if event == 'PLAYER_ENTERING_WORLD' and not bEnteredWorld then
-            bEnteredWorld = true
-        end
-        -- IsInInstance() during the player_entering_world event causes taint issues.
-        --if ((event == 'PLAYER_ENTERING_WORLD' or event == 'GROUP_ROSTER_UPDATE') and (AutoTabardName ~= nil)) then
         if (event == 'GROUP_ROSTER_UPDATE') and (AutoTabardName ~= nil) then
             mnkReputation.CheckTabard()
         end
-        if bEnteredWorld then
+        if (event == 'PLAYER_ENTERING_WORLD') or (event == 'BAG_UPDATE') then
+            if event == 'PLAYER_ENTERING_WORLD' and arg1 == 'false' then
+                mnkReputation.CheckTabard()
+            end
+
             mnkReputation.GetAllTabards()
         end
     end
@@ -269,11 +268,13 @@ function mnkReputation.AddTabards(t)
 end
 
 function mnkReputation.CheckTabard()
-    inInstance, instanceType = IsInInstance()
-    if (not inInstance) or (instanceType == 'none') or (AutoTabardName == nil) then
-        mnkReputation.RemoveTabard()
-    elseif inInstance and (instanceType ~= 'none') then
-        mnkReputation.EquipTabard()
+    if not InGlue() then
+        local inInstance, instanceType = IsInInstance()
+        if (not inInstance) or (instanceType == 'none') or (AutoTabardName == nil) then
+            mnkReputation.RemoveTabard()
+        elseif inInstance and (instanceType ~= 'none') then
+            mnkReputation.EquipTabard()
+        end
     end
 end
 
