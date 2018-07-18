@@ -144,7 +144,7 @@ function mnkNames.PostCreateIcon(Auras, button)
 end
 
 function mnkNames.PostUpdateIcon(element, unit, button, index)
-    local _, _, _, _, _, duration, expirationTime = UnitAura(unit, index, button.filter)
+    local _, _, _, _, duration, expirationTime = UnitAura(unit, index, button.filter)
 
     if duration and duration > 0 then
         button.timercount = expirationTime - GetTime()
