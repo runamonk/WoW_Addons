@@ -41,8 +41,9 @@ function mnkMisc.HideOrderCommandBar()
 end
 
 -- Hide dragon heads
---MainMenuBarLeftEndCap:Hide()
---MainMenuBarRightEndCap:Hide()
+MainMenuBarArtFrame.LeftEndCap:Hide()
+MainMenuBarArtFrame.RightEndCap:Hide()
+
 
 --Hide open all mail button, it's buggy.
 OpenAllMail:Hide()
