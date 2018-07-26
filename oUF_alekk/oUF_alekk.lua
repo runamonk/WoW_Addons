@@ -257,7 +257,7 @@ local PostCreateIcon = function(self, button, icons, index, debuff)
 end
 
 local PostUpdateIcon = function(element, unit, icon, index, offset, filter, isDebuff)
-	local name, _, _, _, dtype, duration, expirationTime, unitCaster, _ = UnitAura(unit, index, icon.filter)
+	local name, _, _, dtype, duration, expirationTime, unitCaster, _ = UnitAura(unit, index, icon.filter)
 
 	if icon.debuff and not UnitIsEnemy('player', unit) then
 		icon.overlay:SetVertexColor(0.8, 0.2, 0.2)
