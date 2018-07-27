@@ -5,5 +5,4 @@
 ## Notes: Basic layout for the Backpack addon
 ## RequiredDeps: Backpack, mnkLibs
 
-GetItemArtifactPower.lua
 mnkBackpack.lua
