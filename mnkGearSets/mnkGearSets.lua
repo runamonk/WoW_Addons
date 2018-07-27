@@ -24,18 +24,21 @@ end
 
 function mnkGearSets.DoOnEnter(self)
     local x = C_EquipmentSet.GetNumEquipmentSets()
-
+    -- this will return a zero based count. zero = none.
     if x > 0 then
         local tooltip = LibQTip:Acquire('mnkGearSetsTooltip', 1, 'LEFT', 'LEFT')
-
         self.tooltip = tooltip
         tooltip:Clear()
         tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Name')
-
-        for i = 1, x do
-            local name, icon, _ = GetEquipmentSetInfo(i)
-            local y, x = tooltip:AddLine(string.format('|T%s:16|t %s', icon, name))
-            tooltip:SetLineScript(y, 'OnMouseDown', mnkGearSets.DoOnSetClick, name)
+        -- this is a zero index.
+        for i = 0, x-1 do
+            local name, icon = C_EquipmentSet.GetEquipmentSetInfo(i)
+            --name, texture, setIndex, isEquipped, totalItems, equippedItems, inventoryItems, missingItems, ignoredSlots = C_EquipmentSet.GetEquipmentSetInfo(index)
+            --print(i, ' ', name, ' ', icon)
+            if name ~= nil then
+                local y, x = tooltip:AddLine(string.format('|T%s:16|t %s', icon, name))
+                tooltip:SetLineScript(y, 'OnMouseDown', mnkGearSets.DoOnSetClick, name)
+            end
         end
         tooltip:SetAutoHideDelay(.1, self)
         tooltip:SmartAnchorTo(self)
@@ -44,8 +47,8 @@ function mnkGearSets.DoOnEnter(self)
     end
 end
 
-function mnkGearSets.DoOnSetClick(self, arg, button) 
-    UseEquipmentSet(arg)
+function mnkGearSets.DoOnSetClick(self, arg, button)
+    C_EquipmentSet.UseEquipmentSet(C_EquipmentSet.GetEquipmentSetID(arg));
 end
 
 function mnkGearSets.UpdateText()
