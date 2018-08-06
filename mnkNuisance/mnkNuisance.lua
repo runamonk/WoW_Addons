@@ -1,6 +1,6 @@
 mnkNuisance = CreateFrame('Frame')
 mnkNuisance.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
-bBlockEnabled = true
+mnkNuisance_bBlockEnabled = true
 
 local LibQTip = LibStub('LibQTip-1.0')
 local BlockThisSession = 0
@@ -17,19 +17,19 @@ function mnkNuisance:DoOnEvent(event, arg1)
         })
         mnkNuisance.SetIcon()
     elseif event == 'PET_BATTLE_PVP_DUEL_REQUESTED' then
-        if bBlockEnabled == true then
+        if mnkNuisance_bBlockEnabled == true then
             CancelPetDuel()
             StaticPopup_Hide('PET_BATTLE_PVP_DUEL_REQUESTED')
             mnkLibs.PrintError('Pet duel declined automtically.')
         end
     elseif event == 'DUEL_REQUESTED' then
-        if bBlockEnabled == true then
+        if mnkNuisance_bBlockEnabled == true then
             CancelDuel()
             StaticPopup_Hide('DUEL_REQUESTED')
             mnkLibs.PrintError('Duel declined automtically.')
         end
     elseif (event == 'PARTY_INVITE_REQUEST') then
-        if bBlockEnabled == true then
+        if mnkNuisance_bBlockEnabled == true then
             if mnkNuisance.IsFriend(arg1) == false and mnkNuisance.InGuild(arg1) == false then
                 DeclineGroup()
                 StaticPopup_Hide('PARTY_INVITE')
@@ -43,13 +43,14 @@ function mnkNuisance:DoOnEvent(event, arg1)
 end
 
 function mnkNuisance.DoOnClick(self)
-    bBlockEnabled = (bBlockEnabled == false)
+    mnkNuisance_bBlockEnabled = (mnkNuisance_bBlockEnabled == false)
     mnkNuisance.SetIcon()
 end
 
 function mnkNuisance.DoOnEnter(self)
     local tooltip = LibQTip:Acquire('mnkNuisanceTooltip', 1, 'LEFT')
     self.tooltip = tooltip
+    tooltip:SetFont(mnkLibs.DefaultTooltipFont)
     tooltip:Clear()
     tooltip:AddLine('Click to enable or disable blocking of group and duel invites.')
 
@@ -109,12 +110,12 @@ function mnkNuisance.InGuild(chatUser)
 end
 
 function mnkNuisance.SetIcon()
-    if bBlockEnabled == true then
+    if mnkNuisance_bBlockEnabled == true then
         mnkNuisance.LDB.icon = 'Interface\\Icons\\Achievement_dungeon_naxxramas_10man'
-        mnkNuisance.LDB.text = mnkLibs.Color(COLOR_GREEN)..'ON'..' ('..BlockThisSession..')'
+        mnkNuisance.LDB.text = mnkLibs.Color(COLOR_RED)..'Blocking'..' ('..BlockThisSession..')'
     else
         mnkNuisance.LDB.icon = 'Interface\\Icons\\Achievement_dungeon_naxxramas'
-        mnkNuisance.LDB.text = mnkLibs.Color(COLOR_RED)..'OFF'
+        mnkNuisance.LDB.text = mnkLibs.Color(COLOR_GREEN)..'Not Blocking'
     end
 end
 

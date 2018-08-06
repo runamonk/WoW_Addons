@@ -1,11 +1,16 @@
 mnkChat = CreateFrame("Frame")
 mnkChat.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
+
 local libQTip = LibStub('LibQTip-1.0')
 
-local tMessages = {}
-local MAX_MESSAGES = 10
-local NEW_MESSAGES = 0
+mnkChat_db = {}
+mnkChat_db.Messages = {}
+mnkChat_db.NEW_MESSAGES = 0
 
+local MAX_MESSAGES = 10
+
+local font = CreateFont("tooltipFont")
+font:SetFont(mnkLibs.Fonts.abf, 12)
 
 local hooks = {}
 local color = "0099FF"
@@ -43,20 +48,20 @@ function mnkChat.DoOnChat(event, message, playername, _, _, _, playerstatus, _, 
 
     if message ~= nil then
         CombatText_AddMessage(mnkLibs.formatPlayerName(playername)..': '..message, CombatText_StandardScroll, 255, 0, 0, nil, false)
-        table.insert(tMessages, 1, {time, name, message})
-        tMessages[1].time = date('%I:%M:%S:%p')
+        table.insert(mnkChat_db.Messages, 1, {time, name, message})
+        mnkChat_db.Messages[1].time = date('%I:%M:%S:%p')
         if string.find(playername, '-') == nil then
-            tMessages[1].name = playername
+            mnkChat_db.Messages[1].name = playername
         else
-            tMessages[1].name = mnkLibs.formatPlayerName(playername)
+            mnkChat_db.Messages[1].name = mnkLibs.formatPlayerName(playername)
         end
-        tMessages[1].fullname = playername
-        tMessages[1].message = message
+        mnkChat_db.Messages[1].fullname = playername
+        mnkChat_db.Messages[1].message = message
 
-        NEW_MESSAGES = NEW_MESSAGES + 1
+        mnkChat_db.NEW_MESSAGES = mnkChat_db.NEW_MESSAGES + 1
         if #mnkChat > MAX_MESSAGES then
-            for i = #tMessages, MAX_MESSAGES + 1, -1 do
-                table.remove(tMessages, i)
+            for i = #mnkChat_db.Messages, MAX_MESSAGES + 1, -1 do
+                table.remove(mnkChat_db.Messages, i)
             end
         end
     end
@@ -68,30 +73,31 @@ function mnkChat.DoOnClick(self, button)
     end
 
     if button == 'RightButton' then
-        tMessages = {}
+        mnkChat_db.Messages = {}
         mnkChat.UpdateText()
     end
 end
 
 function mnkChat.DoOnEnter(self)
-    NEW_MESSAGES = 0
-    if #tMessages == 0 then
+    mnkChat_db.NEW_MESSAGES = 0
+    if #mnkChat_db.Messages == 0 then
         return
     end
 
     mnkChat.UpdateText()
     local tooltip = libQTip:Acquire('mnkChatTooltip', 2, 'LEFT', 'LEFT')
+    tooltip:SetFont(font)
 
     self.tooltip = tooltip 
     tooltip:Clear()
 
     tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Name', mnkLibs.Color(COLOR_GOLD)..'Message')
 
-    for i = 1, #tMessages do
-        if tMessages[i].message ~= nil then
-            local y, x = tooltip:AddLine(tMessages[i].name, '')
-            tooltip:SetCell(y, 2, tMessages[i].time..' '..tMessages[i].message, nil, 'LEFT', nil, nil, nil, nil, GetScreenWidth() / 4, nil)
-            tooltip:SetLineScript(y, 'OnMouseDown', mnkChat.DoOnMessageClick, tMessages[i].fullname)
+    for i = 1, #mnkChat_db.Messages do
+        if mnkChat_db.Messages[i].message ~= nil then
+            local y, x = tooltip:AddLine(mnkChat_db.Messages[i].name, '')
+            tooltip:SetCell(y, 2, mnkChat_db.Messages[i].time..' '..mnkChat_db.Messages[i].message, nil, 'LEFT', nil, nil, nil, nil, GetScreenWidth() / 4, nil)
+            tooltip:SetLineScript(y, 'OnMouseDown', mnkChat.DoOnMessageClick, mnkChat_db.Messages[i].fullname)
         end
     end
 
@@ -107,12 +113,12 @@ function mnkChat.DoOnMessageClick(self, arg, button)
 end
 
 function mnkChat.UpdateText()
-    if NEW_MESSAGES > 0 then
+    if mnkChat_db.NEW_MESSAGES > 0 then
         mnkChat.LDB.icon = mnkLibs.Textures.icon_new
     else
         mnkChat.LDB.icon = mnkLibs.Textures.icon_none
     end
-    mnkChat.LDB.text = NEW_MESSAGES
+    mnkChat.LDB.text = mnkChat_db.NEW_MESSAGES
 end
 
 function mnkChat:DoOnEvent(event, ...)

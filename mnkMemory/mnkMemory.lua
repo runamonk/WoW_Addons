@@ -6,7 +6,6 @@ local LibQTip = LibStub('LibQTip-1.0')
 local _Elapsed = 0
 local SPACER = '       '
 
-
 function mnkMemory:DoOnEvent(event)
     if event == 'PLAYER_LOGIN' then
         mnkMemory.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkMemory', {
@@ -23,7 +22,7 @@ end
 function mnkMemory.DoOnEnter(self)
     local tooltip = LibQTip:Acquire('mnkMemoryTooltip', 3, 'LEFT', 'RIGHT', 'RIGHT')
     self.tooltip = tooltip
-
+    tooltip:SetFont(mnkLibs.DefaultTooltipFont)
     local taddons = {}
 
     tooltip:Clear()

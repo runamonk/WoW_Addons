@@ -29,7 +29,7 @@ function mnkProfessions.DoOnEnter(self)
     
     local tooltip = libQTip:Acquire('mnkProfessionsTooltip', 3, 'LEFT', 'LEFT', 'RIGHT')
     self.tooltip = tooltip
-
+    tooltip:SetFont(mnkLibs.DefaultTooltipFont)
     tooltip:Clear()
     
     tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Profession', SPACER, mnkLibs.Color(COLOR_GOLD)..'Level')

@@ -6,10 +6,9 @@ local libAG = LibStub('AceGUI-3.0')
 local fConfig = nil
 local StatusBarCellProvider, StatusBarCell = libQTip:CreateCellProvider()
 
---local bEnteredWorld = false
-
-tblFactionsWatchedDB = {}
-AutoTabardName = nil
+mnkReputation_db = {}
+mnkReputation_db.Watched = {}
+mnkReputation_db.AutoTabardName = nil
 
 local tblAllFactions = {}
 local tblTabards = {}
@@ -82,7 +81,7 @@ function mnkReputation.DoOnClick(self, button)
                 local s = (tblAllFactions[i].max - tblAllFactions[i].current)
                 mnkReputation.AddLabel(sFactions, header, ' ('..tblAllFactions[i].standing..' - '..tostring(s)..')')
             end
-            mnkReputation.AddCheckbox(sFactions, mnkReputation.InTable(tblFactionsWatchedDB, tblAllFactions[i].name), tblAllFactions[i].name, tblAllFactions[i].standingid, tblAllFactions[i].standing, mnkReputation.GetRepLeft(tblAllFactions[i].max - tblAllFactions[i].current))
+            mnkReputation.AddCheckbox(sFactions, mnkReputation.InTable(mnkReputation_db.Watched, tblAllFactions[i].name), tblAllFactions[i].name, tblAllFactions[i].standingid, tblAllFactions[i].standing, mnkReputation.GetRepLeft(tblAllFactions[i].max - tblAllFactions[i].current))
         end
 
         fConfig:ResumeLayout()
@@ -92,7 +91,7 @@ function mnkReputation.DoOnClick(self, button)
 end
 
 function mnkReputation.DoOnConfigClose(frame)
-    mnkReputation.UpdateTable(tblFactionsWatchedDB, sFactions)
+    mnkReputation.UpdateTable(mnkReputation_db.Watched, sFactions)
     mnkReputation.UpdateText()
 
     --libAG:Release(fConfig);
@@ -107,8 +106,8 @@ function mnkReputation.DoOnEnter(self)
     mnkReputation.tooltip = tooltip
 
     tooltip:Clear()
-    
-    if #tblFactionsWatchedDB == 0 then
+    tooltip:SetFont(mnkLibs.DefaultTooltipFont)
+    if #mnkReputation_db.Watched == 0 then
         tooltip:AddLine('You have not selected any factions to display.')
         tooltip:AddLine('Right click on mnkReputation to open the config.')
     else 
@@ -117,7 +116,7 @@ function mnkReputation.DoOnEnter(self)
         tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Factions', nil)
 
         for i = 1, #tblAllFactions do
-            if mnkReputation.InTable(tblFactionsWatchedDB, tblAllFactions[i].name) == true then
+            if mnkReputation.InTable(mnkReputation_db.Watched, tblAllFactions[i].name) == true then
                 y, _ = tooltip:AddLine()
                 tooltip:SetCell(y, 1, tblAllFactions[i], 2 , StatusBarCellProvider)
             end
@@ -161,7 +160,7 @@ function mnkReputation:DoOnEvent(event, arg1, arg2)
         mnkReputation.UpdateText()
     end
     if (event == 'PLAYER_ENTERING_WORLD') or (event == 'GROUP_ROSTER_UPDATE') or (event == 'BAG_UPDATE') then
-        if (event == 'GROUP_ROSTER_UPDATE') and (AutoTabardName ~= nil) then
+        if (event == 'GROUP_ROSTER_UPDATE') and (mnkReputation_db.AutoTabardName ~= nil) then
             mnkReputation.CheckTabard()
         end
         if (event == 'PLAYER_ENTERING_WORLD') or (event == 'BAG_UPDATE') then
@@ -172,7 +171,7 @@ function mnkReputation:DoOnEvent(event, arg1, arg2)
             mnkReputation.GetAllTabards()
         end
     end
-    if (event == 'ZONE_CHANGED_NEW_AREA') and (AutoTabardName ~= nil) then
+    if (event == 'ZONE_CHANGED_NEW_AREA') and (mnkReputation_db.AutoTabardName ~= nil) then
         mnkReputation.CheckTabard()
     end
 end
@@ -193,6 +192,8 @@ function StatusBarCell:InitializeCell()
     self.fsName:SetDrawLayer('OVERLAY')
 	self.fsName:SetJustifyH('LEFT')
     self.fsName:SetTextColor(1, 1, 1)
+    self.fsName:SetFontObject(mnkLibs.DefaultTooltipFont)
+
     self.fsTogo = self.bar:CreateFontString(nil, 'OVERLAY')
     self.fsTogo:SetPoint('RIGHT', self.bar, 'RIGHT', -5, 0)
     self.fsTogo:SetWidth(100)
@@ -201,7 +202,8 @@ function StatusBarCell:InitializeCell()
     self.fsTogo:SetShadowOffset(1, -1)
     self.fsTogo:SetDrawLayer('OVERLAY')
 	self.fsTogo:SetJustifyH('RIGHT')
-	self.fsTogo:SetTextColor(1, 1, 1)
+    self.fsTogo:SetTextColor(1, 1, 1)
+    self.fsTogo:SetFontObject(mnkLibs.DefaultTooltipFont)
 end
 
 function StatusBarCell:SetupCell(tooltip, data, justification, font, r, g, b)
@@ -257,7 +259,7 @@ function mnkReputation.AddTabards(t)
             local y = t:AddLine()
             t:SetCell(y, 1, string.format('|T%s:16|t %s', tblTabards[i].itemTexture, tblTabards[i].itemName), 1)
             t:SetLineScript(y, 'OnMouseDown', mnkReputation.TabardClick, i)
-            if tblTabards[i].itemName == AutoTabardName then
+            if tblTabards[i].itemName == mnkReputation_db.AutoTabardName then
                 t:SetCell(y, 2, 'Auto-Eequip '..string.format('|T%s:16|t', 'Interface\\Buttons\\UI-CheckBox-Check'))
             end
         end
@@ -270,7 +272,7 @@ end
 function mnkReputation.CheckTabard()
     if not InGlue() then
         local inInstance, instanceType = IsInInstance()
-        if (not inInstance) or (instanceType == 'none') or (AutoTabardName == nil) then
+        if (not inInstance) or (instanceType == 'none') or (mnkReputation_db.AutoTabardName == nil) then
             mnkReputation.RemoveTabard()
         elseif inInstance and (instanceType ~= 'none') then
             mnkReputation.EquipTabard()
@@ -279,7 +281,7 @@ function mnkReputation.CheckTabard()
 end
 
 function mnkReputation.EquipTabard()
-    EquipItemByName(AutoTabardName)
+    EquipItemByName(mnkReputation_db.AutoTabardName)
 end
 
 function mnkReputation.GetAllFactions(event)
@@ -446,7 +448,7 @@ end
 
 function mnkReputation.TabardClick(self, arg, button)
     local newTabard = string.format('|T%s:16|t %s', tblTabards[arg].itemTexture, tblTabards[arg].itemName)
-    local oldTabard = AutoTabardName
+    local oldTabard = mnkReputation_db.AutoTabardName
     local b = nil
 
     local i = 0
@@ -458,14 +460,14 @@ function mnkReputation.TabardClick(self, arg, button)
         if (tblTabards[arg].itemName == oldTabard) then
             if (s == newTabard) then
                 mnkReputation.tooltip:SetCell(i, 2, nil)
-                AutoTabardName = nil
+                mnkReputation_db.AutoTabardName = nil
                 oldTabard = nil
                 newTabard = nil
             end
             --clicked a new tabard
         elseif string.find(s, tblTabards[arg].itemName) ~= nil then
             mnkReputation.tooltip:SetCell(i, 2, 'Auto-Eequip '..string.format('|T%s:16|t', 'Interface\\Buttons\\UI-CheckBox-Check'))
-            AutoTabardName = tblTabards[arg].itemName
+            mnkReputation_db.AutoTabardName = tblTabards[arg].itemName
             newTabard = nil
         elseif (oldTabard ~= nil) and string.find(s, oldTabard) ~= nil then
             mnkReputation.tooltip:SetCell(i, 2, nil)

@@ -2,8 +2,6 @@ mnkFriends = CreateFrame('Frame')
 mnkFriends.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 
 local LibQTip = LibStub('LibQTip-1.0')
-
-
 local FRIENDS_TEXTURE_BROADCAST = 'Interface\\FriendsFrame\\BroadcastIcon'
 local FRIENDS_TEXTURE_ONLINE = 'Interface\\FriendsFrame\\StatusIcon-Online'
 local BNET_ICON = 'Interface\\FriendsFrame\\Battlenet-Portrait'
@@ -28,6 +26,7 @@ function mnkFriends.DoOnEnter(self)
     local tooltip = LibQTip:Acquire('mnkFriendsTooltip', 5, 'LEFT', 'LEFT', 'LEFT', 'LEFT', 'LEFT')
     
     self.tooltip = tooltip
+    tooltip:SetFont(mnkLibs.DefaultTooltipFont)
     tooltip:Clear()
 
     local x = mnkFriends.GetNumFriendsOnline()

@@ -146,6 +146,7 @@ function mnkMoney.DoOnEnter(self)
     
     local tooltip = libQTip:Acquire('mnkMoneyTooltip', 3, 'LEFT', 'LEFT', 'RIGHT')
     self.tooltip = tooltip
+    tooltip:SetFont(mnkLibs.DefaultTooltipFont)
     tooltip:Clear()
     tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Currency', SPACER, mnkLibs.Color(COLOR_GOLD)..'Amount')
     local gold, silver, copper = mnkMoney.GetMoneyText()
