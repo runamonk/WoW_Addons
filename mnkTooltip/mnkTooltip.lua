@@ -16,7 +16,16 @@ function mnkTooltip:DoOnEvent(self, event, ...)
     end
 end
 
+local function SetBackdrop()
+    -- GameTooltip_UpdateStyle was blowing away my backdrop.
+    GameTooltip.GameTooltip_UpdateStyle = mnkLibs.donothing()
+    GameTooltip.shoppingTooltips[1]:SetBackdropBorderColor(0, 0, 0, 0); -- hide the border. 
+    GameTooltip.shoppingTooltips[2]:SetBackdropBorderColor(0, 0, 0, 0); -- hide the border. 
+    GameTooltip:SetBackdropBorderColor(0, 0, 0, 0); -- hide the border. 
+end
+
 local function OnTooltipSetSpell(self)
+    SetBackdrop()   
     local id = select(3, self:GetSpell())
     if id ~= nil and id ~= '' then
         GameTooltip:AddLine(mnkLibs.Color(COLOR_WHITE)..'Spell ID: '..id)
@@ -24,6 +33,7 @@ local function OnTooltipSetSpell(self)
 end
 
 local function OnTooltipSetUnit()
+    SetBackdrop() 
     if bInCombat then 
         GameTooltip:Hide()
     else
@@ -90,13 +100,11 @@ local function OnTooltipSetUnit()
 end
 
 local function OnTooltipSetItem()
-
+    SetBackdrop()
 end
 
 local function OnShow()
-    GameTooltip.shoppingTooltips[1]:SetBackdropBorderColor(0, 0, 0, 0); -- hide the border. 
-    GameTooltip.shoppingTooltips[2]:SetBackdropBorderColor(0, 0, 0, 0); -- hide the border. 
-    GameTooltip:SetBackdropBorderColor(0, 0, 0, 0); -- hide the border. 
+    SetBackdrop()
 end
 
 hooksecurefunc('GameTooltip_SetDefaultAnchor', function(tooltip, parent)
@@ -110,6 +118,7 @@ hooksecurefunc('GameTooltip_SetDefaultAnchor', function(tooltip, parent)
         tooltip:SetPoint('BOTTOM', f, 'TOP', 0, 5)
     end
 end)
+
 
 
 
