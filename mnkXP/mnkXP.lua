@@ -20,6 +20,7 @@ function mnkXP.DoOnEnter(self)
     local tooltip = LibQTip:Acquire('mnkXPTooltip', 3, 'LEFT', 'RIGHT', 'RIGHT')
     self.tooltip = tooltip
     tooltip:SetFont(mnkLibs.DefaultTooltipFont)
+    tooltip:SetHeaderFont(mnkLibs.DefaultTooltipFont)
     local extXP = GetXPExhaustion()
     
     if extXP == nil then

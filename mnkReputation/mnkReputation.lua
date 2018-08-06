@@ -107,6 +107,7 @@ function mnkReputation.DoOnEnter(self)
 
     tooltip:Clear()
     tooltip:SetFont(mnkLibs.DefaultTooltipFont)
+    tooltip:SetHeaderFont(mnkLibs.DefaultTooltipFont)
     if #mnkReputation_db.Watched == 0 then
         tooltip:AddLine('You have not selected any factions to display.')
         tooltip:AddLine('Right click on mnkReputation to open the config.')
