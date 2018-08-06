@@ -7,6 +7,8 @@ mnkLibs.Fonts = {
     abf     = 'Interface\\AddOns\\mnkLibs\\Fonts\\abf.ttf', 
     ap      = 'Interface\\AddOns\\mnkLibs\\Fonts\\ap.ttf'
 }
+mnkLibs.DefaultTooltipFont = CreateFont("mnkLibsDefaultFont")
+mnkLibs.DefaultTooltipFont:SetFont(mnkLibs.Fonts.abf, 12)
 
 mnkLibs.Textures = {
     arrow_down          = 'Interface\\AddOns\\mnkLibs\\Assets\\arrow_down',

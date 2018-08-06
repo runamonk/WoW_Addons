@@ -28,6 +28,7 @@ function mnkGearSets.DoOnEnter(self)
     if x > 0 then
         local tooltip = LibQTip:Acquire('mnkGearSetsTooltip', 1, 'LEFT', 'LEFT')
         self.tooltip = tooltip
+        tooltip:SetFont(mnkLibs.DefaultTooltipFont)
         tooltip:Clear()
         tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Name')
         -- this is a zero index.

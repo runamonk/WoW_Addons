@@ -2,7 +2,6 @@ mnkGuild = CreateFrame('Frame')
 mnkGuild.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 
 local LibQTip = LibStub('LibQTip-1.0')
-
 local t = {}
 local colors = {}
 local maxLevel = GetMaxPlayerLevel()
@@ -30,7 +29,7 @@ function mnkGuild.DoOnEnter(self)
     local tooltip = LibQTip:Acquire('mnkGuildTooltip', 5, 'LEFT', 'LEFT', 'LEFT', 'LEFT', 'LEFT')
     
     self.tooltip = tooltip
-
+    tooltip:SetFont(mnkLibs.DefaultTooltipFont)
     tooltip:Clear()
 
     if IsInGuild() then
