@@ -5,10 +5,13 @@ mnkLibs = CreateFrame('Frame')
 mnkLibs.Fonts = {
     oswald  = 'Interface\\AddOns\\mnkLibs\\Fonts\\oswald.ttf', 
     abf     = 'Interface\\AddOns\\mnkLibs\\Fonts\\abf.ttf', 
-    ap      = 'Interface\\AddOns\\mnkLibs\\Fonts\\ap.ttf'
+    ap      = 'Interface\\AddOns\\mnkLibs\\Fonts\\ap.ttf',
+    arialn  = 'Fonts\\ARIALN.TTF',
+    frizqt = 'Fonts\\FRIZQT__.TTF'
 }
+
 mnkLibs.DefaultTooltipFont = CreateFont("mnkLibsDefaultFont")
-mnkLibs.DefaultTooltipFont:SetFont(mnkLibs.Fonts.ap, 12)
+mnkLibs.DefaultTooltipFont:SetFont(mnkLibs.Fonts.arialn, 12)
 
 mnkLibs.Textures = {
     arrow_down          = 'Interface\\AddOns\\mnkLibs\\Assets\\arrow_down',
