@@ -30,6 +30,7 @@ function mnkGuild.DoOnEnter(self)
     
     self.tooltip = tooltip
     tooltip:SetFont(mnkLibs.DefaultTooltipFont)
+    tooltip:SetHeaderFont(mnkLibs.DefaultTooltipFont)
     tooltip:Clear()
 
     if IsInGuild() then

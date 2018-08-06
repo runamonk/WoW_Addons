@@ -4,10 +4,6 @@ mnkDurability.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 local LibQTip = LibStub('LibQTip-1.0')
 local t = {}
 
-local font = CreateFont("tooltipFont")
-font:SetFont(mnkLibs.Fonts.abf, 12)
-
-
 function mnkDurability:DoOnEvent(event, arg1)
    
     if event == 'PLAYER_LOGIN' then
@@ -48,7 +44,8 @@ end
 function mnkDurability.DoOnEnter(self)
     local tooltip = LibQTip:Acquire('mnkDurabilityTooltip', 5, 'LEFT', 'LEFT', 'RIGHT', 'RIGHT', 'RIGHT')
     self.tooltip = tooltip
-    tooltip:SetFont(font)
+    tooltip:SetFont(mnkLibs.DefaultTooltipFont)
+    tooltip:SetHeaderFont(mnkLibs.DefaultTooltipFont)
     tooltip:Clear()
     local ItemCount = 0
     local Total = 0

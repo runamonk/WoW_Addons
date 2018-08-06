@@ -10,7 +10,7 @@ function mnkNuisance:DoOnEvent(event, arg1)
     if event == 'PLAYER_LOGIN' then
         mnkNuisance.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkNuisance', {
             icon = '', 
-            label = mnkLibs.Color(COLOR_GOLD)..'Block Groups', 
+            label = mnkLibs.Color(COLOR_GOLD)..'Nuisance', 
             type = 'data source', 
             OnClick = mnkNuisance.DoOnClick, 
             OnEnter = mnkNuisance.DoOnEnter
@@ -51,6 +51,7 @@ function mnkNuisance.DoOnEnter(self)
     local tooltip = LibQTip:Acquire('mnkNuisanceTooltip', 1, 'LEFT')
     self.tooltip = tooltip
     tooltip:SetFont(mnkLibs.DefaultTooltipFont)
+    tooltip:SetHeaderFont(mnkLibs.DefaultTooltipFont)
     tooltip:Clear()
     tooltip:AddLine('Click to enable or disable blocking of group and duel invites.')
 

@@ -23,6 +23,7 @@ function mnkFavoriteMounts.DoOnEnter(self)
     local tooltip = libQTip:Acquire('mnkFavoriteMountssToolTip', 1, 'LEFT')
     self.tooltip = tooltip
     tooltip:SetFont(mnkLibs.DefaultTooltipFont)
+    tooltip:SetHeaderFont(mnkLibs.DefaultTooltipFont)
     tooltip:Clear()
     local tblMountIDs = C_MountJournal.GetMountIDs()
     local tblMounts = {}
