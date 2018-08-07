@@ -19,9 +19,25 @@ end
 local function SetBackdrop()
     -- GameTooltip_UpdateStyle was blowing away my backdrop.
     GameTooltip.GameTooltip_UpdateStyle = mnkLibs.donothing()
-    GameTooltip.shoppingTooltips[1]:SetBackdropBorderColor(0, 0, 0, 0); -- hide the border. 
-    GameTooltip.shoppingTooltips[2]:SetBackdropBorderColor(0, 0, 0, 0); -- hide the border. 
-    GameTooltip:SetBackdropBorderColor(0, 0, 0, 0); -- hide the border. 
+
+    local tooltips = {
+        'GameTooltip',
+        'ItemRefTooltip',
+        'ItemRefShoppingTooltip1',
+        'ItemRefShoppingTooltip2',
+        'ShoppingTooltip1',
+        'ShoppingTooltip2',
+        'DropDownList1MenuBackdrop',
+        'DropDownList2MenuBackdrop',
+        'WorldMapTooltip',
+        'WorldMapCompareTooltip1',
+        'WorldMapCompareTooltip2',
+    }
+    
+    for i = 1, #tooltips do
+        local frame = _G[tooltips[i]]
+        frame:SetBackdropBorderColor(0, 0, 0, 0); -- hide the border. 
+    end
 end
 
 local function OnTooltipSetSpell(self)
@@ -120,7 +136,11 @@ hooksecurefunc('GameTooltip_SetDefaultAnchor', function(tooltip, parent)
 end)
 
 
-
+ItemRefTooltip:HookScript("OnTooltipSetItem", OnTooltipSetItem)
+ItemRefShoppingTooltip1:HookScript("OnTooltipSetItem", OnTooltipSetItem)
+ItemRefShoppingTooltip2:HookScript("OnTooltipSetItem", OnTooltipSetItem)
+ShoppingTooltip1:HookScript("OnTooltipSetItem", OnTooltipSetItem)
+ShoppingTooltip2:HookScript("OnTooltipSetItem", OnTooltipSetItem)
 
 GameTooltip:HookScript('OnTooltipSetUnit', OnTooltipSetUnit)
 GameTooltip:HookScript('OnTooltipSetSpell', OnTooltipSetSpell)
