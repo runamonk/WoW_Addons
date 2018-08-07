@@ -1,0 +1,7 @@
+## Interface: 80000
+## Author: runamonk
+## Version: 1
+## Title: mnkMinimap
+## Notes: Minimalistic Minimap
+## RequiredDeps: mnkLibs
+mnkMinimap.lua
