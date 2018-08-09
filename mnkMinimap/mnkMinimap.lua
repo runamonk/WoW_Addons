@@ -1,3 +1,5 @@
+-- Code based on Zorks rMinimap and rObjectiveTracker.
+
 mnkMinimap = CreateFrame('Frame')
 
 local function Zoom(self, direction)
@@ -90,7 +92,6 @@ function mnkMinimap:SetMinimapPositionAndSize()
 
   Minimap:SetScript("OnMouseWheel", Zoom)
 end
-
 
 function mnkMinimap:SetQuestTrackerPosition()
   ObjectiveTrackerFrame:ClearAllPoints(); 
