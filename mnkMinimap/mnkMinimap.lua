@@ -1,8 +1,11 @@
 mnkMinimap = CreateFrame('Frame')
 
 local function Zoom(self, direction)
-  if(direction > 0) then Minimap_ZoomIn()
-  else Minimap_ZoomOut() end
+  if (direction > 0) then 
+    Minimap_ZoomIn()
+  else 
+    Minimap_ZoomOut() 
+  end
 end
 
 function mnkMinimap:DoOnEvent(event, arg1)
