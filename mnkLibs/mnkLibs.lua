@@ -24,7 +24,10 @@ mnkLibs.Textures = {
     combo_pentaarrow    = 'Interface\\AddOns\\mnkLibs\\Assets\\combo_pentaarrow',
     combo_round         = 'Interface\\AddOns\\mnkLibs\\Assets\\combo_round',
     icon_new            = 'Interface\\AddOns\\mnkLibs\\Assets\\icon_new', 
-    icon_none           = 'Interface\\AddOns\\mnkLibs\\Assets\\icon_none'
+    icon_none           = 'Interface\\AddOns\\mnkLibs\\Assets\\icon_none',
+    minimap_calendar    = 'Interface\\AddOns\\mnkLibs\\Assets\\minimap_calendar',
+    minimap_mail        = 'Interface\\AddOns\\mnkLibs\\Assets\\minimap_mail', 
+    minimap_mask        = 'Interface\\AddOns\\mnkLibs\\Assets\\minimap_mask'
 }
 
 mnkLibs.Sounds = {

@@ -4,4 +4,5 @@
 ## Title: mnkMinimap
 ## Notes: Minimalistic Minimap
 ## RequiredDeps: mnkLibs
+
 mnkMinimap.lua
