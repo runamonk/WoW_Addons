@@ -6,7 +6,7 @@ local classColor = {}
 classColor.r, classColor.g, classColor.b, _ = GetClassColor(playerClass)
 
 
-local function Zoom(self, direction)
+local function MinimapZoom(self, direction)
   if (direction > 0) then 
     Minimap_ZoomIn()
   else 
@@ -22,16 +22,18 @@ function mnkMinimap:DoOnEvent(event, arg1)
 end
 
 function mnkMinimap:SetMinimapPositionAndSize()
-  MinimapCluster:SetScale(1)
-  MinimapCluster:ClearAllPoints()
-  MinimapCluster:SetPoint('CENTER', UIParent, 'BOTTOM', 0, 70)
-  MinimapCluster:SetSize(135,135) 
-  
   Minimap:SetMaskTexture(mnkLibs.Textures.minimap_mask)
   Minimap:ClearAllPoints()
-  Minimap:SetPoint('CENTER', UIParent, 'BOTTOM', 0, 70)
+  Minimap:SetPoint('CENTER', UIParent, 'BOTTOM', 0, 68)
   Minimap:SetSize(135,135) 
   Minimap:EnableMouseWheel()
+
+  MinimapCluster:SetScale(1)
+  MinimapCluster:ClearAllPoints()
+  MinimapCluster:SetAllPoints(Minimap)
+  MinimapCluster:SetSize(Minimap:GetSize()) 
+  MinimapCluster:EnableMouse(false)
+  
   mnkLibs.createBorder(Minimap, 0, 0, 0, 0, {classColor.r, classColor.g, classColor.b, .5}) 
   MinimapBackdrop:Hide()
   MinimapBorder:Hide()
@@ -94,12 +96,12 @@ function mnkMinimap:SetMinimapPositionAndSize()
   fs:SetFont(STANDARD_TEXT_FONT,20)
   fs:SetTextColor(0.2,0.2,0.1,0.9)
 
-  Minimap:SetScript('OnMouseWheel', Zoom)
+  Minimap:SetScript('OnMouseWheel', MinimapZoom)
 end
 
 function mnkMinimap:SetQuestTrackerPosition()
   ObjectiveTrackerFrame:ClearAllPoints(); 
-  ObjectiveTrackerFrame:SetPoint('TOPRIGHT', UIParent, -5, -25);    
+  ObjectiveTrackerFrame:SetPoint('TOPRIGHT', UIParent, -5, -30);    
   ObjectiveTrackerFrame.SetPoint = mnkLibs.donothing()
   ObjectiveTrackerFrame:SetClampedToScreen(true)
   ObjectiveTrackerFrame:SetMovable(true)
