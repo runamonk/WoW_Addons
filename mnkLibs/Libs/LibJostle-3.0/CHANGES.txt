@@ -1,0 +1,51 @@
+------------------------------------------------------------------------
+r65 | yess | 2018-07-27 15:33:24 +0000 (Fri, 27 Jul 2018) | 1 line
+Changed paths:
+   M /trunk/LibJostle-3.0.lua
+
+Fix unresponsive action bars after exiting a vehicular UI
+------------------------------------------------------------------------
+r64 | elkano | 2018-07-24 20:08:27 +0000 (Tue, 24 Jul 2018) | 3 lines
+Changed paths:
+   M /trunk/LibJostle-3.0.toc
+   M /trunk/lib.xml
+
+- updated TOC for WoW 8.0.x
+- fixed load order for LibStub in lib.xml
+- removed reference to non-existant externals.xml
+------------------------------------------------------------------------
+r63 | yess | 2018-07-24 13:05:52 +0000 (Tue, 24 Jul 2018) | 1 line
+Changed paths:
+   M /trunk/LibJostle-3.0.lua
+   M /trunk/LibJostle-3.0.toc
+   M /trunk/lib.xml
+
+Set MainMenuBar user placed.
+------------------------------------------------------------------------
+r62 | yess | 2018-07-22 18:31:05 +0000 (Sun, 22 Jul 2018) | 1 line
+Changed paths:
+   M /trunk/LibJostle-3.0.lua
+
+fix MainMenuBar moving to the center when it is placed on the left side.
+------------------------------------------------------------------------
+r61 | yess | 2018-07-19 16:20:09 +0000 (Thu, 19 Jul 2018) | 1 line
+Changed paths:
+   M /trunk/LibJostle-3.0.lua
+
+Add MicroButtonAndBagsBar
+------------------------------------------------------------------------
+r60 | yess | 2016-08-08 04:23:23 +0000 (Mon, 08 Aug 2016) | 1 line
+Changed paths:
+   M /trunk/LibJostle-3.0.lua
+
+Add OrderHallCommandBar support 
+------------------------------------------------------------------------
+r59 | yess | 2016-08-05 13:41:57 +0000 (Fri, 05 Aug 2016) | 2 lines
+Changed paths:
+   M /trunk/LibJostle-3.0.lua
+   M /trunk/LibJostle-3.0.toc
+
+BuffFrame, PlayerFrame and TargetFrame should now properly rearrange after a loading screen.
+Removed PLAYER_AURAS_CHANGED event as this was replaced by UNIT_AURA in patch 3.02 and does no longer seem necessary.
+------------------------------------------------------------------------
+

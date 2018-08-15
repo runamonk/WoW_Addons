@@ -10,6 +10,7 @@ libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
 Libs\LibQTip-1.0\LibQTip-1.0.lua
 Libs\AceGUI-3.0\AceGUI-3.0.lua
 Libs\AceGUI-3.0\AceGUI-3.0.xml
+Libs\LibJostle-3.0\LibJostle-3.0.lua
 Libs\oUF\oUF.xml
 
 mnkLibs.lua
