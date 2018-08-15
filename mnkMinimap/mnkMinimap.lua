@@ -28,12 +28,17 @@ function mnkMinimap:SetMinimapPositionAndSize()
   Minimap:SetSize(135,135) 
   Minimap:EnableMouseWheel()
 
+  -- MinimapCluster:SetScale(1)
+  -- MinimapCluster:ClearAllPoints()
+  -- MinimapCluster:SetAllPoints(Minimap)
+  -- MinimapCluster:SetSize(Minimap:GetSize()) 
+  -- MinimapCluster:EnableMouse(false)
+  
   MinimapCluster:SetScale(1)
   MinimapCluster:ClearAllPoints()
-  MinimapCluster:SetAllPoints(Minimap)
-  MinimapCluster:SetSize(Minimap:GetSize()) 
+  MinimapCluster:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', 0, 0)
   MinimapCluster:EnableMouse(false)
-  
+
   mnkLibs.createBorder(Minimap, 0, 0, 0, 0, {classColor.r, classColor.g, classColor.b, .5}) 
   MinimapBackdrop:Hide()
   MinimapBorder:Hide()
