@@ -261,7 +261,7 @@ function mnkReputation.AddTabards(t)
             t:SetCell(y, 1, string.format('|T%s:16|t %s', tblTabards[i].itemTexture, tblTabards[i].itemName), 1)
             t:SetLineScript(y, 'OnMouseDown', mnkReputation.TabardClick, i)
             if tblTabards[i].itemName == mnkReputation_db.AutoTabardName then
-                t:SetCell(y, 2, 'Auto-Eequip '..string.format('|T%s:16|t', 'Interface\\Buttons\\UI-CheckBox-Check'))
+                t:SetCell(y, 2, 'Auto-equip '..string.format('|T%s:16|t', 'Interface\\Buttons\\UI-CheckBox-Check'))
             end
         end
         t:AddLine(' ')

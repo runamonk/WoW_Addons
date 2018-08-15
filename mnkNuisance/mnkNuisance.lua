@@ -113,10 +113,10 @@ end
 function mnkNuisance.SetIcon()
     if mnkNuisance_bBlockEnabled == true then
         mnkNuisance.LDB.icon = 'Interface\\Icons\\Achievement_dungeon_naxxramas_10man'
-        mnkNuisance.LDB.text = mnkLibs.Color(COLOR_RED)..'Blocking'..' ('..BlockThisSession..')'
+        mnkNuisance.LDB.text = mnkLibs.Color(COLOR_RED)..'Blocked '..' ('..BlockThisSession..')'
     else
         mnkNuisance.LDB.icon = 'Interface\\Icons\\Achievement_dungeon_naxxramas'
-        mnkNuisance.LDB.text = mnkLibs.Color(COLOR_GREEN)..'Not Blocking'
+        mnkNuisance.LDB.text = mnkLibs.Color(COLOR_GREEN)..'Blocking off'
     end
 end
 
