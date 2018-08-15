@@ -103,6 +103,7 @@ function mnkMinimap:SetQuestTrackerPosition()
   ObjectiveTrackerFrame:ClearAllPoints(); 
   ObjectiveTrackerFrame:SetPoint('TOPRIGHT', UIParent, -5, -30);    
   ObjectiveTrackerFrame.SetPoint = mnkLibs.donothing()
+  ObjectiveTrackerFrame:SetHeight(GetScreenHeight()-(GetScreenHeight()*.25))
   ObjectiveTrackerFrame:SetClampedToScreen(true)
   ObjectiveTrackerFrame:SetMovable(true)
   ObjectiveTrackerFrame:SetUserPlaced(true)
