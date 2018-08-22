@@ -27,12 +27,6 @@ function mnkMinimap:SetMinimapPositionAndSize()
   Minimap:SetPoint('CENTER', UIParent, 'BOTTOM', 0, 68)
   Minimap:SetSize(135,135) 
   Minimap:EnableMouseWheel()
-
-  -- MinimapCluster:SetScale(1)
-  -- MinimapCluster:ClearAllPoints()
-  -- MinimapCluster:SetAllPoints(Minimap)
-  -- MinimapCluster:SetSize(Minimap:GetSize()) 
-  -- MinimapCluster:EnableMouse(false)
   
   MinimapCluster:SetScale(1)
   MinimapCluster:ClearAllPoints()
