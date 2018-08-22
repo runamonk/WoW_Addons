@@ -296,7 +296,6 @@ local function PlayerUnit(self)
         self.AdditionalPower.colorPower = true
         mnkLibs.setBackdrop(self.AdditionalPower, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
         self.AdditionalPower:SetBackdropColor(1/7, 1/7, 1/7, 1)
-        
         self.AlternativePower = CreateFrame('StatusBar', nil, self)
         self.AlternativePower:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
         self.AlternativePower:SetHeight(25)
@@ -307,9 +306,7 @@ local function PlayerUnit(self)
         self.AlternativePower:SetStatusBarColor(1/2, 1/2, 1/2)
         self.AlternativePower:SetFrameStrata('HIGH')
         self.AlternativePower:EnableMouse(true)
-
         mnkLibs.createBorder(self.AlternativePower, 1,-1,-1,1, {0, 0, 0, 1})
-
         self.ThreatIndicator = CreateFrame('Frame', nil, self.Health)
         self.ThreatIndicator:SetSize(self:GetWidth(), 1)
         self.ThreatIndicator:SetPoint('CENTER', self, 0, -6)
