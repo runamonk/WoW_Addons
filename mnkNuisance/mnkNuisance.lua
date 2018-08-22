@@ -34,7 +34,7 @@ function mnkNuisance:DoOnEvent(event, arg1)
                 DeclineGroup()
                 StaticPopup_Hide('PARTY_INVITE')
                 mnkLibs.PrintError('Declined group invite from '..arg1)
-                --SendChatMessage('No Thanks.', 'WHISPER', nil, arg1)
+                SendChatMessage('Thanks for the invite. I auto-decline all group invites by default.', 'WHISPER', nil, arg1)
                 BlockThisSession = (BlockThisSession + 1)
                 mnkNuisance.SetIcon()
             end
