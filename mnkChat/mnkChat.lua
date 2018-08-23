@@ -4,6 +4,16 @@ local libQTip = LibStub('LibQTip-1.0')
 local hooks = {}
 local frames = {}
 
+mnkChat_db = {}
+mnkChat_db.Messages = {}
+mnkChat_db.NEW_MESSAGES = 0
+mnkChat_Frames = {}
+
+local MAX_MESSAGES = 10
+
+local font = CreateFont("tooltipFont")
+font:SetFont(mnkLibs.Fonts.abf, 12)
+
 local StickyTypeChannels = {
     SAY = 1, 
     YELL = 0, 
@@ -59,8 +69,41 @@ function ChatFrame_OnHyperlinkShow(frame, link, text, button)
         hooks.ChatFrame_OnHyperlinkShow(self, link, text, button)
     end
 end
+
+function mnkChat.DoOnChat(event, message, playername, _, _, _, playerstatus, _, _, _, lineid, _, guid, pid)
+    if message ~= nil then
+        CombatText_AddMessage(mnkLibs.formatPlayerName(playername)..': '..message, CombatText_StandardScroll, 255, 0, 0, nil, false)
+        table.insert(mnkChat_db.Messages, 1, {time, name, message})
+        mnkChat_db.Messages[1].time = date('%I:%M:%S:%p')
+        if string.find(playername, '-') == nil then
+            mnkChat_db.Messages[1].name = playername
+        else
+            mnkChat_db.Messages[1].name = mnkLibs.formatPlayerName(playername)
+        end
+        mnkChat_db.Messages[1].fullname = playername
+        mnkChat_db.Messages[1].message = message
+
+        mnkChat_db.NEW_MESSAGES = mnkChat_db.NEW_MESSAGES + 1
+        if #mnkChat > MAX_MESSAGES then
+            for i = #mnkChat_db.Messages, MAX_MESSAGES + 1, -1 do
+                table.remove(mnkChat_db.Messages, i)
+            end
+        end
+    end
+end
+
 function mnkChat:DoOnEvent(event, ...)
-    if event == "ADDON_LOADED" then
+    if string.sub(event, 1, 8) == 'CHAT_MSG' then
+        PlaySoundFile(mnkLibs.Sounds.incoming_message, "Master")
+        mnkChat.DoOnChat(event, ...)
+    elseif event == "ADDON_LOADED" then
+        mnkChat.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkChat', {
+            icon = mnkLibs.Textures.icon_none, 
+            type = 'data source', 
+            OnEnter = mnkChat.DoOnEnter, 
+            OnClick = mnkChat.DoOnClick
+        }) 
+        
         QuickJoinToastButton:Hide() 
         QuickJoinToastButton:HookScript("OnShow", QuickJoinToastButton.Hide)
         ChatFrameMenuButton:Hide()
@@ -114,6 +157,61 @@ function mnkChat:DoOnEvent(event, ...)
         end
 	    self:UnregisterEvent("ADDON_LOADED")
     end
+    mnkChat.UpdateText()
+end
+
+function mnkChat.DoOnClick(self, button)
+    if self.tooltip ~= nil then
+        self.tooltip:Hide()
+    end
+
+    if button == 'RightButton' then
+        mnkChat_db.Messages = {}
+        mnkChat.UpdateText()
+    end
+end
+
+function mnkChat.DoOnEnter(self)
+    mnkChat_db.NEW_MESSAGES = 0
+    if #mnkChat_db.Messages == 0 then
+        return
+    end
+
+    mnkChat.UpdateText()
+    local tooltip = libQTip:Acquire('mnkChatTooltip', 2, 'LEFT', 'LEFT')
+    tooltip:SetFont(font)
+
+    self.tooltip = tooltip 
+    tooltip:Clear()
+
+    tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Name', mnkLibs.Color(COLOR_GOLD)..'Message')
+
+    for i = 1, #mnkChat_db.Messages do
+        if mnkChat_db.Messages[i].message ~= nil then
+            local y, x = tooltip:AddLine(mnkChat_db.Messages[i].name, '')
+            tooltip:SetCell(y, 2, mnkChat_db.Messages[i].time..' '..mnkChat_db.Messages[i].message, nil, 'LEFT', nil, nil, nil, nil, GetScreenWidth() / 4, nil)
+            tooltip:SetLineScript(y, 'OnMouseDown', mnkChat.DoOnMessageClick, mnkChat_db.Messages[i].fullname)
+        end
+    end
+
+    tooltip:SetAutoHideDelay(.1, self)
+    tooltip:SmartAnchorTo(self)
+    tooltip:UpdateScrolling(500)
+    tooltip:SetBackdropBorderColor(0, 0, 0, 0)
+    tooltip:Show()
+end
+
+function mnkChat.DoOnMessageClick(self, arg, button) 
+    SetItemRef('player:'..arg, '|Hplayer:'..arg..'|h['..arg..'|h', 'LeftButton')
+end
+
+function mnkChat.UpdateText()
+    if mnkChat_db.NEW_MESSAGES > 0 then
+        mnkChat.LDB.icon = mnkLibs.Textures.icon_new
+    else
+        mnkChat.LDB.icon = mnkLibs.Textures.icon_none
+    end
+    mnkChat.LDB.text = mnkChat_db.NEW_MESSAGES
 end
 
 function mnkChat.AddMessage(frame, message, ...)
@@ -195,4 +293,5 @@ end
 
 mnkChat:SetScript("OnEvent", mnkChat.DoOnEvent)
 mnkChat:RegisterEvent("ADDON_LOADED")
-
+mnkChat:RegisterEvent("CHAT_MSG_WHISPER")
+mnkChat:RegisterEvent('CHAT_MSG_BN_WHISPER')
