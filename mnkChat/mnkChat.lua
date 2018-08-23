@@ -13,7 +13,6 @@ local font = CreateFont("tooltipFont")
 font:SetFont(mnkLibs.Fonts.abf, 12)
 
 local hooks = {}
-local color = "0099FF"
 local foundurl = false
 local hideFrame = function (self) self:Hide() end
 local tabs = {"Left","Middle","Right","SelectedLeft","SelectedRight","SelectedMiddle","HighlightLeft","HighlightMiddle","HighlightRight"}
@@ -35,17 +34,7 @@ ChatFontNormal:SetFont(mnkLibs.Fonts.ap, 14, '')
 ChatFontNormal:SetShadowOffset(1,1)
 ChatFontNormal:SetShadowColor(0,0,0)
 
--- Stolen straight from PhanxChat.
-hooks.FCF_OpenTemporaryWindow = FCF_OpenTemporaryWindow
-FCF_OpenTemporaryWindow = function(chatType, ...)
-    local frame = hooks.FCF_OpenTemporaryWindow(chatType, ...)
-
-    mnkChat.SetFrameSettings(frame)
-    return frame
-end
-
 function mnkChat.DoOnChat(event, message, playername, _, _, _, playerstatus, _, _, _, lineid, _, guid, pid)
-
     if message ~= nil then
         CombatText_AddMessage(mnkLibs.formatPlayerName(playername)..': '..message, CombatText_StandardScroll, 255, 0, 0, nil, false)
         table.insert(mnkChat_db.Messages, 1, {time, name, message})
@@ -122,6 +111,10 @@ function mnkChat.UpdateText()
 end
 
 function mnkChat:DoOnEvent(event, ...)
+    if event == "ADDON_LOADED" then
+        mnkChat:UnregisterEvent('ADDON_LOADED')
+    end
+
     QuickJoinToastButton:SetScript("OnShow", hideFrame)
     QuickJoinToastButton:Hide() 
     --FriendsMicroButton:SetScript("OnShow", hideFrame)
@@ -181,7 +174,7 @@ function mnkChat:DoOnEvent(event, ...)
             ToggleChatColorNamesByClassGroup(true, "CHANNEL"..iCh)
         end
     end
-    
+
     mnkChat.UpdateText()
 end
 
@@ -263,17 +256,16 @@ FloatingChatFrame_OnMouseScroll = function(self, dir)
     end
 end
 
-function string.link(text, type, value, color)
-    return "|H"..type..":"..tostring(value).."|h"..tostring(text):color(color or "ffffff").."|h"
+function string.link(text, type, value)
+    return "|H"..type..":"..tostring(value).."|h"..tostring(text).."|h"
 end
 
 local function highlighturl(before, url, after)
     foundurl = true
-    return " "..string.link("["..url.."]", "url", url, color).." "
+    return " "..string.link(mnkLibs.Color(COLOR_BLUE).."["..url.."]|r", "url", url).." "
 end
 
 local function searchforurl(frame, text, ...)
-
     foundurl = false
 
     if string.find(text, "%pTInterface%p+") or string.find(text, "%pTINTERFACE%p+") then
@@ -329,6 +321,18 @@ for i = 1, NUM_CHAT_WINDOWS do
         cf.am = cf.AddMessage
         cf.AddMessage = searchforurl
     end
+end
+
+-- Stolen straight from PhanxChat.
+hooks.FCF_OpenTemporaryWindow = FCF_OpenTemporaryWindow
+FCF_OpenTemporaryWindow = function(chatType, ...)
+    local frame = hooks.FCF_OpenTemporaryWindow(chatType, ...)
+
+    frame.am = frame.AddMessage
+    frame.AddMessage = searchforurl
+
+    mnkChat.SetFrameSettings(frame)
+    return frame
 end
 
 local orig = ChatFrame_OnHyperlinkShow
