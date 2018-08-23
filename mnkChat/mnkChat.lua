@@ -239,8 +239,6 @@ function mnkChat.AddMessage(frame, message, ...)
     local bnData, bnID, bnName, bnExtra = strmatch(message, BNPLAYER_PATTERN)
     if bnData and bnID then
         local toastIcon = strmatch(message, "|TInterface\\FriendsFrame\\UI%-Toast%-ToastIcons.-|t")
-        -- [BN] John Doe ([WoW] Charguy) has come online. -> [WoW] Charguy has come online.
-        -- |TInterface\\FriendsFrame\\UI-Toast-ToastIcons.tga:16:16:0:0:128:64:2:29:34:61|t|HBNplayer:|Kf5|k000000000000|k:5:1880:BN_INLINE_TOAST_ALERT:0|h[|Kf5|k000000000000|k] (|TInterface\\ChatFrame\\UI-ChatIcon-WOW:14:14:0:0|tCharname)|h has come online.
         if toastIcon then
             local gameIcon = strmatch(message, "|TInterface\\ChatFrame\\UI%-ChatIcon.-|t")
             if gameIcon then
