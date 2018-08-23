@@ -1,16 +1,13 @@
 mnkChat = CreateFrame("Frame")
 mnkChat.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
+mnkChat.hooks = {}
 local libQTip = LibStub('LibQTip-1.0')
-local hooks = {}
-local frames = {}
 
 mnkChat_db = {}
 mnkChat_db.Messages = {}
 mnkChat_db.NEW_MESSAGES = 0
-mnkChat_Frames = {}
 
 local MAX_MESSAGES = 10
-
 local font = CreateFont("tooltipFont")
 font:SetFont(mnkLibs.Fonts.abf, 12)
 
@@ -28,7 +25,7 @@ local StickyTypeChannels = {
 
 local tabs = {"Left","Middle","Right","SelectedLeft","SelectedRight","SelectedMiddle","HighlightLeft","HighlightMiddle","HighlightRight"}
 
-hooks.ChatFrame_OnHyperlinkShow = ChatFrame_OnHyperlinkShow
+mnkChat.hooks.ChatFrame_OnHyperlinkShow = ChatFrame_OnHyperlinkShow
 
 SLASH_CLEAR_CHAT1 = "/clear"
 ChatFontNormal:SetFont(mnkLibs.Fonts.ap, 14, '')
@@ -66,7 +63,7 @@ function ChatFrame_OnHyperlinkShow(frame, link, text, button)
         eb:SetFocus()
         eb:HighlightText()
     else
-        hooks.ChatFrame_OnHyperlinkShow(self, link, text, button)
+        mnkChat.hooks.ChatFrame_OnHyperlinkShow(self, link, text, button)
     end
 end
 
@@ -149,9 +146,9 @@ function mnkChat:DoOnEvent(event, ...)
             mnkChat.SetupFrame(_G["ChatFrame" .. i])
         end
 
-    	hooks.FCF_OpenTemporaryWindow = FCF_OpenTemporaryWindow
+    	mnkChat.hooks.FCF_OpenTemporaryWindow = FCF_OpenTemporaryWindow
         FCF_OpenTemporaryWindow = function(chatType, ...)
-            local frame = hooks.FCF_OpenTemporaryWindow(chatType, ...)
+            local frame = mnkChat.hooks.FCF_OpenTemporaryWindow(chatType, ...)
             mnkChat.SetupFrame(frame)
             return frame
         end
@@ -249,7 +246,7 @@ function mnkChat.AddMessage(frame, message, ...)
         message = gsub(message, BNPLAYER_PATTERN, format(PLAYER_BN_LINK, bnData, bnName, bnExtra or ""))
     end
 
-	hooks[frame].AddMessage(frame, message, ...)
+	mnkChat.hooks[frame].AddMessage(frame, message, ...)
 end
 
 function mnkChat.SetupFrame(frame)
@@ -308,11 +305,11 @@ function mnkChat.SetupFrame(frame)
     for index, value in pairs(tabs) do _G[frame:GetName()..'Tab'..value]:SetTexture(nil) end
 
 	if frame ~= COMBATLOG then
-        if not hooks[frame] then
-            hooks[frame] = {}
+        if not mnkChat.hooks[frame] then
+            mnkChat.hooks[frame] = {}
 		end
-		if not hooks[frame].AddMessage then
-			hooks[frame].AddMessage = frame.AddMessage
+		if not mnkChat.hooks[frame].AddMessage then
+			mnkChat.hooks[frame].AddMessage = frame.AddMessage
 			frame.AddMessage = mnkChat.AddMessage
 		end
 	end
