@@ -425,11 +425,6 @@ function mnkUnits:DoOnEvent(event, unit)
         CompactRaidFrameContainer:Hide()
         CompactRaidFrameContainer:Hide()
 
-        -- PlayerPowerBarAlt:ClearAllPoints()
-        -- PlayerPowerBarAlt:SetPoint("CENTER", 0, 0)
-        -- PlayerPowerBarAlt:SetPoint("BOTTOM", oUF_mnkUnitsPlayer, "TOP", 0, 150)
-        -- PlayerPowerBarAlt.SetPoint = mnkLibs.donothing()
-
         CreateBottomPanel()
         UpdateMirrorBars()
     elseif event == "NAME_PLATE_UNIT_ADDED" then -- hide player castbar when the personal bar is visible, there is a castbar there.
