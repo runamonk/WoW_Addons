@@ -214,14 +214,12 @@ function mnkChat.UpdateText()
 end
 
 function mnkChat.AddMessage(frame, message, ...)
+    if string.find(message, 'Changed Channel') or string.find(message, 'Left Channel') then return end
     -- stolen straight from rChat by Zork.
-    -- channel replace (Trade and such)
     message = message:gsub('|h%[(%d+)%. .-%]|h', '|h%1.|h')
-    -- url search
     message = message:gsub('([wWhH][wWtT][wWtT][%.pP]%S+[^%p%s])', '|cffffffff|Hurl:%1|h[%1]|h|r')
-    -- #TODO Strip out channel change messages
-    -- Changed Channel: X.
-    -- Left Channel: X.
+    message = message:gsub('Changed Channel%s','test')
+    message = message:gsub('Left Channel%s','test')
 
     -- Thanks Phanx
     local PLAYER_STYLE = '%s'
