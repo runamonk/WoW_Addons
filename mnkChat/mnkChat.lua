@@ -218,8 +218,6 @@ function mnkChat.AddMessage(frame, message, ...)
     -- stolen straight from rChat by Zork.
     message = message:gsub('|h%[(%d+)%. .-%]|h', '|h%1.|h')
     message = message:gsub('([wWhH][wWtT][wWtT][%.pP]%S+[^%p%s])', '|cffffffff|Hurl:%1|h[%1]|h|r')
-    message = message:gsub('Changed Channel%s','test')
-    message = message:gsub('Left Channel%s','test')
 
     -- Thanks Phanx
     local PLAYER_STYLE = '%s'
