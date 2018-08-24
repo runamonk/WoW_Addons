@@ -94,9 +94,9 @@ function mnkChat:DoOnEvent(event, ...)
     if string.sub(event, 1, 8) == 'CHAT_MSG' then
         PlaySoundFile(mnkLibs.Sounds.incoming_message, 'Master')
         mnkChat.DoOnChat(event, ...)
-    elseif event == 'ADDON_LOADED' then
-        local addonName = ...
-        if addonName == myaddonName then
+    elseif event == 'PLAYER_ENTERING_WORLD' then
+        local initialLogin, reloadingUI = ...
+        if initialLogin or reloadingUI then
             mnkChat.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkChat', {
                 icon = mnkLibs.Textures.icon_none, 
                 type = 'data source', 
@@ -276,7 +276,7 @@ function mnkChat.SetupFrame(frame)
     _G[frame:GetName()..'ButtonFrameMinimizeButton']:Hide()
     _G[frame:GetName()..'ButtonFrameMinimizeButton']:HookScript('OnShow', _G[frame:GetName()..'ButtonFrameMinimizeButton'].Hide)
     _G[frame:GetName()..'EditBox']:SetAltArrowKeyMode(false)
-
+    
     if GetCVar('chatStyle') == 'classic' then
         _G[frame:GetName()..'EditBox']:ClearAllPoints()
         _G[frame:GetName()..'EditBox']:SetPoint('BOTTOMLEFT', frame, 'TOPLEFT', 0, 0)
@@ -320,6 +320,6 @@ function mnkChat.SetupFrame(frame)
 end
 
 mnkChat:SetScript('OnEvent', mnkChat.DoOnEvent)
-mnkChat:RegisterEvent('ADDON_LOADED')
+mnkChat:RegisterEvent('PLAYER_ENTERING_WORLD')
 mnkChat:RegisterEvent('CHAT_MSG_WHISPER')
 mnkChat:RegisterEvent('CHAT_MSG_BN_WHISPER')
