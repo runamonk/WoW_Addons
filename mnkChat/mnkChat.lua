@@ -2,6 +2,7 @@ mnkChat = CreateFrame('Frame')
 mnkChat.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 mnkChat.hooks = {}
 local libQTip = LibStub('LibQTip-1.0')
+local myaddonName = ...
 
 mnkChat_db = {}
 mnkChat_db.Messages = {}
@@ -94,65 +95,66 @@ function mnkChat:DoOnEvent(event, ...)
         PlaySoundFile(mnkLibs.Sounds.incoming_message, 'Master')
         mnkChat.DoOnChat(event, ...)
     elseif event == 'ADDON_LOADED' then
-        mnkChat.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkChat', {
-            icon = mnkLibs.Textures.icon_none, 
-            type = 'data source', 
-            OnEnter = mnkChat.DoOnEnter, 
-            OnClick = mnkChat.DoOnClick
-        }) 
+        local addonName = ...
+        if addonName == myaddonName then
+            mnkChat.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkChat', {
+                icon = mnkLibs.Textures.icon_none, 
+                type = 'data source', 
+                OnEnter = mnkChat.DoOnEnter, 
+                OnClick = mnkChat.DoOnClick
+            })
+            QuickJoinToastButton:Hide() 
+            QuickJoinToastButton:HookScript('OnShow', QuickJoinToastButton.Hide)
+            ChatFrameMenuButton:Hide()
+            ChatFrameMenuButton:HookScript('OnShow', ChatFrameMenuButton.Hide)
+            ChatFrameChannelButton:Hide()
+            ChatFrameChannelButton:HookScript('OnShow', ChatFrameChannelButton.Hide)
+            
+            CHAT_WHISPER_GET = '>> %s: '
+            CHAT_WHISPER_INFORM_GET = '<< %s: '
+            CHAT_YELL_GET = '|Hchannel:Yell|h<Y> |h %s: '
+            CHAT_SAY_GET = '|Hchannel:Say|h<S> |h %s: '
+            CHAT_BATTLEGROUND_GET = '|Hchannel:Battleground|h<BG> |h %s: '
+            CHAT_BATTLEGROUND_LEADER_GET = [[|Hchannel:Battleground|h<BGL> |h %s: ]]
+            CHAT_GUILD_GET = '|Hchannel:Guild|h<G> |h %s: '
+            CHAT_OFFICER_GET = '|Hchannel:Officer|h<O> |h %s: '
+            CHAT_PARTY_GET = '|Hchannel:Party|h<P> |h %s: '
+            CHAT_PARTY_LEADER_GET = [[|Hchannel:Party|h<PL> |h %s: ]]
+            CHAT_PARTY_GUIDE_GET = CHAT_PARTY_LEADER_GET
+            CHAT_RAID_GET = '|Hchannel:Raid|h<R> |h %s: '
+            CHAT_RAID_LEADER_GET = [[|Hchannel:Raid|h<RL> |h %s: ]]
+            CHAT_RAID_WARNING_GET = [[|Hchannel:RaidWarning|h<RW> |h %s: ]]
+            
+            CHAT_MONSTER_PARTY_GET = CHAT_PARTY_GET
+            CHAT_MONSTER_SAY_GET = CHAT_SAY_GET
+            CHAT_MONSTER_WHISPER_GET = CHAT_WHISPER_GET
+            CHAT_MONSTER_YELL_GET = CHAT_YELL_GET
+            
+            for k, v in pairs(StickyTypeChannels) do
+                ChatTypeInfo[k].sticky = v
+            end
+            
+            --toggle class colors
+            for i, v in pairs(CHAT_CONFIG_CHAT_LEFT) do
+                ToggleChatColorNamesByClassGroup(true, v.type)
+            end
+            
+            --this is to toggle class colors for all the global channels that is not listed under CHAT_CONFIG_CHAT_LEFT
+            for iCh = 1, 15 do
+                ToggleChatColorNamesByClassGroup(true, 'CHANNEL'..iCh)
+            end
 
-        QuickJoinToastButton:Hide() 
-        QuickJoinToastButton:HookScript('OnShow', QuickJoinToastButton.Hide)
-        ChatFrameMenuButton:Hide()
-        ChatFrameMenuButton:HookScript('OnShow', ChatFrameMenuButton.Hide)
-        ChatFrameChannelButton:Hide()
-        ChatFrameChannelButton:HookScript('OnShow', ChatFrameChannelButton.Hide)
-        
-        CHAT_WHISPER_GET = '>> %s: '
-        CHAT_WHISPER_INFORM_GET = '<< %s: '
-        CHAT_YELL_GET = '|Hchannel:Yell|h<Y> |h %s: '
-        CHAT_SAY_GET = '|Hchannel:Say|h<S> |h %s: '
-        CHAT_BATTLEGROUND_GET = '|Hchannel:Battleground|h<BG> |h %s: '
-        CHAT_BATTLEGROUND_LEADER_GET = [[|Hchannel:Battleground|h<BGL> |h %s: ]]
-        CHAT_GUILD_GET = '|Hchannel:Guild|h<G> |h %s: '
-        CHAT_OFFICER_GET = '|Hchannel:Officer|h<O> |h %s: '
-        CHAT_PARTY_GET = '|Hchannel:Party|h<P> |h %s: '
-        CHAT_PARTY_LEADER_GET = [[|Hchannel:Party|h<PL> |h %s: ]]
-        CHAT_PARTY_GUIDE_GET = CHAT_PARTY_LEADER_GET
-        CHAT_RAID_GET = '|Hchannel:Raid|h<R> |h %s: '
-        CHAT_RAID_LEADER_GET = [[|Hchannel:Raid|h<RL> |h %s: ]]
-        CHAT_RAID_WARNING_GET = [[|Hchannel:RaidWarning|h<RW> |h %s: ]]
-        
-        CHAT_MONSTER_PARTY_GET = CHAT_PARTY_GET
-        CHAT_MONSTER_SAY_GET = CHAT_SAY_GET
-        CHAT_MONSTER_WHISPER_GET = CHAT_WHISPER_GET
-        CHAT_MONSTER_YELL_GET = CHAT_YELL_GET
-        
-        for k, v in pairs(StickyTypeChannels) do
-            ChatTypeInfo[k].sticky = v
-        end
-        
-        --toggle class colors
-        for i, v in pairs(CHAT_CONFIG_CHAT_LEFT) do
-            ToggleChatColorNamesByClassGroup(true, v.type)
-        end
-        
-        --this is to toggle class colors for all the global channels that is not listed under CHAT_CONFIG_CHAT_LEFT
-        for iCh = 1, 15 do
-            ToggleChatColorNamesByClassGroup(true, 'CHANNEL'..iCh)
-        end
+            for i = 1, NUM_CHAT_WINDOWS do
+                mnkChat.SetupFrame(_G['ChatFrame' .. i])
+            end
 
-        for i = 1, NUM_CHAT_WINDOWS do
-            mnkChat.SetupFrame(_G['ChatFrame' .. i])
+            mnkChat.hooks.FCF_OpenTemporaryWindow = FCF_OpenTemporaryWindow
+            FCF_OpenTemporaryWindow = function(chatType, ...)
+                local frame = mnkChat.hooks.FCF_OpenTemporaryWindow(chatType, ...)
+                mnkChat.SetupFrame(frame)
+                return frame
+            end   
         end
-
-    	mnkChat.hooks.FCF_OpenTemporaryWindow = FCF_OpenTemporaryWindow
-        FCF_OpenTemporaryWindow = function(chatType, ...)
-            local frame = mnkChat.hooks.FCF_OpenTemporaryWindow(chatType, ...)
-            mnkChat.SetupFrame(frame)
-            return frame
-        end
-	    self:UnregisterEvent('ADDON_LOADED')
     end
     mnkChat.UpdateText()
 end
@@ -258,6 +260,7 @@ function mnkChat.SetupFrame(frame)
     frame:SetMaxResize(UIParent:GetWidth(), UIParent:GetHeight())
     frame:SetMinResize(200, 40) 
     frame:SetFading(false) 
+    frame:SetClampedToScreen(false)
     frame:SetScript('OnHyperlinkEnter', function (frame, link, ...)
         local t = link:match('^([^:]+)')
         if t == 'item' then
@@ -305,6 +308,7 @@ function mnkChat.SetupFrame(frame)
     _G[frame:GetName()..'TabText'].SetTextColor = mnkLibs.donothing
     _G[frame:GetName()..'TabText'].SetVertexColor = mnkLibs.donothing
 
+    
     -- remove the tab textures.
     for index, value in pairs(tabs) do _G[frame:GetName()..'Tab'..value]:SetTexture(nil) end
 
@@ -318,7 +322,6 @@ function mnkChat.SetupFrame(frame)
 		end
 	end
 end
-
 
 mnkChat:SetScript('OnEvent', mnkChat.DoOnEvent)
 mnkChat:RegisterEvent('ADDON_LOADED')
