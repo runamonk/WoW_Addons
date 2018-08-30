@@ -221,6 +221,7 @@ end
 mnkDurability:SetScript('OnEvent', mnkDurability.DoOnEvent)
 mnkDurability:RegisterEvent('PLAYER_LOGIN')
 mnkDurability:RegisterEvent('PLAYER_ENTERING_WORLD')
+mnkDurability:RegisterEvent('PLAYER_EQUIPMENT_CHANGED')
 mnkDurability:RegisterEvent('UPDATE_INVENTORY_DURABILITY')
 mnkDurability:RegisterEvent('UPDATE_INVENTORY_ALERTS')
 mnkDurability:RegisterEvent('EQUIPMENT_SWAP_FINISHED')
