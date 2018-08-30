@@ -142,7 +142,7 @@ function mnkReputation.DoOnEnter(self)
 end
 
 function mnkReputation:DoOnEvent(event, arg1, arg2)
-    
+    --print(event, ' ', arg1, ' ', arg2)
     if event == 'PLAYER_LOGIN' then
         mnkReputation.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkReputation', {
             icon = 'Interface\\Icons\\Inv_misc_bone_skull_02.blp', 
@@ -165,14 +165,14 @@ function mnkReputation:DoOnEvent(event, arg1, arg2)
             mnkReputation.CheckTabard()
         end
         if (event == 'PLAYER_ENTERING_WORLD') or (event == 'BAG_UPDATE') then
-            if event == 'PLAYER_ENTERING_WORLD' and arg1 == 'false' then
+            if event == 'PLAYER_ENTERING_WORLD' then
                 mnkReputation.CheckTabard()
             end
 
             mnkReputation.GetAllTabards()
         end
     end
-    if (event == 'ZONE_CHANGED_NEW_AREA') and (mnkReputation_db.AutoTabardName ~= nil) then
+    if ((event == 'ZONE_CHANGED_NEW_AREA') or (event == 'ZONE_CHANGED')) and (mnkReputation_db.AutoTabardName ~= nil) then
         mnkReputation.CheckTabard()
     end
 end
@@ -271,14 +271,15 @@ function mnkReputation.AddTabards(t)
 end
 
 function mnkReputation.CheckTabard()
-    if not InGlue() then
-        local inInstance, instanceType = IsInInstance()
-        if (not inInstance) or (instanceType == 'none') or (mnkReputation_db.AutoTabardName == nil) then
-            mnkReputation.RemoveTabard()
-        elseif inInstance and (instanceType ~= 'none') then
-            mnkReputation.EquipTabard()
-        end
+    --if not InGlue() then
+    local inInstance, instanceType = IsInInstance()
+    --print(inInstance, ' ', instanceType)
+    if (not inInstance) or (instanceType == 'none') or (mnkReputation_db.AutoTabardName == nil) then
+        mnkReputation.RemoveTabard()
+    elseif inInstance and (instanceType ~= 'none') then
+        mnkReputation.EquipTabard()
     end
+    --end
 end
 
 function mnkReputation.EquipTabard()
@@ -505,6 +506,7 @@ mnkReputation:RegisterEvent('PLAYER_ENTERING_WORLD')
 mnkReputation:RegisterEvent('CHAT_MSG_COMBAT_FACTION_CHANGE')
 mnkReputation:RegisterEvent('PLAYER_ENTERING_WORLD')
 mnkReputation:RegisterEvent('ZONE_CHANGED_NEW_AREA')
+mnkReputation:RegisterEvent('ZONE_CHANGED')
 mnkReputation:RegisterEvent('CHAT_MSG_LOOT')
 mnkReputation:RegisterEvent('UPDATE_FACTION')
 mnkReputation:RegisterEvent('GROUP_ROSTER_UPDATE')
