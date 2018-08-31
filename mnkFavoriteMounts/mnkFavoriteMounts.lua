@@ -22,6 +22,7 @@ end
 function mnkFavoriteMounts.DoOnEnter(self)
     local tooltip = libQTip:Acquire('mnkFavoriteMountssToolTip', 1, 'LEFT')
     self.tooltip = tooltip
+    tooltip.step = 50 
     tooltip:SetFont(mnkLibs.DefaultTooltipFont)
     tooltip:SetHeaderFont(mnkLibs.DefaultTooltipFont)
     tooltip:Clear()
