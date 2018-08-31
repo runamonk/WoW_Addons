@@ -65,6 +65,7 @@ function mnkGuild.DoOnEnter(self)
         local l = tooltip:AddLine()
         tooltip:SetCell(l, 1, 'You are not in a guild.', 5)
     end
+    tooltip.step = 50 
     tooltip:SetAutoHideDelay(.1, self)
     tooltip:SmartAnchorTo(self)
     tooltip:UpdateScrolling(500)
