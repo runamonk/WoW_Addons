@@ -200,7 +200,7 @@ local function CreateUnit(self)
     self.Health:SetHeight(20)
     self.Health:SetAllPoints()
     self.frameValues = CreateFrame('Frame', nil, self)
-    self.frameValues:SetFrameLevel(20)
+    self.frameValues:SetFrameLevel(self:GetFrameLevel()+50)
     self.frameValues:SetSize(self:GetSize())
     self.frameValues:SetAllPoints()
 end
