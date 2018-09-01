@@ -143,34 +143,25 @@ function mnkDurability.GetAvgILevel()
 end
 
 function mnkDurability.GetItemLevel(slotID)
-    local tip, leftside = CreateFrame('GameTooltip', 'mnkBackpackScanTooltip'), {}
-    for i = 1, 5 do
-        local L, R = tip:CreateFontString(), tip:CreateFontString()
-        L:SetFontObject(GameFontNormal)
-        R:SetFontObject(GameFontNormal)
-        tip:AddFontStrings(L, R)
-        leftside[i] = L
-    end
-    tip.leftside = leftside
+    local tip = CreateFrame("GameTooltip", "scanTip", UIParent, "GameTooltipTemplate")
     tip:ClearLines()
-
-    tip:SetOwner(UIParent, 'ANCHOR_NONE')
+    tip:SetOwner(UIParent,"ANCHOR_NONE")
     tip:SetInventoryItem("player", slotID)
-
-    for l = 1, #tip.leftside do
-        local t = tip.leftside[l]:GetText()
-        if t and t:find('Item Level') then
-            local _, i = string.find(t, 'Item Level%s%d')
+    for i=1, 5 do
+        local l = _G["scanTipTextLeft"..i]:GetText()
+        if l and l:find('Item Level') then
+            local _, i = string.find(l, 'Item Level%s%d')
             -- check for boosted levels ie Chromeie scenarios.
-            local _, x = string.find(t, " (", 1, true)
+            local _, x = string.find(l, " (", 1, true)
             --print(t, ' ', x)
             if x then
-                return string.sub(t, i, x-2) or nil
+                return string.sub(l, i, x-2) or nil
             end
-            return string.sub(t, i) or 0
-        end
+            return string.sub(l, i) or nil            
+        end 
     end
-    return 0
+
+    return false
 end
 
 function mnkDurability:GetText()
