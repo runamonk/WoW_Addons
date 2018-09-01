@@ -23,74 +23,67 @@ Backpack.Dropdown:SetFrameLevel(Backpack:GetFrameLevel() + 2)
 
 local function GetItemLevel(bagID, slotID, slot)
     local link = GetContainerItemLink(bagID, slotID)
-    if link then 
-        local tip, leftside = CreateFrame('GameTooltip', 'mnkBackpackScanTooltip'), {}
-        for i = 1, 5 do
-            local L, R = tip:CreateFontString(), tip:CreateFontString()
-            L:SetFontObject(GameFontNormal)
-            R:SetFontObject(GameFontNormal)
-            tip:AddFontStrings(L, R)
-            leftside[i] = L
-        end
+    if link then
+        local tip = CreateFrame("GameTooltip", "scanTip", UIParent, "GameTooltipTemplate")
         tip:ClearLines()
-        tip.leftside = leftside
-        tip:SetOwner(UIParent, 'ANCHOR_NONE')
-        --print(link, ' ', slot.itemLevel)
         -- Weird issue with the tooltip not refilling/painting with the details of a bank item. This
         -- resolves that issue and it makes no sense why.
         if bagID < 0 then
-            tip:ClearLines()
             tip:SetHyperlink(link)
         end
-        tip:ClearLines()
+        tip:SetOwner(UIParent,"ANCHOR_NONE")
         tip:SetBagItem(bagID, slotID)
-        tip:Show()
-        for l = 1, #tip.leftside do
-            local t = tip.leftside[l]:GetText()
-            if t and t:find('Item Level') then
-                local _, i = string.find(t, 'Item Level%s%d')
+        for i=1, 5 do
+            local l = _G["scanTipTextLeft"..i]:GetText()
+            if l and l:find('Item Level') then
+                local _, i = string.find(l, 'Item Level%s%d')
                 -- check for boosted levels ie Chromeie scenarios.
-                local _, x = string.find(t, " (", 1, true)
+                local _, x = string.find(l, " (", 1, true)
                 --print(t, ' ', x)
                 if x then
-                    return string.sub(t, i, x-2) or nil
+                    return string.sub(l, i, x-2) or nil
                 end
-                return string.sub(t, i) or nil
-            end
+                return string.sub(l, i) or nil            
+            end 
         end
-        return nil
-    else
-        return nil
     end
+
+    return false
 end
 
 local function IsItemBOE(bagID, slotID)
     local link = GetContainerItemLink(bagID, slotID)
-    if link then 
-        local tip, leftside = CreateFrame('GameTooltip', 'mnkBackpackScanTooltip'), {}
-
-        for i = 1, 5 do
-            local L, R = tip:CreateFontString(), tip:CreateFontString()
-            L:SetFontObject(GameFontNormal)
-            R:SetFontObject(GameFontNormal)
-            tip:AddFontStrings(L, R)
-            leftside[i] = L
-        end
-        tip.leftside = leftside
-        tip:ClearLines()
-        tip:SetOwner(UIParent, 'ANCHOR_NONE')
+    if link then
+        local tip = CreateFrame("GameTooltip", "scanTip", UIParent, "GameTooltipTemplate")
+        tip:SetOwner(UIParent,"ANCHOR_NONE")
         tip:SetBagItem(bagID, slotID)
+        for i=1, 5 do
+            local l = _G["scanTipTextLeft"..i]:GetText()
+            if l and l:find(ITEM_BIND_ON_EQUIP) then
+                return true
+            end 
+        end
+    end
 
-        local t = nil
+    return false
+end
 
-        for i = 1, #tip.leftside do
-            t = tip.leftside[i]:GetText()
-            if t and t:find(ITEM_BIND_ON_EQUIP) then
+local function IsItemUseable(bagID, slotID)
+    local link = GetContainerItemLink(bagID, slotID)
+    if link then
+        local tip = CreateFrame("GameTooltip", "scanTip", UIParent, "GameTooltipTemplate")
+        tip:SetOwner(UIParent,"ANCHOR_NONE")
+        tip:SetBagItem(bagID, slotID)
+        for i=1, 5 do
+            local l = _G["scanTipTextLeft"..i]:GetText()
+            local cr,cg,cb = nil
+            cr,cg,cb = _G["scanTipTextRight"..i]:GetTextColor()
+            if math.floor(cr+cg+cb) == 1 then
+                return false
+            else
                 return true
             end
         end
-
-        tip:Hide()
     end
 
     return false
@@ -205,9 +198,14 @@ Backpack:Override('UpdateSlot', function(Slot)
                 ItemLevel:Hide()
             end
 
-            --print(itemName, ' ', ilvl)
             local b = IsItemBOE(Slot.bagID, Slot.slotID)
             if b then
+                if IsItemUseable(Slot.bagID, Slot.slotID) then
+                    Slot.boe:SetTextColor(1, 0, 0, 1)
+                else
+                    Slot.boe:SetTextColor(0, 1, 0, 1)
+                end
+
                 Slot.boe:Show()
             else
                 Slot.boe:Hide()
