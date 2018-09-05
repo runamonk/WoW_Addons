@@ -214,6 +214,14 @@ function mnkChat.UpdateText()
     mnkChat.LDB.text = mnkChat_db.NEW_MESSAGES
 end
 
+local function escape(str)
+	return gsub(str, "([%%%+%-%.%[%]%*%?])", "%%%1")
+end
+
+local function unescape(str)
+	return gsub(str, "%%([%%%+%-%.%[%]%*%?])", "%1")
+end
+
 function mnkChat.AddMessage(frame, message, ...)
     if string.find(message, 'Changed Channel') or string.find(message, 'Left Channel') then return end
     -- stolen straight from rChat by Zork.
@@ -221,33 +229,33 @@ function mnkChat.AddMessage(frame, message, ...)
     message = message:gsub('([wWhH][wWtT][wWtT][%.pP]%S+[^%p%s])', '|cffffffff|Hurl:%1|h[%1]|h|r')
 
     -- Thanks Phanx
-    local PLAYER_STYLE = '%s'
-    local PLAYER_LINK = '|Hplayer:%s|h' .. PLAYER_STYLE .. '|h'
-    local PLAYER_BN_LINK = '|HBNplayer:%s|h' .. PLAYER_STYLE .. '%s|h'
-    local PLAYER_PATTERN = '|Hplayer:(.-)|h%[(.-)%]|h'
-    local BNPLAYER_PATTERN = '|HBNplayer:(.-|k:(%d+).-)|h%[(.-)%](.*)|h'
-    local playerData, playerName = strmatch(message, PLAYER_PATTERN)
-    if playerData then
-        if strmatch(playerName, '|cff') then
-            playerName = gsub(playerName, '%-[^|]+', '')
-        else
-            playerName = strmatch(playerName, '[^%-]+')
-        end
-         message = gsub(message, PLAYER_PATTERN, format(PLAYER_LINK, playerData, playerName))
-    end
+    -- local PLAYER_STYLE = '%s'
+    -- local PLAYER_LINK = '|Hplayer:%s|h' .. PLAYER_STYLE .. '|h'
+    -- local PLAYER_BN_LINK = '|HBNplayer:%s|h' .. PLAYER_STYLE .. '%s|h'
+    -- local PLAYER_PATTERN = '|Hplayer:(.-)|h%[(.-)%]|h'
+    -- local BNPLAYER_PATTERN = '|HBNplayer:(.-|k:(%d+).-)|h%[(.-)%](.*)|h'
+    -- local playerData, playerName = strmatch(message, PLAYER_PATTERN)
+    -- if playerData then
+    --     if strmatch(playerName, '|cff') then
+    --         playerName = gsub(playerName, '%-[^|]+', '')
+    --     else
+    --         playerName = strmatch(playerName, '[^%-]+')
+    --     end
+    --      message = gsub(message, PLAYER_PATTERN, format(PLAYER_LINK, playerData, playerName))
+    -- end
 
-    local bnData, bnID, bnName, bnExtra = strmatch(message, BNPLAYER_PATTERN)
-    if bnData and bnID then
-        local toastIcon = strmatch(message, '|TInterface\\FriendsFrame\\UI%-Toast%-ToastIcons.-|t')
-        if toastIcon then
-            local gameIcon = strmatch(message, '|TInterface\\ChatFrame\\UI%-ChatIcon.-|t')
-            if gameIcon then
-                message = gsub(message, escape(toastIcon), gameIcon, 1)
-                bnExtra = gsub(bnExtra, '%s?%(.-%)', '')
-            end
-        end
-        message = gsub(message, BNPLAYER_PATTERN, format(PLAYER_BN_LINK, bnData, bnName, bnExtra or ''))
-    end
+    -- local bnData, bnID, bnName, bnExtra = strmatch(message, BNPLAYER_PATTERN)
+    -- if bnData and bnID then
+    --     local toastIcon = strmatch(message, '|TInterface\\FriendsFrame\\UI%-Toast%-ToastIcons.-|t')
+    --     if toastIcon then
+    --         local gameIcon = strmatch(message, '|TInterface\\ChatFrame\\UI%-ChatIcon.-|t')
+    --         if gameIcon then
+    --             message = gsub(message, escape(toastIcon), gameIcon, 1)
+    --             bnExtra = gsub(bnExtra, '%s?%(.-%)', '')
+    --         end
+    --     end
+    --     message = gsub(message, BNPLAYER_PATTERN, format(PLAYER_BN_LINK, bnData, bnName, bnExtra or ''))
+    -- end
 
 	mnkChat.hooks[frame].AddMessage(frame, message, ...)
 end
