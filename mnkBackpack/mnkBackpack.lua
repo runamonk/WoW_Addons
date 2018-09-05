@@ -21,9 +21,12 @@ LibStub('LibDropDown'):RegisterStyle(addonName, {
 Backpack.Dropdown:SetStyle(addonName)
 Backpack.Dropdown:SetFrameLevel(Backpack:GetFrameLevel() + 2)
 
-local function GetItemLevel(bagID, slotID, slot)
+local function GetItemLevel(bagID, slotID)
     local link = GetContainerItemLink(bagID, slotID)
     if link then
+        --local itemName = GetItemInfo(link) 
+        --return GetDetailedItemLevelInfo(link)
+        --print(itemName, ' ', effectiveILvl,' ', isPreview,' ', baseILvl)
         local tip = CreateFrame("GameTooltip", "scanTip", UIParent, "GameTooltipTemplate")
         tip:ClearLines()
         -- Weird issue with the tooltip not refilling/painting with the details of a bank item. This
@@ -36,25 +39,27 @@ local function GetItemLevel(bagID, slotID, slot)
         for i=1, 5 do
             local l = _G["scanTipTextLeft"..i]:GetText()
             if l and l:find('Item Level') then
-                local _, i = string.find(l, 'Item Level%s%d')
+                local _, c = string.find(l, 'Item Level%s%d')
                 -- check for boosted levels ie Chromeie scenarios.
                 local _, x = string.find(l, " (", 1, true)
                 --print(t, ' ', x)
                 if x then
-                    return string.sub(l, i, x-2) or nil
+                    return tonumber(string.sub(l, c, x-2)) or 0
                 end
-                return string.sub(l, i) or nil            
+                return tonumber(string.sub(l, c)) or 0            
             end 
         end
+        tip:Hide()
+    else
+        return 0
     end
-
-    return false
 end
 
 local function IsItemBOE(bagID, slotID)
     local link = GetContainerItemLink(bagID, slotID)
     if link then
         local tip = CreateFrame("GameTooltip", "scanTip", UIParent, "GameTooltipTemplate")
+        tip:ClearLines()
         tip:SetOwner(UIParent,"ANCHOR_NONE")
         tip:SetBagItem(bagID, slotID)
         for i=1, 5 do
@@ -63,27 +68,7 @@ local function IsItemBOE(bagID, slotID)
                 return true
             end 
         end
-    end
-
-    return false
-end
-
-local function IsItemUseable(bagID, slotID)
-    local link = GetContainerItemLink(bagID, slotID)
-    if link then
-        local tip = CreateFrame("GameTooltip", "scanTip", UIParent, "GameTooltipTemplate")
-        tip:SetOwner(UIParent,"ANCHOR_NONE")
-        tip:SetBagItem(bagID, slotID)
-        for i=1, 5 do
-            local l = _G["scanTipTextLeft"..i]:GetText()
-            local cr,cg,cb = nil
-            cr,cg,cb = _G["scanTipTextRight"..i]:GetTextColor()
-            if math.floor(cr+cg+cb) == 1 then
-                return false
-            else
-                return true
-            end
-        end
+        tip:Hide()
     end
 
     return false
@@ -181,14 +166,10 @@ Backpack:Override('UpdateSlot', function(Slot)
         local _, _, _, _, _, itemClass, itemSubClass = GetItemInfoInstant(itemID)
         if (itemQuality >= LE_ITEM_QUALITY_UNCOMMON and (itemClass == LE_ITEM_CLASS_WEAPON or itemClass == LE_ITEM_CLASS_ARMOR or (itemClass == LE_ITEM_CLASS_GEM and itemSubClass == 11))) then
             local ItemLevel = Slot.ItemLevel
-            
-            --GetDetailedItemLevelInfo() is returning weird ilevels. Parsing the item tooltip instead. Slower but more reliable.
-            --ItemLevel:SetFormattedText('|c%s%s|r', hex, Slot.itemLevel)
-            --ItemLevel:Show()
 
-            local ilvl = GetItemLevel(Slot.bagID, Slot.slotID, Slot)
-            if ilvl then
-                --ItemLevel:SetFormattedText('|c%s%s|r', hex, ilvl)
+            local ilvl = GetItemLevel(Slot.bagID, Slot.slotID)
+            
+            if ilvl > 0 then
                 ItemLevel:SetText(ilvl)
                 ItemLevel:SetTextColor(1, 1, 1, 1)
                 ItemLevel:SetShadowColor(r/5, g/5, b/5, 1)
@@ -199,13 +180,7 @@ Backpack:Override('UpdateSlot', function(Slot)
             end
 
             local b = IsItemBOE(Slot.bagID, Slot.slotID)
-            if b then
-                if IsItemUseable(Slot.bagID, Slot.slotID) then
-                    Slot.boe:SetTextColor(1, 0, 0, 1)
-                else
-                    Slot.boe:SetTextColor(0, 1, 0, 1)
-                end
-
+            if b == true then
                 Slot.boe:Show()
             else
                 Slot.boe:Hide()
