@@ -16,6 +16,8 @@ local sFactions = nil
 local iExalted = 0
 local iHated = 0
 local iHonored = 0
+local iNeutral = 0
+local iFriendly = 0
 local iRevered = 0
 local iNeutral = 0
 
@@ -35,7 +37,9 @@ local function GetFactionColor(standingid)
         return COLOR_RED
     elseif standingid == 4 then
         return COLOR_YELLOW
-    elseif standingid >= 5 and standingid <= 6 then
+    elseif standingid == 5 then
+        return COLOR_DKGREEN
+    elseif standingid == 6 then
         return COLOR_GREEN
     elseif standingid == 7 then
         return COLOR_BLUE
@@ -128,6 +132,7 @@ function mnkReputation.DoOnEnter(self)
         tooltip:SetCell(y, 1, mnkLibs.Color(COLOR_PURPLE)..'Exalted: '..mnkLibs.Color(COLOR_WHITE)..iExalted..
                               mnkLibs.Color(COLOR_BLUE)..' Revered: '..mnkLibs.Color(COLOR_WHITE)..iRevered..
                               mnkLibs.Color(COLOR_GREEN)..' Honored: '..mnkLibs.Color(COLOR_WHITE)..iHonored..
+                              mnkLibs.Color(COLOR_DKGREEN)..' Friendly : '..mnkLibs.Color(COLOR_WHITE)..iFriendly..
                               mnkLibs.Color(COLOR_YELLOW)..' Neutral: '..mnkLibs.Color(COLOR_WHITE)..iNeutral..
                               mnkLibs.Color(COLOR_RED)..' Hated: '..mnkLibs.Color(COLOR_WHITE)..iHated, 'LEFT', 2)
     end
@@ -297,6 +302,8 @@ function mnkReputation.GetAllFactions(event)
     iExalted = 0
     iHated = 0
     iHonored = 0
+    iNeutral = 0
+    iFriendly = 0
     iRevered = 0
     iNeutral = 0
 
@@ -314,17 +321,22 @@ function mnkReputation.GetAllFactions(event)
             local x = GetNumFactions()
         end
 
-        if (isHeader == 0 or isHeader == false) or (isHeader and hasRep) then 
-            if standingId == 8 then
-                iExalted = iExalted + 1
-            elseif standingId >= 1 and standingId <= 3 then
-                iHated = iHated + 1
-            elseif standingId == 4 then
-                iNeutral = iNeutral + 1
-            elseif standingId >= 5 and standingId <= 6 then
-                iHonored = iHonored + 1
-            elseif standingId == 7 then
-                iRevered = iRevered + 1
+        if (isHeader == 0 or isHeader == false) or (isHeader and hasRep) then
+            if mnkReputation.InTable(mnkReputation_db.Watched, name) == true then
+
+                if standingId == 8 then
+                    iExalted = iExalted + 1
+                elseif standingId >= 1 and standingId <= 3 then
+                    iHated = iHated + 1
+                elseif standingId == 4 then
+                    iNeutral = iNeutral + 1
+                elseif standingId == 5 then
+                    iFriendly = iFriendly + 1
+                elseif standingId == 6 then
+                    iHonored = iHonored + 1
+                elseif standingId == 7 then
+                    iRevered = iRevered + 1
+                end
             end
             local isParagon = C_Reputation.IsFactionParagon(factionID)
             if isParagon then
@@ -498,7 +510,11 @@ function mnkReputation.UpdateTable(t, scrollbox)
 end
 
 function mnkReputation.UpdateText()
-    mnkReputation.LDB.text = mnkLibs.Color(COLOR_PURPLE)..iExalted..mnkLibs.Color(COLOR_WHITE)..' / '..mnkLibs.Color(COLOR_GREEN)..iHonored..mnkLibs.Color(COLOR_WHITE)..' / '..mnkLibs.Color(COLOR_RED)..iHated
+    mnkReputation.LDB.text = mnkLibs.Color(COLOR_PURPLE)..iExalted..mnkLibs.Color(COLOR_WHITE)..' / '..
+                             mnkLibs.Color(COLOR_GREEN)..iHonored..mnkLibs.Color(COLOR_WHITE)..' / '..
+                             mnkLibs.Color(COLOR_DKGREEN)..iFriendly..mnkLibs.Color(COLOR_WHITE)..' / '..
+                             mnkLibs.Color(COLOR_YELLOW)..iNeutral..mnkLibs.Color(COLOR_WHITE)..' / '..
+                             mnkLibs.Color(COLOR_RED)..iHated
 end
 
 mnkReputation:SetScript('OnEvent', mnkReputation.DoOnEvent)
