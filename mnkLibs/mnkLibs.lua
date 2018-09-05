@@ -36,6 +36,7 @@ mnkLibs.Sounds = {
 }
 
 COLOR_GREEN = {r = 153, g = 255, b = 0}
+COLOR_DKGREEN = {r = 210, g = 240, b = 50}
 COLOR_WHITE = {r = 255, g = 255, b = 255}
 COLOR_GOLD = {r = 255, g = 215, b = 0}
 COLOR_YELLOW = {r = 255, g = 245, b = 105}
