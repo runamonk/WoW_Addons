@@ -5,7 +5,7 @@ local LibQTip = LibStub('LibQTip-1.0')
 local t = {}
 
 function mnkDurability:DoOnEvent(event, arg1)
-   
+    --print(event, ' ', arg1)
     if event == 'PLAYER_LOGIN' then
         mnkDurability.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkDurability', {
             icon = 'Interface\\Icons\\Inv_chest_plate15.blp', 
@@ -23,17 +23,9 @@ function mnkDurability:DoOnEvent(event, arg1)
         
         --guild repairs.
         --GetGuildBankWithdrawMoney()
-        --RepairAllItems(1)   
-        end
-        -- UNIT_INVENTORY_CHANGED happens a jillion times. We only need it to happen for player, at least then we know that
-        -- player's items have been loaded and we can actually get item info and durability info. Then unregister it. Otherwise it will fire
-        -- so much it will kill the clients fps and loading times.
-    elseif event == 'PLAYER_ENTERING_WORLD' then
-        mnkDurability:RegisterEvent('UNIT_INVENTORY_CHANGED')    
-    elseif event == 'UNIT_INVENTORY_CHANGED' and arg1 == 'player' then
-        mnkDurability:UnregisterEvent('UNIT_INVENTORY_CHANGED')
+        --RepairAllItems(1)
+        end   
     end
-
     self.LDB.text = self.GetText()
 end
 
@@ -53,23 +45,35 @@ function mnkDurability.DoOnEnter(self)
     
     tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Slot', mnkLibs.Color(COLOR_GOLD)..'Name', mnkLibs.Color(COLOR_GOLD)..'Durability', mnkLibs.Color(COLOR_GOLD)..'Level')
     
-    for i in pairs(t) do 
-        Current = (Current + t[i].Current)
-        Total = (Total + t[i].Max)
-        if (t[i].ItemID == nil) then
+    for i,v in pairs(t) do 
+        Current = (Current + v.Current)
+        Total = (Total + v.Max)
+        if (v.ItemID == nil) then
             pct = '-'
         else
-            if (t[i].Max > 0) then
-                pct = math.floor((t[i].Current / t[i].Max) * 100)..'%'
+            if (v.Max > 0) then
+                pct = math.floor((v.Current / v.Max) * 100)..'%'
             else
                 pct = '-'
             end
         end
+       
+        local link = GetInventoryItemLink('player', i)
+        local itemName, itemRarity, itemTexture, itemLevel
 
-        local y, x = tooltip:AddLine(t[i].Text, t[i].ItemName, pct, t[i].Level)
-        tooltip:SetLineScript(y, 'OnMouseDown', mnkDurability.DoOnMouseDown, t[i].ItemLink)
-        tooltip:SetLineScript(y, 'OnEnter', mnkDurability.DoOnMouseEnter, t[i].ItemLink)
-        tooltip:SetLineScript(y, 'OnLeave', mnkDurability.DoOnMouseLeave, t[i].ItemLink)  
+        if link then
+            itemName, _, itemRarity, _, _, _, _, _, _, itemTexture, _ = GetItemInfo(link)            
+            _, _, _, color = GetItemQualityColor(itemRarity)
+            itemLevel = mnkDurability.GetItemLevel(i)
+            itemName = string.format('|T%s:16|t %s', itemTexture, '|c'..color..itemName)
+        else
+            itemLevel, itemName = '-'
+        end
+
+        local y, x = tooltip:AddLine(v.Text, itemName, pct, itemLevel)
+        tooltip:SetLineScript(y, 'OnMouseDown', mnkDurability.DoOnMouseDown, link)
+        tooltip:SetLineScript(y, 'OnEnter', mnkDurability.DoOnMouseEnter, link)
+        tooltip:SetLineScript(y, 'OnLeave', mnkDurability.DoOnMouseLeave, link)  
     end
     
     tooltip:AddLine(' ')
@@ -98,9 +102,10 @@ function mnkDurability.DoOnMouseLeave(self, arg, button)
     GameTooltip:Hide()
 end
 
-function mnkDurability.AddInventory(SlotID, Text)
-    local c, m = GetInventoryItemDurability(SlotID)
-    
+function mnkDurability.AddInventory(slotName)
+    local slotID, _ = GetInventorySlotInfo(slotName)
+    local c, m = GetInventoryItemDurability(slotID)
+
     if c == nil then
         c = 0
     end
@@ -108,33 +113,11 @@ function mnkDurability.AddInventory(SlotID, Text)
         m = 0
     end
     
-    t[SlotID] = {}
-    t[SlotID].Text = Text
-    t[SlotID].Current = c
-    t[SlotID].Max = m
-    t[SlotID].ItemID = GetInventoryItemID('player', SlotID)
-
-    if t[SlotID].ItemID ~= nil then
-        local link = GetInventoryItemLink('player', SlotID)
-        local itemName, _, itemRarity, _, _, _, _, _, _, itemTexture, _ = GetItemInfo(link)
-        
-        --when the addon is first loaded after logging in item information is not available.
-        if (itemName == nil) or (itemRarity == nil) then
-            itemName = 'n/a'
-            itemRarity = 0
-            itemTexture = 'Interface\\Icons\\Inv_chest_plate15'
-        end
-        -- GetDetailedItemLevelInfo() returning a different itemlevel to what is diplayed in the tooltip
-        --t[SlotID].Level = GetDetailedItemLevelInfo(link) or 0
-        t[SlotID].Level = mnkDurability.GetItemLevel(SlotID)
-        t[SlotID].ItemLink = link
-        _, _, _, color = GetItemQualityColor(itemRarity)
-        --print(itemName..' '..itemLevel..' '..itemMinLevel);
-
-        t[SlotID].ItemName = string.format('|T%s:16|t %s', itemTexture, '|c'..color..itemName)
-    else
-        t[SlotID].ItemName = '-'
-    end
+    t[slotID] = {}
+    t[slotID].Text = slotName:gsub('Slot','')
+    t[slotID].Current = c
+    t[slotID].Max = m
+    t[slotID].ItemID = GetInventoryItemID('player', slotID)
 end
 
 function mnkDurability.GetAvgILevel()
@@ -171,23 +154,22 @@ function mnkDurability:GetText()
     local Lowest = 100
     local Percent = 100
     
-    mnkDurability.AddInventory(1, 'Head')
-    mnkDurability.AddInventory(2, 'Neck')
-    mnkDurability.AddInventory(3, 'Shoulder')
-    mnkDurability.AddInventory(15, 'Back')
-    mnkDurability.AddInventory(5, 'Chest')
-    mnkDurability.AddInventory(6, 'Waist')
-    mnkDurability.AddInventory(7, 'Legs')
-    mnkDurability.AddInventory(8, 'Feet')
-    mnkDurability.AddInventory(9, 'Wrist')
-    mnkDurability.AddInventory(10, 'Gloves')
-    mnkDurability.AddInventory(11, 'Finger 1')
-    mnkDurability.AddInventory(12, 'Finger 2')
-    mnkDurability.AddInventory(13, 'Trinket 1')
-    mnkDurability.AddInventory(14, 'Trinket 2')
-    mnkDurability.AddInventory(16, 'Main Hand')
-    mnkDurability.AddInventory(17, 'Off Hand')
-    mnkDurability.AddInventory(18, 'Ranged')
+    mnkDurability.AddInventory('HeadSlot')
+    mnkDurability.AddInventory('NeckSlot')
+    mnkDurability.AddInventory('ShoulderSlot')
+    mnkDurability.AddInventory('BackSlot')
+    mnkDurability.AddInventory('ChestSlot')
+    mnkDurability.AddInventory('WaistSlot')
+    mnkDurability.AddInventory('LegsSlot')
+    mnkDurability.AddInventory('FeetSlot')
+    mnkDurability.AddInventory('WristSlot')
+    mnkDurability.AddInventory('HandsSlot')
+    mnkDurability.AddInventory('Finger0Slot')
+    mnkDurability.AddInventory('Finger1Slot')
+    mnkDurability.AddInventory('Trinket0Slot')
+    mnkDurability.AddInventory('Trinket1Slot')
+    mnkDurability.AddInventory('MainHandSlot')
+    mnkDurability.AddInventory('SecondaryHandSlot')
     
     for i in pairs(t) do 
         if (t[i].Max ~= nil) and (t[i].Current ~= nil) then
