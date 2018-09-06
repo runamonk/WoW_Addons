@@ -5,6 +5,7 @@ local COLUMNS = 12;
 local ICON_TEXTURES = [[Interface\AddOns\mnkLibs\Assets\icons]]
 local TEXTURE = [[Interface\ChatFrame\ChatFrameBackground]]
 local BACKDROP = {bgFile = TEXTURE, edgeFile = TEXTURE, edgeSize = 1}
+local scanTip = CreateFrame("GameTooltip", "scanTip", UIParent, "GameTooltipTemplate")
 
 LibStub('LibDropDown'):RegisterStyle(addonName, {
     gap = 18, 
@@ -20,59 +21,6 @@ LibStub('LibDropDown'):RegisterStyle(addonName, {
 
 Backpack.Dropdown:SetStyle(addonName)
 Backpack.Dropdown:SetFrameLevel(Backpack:GetFrameLevel() + 2)
-
-local function GetItemLevel(bagID, slotID)
-    local link = GetContainerItemLink(bagID, slotID)
-    if link then
-        --local itemName = GetItemInfo(link) 
-        --return GetDetailedItemLevelInfo(link)
-        --print(itemName, ' ', effectiveILvl,' ', isPreview,' ', baseILvl)
-        local tip = CreateFrame("GameTooltip", "scanTip", UIParent, "GameTooltipTemplate")
-        tip:ClearLines()
-        -- Weird issue with the tooltip not refilling/painting with the details of a bank item. This
-        -- resolves that issue and it makes no sense why.
-        if bagID < 0 then
-            tip:SetHyperlink(link)
-        end
-        tip:SetOwner(UIParent,"ANCHOR_NONE")
-        tip:SetBagItem(bagID, slotID)
-        for i=1, 5 do
-            local l = _G["scanTipTextLeft"..i]:GetText()
-            if l and l:find('Item Level') then
-                local _, c = string.find(l, 'Item Level%s%d')
-                -- check for boosted levels ie Chromeie scenarios.
-                local _, x = string.find(l, " (", 1, true)
-                --print(t, ' ', x)
-                if x then
-                    return tonumber(string.sub(l, c, x-2)) or 0
-                end
-                return tonumber(string.sub(l, c)) or 0            
-            end 
-        end
-        tip:Hide()
-    else
-        return 0
-    end
-end
-
-local function IsItemBOE(bagID, slotID)
-    local link = GetContainerItemLink(bagID, slotID)
-    if link then
-        local tip = CreateFrame("GameTooltip", "scanTip", UIParent, "GameTooltipTemplate")
-        tip:ClearLines()
-        tip:SetOwner(UIParent,"ANCHOR_NONE")
-        tip:SetBagItem(bagID, slotID)
-        for i=1, 5 do
-            local l = _G["scanTipTextLeft"..i]:GetText()
-            if l and l:find(ITEM_BIND_ON_EQUIP) then
-                return true
-            end 
-        end
-        tip:Hide()
-    end
-
-    return false
-end
 
 local function SkinContainer(Container)
     Container.Title = mnkLibs.createFontString(Container, mnkLibs.Fonts.oswald, 14)
@@ -165,25 +113,50 @@ Backpack:Override('UpdateSlot', function(Slot)
     if (itemID) then
         local _, _, _, _, _, itemClass, itemSubClass = GetItemInfoInstant(itemID)
         if (itemQuality >= LE_ITEM_QUALITY_UNCOMMON and (itemClass == LE_ITEM_CLASS_WEAPON or itemClass == LE_ITEM_CLASS_ARMOR or (itemClass == LE_ITEM_CLASS_GEM and itemSubClass == 11))) then
-            local ItemLevel = Slot.ItemLevel
-
-            local ilvl = GetItemLevel(Slot.bagID, Slot.slotID)
-            
-            if ilvl > 0 then
-                ItemLevel:SetText(ilvl)
-                ItemLevel:SetTextColor(1, 1, 1, 1)
-                ItemLevel:SetShadowColor(r/5, g/5, b/5, 1)
-                ItemLevel:Show()
-            else
-                ItemLevel:SetText()
-                ItemLevel:Hide()
-            end
-
-            local b = IsItemBOE(Slot.bagID, Slot.slotID)
-            if b == true then
-                Slot.boe:Show()
-            else
-                Slot.boe:Hide()
+            local link = GetContainerItemLink(Slot.bagID, Slot.slotID)
+              if link then
+                local itemBOE = false
+                local itemLevel = 0
+                scanTip:ClearLines()
+                -- Weird issue with the tooltip not refilling/painting with the details of a bank item. This
+                -- resolves that issue and it makes no sense why.
+                if Slot.bagID < 0 then
+                    scanTip:SetHyperlink(link)
+                end
+                scanTip:SetOwner(UIParent,"ANCHOR_NONE")
+                scanTip:SetBagItem(Slot.bagID, Slot.slotID)
+                for i=1, 5 do
+                    local l = _G["scanTipTextLeft"..i]:GetText()
+                    if itemLevel == 0 and l and l:find('Item Level') then
+                        local _, c = string.find(l, 'Item Level%s%d')
+                        -- check for boosted levels ie Chromeie scenarios.
+                        local _, x = string.find(l, " (", 1, true)
+                        if x then
+                            itemLevel = tonumber(string.sub(l, c, x-2)) or 0
+                        end
+                        itemLevel = tonumber(string.sub(l, c)) or 0            
+                    end
+                    
+                    if itemBOE == false and l and l:find(ITEM_BIND_ON_EQUIP) then
+                        itemBOE = true
+                    end 
+                end
+                
+                if itemLevel > 0 then
+                    Slot.ItemLevel:SetText(itemLevel)
+                    Slot.ItemLevel:SetTextColor(1, 1, 1, 1)
+                    Slot.ItemLevel:SetShadowColor(r/5, g/5, b/5, 1)
+                    Slot.ItemLevel:Show()
+                else
+                    Slot.ItemLevel:SetText()
+                    Slot.ItemLevel:Hide()
+                end
+        
+                if itemBOE == true then
+                    Slot.boe:Show()
+                else
+                    Slot.boe:Hide()
+                end        
             end
         else
             Slot.ItemLevel:Hide()
