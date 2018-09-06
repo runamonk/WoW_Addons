@@ -107,11 +107,11 @@ local function OnTooltipSetItem()
 end
 
 local function OnShow()
-    if InCombatLockdown() then 
-        GameTooltip:Hide()
-    else
-        SetBackdrop()
-    end
+    -- if InCombatLockdown() then 
+    --     GameTooltip:Hide()
+    -- else
+         SetBackdrop()
+    -- end
 end
 
 hooksecurefunc('GameTooltip_SetDefaultAnchor', function(tooltip, parent)
