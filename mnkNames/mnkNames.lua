@@ -2,6 +2,8 @@ mnkNames = CreateFrame("Frame")
 mnkNames.oUF = oUF or ns.oUF
 --Tags are in mnkLibs\mnkuTags
 
+local playerGuild = nil
+
 local cvars = {
     nameplateGlobalScale = .8, 
     NamePlateHorizontalScale = .8, 
@@ -157,18 +159,33 @@ function mnkNames.PostUpdateIcon(element, unit, button, index)
 end
 
 function mnkNames.OnNameplatesCallback(self)
-    if (UnitExists('target') and UnitIsUnit('target', self.unit)) then
-        if (lastNameplate ~= nil and lastNameplate ~= self) then
-            lastNameplate:SetBackdropColor(0, 0, 0, 1)
+    local inInstance, instanceType = IsInInstance()
+
+    if playerGuild and ((not inInstance) or (instanceType == 'none')) and UnitIsPlayer(self.unit) then
+        guildName, _, _ = GetGuildInfo(self.unit);
+        if guildName == playerGuild then
+            self:SetBackdropColor(0, 1, 0, 1)
+            self:Show()
+        else    
+            self:Hide()
         end
-        self:SetBackdropColor(1, 1, 1, 1)
-        lastNameplate = self
     else
-        self:SetBackdropColor(0, 0, 0, 1)
+        self:Show()    
+        if (UnitExists('target') and UnitIsUnit('target', self.unit)) then
+            if (lastNameplate ~= nil and lastNameplate ~= self) then
+                lastNameplate:SetBackdropColor(0, 0, 0, 1)
+            end
+            self:SetBackdropColor(1, 1, 1, 1)
+            lastNameplate = self
+        else
+            self:SetBackdropColor(0, 0, 0, 1)
+        end
     end
 end
 
 function mnkNames.DoOnEvent(self, event, unit, frame)
+    playerGuild, _, _ = GetGuildInfo("player")
+
     -- Hide the default castbar when the personal bar is visible. 
     if event == 'NAME_PLATE_UNIT_ADDED' and UnitIsUnit(unit, "player") then
         mnkNames.SetCastbarVis(false)
