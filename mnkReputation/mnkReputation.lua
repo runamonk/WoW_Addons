@@ -13,6 +13,7 @@ mnkReputation_db.AutoTabardName = nil
 local tblAllFactions = {}
 local tblTabards = {}
 local sFactions = nil
+
 local iExalted = 0
 local iHated = 0
 local iHonored = 0
@@ -96,6 +97,7 @@ end
 
 function mnkReputation.DoOnConfigClose(frame)
     mnkReputation.UpdateTable(mnkReputation_db.Watched, sFactions)
+    mnkReputation.GetAllFactions()
     mnkReputation.UpdateText()
 
     --libAG:Release(fConfig);
@@ -131,10 +133,7 @@ function mnkReputation.DoOnEnter(self)
         local y, x = tooltip:AddLine()
         tooltip:SetCell(y, 1, mnkLibs.Color(COLOR_PURPLE)..'Exalted: '..mnkLibs.Color(COLOR_WHITE)..iExalted..
                               mnkLibs.Color(COLOR_BLUE)..' Revered: '..mnkLibs.Color(COLOR_WHITE)..iRevered..
-                              mnkLibs.Color(COLOR_GREEN)..' Honored: '..mnkLibs.Color(COLOR_WHITE)..iHonored..
-                              mnkLibs.Color(COLOR_DKGREEN)..' Friendly : '..mnkLibs.Color(COLOR_WHITE)..iFriendly..
-                              mnkLibs.Color(COLOR_YELLOW)..' Neutral: '..mnkLibs.Color(COLOR_WHITE)..iNeutral..
-                              mnkLibs.Color(COLOR_RED)..' Hated: '..mnkLibs.Color(COLOR_WHITE)..iHated, 'LEFT', 2)
+                              mnkLibs.Color(COLOR_GREEN)..' Honored: '..mnkLibs.Color(COLOR_WHITE)..iHonored, 'LEFT', 2)
     end
 
     mnkReputation.AddTabards(tooltip)
@@ -159,11 +158,12 @@ function mnkReputation:DoOnEvent(event, arg1, arg2)
         
         mnkReputation.LDB.label = 'Factions'
     end
-    if (event == 'CHAT_MSG_COMBAT_FACTION_CHANGE') or (event == 'UPDATE_FACTION') or (event == 'PLAYER_ENTERING_WORLD') or (event == 'CHAT_MSG_LOOT') then
+    if (event == 'CHAT_MSG_COMBAT_FACTION_CHANGE') or (event == 'UPDATE_FACTION') or (event == 'PLAYER_ENTERING_WORLD') or (event == 'CHAT_MSG_LOOT') or (event == 'PLAYER_GUILD_UPDATE') then
         if (event == 'CHAT_MSG_COMBAT_FACTION_CHANGE') and (arg1 ~= nil) then
             CombatText_AddMessage(arg1, CombatText_StandardScroll, 255, 255, 255, nil, false)
         end
-        mnkReputation.GetAllFactions(event)
+        --print(event)
+        mnkReputation.GetAllFactions()
         mnkReputation.UpdateText()
     end
     if (event == 'PLAYER_ENTERING_WORLD') or (event == 'GROUP_ROSTER_UPDATE') or (event == 'BAG_UPDATE') then
@@ -292,7 +292,7 @@ function mnkReputation.EquipTabard()
     EquipItemByName(mnkReputation_db.AutoTabardName)
 end
 
-function mnkReputation.GetAllFactions(event)
+function mnkReputation.GetAllFactions()
     table.wipe(tblAllFactions)
 
     local x = GetNumFactions()
@@ -306,7 +306,8 @@ function mnkReputation.GetAllFactions(event)
     iFriendly = 0
     iRevered = 0
     iNeutral = 0
-
+    
+    
     for i = 1, x do
         local name, _, standingId, _, max, current, _, _, isHeader, isCollapsed, hasRep, _, _,  factionID = GetFactionInfo(i)
         local pCurrent, pMax = 0
@@ -315,15 +316,16 @@ function mnkReputation.GetAllFactions(event)
         if isHeader then
             header = name
         end
+        
 
-        if isHeader and isCollapsed then
-            ExpandFactionHeader(i)
-            local x = GetNumFactions()
-        end
-
-        if (isHeader == 0 or isHeader == false) or (isHeader and hasRep) then
+        -- if isHeader and isCollapsed then
+        --     ExpandFactionHeader(i)
+        --     x = GetNumFactions()
+        -- end
+        
+        if (isHeader == false) or (isHeader and hasRep) then
+            --print(i, ' ', name, ' ', isHeader)
             if mnkReputation.InTable(mnkReputation_db.Watched, name) == true then
-
                 if standingId == 8 then
                     iExalted = iExalted + 1
                 elseif standingId >= 1 and standingId <= 3 then
@@ -362,6 +364,7 @@ function mnkReputation.GetAllFactions(event)
             if header == 'Guild' then
                 header = '.Guild.'
             end
+
             tblAllFactions[idx].header = header
             tblAllFactions[idx].name = name
             tblAllFactions[idx].standingid = standingId
@@ -509,12 +512,13 @@ function mnkReputation.UpdateTable(t, scrollbox)
     end 
 end
 
-function mnkReputation.UpdateText()
+function mnkReputation.UpdateText()  
     mnkReputation.LDB.text = mnkLibs.Color(COLOR_PURPLE)..iExalted..mnkLibs.Color(COLOR_WHITE)..' / '..
-                             mnkLibs.Color(COLOR_GREEN)..iHonored..mnkLibs.Color(COLOR_WHITE)..' / '..
-                             mnkLibs.Color(COLOR_DKGREEN)..iFriendly..mnkLibs.Color(COLOR_WHITE)..' / '..
-                             mnkLibs.Color(COLOR_YELLOW)..iNeutral..mnkLibs.Color(COLOR_WHITE)..' / '..
-                             mnkLibs.Color(COLOR_RED)..iHated
+                             mnkLibs.Color(COLOR_BLUE)..iRevered..mnkLibs.Color(COLOR_WHITE)..' / '..
+                             mnkLibs.Color(COLOR_GREEN)..iHonored
+                            --  mnkLibs.Color(COLOR_DKGREEN)..iFriendly..mnkLibs.Color(COLOR_WHITE)..' / '..
+                            --  mnkLibs.Color(COLOR_YELLOW)..iNeutral..mnkLibs.Color(COLOR_WHITE)..' / '..
+                            --  mnkLibs.Color(COLOR_RED)..iHated
 end
 
 mnkReputation:SetScript('OnEvent', mnkReputation.DoOnEvent)
@@ -522,6 +526,7 @@ mnkReputation:RegisterEvent('PLAYER_LOGIN')
 mnkReputation:RegisterEvent('PLAYER_ENTERING_WORLD')
 mnkReputation:RegisterEvent('CHAT_MSG_COMBAT_FACTION_CHANGE')
 mnkReputation:RegisterEvent('PLAYER_ENTERING_WORLD')
+mnkReputation:RegisterEvent('PLAYER_GUILD_UPDATE')
 mnkReputation:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 mnkReputation:RegisterEvent('ZONE_CHANGED')
 mnkReputation:RegisterEvent('CHAT_MSG_LOOT')
