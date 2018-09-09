@@ -134,8 +134,12 @@ function mnkLibs.formatNumber(num, places)
     return ret
 end
 
-function mnkLibs.formatNumToPercentage(num)
-    return format('%.1f%%', (num * 100))
+function mnkLibs.formatNumToPercentage(num, places)
+    if places == 0 or places == nil then
+        return format('%.0f%%', (num * 100))
+    else
+        return format('%.'..places..'f%%', (num * 100))
+    end
 end
 
 function mnkLibs.formatMemory(bytes)
