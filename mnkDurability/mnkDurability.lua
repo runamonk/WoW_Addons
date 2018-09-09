@@ -61,7 +61,7 @@ function mnkDurability.DoOnEnter(self)
         end
 
         local y, x = tooltip:AddLine(v.Text, nil, pct, mnkDurability.GetItemLevel(i))
-        tooltip:SetCell(y, 2, i, 1 , StatusBarCellProvider)
+        tooltip:SetCell(y, 2, i, 1 , StatusBarCellProvider, 0)
 
         tooltip:SetLineScript(y, 'OnMouseDown', mnkDurability.DoOnMouseDown, link)
         tooltip:SetLineScript(y, 'OnEnter', mnkDurability.DoOnMouseEnter, link)
@@ -82,8 +82,10 @@ function StatusBarCell:InitializeCell()
     self.bar:SetSize(350, 16)
     self.bar:SetPoint('CENTER')
     self.bar:SetMinMaxValues(0, 100)
-    self.bar:SetPoint('LEFT', self, 'LEFT', 1, 0)
+    self.bar:SetPoint('LEFT', self, 'LEFT', 0, 0)
     self.bar:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
+    mnkLibs.setBackdrop(self.bar, nil, nil, 1, 1, 1, 1)
+
     self.fsName = self.bar:CreateFontString(nil, 'OVERLAY')
     self.fsName:SetPoint('LEFT', self.bar, 'LEFT', 5, 0)
     self.fsName:SetWidth(250)
@@ -97,7 +99,7 @@ function StatusBarCell:InitializeCell()
 
     self.fsTogo = self.bar:CreateFontString(nil, 'OVERLAY')
     self.fsTogo:SetPoint('RIGHT', self.bar, 'RIGHT', -5, 0)
-    self.fsTogo:SetWidth(100)
+    self.fsTogo:SetWidth(150)
 	self.fsTogo:SetFontObject(_G.GameTooltipText)
     self.fsTogo:SetShadowColor(0, 0, 0)
     self.fsTogo:SetShadowOffset(1, -1)
@@ -126,8 +128,9 @@ function StatusBarCell:SetupCell(tooltip, data, justification, font, r, g, b)
         self.fsTogo:SetText()
         if azeriteItem and azeriteItem:GetItemName() == itemName then
             itemName = string.format('|T%s:12|t %s', itemTexture, '|c'..color..itemName..' [Level '..C_AzeriteItem.GetPowerLevel(azeriteItemLocation)..']')
+            
             self.bar:SetValue(math.min((azItemXP/azItemTotalXP) * 100, 100))
-            self.fsTogo:SetText((azItemTotalXP-azItemXP)..' to next level')
+            self.fsTogo:SetText(mnkLibs.formatNumToPercentage(azItemXP/azItemTotalXP)..' - '..(azItemTotalXP-azItemXP)..' to next level')
             showBar = true
         else
             itemName = string.format('|T%s:12|t %s', itemTexture, '|c'..color..itemName)
@@ -142,8 +145,10 @@ function StatusBarCell:SetupCell(tooltip, data, justification, font, r, g, b)
 
     if showBar then
         self.bar:SetStatusBarColor(50,50,50, .2)
+        self.bar:SetBackdropColor(0, 0, 0, 1)
     else
         self.bar:SetStatusBarColor(50,50,50, 0)
+        self.bar:SetBackdropColor(0, 0, 0, 0)
     end
 
     return self.bar:GetWidth(), self.bar:GetHeight()
