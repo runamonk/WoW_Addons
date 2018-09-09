@@ -159,11 +159,13 @@ function mnkNames.PostUpdateIcon(element, unit, button, index)
 end
 
 function mnkNames.OnNameplatesCallback(self)
-    local inInstance, instanceType = IsInInstance()
-
-    if playerGuild and ((not inInstance) or (instanceType == 'none')) and UnitIsPlayer(self.unit) then
+    --print('2 ', playerGuild)
+    
+    if playerGuild and UnitIsPlayer(self.unit) then
         guildName, _, _ = GetGuildInfo(self.unit);
-        if guildName == playerGuild then
+        local inInstance, instanceType = IsInInstance()
+        --print(playerGuild, ' ', inInstance, ' ', instanceType, ' ', self.name, ' ', guildName)
+        if guildName == playerGuild and ((not inInstance) or (instanceType == 'none')) then
             self:SetBackdropColor(0, 1, 0, 1)
             self:Show()
         else    
@@ -185,7 +187,7 @@ end
 
 function mnkNames.DoOnEvent(self, event, unit, frame)
     playerGuild, _, _ = GetGuildInfo("player")
-
+    --print('1 ', playerGuild)
     -- Hide the default castbar when the personal bar is visible. 
     if event == 'NAME_PLATE_UNIT_ADDED' and UnitIsUnit(unit, "player") then
         mnkNames.SetCastbarVis(false)
@@ -212,3 +214,5 @@ mnkNames:SetScript('OnEvent', mnkNames.DoOnEvent)
 mnkNames:RegisterEvent('PLAYER_ENTERING_WORLD')
 mnkNames:RegisterEvent('NAME_PLATE_UNIT_ADDED')
 mnkNames:RegisterEvent('NAME_PLATE_UNIT_REMOVED')
+mnkNames:RegisterEvent('PLAYER_FLAGS_CHANGED')
+mnkNames:RegisterEvent('PLAYER_GUILD_UPDATE')
