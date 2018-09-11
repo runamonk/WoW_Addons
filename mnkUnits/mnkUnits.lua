@@ -320,11 +320,12 @@ local function PlayerUnit(self)
         self.Auras.disableCooldown = true
         self.Auras['growth-x'] = 'RIGHT'
         self.Auras['growth-y'] = 'UP'
-        self.Auras.spacing = 3
+        self.Auras.spacing = 4
         self.Auras.numTotal = 18
+        self.Auras.size = 16
         self.Auras:SetPoint('LEFT', self, 'LEFT', -1, 0)
         self.Auras:SetPoint('BOTTOM', self, 'TOP', 0 , 5)
-        self.Auras:SetSize(self.Health:GetWidth(), 24)
+        self.Auras:SetSize(16*12, 34)
         self.Auras.PostCreateIcon = PostCreateIcon
         self.Auras.PostUpdateIcon = PostUpdateIcon   
     end
