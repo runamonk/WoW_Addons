@@ -208,11 +208,11 @@ end
 local function MinimalUnit(self)
     if Config['show'..self.unit] then 
         CreateUnit(self)
-        self.Name = mnkLibs.createFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
-        self.Name:SetAllPoints(self)
-        self.Name:SetJustifyH('CENTER')
-        self.Name:SetWordWrap(false)
-        self:Tag(self.Name, '[mnku:name]')
+        self.unitName = mnkLibs.createFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
+        self.unitName:SetAllPoints(self)
+        self.unitName:SetJustifyH('CENTER')
+        self.unitName:SetWordWrap(false)
+        self:Tag(self.unitName, '[mnku:name]')
     end   
 end
 
@@ -334,9 +334,11 @@ end
 local function PartyUnit(self)
     if (self.unit == 'party' and Config.showparty) or (self.unit == 'raid' and Config.showraid) then
         CreateUnit(self)
-        self.Name = mnkLibs.createFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, nil, nil, true)
-        self:Tag(self.Name, '[group]  [mnku:leader][raidcolor][name]')
-        self.Name:SetPoint('LEFT', 2, 0)
+        self.unitName = mnkLibs.createFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, nil, nil, true)
+        self.unitName:SetPoint('LEFT', self.frameValues, 'LEFT', 3, 0)
+        self.unitName:SetPoint('RIGHT', self.frameValues, 'RIGHT', -2, 0)
+        self.unitName:SetJustifyH('LEFT')
+        self:Tag(self.unitName, '[group]  [mnku:leader][raidcolor][name]')
         self.ResurrectIndicator = self.frameValues:CreateTexture(nil, 'OVERLAY')
         self.ResurrectIndicator:SetPoint('CENTER', self)
         self.ReadyCheckIndicator = self.frameValues:CreateTexture()
@@ -356,7 +358,7 @@ local function PartyUnit(self)
                                                 end
                                             end
         self.RaidTargetIndicator = self.frameValues:CreateTexture(nil, 'OVERLAY')
-        self.RaidTargetIndicator:SetPoint('LEFT', self.Name, 'RIGHT', 5, 0)
+        self.RaidTargetIndicator:SetPoint('LEFT', self.unitName, 'RIGHT', 5, 0)
         self.RaidTargetIndicator:SetSize(14, 14)
         self.HealthValue = mnkLibs.createFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
         self.HealthValue:SetPoint('RIGHT', self.GroupRoleIndicator, 'LEFT', -3, 0)
