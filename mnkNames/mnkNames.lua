@@ -2,8 +2,6 @@ mnkNames = CreateFrame("Frame")
 mnkNames.oUF = oUF or ns.oUF
 --Tags are in mnkLibs\mnkuTags
 
-local playerGuild = nil
-
 local cvars = {
     nameplateGlobalScale = .8, 
     NamePlateHorizontalScale = .8, 
@@ -159,35 +157,18 @@ function mnkNames.PostUpdateIcon(element, unit, button, index)
 end
 
 function mnkNames.OnNameplatesCallback(self)
-    --print('2 ', playerGuild)
-    
-    if playerGuild and UnitIsPlayer(self.unit) then
-        guildName, _, _ = GetGuildInfo(self.unit);
-        local inInstance, instanceType = IsInInstance()
-        --print(playerGuild, ' ', inInstance, ' ', instanceType, ' ', self.name, ' ', guildName)
-        if guildName == playerGuild and ((not inInstance) or (instanceType == 'none')) then
-            self:SetBackdropColor(0, 1, 0, 1)
-            self:Show()
-        else    
-            self:Hide()
+    if (UnitExists('target') and UnitIsUnit('target', self.unit)) then
+        if (lastNameplate ~= nil and lastNameplate ~= self) then
+            lastNameplate:SetBackdropColor(0, 0, 0, 1)
         end
+        self:SetBackdropColor(1, 1, 1, 1)
+        lastNameplate = self
     else
-        self:Show()    
-        if (UnitExists('target') and UnitIsUnit('target', self.unit)) then
-            if (lastNameplate ~= nil and lastNameplate ~= self) then
-                lastNameplate:SetBackdropColor(0, 0, 0, 1)
-            end
-            self:SetBackdropColor(1, 1, 1, 1)
-            lastNameplate = self
-        else
-            self:SetBackdropColor(0, 0, 0, 1)
-        end
-    end
+        self:SetBackdropColor(0, 0, 0, 1)
+    end   
 end
 
 function mnkNames.DoOnEvent(self, event, unit, frame)
-    playerGuild, _, _ = GetGuildInfo("player")
-    --print('1 ', playerGuild)
     -- Hide the default castbar when the personal bar is visible. 
     if event == 'NAME_PLATE_UNIT_ADDED' and UnitIsUnit(unit, "player") then
         mnkNames.SetCastbarVis(false)
@@ -214,5 +195,3 @@ mnkNames:SetScript('OnEvent', mnkNames.DoOnEvent)
 mnkNames:RegisterEvent('PLAYER_ENTERING_WORLD')
 mnkNames:RegisterEvent('NAME_PLATE_UNIT_ADDED')
 mnkNames:RegisterEvent('NAME_PLATE_UNIT_REMOVED')
-mnkNames:RegisterEvent('PLAYER_FLAGS_CHANGED')
-mnkNames:RegisterEvent('PLAYER_GUILD_UPDATE')
