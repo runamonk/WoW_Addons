@@ -26,7 +26,9 @@ local function SetBackdrop()
     
     for i = 1, #tooltips do
         local frame = _G[tooltips[i]]
-        frame:SetBackdropBorderColor(0, 0, 0, 0); -- hide the border. 
+		if frame ~= nil then
+			frame:SetBackdropBorderColor(0, 0, 0, 0); -- hide the border. 
+		end
     end
 end
 

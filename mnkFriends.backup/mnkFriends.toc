@@ -1,0 +1,9 @@
+## Interface: 80000
+## Title: mnkFriends
+## Notes: Display friends in a broker display
+## Author: runamonk
+## X-Embeds: LibDataBroker-1.1
+## Version: 1
+##Dependencies: mnkLibs
+
+mnkFriends.lua

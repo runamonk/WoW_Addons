@@ -12,27 +12,19 @@ local colors = {}
 for class, color in pairs(RAID_CLASS_COLORS) do colors[class] = string.format('%02x%02x%02x', color.r * 255, color.g * 255, color.b * 255) end
 
 function mnkFriends.DoOnMouseDown(self, arg, button) 
-	local sendBNet = false
-	local name = string.sub(arg,3,string.len(arg))
-	
-	if string.sub(arg, 1, 2) == 'b_' then
-		sendBNet = true
-	end
-	
+
     if button == 'RightButton' then
-        InviteUnit(name)
+        InviteUnit(arg)
     else
-		if sendBNet then 
-			ChatFrame_SendBNetTell(name)
-		else
-			ChatFrame_SendTell(name)
-		end
+        --SetItemRef('player:'..arg, '|Hplayer:'..arg..'|h['..arg..'|h', 'LeftButton')
+        ChatFrame_SendSmartTell(arg)
+        --SendChatMessage(msg, 'WHISPER', nil, GetUnitName('PLAYERTARGET'))
     end
 end
 
 function mnkFriends.DoOnEnter(self)
     local tooltip = LibQTip:Acquire('mnkFriendsTooltip', 5, 'LEFT', 'LEFT', 'LEFT', 'LEFT', 'LEFT')
-    local status = ""
+    
     self.tooltip = tooltip
     tooltip:SetFont(mnkLibs.DefaultTooltipFont)
     tooltip:SetHeaderFont(mnkLibs.DefaultTooltipFont)
@@ -47,19 +39,18 @@ function mnkFriends.DoOnEnter(self)
     end
 
     for i = 1, x do
-        local info = C_FriendList.GetFriendInfoByIndex(i)
+        local name, level, class, zone, online, status, note = GetFriendInfo(i)
+        if online and name ~= nil then 
+            -- local c1,c2,c3,c4 = unpack(CLASS_ICON_TCOORDS[classFileName])
+            -- local classIcon = string.format('|TInterface\\GLUES\\CHARACTERCREATE\\UI-CHARACTERCREATE-CLASSES:16:16:0:0:256:256:%s:%s:%s:%s|t', c1*256,c2*256,c3*256,c4*256)
 
-        if info and info.connected and info.name ~= nil then 
-			if info.afk then
-				status = mnkLibs.Color(COLOR_GREEN)..' <AFK>'
-			elseif info.dnd then
-				status = mnkLibs.Color(COLOR_RED)..' <DND>'
-			else
-				status = " "
-			end
-			
-			local y, x = tooltip:AddLine(string.format('|T%s:16|t', WOW_ICON)..format('|cff%s%s', colors[info.className:gsub(' ', ''):upper()] or 'ffffff', info.name)..status, info.level, info.zone, info.note)
-			tooltip:SetLineScript(y, 'OnMouseDown', mnkFriends.DoOnMouseDown, 'p_'..info.name)
+            if status ~= '' and status ~= nil then
+                local y, x = tooltip:AddLine(string.format('|T%s:16|t', WOW_ICON)..format('|cff%s%s', colors[class:gsub(' ', ''):upper()] or 'ffffff', name)..status, level, zone, note)
+                tooltip:SetLineScript(y, 'OnMouseDown', mnkFriends.DoOnMouseDown, name)
+            else
+                local y, x = tooltip:AddLine(string.format('|T%s:16|t', WOW_ICON)..format('|cff%s%s', colors[class:gsub(' ', ''):upper()] or 'ffffff', name), level, zone, note)
+                tooltip:SetLineScript(y, 'OnMouseDown', mnkFriends.DoOnMouseDown, name)
+            end 
         end
     end
     
@@ -73,22 +64,17 @@ function mnkFriends.DoOnEnter(self)
         local _, presenceName, battleTag, _, toonName, toonID, _, isOnline, lastOnline, _, _, _, noteText, _, _, _ = BNGetFriendInfo(x)
 
         if isOnline then
-			local friendInfo = C_BattleNet.GetFriendAccountInfo(x)
+            local _, _, client, realmName, _, _, _, class, _, zoneName, level, _, _, _, _, _, _, _, _ = BNGetGameAccountInfo(toonID)
 
-			if friendInfo.isAFK then
-				status = mnkLibs.Color(COLOR_GREEN)..' <AFK>'
-			elseif friendInfo.isDND then
-				status = mnkLibs.Color(COLOR_RED)..' <DND>'
-			else
-				status = " "
-			end
-			
-            if friendInfo.gameAccountInfo.clientProgram == 'WoW' then 
-                local y, x = tooltip:AddLine(string.format('|T%s:16|t', WOW_ICON)..format('|cff%s%s', colors[friendInfo.gameAccountInfo.className:gsub(' ', ''):upper()] or 'ffffff', presenceName..' ('..toonName..')')..status, level, zoneName, noteText)
-                tooltip:SetLineScript(y, 'OnMouseDown', mnkFriends.DoOnMouseDown, 'b_'..presenceName)
+            --unknown, toonName, client, realmName, realmID, faction, race, class, unknown, zoneName, level, gameText, broadcastText, broadcastTime, unknown, presenceID
+            --local  _, _, client, _, _, _, _, class, _, zoneName, level, _, _, _, _, _ = BNGetToonInfo(toonID);
+
+            if client == 'WoW' then 
+                local y, x = tooltip:AddLine(string.format('|T%s:16|t', WOW_ICON)..format('|cff%s%s', colors[class:gsub(' ', ''):upper()] or 'ffffff', presenceName..' ('..toonName..')'), level, zoneName, noteText)
+                tooltip:SetLineScript(y, 'OnMouseDown', mnkFriends.DoOnMouseDown, toonName..'-'..realmName)
             else
-                local y, x = tooltip:AddLine(string.format('|T%s:16|t', BNET_ICON)..presenceName..status, '', '', noteText)
-                tooltip:SetLineScript(y, 'OnMouseDown', mnkFriends.DoOnMouseDown, 'b_'..presenceName)
+                local y, x = tooltip:AddLine(string.format('|T%s:16|t', BNET_ICON)..presenceName, '', '', noteText)
+                tooltip:SetLineScript(y, 'OnMouseDown', mnkFriends.DoOnMouseDown, presenceName)
             end
         end
     end
@@ -110,18 +96,17 @@ function mnkFriends.DoOnClick(self)
 end
 
 function mnkFriends.GetNumFriendsOnline()
-    C_FriendList.ShowFriends()
-	local i =  C_FriendList.GetNumOnlineFriends()
-	local numBNetTotal, numBNetOnline = BNGetNumFriends()
+    local _, i = GetNumFriends()
+    local _, x = BNGetNumFriends()
 
-    if LastFriendsOnline ~= (i + numBNetOnline) then
-        if ((i + numBNetOnline) > LastFriendsOnline) then
+    if LastFriendsOnline ~= (i + x) then
+        if ((i + x) > LastFriendsOnline) then
             PlaySoundFile(mnkLibs.Sounds.friend_online, 'Master')
         end
-        LastFriendsOnline = (i + numBNetOnline)
+        LastFriendsOnline = (i + x)
     end
 
-    return i + numBNetOnline
+    return i + x
 end
 
 function mnkFriends:DoOnEvent(event)
