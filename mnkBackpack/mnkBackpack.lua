@@ -117,6 +117,7 @@ Backpack:Override('UpdateSlot', function(Slot)
               if link then
                 local itemBOE = false
                 local itemLevel = 0
+				
                 scanTip:ClearLines()
                 -- Weird issue with the tooltip not refilling/painting with the details of a bank item. This
                 -- resolves that issue and it makes no sense why.
