@@ -1,0 +1,17 @@
+﻿## Interface: 70300
+## Author: p3lim
+## Version: 70300.17-Beta
+## Title: Backpack
+## Notes: WIP
+## SavedVariables: BackpackDB, BackpackCategoriesDB, BackpackContainerOrderDB, BackpackKnownItems
+## SavedVariablesPerCharacter: BackpackBankDB, BackpackPosition
+## OptionalDeps: LibStub, LibDropDown, Wasabi
+
+## X-Curse-Project-ID: 102789
+## X-WoWI-ID: 16997
+
+
+
+embed.xml
+
+
