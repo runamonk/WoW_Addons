@@ -202,6 +202,20 @@ function mnkDurability.GetAvgILevel()
 end
 
 function mnkDurability.GetItemLevel(slotID)
+	-- local link = GetInventoryItemLink('player', slotID); 
+	-- local level = 0
+	
+	-- if link then
+		-- level = GetDetailedItemLevelInfo(link);
+	-- end
+	
+	-- if level == 0 then
+		-- return '-'
+	-- else
+		-- return level
+	-- end
+	 
+
     local tip = CreateFrame("GameTooltip", "scanTip", UIParent, "GameTooltipTemplate")
     tip:ClearLines()
     tip:SetOwner(UIParent,"ANCHOR_NONE")
