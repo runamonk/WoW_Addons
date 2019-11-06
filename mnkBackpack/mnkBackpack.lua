@@ -72,6 +72,7 @@ local function SkinSlot(Slot)
     Slot.Icon:SetPoint('TOPLEFT', 1, -1)
     Slot.Icon:SetPoint('BOTTOMRIGHT', -1, 1)
     Slot.Icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+	
     Slot.Count = mnkLibs.createFontString(Slot, mnkLibs.Fonts.ap, 16, nil, nil, true)
     Slot.Count:SetPoint('BOTTOMRIGHT', 0, 0)
     Slot.Count:Show()
@@ -82,15 +83,6 @@ local function SkinSlot(Slot)
     Slot.boe:SetText('.')
     Slot.boe:Hide()
 	
-    -- Slot.PushedTexture:ClearAllPoints()
-    -- Slot.PushedTexture:SetPoint('TOPLEFT', 1, -1)
-    -- Slot.PushedTexture:SetPoint('BOTTOMRIGHT', -1, 1)
-    -- Slot.PushedTexture:SetColorTexture(1, 1, 1, 0.3)
-    -- Slot.HighlightTexture:ClearAllPoints()
-    -- Slot.HighlightTexture:SetPoint('TOPLEFT', 1, -1)
-    -- Slot.HighlightTexture:SetPoint('BOTTOMRIGHT', -1, 1)
-    -- Slot.HighlightTexture:SetColorTexture(0, 0.6, 1, 0.3)
-    -- Slot.NormalTexture:SetSize(0.1, 0.1)
 
     if (Slot.QuestIcon) then Slot.QuestIcon:Hide() end
     if (Slot.NewItem) then Slot.NewItem:Hide() end
