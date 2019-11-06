@@ -70,7 +70,9 @@ function mnkMoney:DoOnEvent(event, arg1, arg2)
                             local _,_,_,color = GetItemQualityColor(rarity)
                             --print('3 ', x)
                             if x > 0 then
-                                x = ' ['..x + q..']'
+								-- timing issue where I don't know if the new items are in the inventory or not. 
+                                --x = ' ['..x + q..']'
+								x = ' ['..x..']'
                             else
                                 x = ' '
                             end
