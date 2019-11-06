@@ -48,9 +48,6 @@ local function CreateCastBar(self)
     self.Castbar.PostCastStop = function(element, unit) element:GetParent():Hide() end
     self.Castbar.PostChannelStart = function(element, unit) element:GetParent():Show() end
     self.Castbar.PostChannelStop = function(element, unit) element:GetParent():Hide() end
-    self.Castbar.Spark = self.Castbar:CreateTexture(nil, 'OVERLAY')
-    self.Castbar.Spark:SetSize(1, self.castbarbg:GetHeight())
-    self.Castbar.Spark:SetColorTexture(1, 0, 0, 1)
 end
 
 local function CreateHealthBar(self)
