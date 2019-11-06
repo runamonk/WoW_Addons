@@ -131,9 +131,11 @@ function mnkReputation.DoOnEnter(self)
         
         tooltip:AddLine(' ')
         local y, x = tooltip:AddLine()
-        tooltip:SetCell(y, 1, mnkLibs.Color(COLOR_PURPLE)..'Exalted: '..mnkLibs.Color(COLOR_WHITE)..iExalted..
-                              mnkLibs.Color(COLOR_BLUE)..' Revered: '..mnkLibs.Color(COLOR_WHITE)..iRevered..
-                              mnkLibs.Color(COLOR_GREEN)..' Honored: '..mnkLibs.Color(COLOR_WHITE)..iHonored, 'LEFT', 2)
+        tooltip:SetCell(y, 1, mnkLibs.Color(GetFactionColor(8))..'Exalted: '..mnkLibs.Color(COLOR_WHITE)..iExalted..
+                              mnkLibs.Color(GetFactionColor(7))..' Revered: '..mnkLibs.Color(COLOR_WHITE)..iRevered..
+                              mnkLibs.Color(GetFactionColor(6))..' Honored: '..mnkLibs.Color(COLOR_WHITE)..iHonored..
+							  mnkLibs.Color(GetFactionColor(5))..' Friendly: '..mnkLibs.Color(COLOR_WHITE)..iFriendly 
+							  ,'LEFT', 2, StatusBarCellProvider)
     end
 
     mnkReputation.AddTabards(tooltip)
@@ -214,19 +216,29 @@ function StatusBarCell:InitializeCell()
 end
 
 function StatusBarCell:SetupCell(tooltip, data, justification, font, r, g, b)
-    if data.header == '.Guild.' then
-        self.fsName:SetText(mnkLibs.Color(COLOR_GREEN)..'<'..mnkLibs.Color(GetFactionColor(data.standingid))..data.name..mnkLibs.Color(COLOR_GREEN)..'>')
-    elseif data.hasreward then
-        self.fsName:SetText(mnkLibs.Color(COLOR_GOLD)..data.name)
-    else
-        self.fsName:SetText(mnkLibs.Color(GetFactionColor(data.standingid))..data.name)
-    end
-    self.fsTogo:SetText(mnkLibs.Color(GetFactionColor(data.standingid))..mnkReputation.GetRepLeft(data.max - data.current))
+	if (type(data) == "table") then	
+		if data.header == '.Guild.' then
+			self.fsName:SetText(mnkLibs.Color(COLOR_GREEN)..'<'..mnkLibs.Color(GetFactionColor(data.standingid))..data.name..mnkLibs.Color(COLOR_GREEN)..'>')
+		elseif data.hasreward then
+			self.fsName:SetText(mnkLibs.Color(COLOR_GOLD)..data.name)
+		else
+			self.fsName:SetText(mnkLibs.Color(GetFactionColor(data.standingid))..data.name)
+		end
+		self.fsTogo:SetText(mnkLibs.Color(GetFactionColor(data.standingid))..mnkReputation.GetRepLeft(data.max - data.current))
     
-    local c = GetFactionColor(data.standingid)
-    self.bar:SetStatusBarColor(c.r/255/2, c.g/255/2, c.b/255/2, 1)
-    self.bar:SetValue(math.min((data.current / data.max) * 100, 100))
-    return self.bar:GetWidth(), self.bar:GetHeight()
+		local c = GetFactionColor(data.standingid)
+		self.bar:SetStatusBarColor(c.r/255/2, c.g/255/2, c.b/255/2, 1)
+		self.bar:SetValue(math.min((data.current / data.max) * 100, 100))
+		return self.bar:GetWidth(), self.bar:GetHeight()
+	else
+		-- Just text so create a background with the bar.
+		self.fsName:SetText(data)
+		self.fsTogo:SetText("")
+		self.bar:SetStatusBarColor(0, 0, 0, 0.5)
+		self.bar:SetValue(100, 100)
+		return self.bar:GetWidth(), self.bar:GetHeight()	
+	end
+
 end
 
 function StatusBarCell:ReleaseCell()
