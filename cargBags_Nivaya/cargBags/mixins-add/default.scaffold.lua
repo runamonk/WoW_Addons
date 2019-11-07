@@ -97,7 +97,7 @@ local function ItemButton_Scaffold(self)
     self.BottomString:SetShadowOffset(2, -2)
 	
 	self.boe = mnkLibs.createFontString(self, mnkLibs.Fonts.ap, 50, nil, nil, true)
-    self.boe:SetPoint('TOPLEFT', -3, 37)
+    self.boe:SetPoint('TOPLEFT', -1, 35)
     self.boe:SetJustifyH('LEFT')
     self.boe:SetTextColor(1, 0, 0, 1)
     self.boe:SetText('.')
