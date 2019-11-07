@@ -86,43 +86,18 @@ cargBags:RegisterPlugin("SearchBar", function(self, target)
 	local search = CreateFrame("EditBox", nil, self)
 	search:SetFontObject(GameFontHighlight)
 	self.Search = search
-
-	search.Clear = onEscape
-	search.DoSearch = search.doSearch
-
-	local left = search:CreateTexture(nil, "BACKGROUND")
-	left:SetTexture("Interface\\Common\\Common-Input-Border")
-	left:SetTexCoord(0, 0.0625, 0, 0.625)
-	left:SetWidth(8)
-	left:SetHeight(20)
-	left:SetPoint("LEFT", -5, 0)
-	search.Left = left
-
-	local right = search:CreateTexture(nil, "BACKGROUND")
-	right:SetTexture("Interface\\Common\\Common-Input-Border")
-	right:SetTexCoord(0.9375, 1, 0, 0.625)
-	right:SetWidth(8)
-	right:SetHeight(20)
-	right:SetPoint("RIGHT", 0, 0)
-	search.Right = right
-
-	local center = search:CreateTexture(nil, "BACKGROUND")
-	center:SetTexture("Interface\\Common\\Common-Input-Border")
-	center:SetTexCoord(0.0625, 0.9375, 0, 0.625)
-	center:SetHeight(20)
-	center:SetPoint("RIGHT", right, "LEFT", 0, 0)
-	center:SetPoint("LEFT", left, "RIGHT", 0, 0)
-	search.Center = center
-
+	
 	search:SetScript("OnTextChanged", doSearch)
 	search:SetScript("OnEscapePressed", onEscape)
 	search:SetScript("OnEnterPressed", onEnter)
 
-	if(target) then
+	if (target) then
 		search:SetAutoFocus(true)
-		search:SetAllPoints(target)
+		search:SetPoint("BOTTOMLEFT", target, "BOTTOMLEFT", 18, 7)
+		search:SetPoint("BOTTOMRIGHT", target, "BOTTOMRIGHT", 0, 0)
+		search:SetHeight(16);
 		search:Hide()
-
+		
 		target.search, search.target = search, target
 		target:RegisterForClicks("anyUp")
 		target:SetScript("OnClick", target_openSearch)

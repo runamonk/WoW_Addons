@@ -21,7 +21,7 @@ local Textures = {
 	Right =			mediaPath .. "Right",
 }
 
-local itemSlotSize = ns.options.itemSlotSize
+local itemSlotSize = 32
 ------------------------------------------
 -- MyContainer specific
 ------------------------------------------
@@ -99,11 +99,8 @@ function MyContainer:OnContentsChanged(forced)
 	local usedSlotsReagent = numSlotsReagent[2] - numSlotsReagent[1]
 	
 	local oldColums = self.Columns
-	if (tBank or tBankBags or tReagent) then
-		self.Columns = (usedSlotsBank > ns.options.sizes.bank.largeItemCount) and ns.options.sizes.bank.columnsLarge or ns.options.sizes.bank.columnsSmall
-	else
-		self.Columns = (usedSlotsBag > ns.options.sizes.bags.largeItemCount) and ns.options.sizes.bags.columnsLarge or ns.options.sizes.bags.columnsSmall
-	end
+	
+	self.Columns = 12
 	
 	local needColumnUpdate = (self.Columns ~= oldColums)
 
@@ -369,7 +366,6 @@ local createIconButton = function (name, parent, texture, point, hint, isBag)
 	button.tooltip:Hide()
 	
 	button.tooltipIcon = button:CreateTexture(nil, "ARTWORK")
-	-- button.tooltipIcon:SetPoint("BOTTOMRIGHT", parent, "BOTTOMRIGHT", isBag and -71 or -54, 1)
 	button.tooltipIcon:SetWidth(16)
 	button.tooltipIcon:SetHeight(16)
 	button.tooltipIcon:SetTexture(Textures.TooltipIcon)
@@ -453,13 +449,7 @@ function MyContainer:OnCreate(name, settings)
 		SetFrameMovable(self, cBnivCfg.Unlocked) 
 	end
 
-	if (tBank or tBankBags or tReagent) then
-		self.Columns = (usedSlotsBank > ns.options.sizes.bank.largeItemCount) and ns.options.sizes.bank.columnsLarge or ns.options.sizes.bank.columnsSmall
-	--elseif (tReagent) then
-	--	self.Columns = (usedSlotsReagent > ns.options.sizes.bank.largeItemCount) and ns.options.sizes.bank.columnsLarge or ns.options.sizes.bank.columnsSmall
-	else
-		self.Columns = (usedSlotsBag > ns.options.sizes.bags.largeItemCount) and ns.options.sizes.bags.columnsLarge or ns.options.sizes.bags.columnsSmall
-	end
+	self.Columns = 12
 	self.ContainerHeight = 0
 	self:UpdateDimensions()
 	self:SetWidth((itemSlotSize + 2) * self.Columns + 2)
@@ -701,8 +691,6 @@ function MyContainer:OnCreate(name, settings)
 		money:SetPoint("TOPRIGHT", self, -30, 0)
 		money = mnkLibs.createFontString(self, mnkLibs.Fonts.ap, 12, nil, nil, true)
 	end
-	
-	self:SetScale(cBnivCfg.scale)
 	return self
 end
 
@@ -711,18 +699,4 @@ end
 ------------------------------------------
 local MyButton = cbNivaya:GetItemButtonClass()
 MyButton:Scaffold("Default")
-
--- function MyButton:OnAdd()
-	-- self:SetScript('OnMouseUp', function(self, mouseButton)
-		-- if (mouseButton == 'RightButton') and (IsAltKeyDown()) and (IsControlKeyDown()) then
-			-- local tID = GetContainerItemID(self.bagID, self.slotID)
-			-- if tID then
-				-- cbNivCatDropDown.itemName = GetItemInfo(tID)
-				-- cbNivCatDropDown.itemID = tID
-				-- --ToggleDropDownMenu(1, nil, cbNivCatDropDown, self, 0, 0)
-				-- cbNivCatDropDown:Toggle(self, nil, nil, 0, 0)
-			-- end
-		-- end
-	-- end)
--- end
 

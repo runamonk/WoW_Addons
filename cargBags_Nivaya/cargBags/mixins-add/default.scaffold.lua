@@ -32,29 +32,10 @@ local select = select
 local unpack = unpack
 local math = math
 local string = string
+local scanTip = CreateFrame("GameTooltip", "scanTip", UIParent, "GameTooltipTemplate")
 
 local function noop() end
 
---[[
-local S_UPGRADE_LEVEL = "^" .. gsub(ITEM_UPGRADE_TOOLTIP_FORMAT, "%%d", "(%%d+)")	-- Search pattern
-local scantip = CreateFrame("GameTooltip", "ItemUpgradeScanTooltip", nil, "GameTooltipTemplate")
-scantip:SetOwner(UIParent, "ANCHOR_NONE")
-
-local function GetItemUpgradeLevel(itemLink)
-	scantip:SetOwner(UIParent, "ANCHOR_NONE")
-	scantip:SetHyperlink(itemLink)
-	for i = 2, scantip:NumLines() do -- Line 1 = name so skip
-		local text = _G["ItemUpgradeScanTooltipTextLeft"..i]:GetText()
-		if text and text ~= "" then
-			local currentUpgradeLevel, maxUpgradeLevel = strmatch(text, S_UPGRADE_LEVEL)
-			if currentUpgradeLevel then
-				return currentUpgradeLevel, maxUpgradeLevel
-			end
-		end
-	end
-	scantip:Hide()
-end
-]]
 local function Round(num, idp)
 	local mult = 10^(idp or 0)
 	return math.floor(num * mult + 0.5) / mult
@@ -72,24 +53,6 @@ local function ItemColorGradient(perc, ...)
 	local r1, g1, b1, r2, g2, b2 = select((segment*3)+1, ...)
 
 	return r1 + (r2-r1)*relperc, g1 + (g2-g1)*relperc, b1 + (b2-b1)*relperc
-end
-
-local function CreateInfoString(button, position)
-	local str = button:CreateFontString(nil, "OVERLAY")
-	if position == "TOP" then
-		str:SetJustifyH("LEFT")
-		str:SetPoint("TOPLEFT", button, "TOPLEFT", 1.5, -1.5)
-	else
-		str:SetJustifyH("RIGHT")
-		str:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 1.5, 1.5)
-	end
-	if RealUI then
-		str:SetFontObject(RealUIFont_PixelSmall)
-	else
-		str:SetFont(unpack(ns.options.fonts.itemCount))
-	end
-
-	return str
 end
 
 local function GetScreenModes()
@@ -124,9 +87,21 @@ local function ItemButton_Scaffold(self)
 	
 	mnkLibs.createBorder(self, 1,-1,-1,1, {1,1,1,1})
 	self.Border = self.border
-		
-	self.TopString = CreateInfoString(self, "TOP")
-	self.BottomString = CreateInfoString(self, "BOTTOM")
+	
+    self.Count = mnkLibs.createFontString(self, mnkLibs.Fonts.ap, 16, nil, nil, true)
+    self.Count:SetPoint('BOTTOMRIGHT', 0, 0)
+
+	self.BottomString = mnkLibs.createFontString(self, mnkLibs.Fonts.ap, 18, nil, nil, true)
+    self.BottomString:SetPoint('CENTER', 0, 0)
+    self.BottomString:SetJustifyH('CENTER')
+    self.BottomString:SetShadowOffset(2, -2)
+	
+	self.boe = mnkLibs.createFontString(self, mnkLibs.Fonts.ap, 50, nil, nil, true)
+    self.boe:SetPoint('TOPLEFT', -3, 37)
+    self.boe:SetJustifyH('LEFT')
+    self.boe:SetTextColor(1, 0, 0, 1)
+    self.boe:SetText('.')
+    self.boe:Hide()
 end
 
 --[[!
@@ -142,6 +117,28 @@ local ilvlTypes = {
 local ilvlSubTypes = {
 	[GetItemSubClassInfo(3,11)] = true	--Artifact Relic
 }
+
+local function IsItemBOE(item)
+	if item.link and (item.type and (ilvlTypes[item.type] or item.subType and ilvlSubTypes[item.subType])) and item.level > 0 then		
+		scanTip:ClearLines()
+		scanTip:SetHyperlink(item.link)	
+		scanTip:SetOwner(UIParent,"ANCHOR_NONE")
+		scanTip:SetBagItem(item.bagID, item.slotID)
+		local l = ""
+		for i=2, 5 do
+			if _G["scanTipTextLeft"..i] then
+				l = _G["scanTipTextLeft"..i]:GetText() or ""
+			
+				if l and l:find(ITEM_BIND_ON_EQUIP) then
+					return true
+				end
+			end 
+		end
+	end
+	return false
+end
+
+
 local function ItemButton_Update(self, item)
 	if item.texture then
 		local tex = item.texture or (cBnivCfg.CompressEmpty and self.bgTex)
@@ -166,23 +163,20 @@ local function ItemButton_Update(self, item)
 		self.Count:Hide()
 	end
 	self.count = item.count -- Thank you Blizz for not using local variables >.> (BankFrame.lua @ 234 )
-
-	-- Durability
-	local dCur, dMax = GetContainerItemDurability(item.bagID, item.slotID)
-	if dMax and (dMax > 0) and (dCur < dMax) then
-		local dPer = (dCur / dMax * 100)
-		local r, g, b = ItemColorGradient((dCur/dMax), 1, 0, 0, 1, 1, 0, 0, 1, 0)
-		self.TopString:SetText(Round(dPer).."%")
-		self.TopString:SetTextColor(r, g, b)
+	
+	if IsItemBOE(item) then
+		self.boe:Show()
 	else
-		self.TopString:SetText("")
+		self.boe:Hide()	
 	end
-
+	
 	-- Item Level
 	if item.link then
 		if (item.type and (ilvlTypes[item.type] or item.subType and ilvlSubTypes[item.subType])) and item.level > 0 then
+			local r,g,b = GetItemQualityColor(item.rarity);
 			self.BottomString:SetText(item.level)
-			self.BottomString:SetTextColor(GetItemQualityColor(item.rarity))
+			self.BottomString:SetTextColor(1, 1, 1, 1)
+			self.BottomString:SetShadowColor(r/5, g/5, b/5, 1)	
 		else
 			self.BottomString:SetText("")
 		end

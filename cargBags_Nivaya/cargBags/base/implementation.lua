@@ -32,6 +32,7 @@ Implementation.itemKeys = {}
 local toBagSlot = cargBags.ToBagSlot
 local L
 
+
 --[[!
 	Creates a new instance of the class
 	@param name <string>
@@ -306,26 +307,6 @@ local ilvlTypes = {
 local ilvlSubTypes = {
 	[GetItemSubClassInfo(3,11)] = true	--Artifact Relic
 }
---[[
-local cB_TT_Name = "cargBagsContainerItemTooltip"
-local cB_TT= CreateFrame("GameTooltip", cB_TT_Name, nil, "GameTooltipTemplate")
-local itemLevelString = _G["ITEM_LEVEL"]:gsub("%%d", "")
-local itemDB = {}
-local function GetContainerItemLevel(link, bagID, slotID)
-	if itemDB[link] then return itemDB[link] end
-	cB_TT:SetOwner(UIParent, "ANCHOR_NONE")
-	cB_TT:SetBagItem(bagID, slotID)
- 	for i = 2, 5 do
-		local text = _G[cB_TT_Name.."TextLeft"..i]:GetText() or ""
-		local hasLevel = string.find(text, itemLevelString)
-		if hasLevel then
-			local level = string.match(text, "(%d+)%)?$")
-			itemDB[link] = tonumber(level)
-			break
-		end
-	end
-	return itemDB[link]
-end]]
 
 function Implementation:GetItemInfo(bagID, slotID, i)
 	i = i or defaultItem
@@ -333,6 +314,7 @@ function Implementation:GetItemInfo(bagID, slotID, i)
 
 	i.bagID = bagID
 	i.slotID = slotID
+	i.boe = false
 
 	local clink = GetContainerItemLink(bagID, slotID)
 	
@@ -358,11 +340,12 @@ function Implementation:GetItemInfo(bagID, slotID, i)
 			end
 		end
 		-- get the item spell to determine if the item is an Artifact Power boosting item
-		if ns.options.filterArtifactPower and IsArtifactPowerItem(i.id) then
+		if IsArtifactPowerItem(i.id) then
 			i.type = ARTIFACT_POWER
 		end
 		-- texture
 		i.texture = i.texture or texture
+		
 		-- battle pet info must be extracted from the itemlink
 		if (clink:find("battlepet")) then
 			if not(L) then
@@ -381,6 +364,8 @@ function Implementation:GetItemInfo(bagID, slotID, i)
 			if not i.id then i.id = 138019 end
 			_, _, i.rarity, i.level, i.minLevel, i.type, i.subType, i.stackCount, i.equipLoc, texture, i.sellPrice  = GetItemInfo(i.id)
 		end
+		
+		
 		--print("GetItemInfo:", i.isInSet, i.setName, i.name)
 	end
 	return i

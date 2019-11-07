@@ -3,29 +3,7 @@ local addon, ns = ...
 
 ns.options = {
 
-filterArtifactPower = true, --set to 'false' to disable the category for items that give Artifact Power
-
-itemSlotSize = 32,	-- Size of item slots
-
-sizes = {
-	bags = {
-		columnsSmall = 16,
-		columnsLarge = 16,
-		largeItemCount = 16,	-- Switch to columnsLarge when >= this number of items in your bags
-	},
-	bank = {
-		columnsSmall = 16,
-		columnsLarge = 16,
-		largeItemCount = 16,	-- Switch to columnsLarge when >= this number of items in the bank
-	},	
-},
-
-
---------------------------------------------------------------
--- Anything below this is only effective when not using RealUI
---------------------------------------------------------------
-
-fonts = {
+	fonts = {
 	-- Font to use for bag captions and other strings
 	standard = {
 		mnkLibs.Fonts.ap, 	-- Font path
@@ -53,7 +31,6 @@ fonts = {
 		16, 						-- Font Size
 		"",	-- Flags
 	},
-
 },
 
 colors = {
