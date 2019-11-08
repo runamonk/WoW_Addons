@@ -23,7 +23,7 @@ cB_Filters.fHideEmpty = function(item) return item.link ~= nil end
 -- General Classification (cached)
 ------------------------------------
 cB_Filters.fItemClass = function(item, container)
-	if not item.id or not item.name then	return false	end	-- incomplete data (itemID or itemName missing), return (item that aren't loaded yet will get classified on the next successful call)
+	if not item.id or not item.name then return false end	-- incomplete data (itemID or itemName missing), return (item that aren't loaded yet will get classified on the next successful call)
 	if not cB_ItemClass[item.id] then cbNivaya:ClassifyItem(item) end
 	
 	local t, bag = cB_ItemClass[item.id]
