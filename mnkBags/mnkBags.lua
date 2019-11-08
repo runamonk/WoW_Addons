@@ -11,46 +11,8 @@ local L = cBnivL
 cB_Bags = {}
 cB_BagHidden = {}
 
-local ItemSetCaption = (IsAddOnLoaded('ItemRack') and "ItemRack ") or (IsAddOnLoaded('Outfitter') and "Outfitter ") or "Item "
+--local ItemSetCaption = (IsAddOnLoaded('ItemRack') and "ItemRack ") or (IsAddOnLoaded('Outfitter') and "Outfitter ") or "Item "
 local bankOpenState = false
-
--- function cbNivaya:ShowBags(...)
-	-- local bags = {...}
-	-- for i = 1, #bags do
-		-- local bag = bags[i]
-		-- if not cB_BagHidden[bag.name] then
-			-- bag:Show()
-		-- end
-	-- end
--- end
-
--- function cbNivaya:HideBags(...)
-	-- local bags = {...}
-	-- for i = 1, #bags do
-		-- local bag = bags[i]
-		-- bag:Hide()
-	-- end
--- end
-
-function cbNivaya:ShowBags(...)
-	local bags = {...}
-	for i = 1, #bags do
-		local bag = bags[i]
-		if not cB_BagHidden[bag.name] then
-			bag:Show()
-		end
-	end
-end
-
-function cbNivaya:HideBags(...)
-	local bags = {...}
-	for i = 1, #bags do
-		local bag = bags[i]
-		bag:Hide()
-	end
-end
-
-
 
 function mnkBags:ADDON_LOADED(event, addon)
 
@@ -58,7 +20,6 @@ function mnkBags:ADDON_LOADED(event, addon)
 	self:UnregisterEvent(event)
 
 	cBniv.BagPos = true
-
 	-----------------
 	-- Frame Spawns
 	-----------------
@@ -111,95 +72,69 @@ function mnkBags:ADDON_LOADED(event, addon)
 	cB_Bags.main:SetPoint("BOTTOMRIGHT", -99, 26)
 	cB_Bags.bank:SetPoint("TOPLEFT", 20, -20)
 	
-	cbNivaya:CreateAnchors()
+	cbNivaya:UpdateAnchors()
 	cbNivaya:Init()
 	cbNivaya:ToggleBagPosButtons()
 end
 
-function cbNivaya:CreateAnchors()
-	-----------------------------------------------
-	-- Store the anchoring order:
-	-- read: "tar" is anchored to "src" in the direction denoted by "dir".
-	-----------------------------------------------
-	local function CreateAnchorInfo(src, tar, dir)
-		tar.AnchorTo = src
-		tar.AnchorDir = dir
-		if src then
-			if not src.AnchorTargets then src.AnchorTargets = {} end
-			src.AnchorTargets[tar] = true
-		end
-	end
+function cbNivaya:UpdateAnchors()
+	local lastBank, lastMain
+	--local t = {}	
+	--for k in pairs(cB_Bags) do table.insert(t, k) end
+	--table.sort(t)
+	--for _, k in ipairs(t) do print(k, ' ', cB_Bags[k]) end
 	
-	-- neccessary if this function is used to update the anchors:
 	for k,_ in pairs(cB_Bags) do
-		if not ((k == 'main') or (k == 'bank')) then cB_Bags[k]:ClearAllPoints() end
-		cB_Bags[k].AnchorTo = nil
-		cB_Bags[k].AnchorDir = nil
-		cB_Bags[k].AnchorTargets = nil
-	end
-
-	-- Main Anchors:
-	CreateAnchorInfo(nil, cB_Bags.main, "Bottom")
-	CreateAnchorInfo(nil, cB_Bags.bank, "Bottom")
-
-	-- Bank Anchors:
-	CreateAnchorInfo(cB_Bags.bank, 				cB_Bags.bankArmor, "Bottom")
-	CreateAnchorInfo(cB_Bags.bankArmor, 		cB_Bags.bankGem, "Bottom")
-	CreateAnchorInfo(cB_Bags.bankGem, 			cB_Bags.bankTrade, "Bottom")
-	CreateAnchorInfo(cB_Bags.bankTrade, 		cB_Bags.bankReagent, "Bottom")
-	CreateAnchorInfo(cB_Bags.bankReagent, 		cB_Bags.bankConsumables, "Bottom")
-	CreateAnchorInfo(cB_Bags.bankConsumables, 	cB_Bags.bankQuest, "Bottom")
-	CreateAnchorInfo(cB_Bags.bankQuest, 		cB_Bags.bankArtifactPower, "Bottom")
-	CreateAnchorInfo(cB_Bags.bankArtifactPower, cB_Bags.bankBattlePet, "Bottom")
-	
-	-- Bag Anchors:
-	CreateAnchorInfo(cB_Bags.main, 	        cB_Bags.armor, 			"Top")
-	CreateAnchorInfo(cB_Bags.armor, 		cB_Bags.gem, 			"Top")
-	CreateAnchorInfo(cB_Bags.gem, 			cB_Bags.artifactpower,	"Top")
-	CreateAnchorInfo(cB_Bags.artifactpower,	cB_Bags.battlepet, 		"Top")
-	CreateAnchorInfo(cB_Bags.battlepet, 	cB_Bags.tradegoods, 	"Top")
-	CreateAnchorInfo(cB_Bags.tradegoods, 	cB_Bags.consumables, 	"Top")
-	CreateAnchorInfo(cB_Bags.consumables, 	cB_Bags.quest, 			"Top")
-	CreateAnchorInfo(cB_Bags.quest, 		cB_Bags.bagJunk, 		"Top")
-	CreateAnchorInfo(cB_Bags.bagJunk, 		cB_Bags.bagNew, 		"Top")
-	
-	-- Finally update all anchors:
-	for _,v in pairs(cB_Bags) do cbNivaya:UpdateAnchors(v) end
-end
-
-function cbNivaya:UpdateAnchors(self)
-	if not self.AnchorTargets then return end
-	for v,_ in pairs(self.AnchorTargets) do
-		local t, u = v.AnchorTo, v.AnchorDir
-		if t then
-			local h = cB_BagHidden[t.name]
-			v:ClearAllPoints()
-			if	not h		and u == "Top"		then v:SetPoint("BOTTOM", t, "TOP", 0, 9)
-			elseif	h		and u == "Top"		then v:SetPoint("BOTTOM", t, "BOTTOM")
-			elseif	not h	and u == "Bottom"	then v:SetPoint("TOP", t, "BOTTOM", 0, -9)
-			elseif	h		and u == "Bottom"	then v:SetPoint("TOP", t, "TOP")
-			elseif	u == "Left"					then v:SetPoint("BOTTOMRIGHT", t, "BOTTOMLEFT", -9, 0)
-			elseif	u == "Right"				then v:SetPoint("TOPLEFT", t, "TOPRIGHT", 9, 0) end
+		
+		if not ((k == 'main') or (k == 'bank')) then
+			cB_Bags[k]:ClearAllPoints()					
+			if (cB_Bags[k].name:sub(1, 10) == 'cBniv_Bank') then	
+				if not lastBank then lastBank = cB_Bags.bank end
+				if not cB_BagHidden[lastBank.name] then
+					cB_Bags[k]:SetPoint("TOPLEFT", lastBank, "BOTTOMLEFT", 0, -9)
+				else
+					cB_Bags[k]:SetPoint("TOPLEFT", lastBank, "TOPLEFT", 0, 0)
+				end
+				lastBank = cB_Bags[k]
+			else
+				if not lastMain then lastMain = cB_Bags.main end
+				if not cB_BagHidden[lastMain.name] then
+					cB_Bags[k]:SetPoint("BOTTOMLEFT", lastMain, "TOPLEFT", 0, 9)
+				else
+					cB_Bags[k]:SetPoint("BOTTOMLEFT", lastMain, "BOTTOMLEFT", 0, 0)
+				end
+				lastMain = cB_Bags[k]
+			end		
 		end
 	end
 end
 
 function cbNivaya:OnOpen()
-	cB_Bags.main:Show()
-	cbNivaya:ShowBags(cB_Bags.armor, cB_Bags.bagNew, cB_Bags.gem, cB_Bags.quest, cB_Bags.consumables, cB_Bags.artifactpower, cB_Bags.battlepet,  cB_Bags.tradegoods, cB_Bags.bagJunk)
+	for k,_ in pairs(cB_Bags) do
+		if (cB_Bags[k].name:sub(1, 10) ~= 'cBniv_Bank') and not cB_BagHidden[cB_Bags[k].name] then
+			cB_Bags[k]:Show()
+		end
+	end
 end
 
 function cbNivaya:OnClose()
-	cbNivaya:HideBags(cB_Bags.main, cB_Bags.armor, cB_Bags.bagNew, cB_Bags.gem, cB_Bags.quest, cB_Bags.consumables, cB_Bags.artifactpower, cB_Bags.battlepet, cB_Bags.tradegoods, cB_Bags.bagJunk)
+	for k,_ in pairs(cB_Bags) do
+		cB_Bags[k]:Hide()
+	end
 end
 
-function cbNivaya:OnBankOpened() 
-	cB_Bags.bank:Show(); 
-	cbNivaya:ShowBags(cB_Bags.bankReagent, cB_Bags.bankArmor, cB_Bags.bankGem, cB_Bags.bankQuest, cB_Bags.bankTrade, cB_Bags.bankConsumables, cB_Bags.bankArtifactPower, cB_Bags.bankBattlePet) 
+function cbNivaya:OnBankOpened()
+	for k,_ in pairs(cB_Bags) do
+		if not cB_BagHidden[cB_Bags[k].name] then
+			cB_Bags[k]:Show()
+		end
+	end 
 end
 
 function cbNivaya:OnBankClosed()
-	cbNivaya:HideBags(cB_Bags.bank, cB_Bags.bankReagent, cB_Bags.bankArmor, cB_Bags.bankGem, cB_Bags.bankQuest, cB_Bags.bankTrade, cB_Bags.bankConsumables, cB_Bags.bankArtifactPower, cB_Bags.bankBattlePet)
+	for k,_ in pairs(cB_Bags) do
+		cB_Bags[k]:Hide()
+	end
 end
 
 function cbNivaya:ToggleBagPosButtons()
@@ -282,10 +217,7 @@ Event:SetScript('OnEvent', function(self, event, ...)
 				NivayacBniv_Bank.reagentBtn:Show()
 				buyReagent:Hide()
 			end)
-			if Aurora then
-				local F = Aurora[1]
-				F.Reskin(buyReagent)
-			end
+
 			buyReagent:RegisterEvent("REAGENTBANK_PURCHASED")
 		end
 

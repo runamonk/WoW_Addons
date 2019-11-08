@@ -174,7 +174,7 @@ function MyContainer:OnContentsChanged(forced)
 	end
 
 	cB_BagHidden[tName] = (not t) and isEmpty or false
-	cbNivaya:UpdateAnchors(self)
+	cbNivaya:UpdateAnchors()
 
 	--update all other bags as well
 	if needColumnUpdate and not forced then
