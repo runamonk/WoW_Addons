@@ -1,8 +1,0 @@
-------------------------------------------------------------------------
-r74 | humfras | 2019-07-06 20:51:18 +0000 (Sat, 06 Jul 2019) | 1 line
-Changed paths:
-   M /trunk/cargBags/mixins-add/itemkeys/equipSets.lua
-
-* fix potential bug with equipment manager
-------------------------------------------------------------------------
-

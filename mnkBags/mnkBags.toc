@@ -2,7 +2,7 @@
 ## Title: mnkBags
 ## Author: runamonk
 ## SavedVariables: 
-## SavedVariablesPerCharacter: cB_KnownItems, cBniv
+## SavedVariablesPerCharacter: mnkBagsKnownItems, mnkBagsGlobals
 ## Dependencies: mnkLibs
 ## X-cargBags: cargBags
 

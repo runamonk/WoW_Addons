@@ -10,16 +10,13 @@ local cbNivaya = cargBags:GetImplementation("Nivaya")
 local L = cBnivL
 cB_Bags = {}
 cB_BagHidden = {}
+mnkBagsGlobals = {}
 
---local ItemSetCaption = (IsAddOnLoaded('ItemRack') and "ItemRack ") or (IsAddOnLoaded('Outfitter') and "Outfitter ") or "Item "
-local bankOpenState = false
 
 function mnkBags:ADDON_LOADED(event, addon)
 
 	if (addon ~= 'mnkBags') then return end
 	self:UnregisterEvent(event)
-
-	cBniv.BagPos = true
 	-----------------
 	-- Frame Spawns
 	-----------------
@@ -69,12 +66,12 @@ function mnkBags:ADDON_LOADED(event, addon)
 	cB_Bags.tradegoods	:SetExtendedFilter(cB_Filters.fItemClass, "TradeGoods")
 	cB_Bags.main		:SetMultipleFilters(true, cB_Filters.fBags, cB_Filters.fHideEmpty)
 
-	cB_Bags.main:SetPoint("BOTTOMRIGHT", -99, 26)
-	cB_Bags.bank:SetPoint("TOPLEFT", 20, -20)
+	cB_Bags.main:SetPoint("BOTTOMRIGHT", -20, 200)
+	cB_Bags.bank:SetPoint("TOPLEFT", 20, -50)
 	
 	cbNivaya:UpdateAnchors()
 	cbNivaya:Init()
-	cbNivaya:ToggleBagPosButtons()
+	--cbNivaya:ToggleBagPosButtons()
 end
 
 function cbNivaya:UpdateAnchors()
@@ -136,11 +133,6 @@ function cbNivaya:OnBankClosed()
 		cB_Bags[k]:Hide()
 	end
 end
-
-function cbNivaya:ToggleBagPosButtons()
-	cBniv.BagPos = not cBniv.BagPos
-end
-
 
 local SetFrameMovable = function(f, v)
 	f:SetMovable(true)
