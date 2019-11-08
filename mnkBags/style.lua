@@ -239,14 +239,14 @@ end
 
 -- Reset New
 local resetNewItems = function(self)
-	cB_KnownItems = cB_KnownItems or {}
-	if not cBniv.clean then
-		for item, numItem in next, cB_KnownItems do
+	mnkBagsKnownItems = mnkBagsKnownItems or {}
+	if not mnkBagsGlobals.clean then
+		for item, numItem in next, mnkBagsKnownItems do
 			if type(item) == "string" then
-				cB_KnownItems[item] = nil
+				mnkBagsKnownItems[item] = nil
 			end
 		end
-		cBniv.clean = true
+		mnkBagsGlobals.clean = true
 	end
 	for bag = 0, 4 do
 		local tNumSlots = GetContainerNumSlots(bag)
@@ -255,10 +255,10 @@ local resetNewItems = function(self)
 				local item = cbNivaya:GetItemInfo(bag, slot)
 				--print("resetNewItems", item.id)
 				if item.id then
-					if cB_KnownItems[item.id] then
-						cB_KnownItems[item.id] = cB_KnownItems[item.id] + (item.stackCount and item.stackCount or 0)
+					if mnkBagsKnownItems[item.id] then
+						mnkBagsKnownItems[item.id] = mnkBagsKnownItems[item.id] + (item.stackCount and item.stackCount or 0)
 					else
-						cB_KnownItems[item.id] = item.stackCount and item.stackCount or 0
+						mnkBagsKnownItems[item.id] = item.stackCount and item.stackCount or 0
 					end
 				end
 			end 
