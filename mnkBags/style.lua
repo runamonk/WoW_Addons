@@ -113,7 +113,8 @@ function MyContainer:OnContentsChanged(forced)
 			buttonIDs[i] = { -1, -2, button, -1 }
 		end
 	end
-	if ((tBank or tReagent) and cBnivCfg.SortBank) or (not (tBank or tReagent) and cBnivCfg.SortBags) then QuickSort(buttonIDs) end
+	
+	QuickSort(buttonIDs) 
 
 	for _,v in ipairs(buttonIDs) do
 		local button = v[3]
@@ -131,27 +132,27 @@ function MyContainer:OnContentsChanged(forced)
 		end
 		isEmpty = false
 	end
+	
+	-- compress empty slots.
+	local xPos = col * (itemSlotSize + 4) + 2
+	local yPos = (-1 * row * (itemSlotSize + 4)) - yPosOffs
 
-	if cBnivCfg.CompressEmpty then
-		local xPos = col * (itemSlotSize + 4) + 2
-		local yPos = (-1 * row * (itemSlotSize + 4)) - yPosOffs
-
-		local tDrop = self.DropTarget
-		if tDrop then
-			tDrop:ClearAllPoints()
-			tDrop:SetPoint("TOPLEFT", self, "TOPLEFT", xPos, yPos)
-			if(col >= self.Columns-1) then
-				col = 0
-				row = row + 1
-			else
-				col = col + 1
-			end
+	local tDrop = self.DropTarget
+	if tDrop then
+		tDrop:ClearAllPoints()
+		tDrop:SetPoint("TOPLEFT", self, "TOPLEFT", xPos, yPos)
+		if(col >= self.Columns-1) then
+			col = 0
+			row = row + 1
+		else
+			col = col + 1
 		end
-		
-		cB_Bags.main.EmptySlotCounter:SetText(GetNumFreeSlots("bag"))
-		cB_Bags.bank.EmptySlotCounter:SetText(GetNumFreeSlots("bank"))
-		cB_Bags.bankReagent.EmptySlotCounter:SetText(GetNumFreeSlots("bankReagent"))
 	end
+	
+	cB_Bags.main.EmptySlotCounter:SetText(GetNumFreeSlots("bag"))
+	cB_Bags.bank.EmptySlotCounter:SetText(GetNumFreeSlots("bank"))
+	cB_Bags.bankReagent.EmptySlotCounter:SetText(GetNumFreeSlots("bankReagent"))
+
 	
 	-- This variable stores the size of the item button container
 	self.ContainerHeight = (row + (col > 0 and 1 or 0)) * (itemSlotSize + 2)
@@ -446,7 +447,7 @@ function MyContainer:OnCreate(name, settings)
 	tinsert(UISpecialFrames, self:GetName()) -- Close on "Esc"
 
 	if (tBag or tBank) then 
-		SetFrameMovable(self, cBnivCfg.Unlocked) 
+		SetFrameMovable(self, true) 
 	end
 
 	self.Columns = 12
@@ -455,7 +456,6 @@ function MyContainer:OnCreate(name, settings)
 	self:SetWidth((itemSlotSize + 2) * self.Columns + 2)
 
 	-- The frame background
-	local tBankCustom = (tBankBags and not cBnivCfg.BankBlack)
 	local color_rb = ns.options.colors.background[1]
 	local color_gb = ns.options.colors.background[2]
 	local color_bb = ns.options.colors.background[3]
@@ -541,45 +541,20 @@ function MyContainer:OnCreate(name, settings)
 		end)
 
 		-- Button to reset new items:
-		if tBag and cBnivCfg.NewItems then
+		if tBag then
 			self.resetBtn = createIconButton("ResetNew", self, Textures.ResetNew, "BOTTOMRIGHT", "Reset New", tBag)
 			self.resetBtn:SetPoint("BOTTOMRIGHT", self.bagToggle, "BOTTOMLEFT", 0, 0)
 			self.resetBtn:SetScript("OnClick", function() resetNewItems(self) end)
 		end
 		
 		-- Button to restack items:
-		if cBnivCfg.Restack then
-			self.restackBtn = createIconButton("Restack", self, Textures.Restack, "BOTTOMRIGHT", "Restack", tBag)
-			if self.resetBtn then
-				self.restackBtn:SetPoint("BOTTOMRIGHT", self.resetBtn, "BOTTOMLEFT", 0, 0)
-			else
-				self.restackBtn:SetPoint("BOTTOMRIGHT", self.bagToggle, "BOTTOMLEFT", 0, 0)
-			end
-			self.restackBtn:SetScript("OnClick", function() restackItems(self) end)
+		self.restackBtn = createIconButton("Restack", self, Textures.Restack, "BOTTOMRIGHT", "Restack", tBag)
+		if self.resetBtn then
+			self.restackBtn:SetPoint("BOTTOMRIGHT", self.resetBtn, "BOTTOMLEFT", 0, 0)
+		else
+			self.restackBtn:SetPoint("BOTTOMRIGHT", self.bagToggle, "BOTTOMLEFT", 0, 0)
 		end
-
-		-- Button to toggle Sell Junk:
-		if tBag then
-			local sjHint = cBnivCfg.SellJunk and "Sell Junk |cffd0d0d0(on)|r" or "Sell Junk |cffd0d0d0(off)|r"
-			self.junkBtn = createIconButton("SellJunk", self, Textures.SellJunk, "BOTTOMRIGHT", sjHint, tBag)
-			if self.optionsBtn then
-				self.junkBtn:SetPoint("BOTTOMRIGHT", self.optionsBtn, "BOTTOMLEFT", 0, 0)
-			elseif self.restackBtn then
-				self.junkBtn:SetPoint("BOTTOMRIGHT", self.restackBtn, "BOTTOMLEFT", 0, 0)
-			elseif self.resetBtn then
-				self.junkBtn:SetPoint("BOTTOMRIGHT", self.resetBtn, "BOTTOMLEFT", 0, 0)
-			else
-				self.junkBtn:SetPoint("BOTTOMRIGHT", self.bagToggle, "BOTTOMLEFT", 0, 0)
-			end
-			self.junkBtn:SetScript("OnClick", function() 
-				cBnivCfg.SellJunk = not(cBnivCfg.SellJunk)
-				if cBnivCfg.SellJunk then
-					self.junkBtn.tooltip:SetText("Sell Junk |cffd0d0d0(on)|r")
-				else
-					self.junkBtn.tooltip:SetText("Sell Junk |cffd0d0d0(off)|r")
-				end
-			end)
-		end
+		self.restackBtn:SetScript("OnClick", function() restackItems(self) end)
 		
 		-- Button to send reagents to Reagent Bank:
 		if tBank then
@@ -639,10 +614,8 @@ function MyContainer:OnCreate(name, settings)
 		self.DropTarget:SetHeight(itemSlotSize+1)
 		
 		local DropTargetProcessItem = function()
-			-- if CursorHasItem() then	-- Commented out to fix Guild Bank -> Bags item dragging
-				local bID, sID = GetFirstFreeSlot((tBag and "bag") or (tBank and "bank") or "bankReagent")
-				if bID then PickupContainerItem(bID, sID) end
-			-- end
+			local bID, sID = GetFirstFreeSlot((tBag and "bag") or (tBank and "bank") or "bankReagent")
+			if bID then PickupContainerItem(bID, sID) end
 		end
 		self.DropTarget:SetScript("OnMouseUp", DropTargetProcessItem)
 		self.DropTarget:SetScript("OnReceiveDrag", DropTargetProcessItem)
@@ -651,13 +624,8 @@ function MyContainer:OnCreate(name, settings)
 		self.EmptySlotCounter:SetPoint("BOTTOMRIGHT", self.DropTarget, "BOTTOMRIGHT", -3, 3)
 		self.EmptySlotCounter:SetJustifyH("LEFT")
 		
-		if cBnivCfg.CompressEmpty then 
-			self.DropTarget:Show()
-			self.EmptySlotCounter:Show()
-		else
-			self.DropTarget:Hide()
-			self.EmptySlotCounter:Hide()
-		end
+		self.DropTarget:Show()
+		self.EmptySlotCounter:Show()
 	end
 	
 	if tBag then

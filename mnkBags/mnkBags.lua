@@ -11,7 +11,6 @@ local L = cBnivL
 cB_Bags = {}
 cB_BagHidden = {}
 
--- Those are default values only, change them ingame via "/cbniv":
 local optDefaults = {
 					NewItems = true,
 					Restack = true,
@@ -57,31 +56,20 @@ function cbNivaya:HideBags(...)
 	end
 end
 
-local LoadDefaults = function()
-	cBniv = cBniv or {}
-	for k,v in pairs(defaults) do
-		if(type(cBniv[k]) == 'nil') then cBniv[k] = v end
-	end
-	cBnivCfg = cBnivCfg or {}
-	for k,v in pairs(optDefaults) do
-		if(type(cBnivCfg[k]) == 'nil') then cBnivCfg[k] = v end
-	end
-end
-
 function mnkBags:ADDON_LOADED(event, addon)
 
 	if (addon ~= 'mnkBags') then return end
 	self:UnregisterEvent(event)
 	
-	LoadDefaults()
+	--LoadDefaults()
 	
-	cB_filterEnabled["Armor"] = cBnivCfg.Armor
-	cB_filterEnabled["Gem"] = cBnivCfg.Gem
-	cB_filterEnabled["TradeGoods"] = cBnivCfg.TradeGoods
-	cB_filterEnabled["Junk"] = cBnivCfg.Junk
-	cB_filterEnabled["ItemSets"] = cBnivCfg.ItemSets
-	cB_filterEnabled["Consumables"] = cBnivCfg.Consumables
-	cB_filterEnabled["Quest"] = cBnivCfg.Quest
+	-- cB_filterEnabled["Armor"] = cBnivCfg.Armor
+	-- cB_filterEnabled["Gem"] = cBnivCfg.Gem
+	-- cB_filterEnabled["TradeGoods"] = cBnivCfg.TradeGoods
+	-- cB_filterEnabled["Junk"] = cBnivCfg.Junk
+	-- cB_filterEnabled["ItemSets"] = cBnivCfg.ItemSets
+	-- cB_filterEnabled["Consumables"] = cBnivCfg.Consumables
+	-- cB_filterEnabled["Quest"] = cBnivCfg.Quest
 
 	cBniv.BagPos = true
 
@@ -320,11 +308,9 @@ Event:SetScript('OnEvent', function(self, event, ...)
 				GameTooltip:Hide()
 			end)
 			buyReagent:SetScript("OnClick", function()
-				--print("Reagent Bank!!!")
 				StaticPopup_Show("CONFIRM_BUY_REAGENTBANK_TAB")
 			end)
 			buyReagent:SetScript("OnEvent", function(...)
-				--print("OnReagentPurchase", ...)
 				buyReagent:UnregisterEvent("REAGENTBANK_PURCHASED")
 				NivayacBniv_Bank.reagentBtn:Show()
 				buyReagent:Hide()
