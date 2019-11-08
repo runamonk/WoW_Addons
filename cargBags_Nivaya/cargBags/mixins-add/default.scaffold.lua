@@ -26,60 +26,12 @@ DEPENDENCIES
 ]]
 local addon, ns = ...
 local cargBags = ns.cargBags
-
-local tonumber = tonumber
-local select = select
-local unpack = unpack
-local math = math
-local string = string
 local scanTip = CreateFrame("GameTooltip", "scanTip", UIParent, "GameTooltipTemplate")
 
-local function noop() end
-
-local function Round(num, idp)
-	local mult = 10^(idp or 0)
-	return math.floor(num * mult + 0.5) / mult
-end
-
-local function ItemColorGradient(perc, ...)
-	if perc >= 1 then
-		return select(select('#', ...) - 2, ...)
-	elseif perc <= 0 then
-		return ...
-	end
-
-	local num = select('#', ...) / 3
-	local segment, relperc = math.modf(perc*(num-1))
-	local r1, g1, b1, r2, g2, b2 = select((segment*3)+1, ...)
-
-	return r1 + (r2-r1)*relperc, g1 + (g2-g1)*relperc, b1 + (b2-b1)*relperc
-end
-
-local function GetScreenModes()
-	local curResIndex = GetCurrentResolution()
-	local curRes = curResIndex > 0 and select(curResIndex, GetScreenResolutions()) or nil
-	local windowedMode = Display_DisplayModeDropDown:windowedmode()
-	
-	local resolution = curRes or (windowedMode and GetCVar("gxWindowedResolution")) or GetCVar("gxFullscreenResolution")
-	
-	return resolution
-end
-
-local borderSize
-local function GetBorderSizeFromScreenSize()
-	if borderSize then return borderSize end
-	local width, height = GetPhysicalScreenSize()
-	local uiScale = GetCVar("uiScale")
-	
-	borderSize = 768/height/(uiScale*cBnivCfg.scale)
-	return borderSize
-end
-
 local function ItemButton_Scaffold(self)
+	local name = self:GetName()
 	self:SetSize(32, 32)
 
-	local bordersize = GetBorderSizeFromScreenSize()	--768/string.match(GetScreenModes(), "%d+x(%d+)")/(GetCVar("uiScale")*cBnivCfg.scale)
-	local name = self:GetName()
 	self.Icon = _G[name.."IconTexture"]
 	self.Count = _G[name.."Count"]
 	self.Cooldown = _G[name.."Cooldown"]
@@ -118,27 +70,6 @@ local ilvlSubTypes = {
 	[GetItemSubClassInfo(3,11)] = true	--Artifact Relic
 }
 
-local function IsItemBOE(item)
-	if item.link and (item.type and (ilvlTypes[item.type] or item.subType and ilvlSubTypes[item.subType])) and item.level > 0 then		
-		scanTip:ClearLines()
-		scanTip:SetHyperlink(item.link)	
-		scanTip:SetOwner(UIParent,"ANCHOR_NONE")
-		scanTip:SetBagItem(item.bagID, item.slotID)
-		local l = ""
-		for i=2, 5 do
-			if _G["scanTipTextLeft"..i] then
-				l = _G["scanTipTextLeft"..i]:GetText() or ""
-			
-				if l and l:find(ITEM_BIND_ON_EQUIP) then
-					return true
-				end
-			end 
-		end
-	end
-	return false
-end
-
-
 local function ItemButton_Update(self, item)
 	if item.texture then
 		local tex = item.texture or (cBnivCfg.CompressEmpty and self.bgTex)
@@ -163,8 +94,8 @@ local function ItemButton_Update(self, item)
 		self.Count:Hide()
 	end
 	self.count = item.count -- Thank you Blizz for not using local variables >.> (BankFrame.lua @ 234 )
-	
-	if IsItemBOE(item) then
+	--print(item.bindOn)
+	if item.boe then
 		self.boe:Show()
 	else
 		self.boe:Hide()	
