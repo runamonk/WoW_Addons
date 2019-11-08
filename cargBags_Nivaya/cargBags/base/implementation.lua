@@ -308,6 +308,26 @@ local ilvlSubTypes = {
 	[GetItemSubClassInfo(3,11)] = true	--Artifact Relic
 }
 
+local function IsItemBOE(item)
+	if item.link and (item.type and (ilvlTypes[item.type] or item.subType and ilvlSubTypes[item.subType])) and item.level > 0 then		
+		scanTip:ClearLines()
+		scanTip:SetHyperlink(item.link)	
+		scanTip:SetOwner(UIParent,"ANCHOR_NONE")
+		scanTip:SetBagItem(item.bagID, item.slotID)
+		local l = ""
+		for i=2, 5 do
+			if _G["scanTipTextLeft"..i] then
+				l = _G["scanTipTextLeft"..i]:GetText() or ""
+			
+				if l and l:find(ITEM_BIND_ON_EQUIP) then
+					return true
+				end
+			end 
+		end
+	end
+	return false
+end
+
 function Implementation:GetItemInfo(bagID, slotID, i)
 	i = i or defaultItem
 	for k in pairs(i) do i[k] = nil end
@@ -333,6 +353,7 @@ function Implementation:GetItemInfo(bagID, slotID, i)
 		i.link = clink
 		-- get the actual item level for items we want it to be shown
 		if (i.type and (ilvlTypes[i.type] or i.subType and ilvlSubTypes[i.subType])) and i.level > 0 then
+			i.boe = IsItemBOE(i)
 			if i.rarity == LE_ITEM_QUALITY_ARTIFACT then
 				-- for artifact weapons, GetItemInfo returns the actual ilvl
 			else
