@@ -11,16 +11,12 @@ cB_KnownItems = cB_KnownItems or {}
 cBniv_CatInfo = {}
 cB_ItemClass = {}
 
-cB_existsBankBag = { Armor = true, Gem = true, Quest = true, TradeGoods = true, Consumables = true, ArtifactPower = true, BattlePet = true }
-cB_filterEnabled = { Armor = true, Gem = true, Quest = true, TradeGoods = true, Consumables = true, Keyring = true, Junk = true, Stuff = true, ItemSets = true, ArtifactPower = true, BattlePet = true }
-
 --------------------
 --Basic filters
 --------------------
 cB_Filters.fBags = function(item) return item.bagID >= 0 and item.bagID <= 4 end
 cB_Filters.fBank = function(item) return item.bagID == -1 or item.bagID >= 5 and item.bagID <= 11 end
 cB_Filters.fBankReagent = function(item) return item.bagID == -3 end
-cB_Filters.fBankFilter = function() return true end
 cB_Filters.fHideEmpty = function(item) return item.link ~= nil end
 
 ------------------------------------
@@ -34,7 +30,7 @@ cB_Filters.fItemClass = function(item, container)
 
 	local isBankBag = item.bagID == -1 or (item.bagID >= 5 and item.bagID <= 11)
 	if isBankBag then
-		bag = (cB_existsBankBag[t]) and "Bank"..t or "Bank"
+		bag = (t) and "Bank"..t or "Bank"
 	else
 		bag = (t ~= "NoClass") and t or "Bag"
 	end
@@ -70,15 +66,6 @@ cB_Filters.fNewItems = function(item)
 	if not cB_KnownItems[item.id] then return true end
 	local t = GetItemCount(item.id)
 	return (t > cB_KnownItems[item.id]) and true or false
-end
-
-cB_Filters.fItemSets = function(item)
-	if not cB_filterEnabled["ItemSets"] then return false end
-	if not item.link then return false end
-	local tC = cBniv_CatInfo[item.name]
-	if tC then return (tC == "ItemSets") and true or false end
-
-   return false
 end
 
 
