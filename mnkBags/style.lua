@@ -200,7 +200,7 @@ end
 local JS = CreateFrame("Frame")
 JS:RegisterEvent("MERCHANT_SHOW")
 local function SellJunk()
-	if not(cBnivCfg.SellJunk) or (UnitLevel("player") < 5) then return end
+	--if not(cBnivCfg.SellJunk) or (UnitLevel("player") < 5) then return end
 	
 	local Profit, SoldCount = 0, 0
 	local item
@@ -325,11 +325,7 @@ end
 local function IconButton_OnLeave(self)
 	self.mouseover = false
 	if self.tag == "SellJunk" then
-		if cBnivCfg.SellJunk then
-			self.icon:SetVertexColor(0.8, 0.8, 0.8)
-		else
-			self.icon:SetVertexColor(0.4, 0.4, 0.4)
-		end
+		self.icon:SetVertexColor(0.8, 0.8, 0.8)
 	else
 		self.icon:SetVertexColor(0.8, 0.8, 0.8)
 	end
@@ -350,11 +346,7 @@ local createIconButton = function (name, parent, texture, point, hint, isBag)
 	button.icon:SetHeight(16)
 	button.icon:SetTexture(texture)
 	if name == "SellJunk" then
-		if cBnivCfg.SellJunk then
-			button.icon:SetVertexColor(0.8, 0.8, 0.8)
-		else
-			button.icon:SetVertexColor(0.4, 0.4, 0.4)
-		end
+		button.icon:SetVertexColor(0.8, 0.8, 0.8)
 	else
 		button.icon:SetVertexColor(0.8, 0.8, 0.8)
 	end
