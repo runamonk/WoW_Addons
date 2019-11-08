@@ -11,33 +11,26 @@ local L = cBnivL
 cB_Bags = {}
 cB_BagHidden = {}
 
-local optDefaults = {
-					NewItems = true,
-					Restack = true,
-					TradeGoods = true,
-					Armor = true,
-					Gem = true,
-					CoolStuff = false,
-					Junk = true,
-					ItemSets = false,
-					Consumables = true,
-					Quest = true,
-					BankBlack = true,
-					scale = 1,
-					FilterBank = true,
-					CompressEmpty = true,
-					Unlocked = true,
-					SortBags = true,
-					SortBank = true,
-					BankCustomBags = true,
-					SellJunk = true,
-					}
-
--- Those are internal settings, don't touch them at all:
-local defaults = {}
-
 local ItemSetCaption = (IsAddOnLoaded('ItemRack') and "ItemRack ") or (IsAddOnLoaded('Outfitter') and "Outfitter ") or "Item "
 local bankOpenState = false
+
+-- function cbNivaya:ShowBags(...)
+	-- local bags = {...}
+	-- for i = 1, #bags do
+		-- local bag = bags[i]
+		-- if not cB_BagHidden[bag.name] then
+			-- bag:Show()
+		-- end
+	-- end
+-- end
+
+-- function cbNivaya:HideBags(...)
+	-- local bags = {...}
+	-- for i = 1, #bags do
+		-- local bag = bags[i]
+		-- bag:Hide()
+	-- end
+-- end
 
 function cbNivaya:ShowBags(...)
 	local bags = {...}
@@ -48,6 +41,7 @@ function cbNivaya:ShowBags(...)
 		end
 	end
 end
+
 function cbNivaya:HideBags(...)
 	local bags = {...}
 	for i = 1, #bags do
@@ -56,20 +50,12 @@ function cbNivaya:HideBags(...)
 	end
 end
 
+
+
 function mnkBags:ADDON_LOADED(event, addon)
 
 	if (addon ~= 'mnkBags') then return end
 	self:UnregisterEvent(event)
-	
-	--LoadDefaults()
-	
-	-- cB_filterEnabled["Armor"] = cBnivCfg.Armor
-	-- cB_filterEnabled["Gem"] = cBnivCfg.Gem
-	-- cB_filterEnabled["TradeGoods"] = cBnivCfg.TradeGoods
-	-- cB_filterEnabled["Junk"] = cBnivCfg.Junk
-	-- cB_filterEnabled["ItemSets"] = cBnivCfg.ItemSets
-	-- cB_filterEnabled["Consumables"] = cBnivCfg.Consumables
-	-- cB_filterEnabled["Quest"] = cBnivCfg.Quest
 
 	cBniv.BagPos = true
 
@@ -79,9 +65,6 @@ function mnkBags:ADDON_LOADED(event, addon)
 	local C = cbNivaya:GetContainerClass()
 
 	-- bank bags
-	cB_Bags.bankSets		= C:New("cBniv_BankSets")
-
-	
 	cB_Bags.bankArmor		= C:New("cBniv_BankArmor")
 	cB_Bags.bankGem			= C:New("cBniv_BankGem")
 	cB_Bags.bankConsumables	= C:New("cBniv_BankCons")
@@ -91,8 +74,6 @@ function mnkBags:ADDON_LOADED(event, addon)
 	cB_Bags.bankTrade		= C:New("cBniv_BankTrade")
 	cB_Bags.bankReagent		= C:New("cBniv_BankReagent")
 	cB_Bags.bank			= C:New("cBniv_Bank")
-
-	cB_Bags.bankSets		:SetMultipleFilters(true, cB_Filters.fBank, cB_Filters.fBankFilter, cB_Filters.fItemSets)
 		
 	cB_Bags.bankArmor		:SetExtendedFilter(cB_Filters.fItemClass, "BankArmor")
 	cB_Bags.bankGem			:SetExtendedFilter(cB_Filters.fItemClass, "BankGem")
@@ -105,11 +86,6 @@ function mnkBags:ADDON_LOADED(event, addon)
 	cB_Bags.bank			:SetMultipleFilters(true, cB_Filters.fBank, cB_Filters.fHideEmpty)
 
 	-- inventory bags
-	cB_Bags.key			= C:New("cBniv_Keyring")
-	cB_Bags.bagItemSets	= C:New("cBniv_ItemSets")
-	cB_Bags.bagStuff	= C:New("cBniv_Stuff")
-	
-	
 	cB_Bags.bagJunk		= C:New("cBniv_Junk")
 	cB_Bags.bagNew		= C:New("cBniv_NewItems")
 	cB_Bags.armor		= C:New("cBniv_Armor")
@@ -121,9 +97,6 @@ function mnkBags:ADDON_LOADED(event, addon)
 	cB_Bags.tradegoods	= C:New("cBniv_TradeGoods")
 	cB_Bags.main		= C:New("cBniv_Bag")
 
-	cB_Bags.key			:SetExtendedFilter(cB_Filters.fItemClass, "Keyring")
-	cB_Bags.bagItemSets	:SetFilter(cB_Filters.fItemSets, true)
-	cB_Bags.bagStuff	:SetExtendedFilter(cB_Filters.fItemClass, "Stuff")
 	cB_Bags.bagJunk		:SetExtendedFilter(cB_Filters.fItemClass, "Junk")
 	cB_Bags.bagNew		:SetFilter(cB_Filters.fNewItems, true)
 	cB_Bags.armor		:SetExtendedFilter(cB_Filters.fItemClass, "Armor")
@@ -171,8 +144,7 @@ function cbNivaya:CreateAnchors()
 
 	-- Bank Anchors:
 	CreateAnchorInfo(cB_Bags.bank, 				cB_Bags.bankArmor, "Bottom")
-	CreateAnchorInfo(cB_Bags.bankArmor, 		cB_Bags.bankSets, "Bottom")
-	CreateAnchorInfo(cB_Bags.bankSets, 			cB_Bags.bankGem, "Bottom")
+	CreateAnchorInfo(cB_Bags.bankArmor, 		cB_Bags.bankGem, "Bottom")
 	CreateAnchorInfo(cB_Bags.bankGem, 			cB_Bags.bankTrade, "Bottom")
 	CreateAnchorInfo(cB_Bags.bankTrade, 		cB_Bags.bankReagent, "Bottom")
 	CreateAnchorInfo(cB_Bags.bankReagent, 		cB_Bags.bankConsumables, "Bottom")
@@ -181,14 +153,11 @@ function cbNivaya:CreateAnchors()
 	CreateAnchorInfo(cB_Bags.bankArtifactPower, cB_Bags.bankBattlePet, "Bottom")
 	
 	-- Bag Anchors:
-	CreateAnchorInfo(cB_Bags.main, 			cB_Bags.key, 			"Bottom")
-	CreateAnchorInfo(cB_Bags.main, 			cB_Bags.bagItemSets, 	"Top")
-	CreateAnchorInfo(cB_Bags.bagItemSets, 	cB_Bags.armor, 			"Top")
+	CreateAnchorInfo(cB_Bags.main, 	        cB_Bags.armor, 			"Top")
 	CreateAnchorInfo(cB_Bags.armor, 		cB_Bags.gem, 			"Top")
 	CreateAnchorInfo(cB_Bags.gem, 			cB_Bags.artifactpower,	"Top")
 	CreateAnchorInfo(cB_Bags.artifactpower,	cB_Bags.battlepet, 		"Top")
-	CreateAnchorInfo(cB_Bags.battlepet, 	cB_Bags.bagStuff, 		"Top")
-	CreateAnchorInfo(cB_Bags.bagStuff, 		cB_Bags.tradegoods, 	"Top")
+	CreateAnchorInfo(cB_Bags.battlepet, 	cB_Bags.tradegoods, 	"Top")
 	CreateAnchorInfo(cB_Bags.tradegoods, 	cB_Bags.consumables, 	"Top")
 	CreateAnchorInfo(cB_Bags.consumables, 	cB_Bags.quest, 			"Top")
 	CreateAnchorInfo(cB_Bags.quest, 		cB_Bags.bagJunk, 		"Top")
@@ -217,22 +186,20 @@ end
 
 function cbNivaya:OnOpen()
 	cB_Bags.main:Show()
-	cbNivaya:ShowBags(cB_Bags.armor, cB_Bags.bagNew, cB_Bags.bagItemSets, cB_Bags.gem, cB_Bags.quest, cB_Bags.consumables, cB_Bags.artifactpower, cB_Bags.battlepet, 
-					  cB_Bags.tradegoods, cB_Bags.bagStuff, cB_Bags.bagJunk)
+	cbNivaya:ShowBags(cB_Bags.armor, cB_Bags.bagNew, cB_Bags.gem, cB_Bags.quest, cB_Bags.consumables, cB_Bags.artifactpower, cB_Bags.battlepet,  cB_Bags.tradegoods, cB_Bags.bagJunk)
 end
 
 function cbNivaya:OnClose()
-	cbNivaya:HideBags(cB_Bags.main, cB_Bags.armor, cB_Bags.bagNew, cB_Bags.bagItemSets, cB_Bags.gem, cB_Bags.quest, cB_Bags.consumables, cB_Bags.artifactpower, cB_Bags.battlepet, 
-					  cB_Bags.tradegoods, cB_Bags.bagStuff, cB_Bags.bagJunk, cB_Bags.key)
+	cbNivaya:HideBags(cB_Bags.main, cB_Bags.armor, cB_Bags.bagNew, cB_Bags.gem, cB_Bags.quest, cB_Bags.consumables, cB_Bags.artifactpower, cB_Bags.battlepet, cB_Bags.tradegoods, cB_Bags.bagJunk)
 end
 
 function cbNivaya:OnBankOpened() 
 	cB_Bags.bank:Show(); 
-	cbNivaya:ShowBags(cB_Bags.bankSets, cB_Bags.bankReagent, cB_Bags.bankArmor, cB_Bags.bankGem, cB_Bags.bankQuest, cB_Bags.bankTrade, cB_Bags.bankConsumables, cB_Bags.bankArtifactPower, cB_Bags.bankBattlePet) 
+	cbNivaya:ShowBags(cB_Bags.bankReagent, cB_Bags.bankArmor, cB_Bags.bankGem, cB_Bags.bankQuest, cB_Bags.bankTrade, cB_Bags.bankConsumables, cB_Bags.bankArtifactPower, cB_Bags.bankBattlePet) 
 end
 
 function cbNivaya:OnBankClosed()
-	cbNivaya:HideBags(cB_Bags.bank, cB_Bags.bankSets, cB_Bags.bankReagent, cB_Bags.bankArmor, cB_Bags.bankGem, cB_Bags.bankQuest, cB_Bags.bankTrade, cB_Bags.bankConsumables, cB_Bags.bankArtifactPower, cB_Bags.bankBattlePet)
+	cbNivaya:HideBags(cB_Bags.bank, cB_Bags.bankReagent, cB_Bags.bankArmor, cB_Bags.bankGem, cB_Bags.bankQuest, cB_Bags.bankTrade, cB_Bags.bankConsumables, cB_Bags.bankArtifactPower, cB_Bags.bankBattlePet)
 end
 
 function cbNivaya:ToggleBagPosButtons()
