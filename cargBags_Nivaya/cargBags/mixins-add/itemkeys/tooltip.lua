@@ -35,6 +35,18 @@ local function generateTooltip()
 		tooltip:CreateFontString("$parentTextRight1", nil, "GameTooltipText")
 	)
 end
+local function GetBindText(text)
+	local result
+	if(text:match(ITEM_BIND_ON_EQUIP)) then result = "equip"
+	elseif(text:match(ITEM_SOULBOUND)) then result = "soul"
+	elseif(text:match(ITEM_BIND_QUEST)) then result = "quest"
+	elseif(text:match(ITEM_BIND_TO_ACCOUNT)) then result = "account"
+	elseif(text:match(ITEM_BIND_ON_PICKUP)) then result = "pickup"
+	elseif(text:match(ITEM_BIND_ON_USE)) then result = "use" 
+	end
+	return result
+end
+
 
 cargBags.itemKeys["bindOn"] = function(i)
 	if(not i.link) then return end
@@ -42,18 +54,23 @@ cargBags.itemKeys["bindOn"] = function(i)
 	if(not tooltip) then generateTooltip() end
 	tooltip:ClearLines()
 	tooltip:SetBagItem(i.bagID, i.slotID)
-	local bound = _G[tipName.."TextLeft2"] and _G[tipName.."TextLeft2"]:GetText()
-	if(not bound) then return end
 
-	local bindOn
-	if(bound:match(ITEM_BIND_ON_EQUIP)) then bindOn = "equip"
-	elseif(bound:match(ITEM_SOULBOUND)) then bindOn = "soul"
-	elseif(bound:match(ITEM_BIND_QUEST)) then bindOn = "quest"
-	elseif(bound:match(ITEM_BIND_TO_ACCOUNT)) then bindOn = "account"
-	elseif(bound:match(ITEM_BIND_ON_PICKUP)) then bindOn = "pickup"
-	elseif(bound:match(ITEM_BIND_ON_USE)) then bindOn = "use" end
-
-	i.bindOn = bindOn
-	return bindOn
+	local result = nil
+	local bound = nil
+	bound = _G[tipName.."TextLeft2"] and _G[tipName.."TextLeft2"]:GetText()
+	
+	if (bound) then
+		result = GetBindText(bound)
+	end
+	
+	if not bound or not result then
+		bound = _G[tipName.."TextLeft3"] and _G[tipName.."TextLeft3"]:GetText()
+		if (bound) then
+			result = GetBindText(bound)
+		end
+	end
+	
+	i.bindOn = result
+	return result
 end
 
