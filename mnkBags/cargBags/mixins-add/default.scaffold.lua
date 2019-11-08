@@ -72,7 +72,7 @@ local ilvlSubTypes = {
 
 local function ItemButton_Update(self, item)
 	if item.texture then
-		local tex = item.texture or (cBnivCfg.CompressEmpty and self.bgTex)
+		local tex = item.texture or self.bgTex
 		if tex then
 			self.Icon:SetTexture(tex)
 			self.Icon:SetTexCoord(.08, .92, .08, .92)
@@ -80,12 +80,8 @@ local function ItemButton_Update(self, item)
 			self.Icon:SetColorTexture(1,1,1,0.1)
 		end
 	else
-		if cBnivCfg.CompressEmpty then
-			self.Icon:SetTexture(self.bgTex)
-			self.Icon:SetTexCoord(.08, .92, .08, .92)
-		else
-			self.Icon:SetColorTexture(1,1,1,0.1)
-		end
+		self.Icon:SetTexture(self.bgTex)
+		self.Icon:SetTexCoord(.08, .92, .08, .92)
 	end
 	if(item.count and item.count > 1) then
 		self.Count:SetText(item.count >= 1e3 and "*" or item.count)

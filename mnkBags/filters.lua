@@ -20,8 +20,8 @@ cB_filterEnabled = { Armor = true, Gem = true, Quest = true, TradeGoods = true, 
 cB_Filters.fBags = function(item) return item.bagID >= 0 and item.bagID <= 4 end
 cB_Filters.fBank = function(item) return item.bagID == -1 or item.bagID >= 5 and item.bagID <= 11 end
 cB_Filters.fBankReagent = function(item) return item.bagID == -3 end
-cB_Filters.fBankFilter = function() return cBnivCfg.FilterBank end
-cB_Filters.fHideEmpty = function(item) if cBnivCfg.CompressEmpty then return item.link ~= nil else return true end end
+cB_Filters.fBankFilter = function() return true end
+cB_Filters.fHideEmpty = function(item) return item.link ~= nil end
 
 ------------------------------------
 -- General Classification (cached)
@@ -34,22 +34,15 @@ cB_Filters.fItemClass = function(item, container)
 
 	local isBankBag = item.bagID == -1 or (item.bagID >= 5 and item.bagID <= 11)
 	if isBankBag then
-		bag = (cB_existsBankBag[t] and cBnivCfg.FilterBank and cB_filterEnabled[t]) and "Bank"..t or "Bank"
+		bag = (cB_existsBankBag[t]) and "Bank"..t or "Bank"
 	else
-		bag = (t ~= "NoClass" and cB_filterEnabled[t]) and t or "Bag"
+		bag = (t ~= "NoClass") and t or "Bag"
 	end
 
 	return bag == container
 end
 
 function cbNivaya:ClassifyItem(item)
-	-- keyring
-	if item.bagID == -2 then cB_ItemClass[item.id] = "Keyring"; return true end
-
-	-- user assigned containers
-	local tC = cBniv_CatInfo[item.id]
-	if tC then cB_ItemClass[item.id] = tC; return true end
-
 	-- junk
 	if (item.rarity == 0) then cB_ItemClass[item.id] = "Junk"; return true end
 
@@ -72,11 +65,10 @@ end
 -- New Items filter and related functions
 ------------------------------------------
 cB_Filters.fNewItems = function(item)
-	if not cBnivCfg.NewItems then return false end
 	if not ((item.bagID >= 0) and (item.bagID <= 4)) then return false end
 	if not item.link then return false end
 	if not cB_KnownItems[item.id] then return true end
-	local t = GetItemCount(item.id)	--cbNivaya:getItemCount(item.id)
+	local t = GetItemCount(item.id)
 	return (t > cB_KnownItems[item.id]) and true or false
 end
 

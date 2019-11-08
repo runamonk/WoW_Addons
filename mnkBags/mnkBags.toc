@@ -1,7 +1,7 @@
 ## Interface: 80200
 ## Title: mnkBags
 ## Author: runamonk
-## SavedVariables: cBnivCfg, cB_CustomBags, cBniv_CatInfo
+## SavedVariables: 
 ## SavedVariablesPerCharacter: cB_KnownItems, cBniv
 ## Dependencies: mnkLibs
 ## X-cargBags: cargBags
