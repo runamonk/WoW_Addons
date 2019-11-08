@@ -80,80 +80,13 @@ cB_Filters.fNewItems = function(item)
 	return (t > cB_KnownItems[item.id]) and true or false
 end
 
------------------------------------------
--- Item Set filter and related functions
------------------------------------------
-local item2setIR = {} -- ItemRack
-local item2setOF = {} -- Outfitter
-local IR = IsAddOnLoaded('ItemRack')
-local OF = IsAddOnLoaded('Outfitter')
-
 cB_Filters.fItemSets = function(item)
-	--print("fItemSets", item, item.isInSet)
 	if not cB_filterEnabled["ItemSets"] then return false end
 	if not item.link then return false end
 	local tC = cBniv_CatInfo[item.name]
 	if tC then return (tC == "ItemSets") and true or false end
-	-- Check ItemRack sets:
-	if item2setIR[string.match(item.link,"item:(.+):%-?%d+")] then return true end
-	-- Check Outfitter sets:
-	local _,_,itemStr = string.find(item.link, "^|c%x+|H(.+)|h%[.*%]")
-	if item2setOF[itemStr] then return true end
-	-- Check Equipment Manager sets:
-	if cargBags.itemKeys["setID"](item) then return true end
+
    return false
 end
 
--- ItemRack related
-local function cacheSetsIR()
-	for k in pairs(item2setIR) do item2setIR[k] = nil end
-	local IRsets = ItemRackUser.Sets
-	for i in next, IRsets do
-		if not string.find(i, "^~") then 
-			for _,item in pairs(IRsets[i].equip) do
-				if item then item2setIR[item] = true end
-			end
-		end
-	end
-	cbNivaya:UpdateBags()
-end
 
-if IR then
-	cacheSetsIR()
-	local function ItemRackOpt_CreateHooks()
-		local IRsaveSet = ItemRackOpt.SaveSet
-		function ItemRackOpt.SaveSet(...) IRsaveSet(...); cacheSetsIR() end
-		local IRdeleteSet = ItemRackOpt.DeleteSet
-		function ItemRackOpt.DeleteSet(...) IRdeleteSet(...); cacheSetsIR() end
-	end
-	local IRtoggleOpts = ItemRack.ToggleOptions
-	function ItemRack.ToggleOptions(...) IRtoggleOpts(...) ItemRackOpt_CreateHooks() end
-end
-
--- Outfitter related
-local pLevel = UnitLevel("player")
-local function createItemString(i) return string.format("item:%d:%d:%d:%d:%d:%d:%d:%d:%d", i.Code, i.EnchantCode or 0, i.JewelCode1 or 0, i.JewelCode2 or 0, i.JewelCode3 or 0, i.JewelCode4 or 0, i.SubCode or 0, i.UniqueID or 0, pLevel) end
-
-local function cacheSetsOF()
-	for k in pairs(item2setOF) do item2setOF[k] = nil end
-	for _,id in ipairs(Outfitter_GetCategoryOrder()) do
-		local OFsets = Outfitter_GetOutfitsByCategoryID(id)
-		for _,vSet in pairs(OFsets) do
-			for _,item in pairs(vSet.Items) do
-				if item then item2setOF[createItemString(item)] = true end
-			end
-		end
-	end
-	cbNivaya:UpdateBags()
-end
-
-if OF then
-	Outfitter_RegisterOutfitEvent("ADD_OUTFIT", cacheSetsOF)
-	Outfitter_RegisterOutfitEvent("DELETE_OUTFIT", cacheSetsOF)
-	Outfitter_RegisterOutfitEvent("EDIT_OUTFIT", cacheSetsOF)
-	if Outfitter:IsInitialized() then
-		cacheSetsOF()
-	else
-		Outfitter_RegisterOutfitEvent('OUTFITTER_INIT', cacheSetsOF)
-	end
-end
