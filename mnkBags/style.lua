@@ -2,7 +2,7 @@ local addon, ns = ...
 local cargBags = ns.cargBags
 
 local _
-local L = cBnivL
+local L = mnkBags_Locals
 
 local mediaPath = [[Interface\AddOns\mnkBags\media\]]
 local Textures = {
@@ -25,8 +25,8 @@ local itemSlotSize = 32
 ------------------------------------------
 -- MyContainer specific
 ------------------------------------------
-local cbNivaya = cargBags:GetImplementation("Nivaya")
-local MyContainer = cbNivaya:GetContainerClass()
+local _cargBags = cargBags:GetImplementation("mnkBags_cargBags")
+local MyContainer = _cargBags:GetContainerClass()
 
 local function GetClassColor(class)
 	if not RAID_CLASS_COLORS[class] then return {1, 1, 1} end
@@ -87,8 +87,8 @@ function MyContainer:OnContentsChanged(forced)
 
 	local tName = self.name
 	local tBankBags = string.find(tName, "Bank")
-	local tBank = tBankBags or (tName == "cBniv_Bank")
-	local tReagent = (tName == "cBniv_BankReagent")
+	local tBank = tBankBags or (tName == "bag_Bank")
+	local tReagent = (tName == "bag_BankReagent")
 	
 	local numSlotsBag = {GetNumFreeSlots("bag")}
 	local numSlotsBank = {GetNumFreeSlots("bank")}
@@ -106,7 +106,7 @@ function MyContainer:OnContentsChanged(forced)
 
 	local buttonIDs = {}
   	for i, button in pairs(self.buttons) do
-		local item = cbNivaya:GetItemInfo(button.bagID, button.slotID)
+		local item = _cargBags:GetItemInfo(button.bagID, button.slotID)
 		if item.link then
 			buttonIDs[i] = { item.id, item.rarity, button, item.count }
 		else
@@ -149,9 +149,9 @@ function MyContainer:OnContentsChanged(forced)
 		end
 	end
 	
-	cB_Bags.main.EmptySlotCounter:SetText(GetNumFreeSlots("bag"))
-	cB_Bags.bank.EmptySlotCounter:SetText(GetNumFreeSlots("bank"))
-	cB_Bags.bankReagent.EmptySlotCounter:SetText(GetNumFreeSlots("bankReagent"))
+	_Bags.main.EmptySlotCounter:SetText(GetNumFreeSlots("bag"))
+	_Bags.bank.EmptySlotCounter:SetText(GetNumFreeSlots("bank"))
+	_Bags.bankReagent.EmptySlotCounter:SetText(GetNumFreeSlots("bankReagent"))
 
 	
 	-- This variable stores the size of the item button container
@@ -159,22 +159,22 @@ function MyContainer:OnContentsChanged(forced)
 
 	if (self.UpdateDimensions) then self:UpdateDimensions() end -- Update the bag's height
 	self:SetWidth((itemSlotSize + 4) * self.Columns + 4)
-	local t = (tName == "cBniv_Bag") or (tName == "cBniv_Bank") or (tName == "cBniv_BankReagent")
-	local tAS = (tName == "cBniv_Ammo") or (tName == "cBniv_Soulshards")
-	local bankShown = cB_Bags.bank:IsShown()
-	if (not tBankBags and cB_Bags.main:IsShown() and not (t or tAS)) or (tBankBags and bankShown) then 
+	local t = (tName == "bag_Bag") or (tName == "bag_Bank") or (tName == "bag_BankReagent")
+	local tAS = (tName == "bag_Ammo") or (tName == "bag_Soulshards")
+	local bankShown = _Bags.bank:IsShown()
+	if (not tBankBags and _Bags.main:IsShown() and not (t or tAS)) or (tBankBags and bankShown) then 
 		if isEmpty then
 			self:Hide()
 			if bankShown then
-				cB_Bags.bank:Show()
+				_Bags.bank:Show()
 			end
 		else
 			self:Show()
 		end 
 	end
 
-	cB_BagHidden[tName] = (not t) and isEmpty or false
-	cbNivaya:UpdateAnchors()
+	_BagHidden[tName] = (not t) and isEmpty or false
+	_cargBags:UpdateAnchors()
 
 	--update all other bags as well
 	if needColumnUpdate and not forced then
@@ -207,7 +207,7 @@ local function SellJunk()
 
 	for BagID = 0, 4 do
 		for BagSlot = 1, GetContainerNumSlots(BagID) do
-			item = cbNivaya:GetItemInfo(BagID, BagSlot)
+			item = _cargBags:GetItemInfo(BagID, BagSlot)
 			if item then
 				if item.rarity == 0 and item.sellPrice ~= 0 then
 					Profit = Profit + (item.sellPrice * item.count)
@@ -227,7 +227,7 @@ JS:SetScript("OnEvent", function() SellJunk() end)
 
 -- Restack Items
 local restackItems = function(self)
-	local tBag, tBank = (self.name == "cBniv_Bag"), (self.name == "cBniv_Bank")
+	local tBag, tBank = (self.name == "bag_Bag"), (self.name == "bag_Bank")
 	--local loc = tBank and "bank" or "bags"
 	if tBank then
 		SortBankBags()
@@ -252,7 +252,7 @@ local resetNewItems = function(self)
 		local tNumSlots = GetContainerNumSlots(bag)
 		if tNumSlots > 0 then
 			for slot = 1, tNumSlots do
-				local item = cbNivaya:GetItemInfo(bag, slot)
+				local item = _cargBags:GetItemInfo(bag, slot)
 				--print("resetNewItems", item.id)
 				if item.id then
 					if mnkBagsKnownItems[item.id] then
@@ -264,7 +264,7 @@ local resetNewItems = function(self)
 			end 
 		end
 	end
-	cbNivaya:UpdateBags()
+	_cargBags:UpdateBags()
 end
 function cbNivResetNew()
 	resetNewItems()
@@ -279,7 +279,7 @@ local UpdateDimensions = function(self)
 		height = height + 16	-- additional info display space
 	end
 	if self.bagToggle then
-		local tBag = (self.name == "cBniv_Bag")
+		local tBag = (self.name == "bag_Bag")
 		local fheight = (ns.options.fonts.standard[2] + 4)
 		local extraHeight = (tBag and self.hintShown) and (fheight + 4) or 0
 		height = height + 24 + extraHeight
@@ -418,7 +418,7 @@ function MyContainer:OnCreate(name, settings)
 	self.Settings = settings
 	self.name = name
 
-	local tBag, tBank, tReagent = (name == "cBniv_Bag"), (name == "cBniv_Bank"), (name == "cBniv_BankReagent")
+	local tBag, tBank, tReagent = (name == "bag_Bag"), (name == "bag_Bank"), (name == "bag_BankReagent")
 	local tBankBags = string.find(name, "Bank")
 
 	table.insert((tBankBags and BankFrames or BagFrames), self)
@@ -474,7 +474,7 @@ function MyContainer:OnCreate(name, settings)
 	if(caption) then
 		local t = L.bagCaptions[self.name] or (tBankBags and strsub(self.name, 5))
 		if not t then t = self.name end
-		if self.Name == "cBniv_ItemSets" then t=ItemSetCaption..t end
+		if self.Name == "bag_ItemSets" then t=ItemSetCaption..t end
 		caption:SetText(t)
 		caption:SetPoint("TOPLEFT", 3, -1)
 		self.Caption = caption
@@ -493,7 +493,7 @@ function MyContainer:OnCreate(name, settings)
 			close:SetHighlightTexture("Interface\\AddOns\\mnkBags\\media\\CloseButton\\UI-Panel-MinimizeButton-Highlight", "ADD")
 			close:ClearAllPoints()
 			close:SetPoint("TOPRIGHT", 8, 8)
-			close:SetScript("OnClick", function(self) if cbNivaya:AtBank() then CloseBankFrame() else CloseAllBags() end end)
+			close:SetScript("OnClick", function(self) if _cargBags:AtBank() then CloseBankFrame() else CloseAllBags() end end)
 		end
 	end
 		
@@ -657,6 +657,6 @@ end
 ------------------------------------------
 -- MyButton specific
 ------------------------------------------
-local MyButton = cbNivaya:GetItemButtonClass()
+local MyButton = _cargBags:GetItemButtonClass()
 MyButton:Scaffold("Default")
 
