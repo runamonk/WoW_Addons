@@ -7,7 +7,7 @@ mnkBags:RegisterEvent("ADDON_LOADED")
 
 local cbNivaya = cargBags:GetImplementation("Nivaya")
 
-local L = cBnivL
+local L = mbLocals
 _Bags = {}
 cB_BagHidden = {}
 mnkBagsGlobals = {}

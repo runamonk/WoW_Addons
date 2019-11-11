@@ -2,7 +2,7 @@ local addon, ns = ...
 local cargBags = ns.cargBags
 
 local _
-local L = cBnivL
+local L = mbLocals
 
 local mediaPath = [[Interface\AddOns\mnkBags\media\]]
 local Textures = {
