@@ -149,9 +149,9 @@ function MyContainer:OnContentsChanged(forced)
 		end
 	end
 	
-	cB_Bags.main.EmptySlotCounter:SetText(GetNumFreeSlots("bag"))
-	cB_Bags.bank.EmptySlotCounter:SetText(GetNumFreeSlots("bank"))
-	cB_Bags.bankReagent.EmptySlotCounter:SetText(GetNumFreeSlots("bankReagent"))
+	_Bags.main.EmptySlotCounter:SetText(GetNumFreeSlots("bag"))
+	_Bags.bank.EmptySlotCounter:SetText(GetNumFreeSlots("bank"))
+	_Bags.bankReagent.EmptySlotCounter:SetText(GetNumFreeSlots("bankReagent"))
 
 	
 	-- This variable stores the size of the item button container
@@ -161,12 +161,12 @@ function MyContainer:OnContentsChanged(forced)
 	self:SetWidth((itemSlotSize + 4) * self.Columns + 4)
 	local t = (tName == "cBniv_Bag") or (tName == "cBniv_Bank") or (tName == "cBniv_BankReagent")
 	local tAS = (tName == "cBniv_Ammo") or (tName == "cBniv_Soulshards")
-	local bankShown = cB_Bags.bank:IsShown()
-	if (not tBankBags and cB_Bags.main:IsShown() and not (t or tAS)) or (tBankBags and bankShown) then 
+	local bankShown = _Bags.bank:IsShown()
+	if (not tBankBags and _Bags.main:IsShown() and not (t or tAS)) or (tBankBags and bankShown) then 
 		if isEmpty then
 			self:Hide()
 			if bankShown then
-				cB_Bags.bank:Show()
+				_Bags.bank:Show()
 			end
 		else
 			self:Show()
