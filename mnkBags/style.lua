@@ -252,9 +252,6 @@ local resetNewItems = function(self)
 	end
 	cbmb:UpdateBags()
 end
-function cbNivResetNew()
-	resetNewItems()
-end
 
 local UpdateDimensions = function(self)
 	local height = 0			-- Normal margin space
@@ -523,14 +520,11 @@ function MyContainer:OnCreate(name, settings)
 		if dtNT then dtNT:SetTexture(nil) end
 		
 		self.DropTarget.bg = CreateFrame("Frame", nil, self.DropTarget)
-		self.DropTarget.bg:SetAllPoints()
-		self.DropTarget.bg:SetBackdrop({
-			bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
-			edgeFile = "Interface\\Buttons\\WHITE8x8",
-			tile = false, tileSize = 16, edgeSize = 1,
-		})
+		self.DropTarget.bg:SetAllPoints()	
+		mnkLibs.setBackdrop(self.DropTarget.bg, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
 		self.DropTarget.bg:SetBackdropColor(1, 1, 1, 0.1)
 		self.DropTarget.bg:SetBackdropBorderColor(0, 0, 0, 1)
+
 		self.DropTarget:SetWidth(itemSlotSize+1)
 		self.DropTarget:SetHeight(itemSlotSize+1)
 		
