@@ -85,7 +85,7 @@ function cbNivaya:UpdateAnchors()
 		
 		if not ((k == 'main') or (k == 'bank')) then
 			cB_Bags[k]:ClearAllPoints()					
-			if (cB_Bags[k].name:sub(1, 10) == 'cBniv_Bank') then	
+			if (cB_Bags[k].name:sub(1, string.len('cBniv_Bank')) == 'cBniv_Bank') then	
 				if not lastBank then lastBank = cB_Bags.bank end
 				if not cB_BagHidden[lastBank.name] then
 					cB_Bags[k]:SetPoint("TOPLEFT", lastBank, "BOTTOMLEFT", 0, -9)
@@ -108,7 +108,7 @@ end
 
 function cbNivaya:OnOpen()
 	for k,_ in pairs(cB_Bags) do
-		if (cB_Bags[k].name:sub(1, 10) ~= 'cBniv_Bank') and not cB_BagHidden[cB_Bags[k].name] then
+		if (cB_Bags[k].name:sub(1, string.len('cBniv_Bank')) ~= 'cBniv_Bank') and not cB_BagHidden[cB_Bags[k].name] then
 			cB_Bags[k]:Show()
 		end
 	end
