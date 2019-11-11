@@ -88,7 +88,7 @@ function cbmb:UpdateAnchors()
 			if (_Bags[k].name:sub(1, string.len('mb_Bank')) == 'mb_Bank') then	
 				if not lastBank then lastBank = _Bags.bank end
 				if not _BagsHidden[lastBank.name] then
-					_Bags[k]:SetPoint("TOPLEFT", lastBank, "BOTTOMLEFT", 0, -9)
+					_Bags[k]:SetPoint("TOPLEFT", lastBank, "BOTTOMLEFT", 0, -12)
 				else
 					_Bags[k]:SetPoint("TOPLEFT", lastBank, "TOPLEFT", 0, 0)
 				end
@@ -96,7 +96,7 @@ function cbmb:UpdateAnchors()
 			else
 				if not lastMain then lastMain = _Bags.main end
 				if not _BagsHidden[lastMain.name] then
-					_Bags[k]:SetPoint("BOTTOMLEFT", lastMain, "TOPLEFT", 0, 9)
+					_Bags[k]:SetPoint("BOTTOMLEFT", lastMain, "TOPLEFT", 0, 12)
 				else
 					_Bags[k]:SetPoint("BOTTOMLEFT", lastMain, "BOTTOMLEFT", 0, 0)
 				end
