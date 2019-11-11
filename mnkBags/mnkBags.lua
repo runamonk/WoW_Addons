@@ -23,15 +23,15 @@ function mnkBags:ADDON_LOADED(event, addon)
 	local C = cbNivaya:GetContainerClass()
 
 	-- bank bags
-	_Bags.bankArmor		= C:New("cBniv_BankArmor")
-	_Bags.bankGem			= C:New("cBniv_BankGem")
-	_Bags.bankConsumables	= C:New("cBniv_BankCons")
-	_Bags.bankArtifactPower	= C:New("cBniv_BankArtifactPower")
-	_Bags.bankBattlePet	= C:New("cBniv_BankPet")
-	_Bags.bankQuest		= C:New("cBniv_BankQuest")
-	_Bags.bankTrade		= C:New("cBniv_BankTrade")
-	_Bags.bankReagent		= C:New("cBniv_BankReagent")
-	_Bags.bank			= C:New("cBniv_Bank")
+	_Bags.bankArmor		= C:New("mb_BankArmor")
+	_Bags.bankGem			= C:New("mb_BankGem")
+	_Bags.bankConsumables	= C:New("mb_BankCons")
+	_Bags.bankArtifactPower	= C:New("mb_BankArtifactPower")
+	_Bags.bankBattlePet	= C:New("mb_BankPet")
+	_Bags.bankQuest		= C:New("mb_BankQuest")
+	_Bags.bankTrade		= C:New("mb_BankTrade")
+	_Bags.bankReagent		= C:New("mb_BankReagent")
+	_Bags.bank			= C:New("mb_Bank")
 		
 	_Bags.bankArmor		:SetExtendedFilter(cB_Filters.fItemClass, "BankArmor")
 	_Bags.bankGem			:SetExtendedFilter(cB_Filters.fItemClass, "BankGem")
@@ -44,16 +44,16 @@ function mnkBags:ADDON_LOADED(event, addon)
 	_Bags.bank			:SetMultipleFilters(true, cB_Filters.fBank, cB_Filters.fHideEmpty)
 
 	-- inventory bags
-	_Bags.bagJunk		= C:New("cBniv_Junk")
-	_Bags.bagNew		= C:New("cBniv_NewItems")
-	_Bags.armor		= C:New("cBniv_Armor")
-	_Bags.gem			= C:New("cBniv_Gem")
-	_Bags.quest		= C:New("cBniv_Quest")
-	_Bags.consumables	= C:New("cBniv_Consumables")
-	_Bags.artifactpower	= C:New("cBniv_ArtifactPower")
-	_Bags.battlepet	= C:New("cBniv_BattlePet")
-	_Bags.tradegoods	= C:New("cBniv_TradeGoods")
-	_Bags.main		= C:New("cBniv_Bag")
+	_Bags.bagJunk		= C:New("mb_Junk")
+	_Bags.bagNew		= C:New("mb_NewItems")
+	_Bags.armor		= C:New("mb_Armor")
+	_Bags.gem			= C:New("mb_Gem")
+	_Bags.quest		= C:New("mb_Quest")
+	_Bags.consumables	= C:New("mb_Consumables")
+	_Bags.artifactpower	= C:New("mb_ArtifactPower")
+	_Bags.battlepet	= C:New("mb_BattlePet")
+	_Bags.tradegoods	= C:New("mb_TradeGoods")
+	_Bags.main		= C:New("mb_Bag")
 
 	_Bags.bagJunk		:SetExtendedFilter(cB_Filters.fItemClass, "Junk")
 	_Bags.bagNew		:SetFilter(cB_Filters.fNewItems, true)
@@ -85,7 +85,7 @@ function cbNivaya:UpdateAnchors()
 		
 		if not ((k == 'main') or (k == 'bank')) then
 			_Bags[k]:ClearAllPoints()					
-			if (_Bags[k].name:sub(1, string.len('cBniv_Bank')) == 'cBniv_Bank') then	
+			if (_Bags[k].name:sub(1, string.len('mb_Bank')) == 'mb_Bank') then	
 				if not lastBank then lastBank = _Bags.bank end
 				if not cB_BagHidden[lastBank.name] then
 					_Bags[k]:SetPoint("TOPLEFT", lastBank, "BOTTOMLEFT", 0, -9)
@@ -108,7 +108,7 @@ end
 
 function cbNivaya:OnOpen()
 	for k,_ in pairs(_Bags) do
-		if (_Bags[k].name:sub(1, string.len('cBniv_Bank')) ~= 'cBniv_Bank') and not cB_BagHidden[_Bags[k].name] then
+		if (_Bags[k].name:sub(1, string.len('mb_Bank')) ~= 'mb_Bank') and not cB_BagHidden[_Bags[k].name] then
 			_Bags[k]:Show()
 		end
 	end
@@ -186,13 +186,13 @@ Event:SetScript('OnEvent', function(self, event, ...)
 		cbNivaya:UpdateBags()
 
 		if IsReagentBankUnlocked() then
-			NivayacBniv_Bank.reagentBtn:Show()
+			Nivayamb_Bank.reagentBtn:Show()
 		else
-			NivayacBniv_Bank.reagentBtn:Hide()
-			local buyReagent = CreateFrame("Button", nil, NivayacBniv_BankReagent, "UIPanelButtonTemplate")
+			Nivayamb_Bank.reagentBtn:Hide()
+			local buyReagent = CreateFrame("Button", nil, Nivayamb_BankReagent, "UIPanelButtonTemplate")
 			buyReagent:SetText(BANKSLOTPURCHASE)
 			buyReagent:SetWidth(buyReagent:GetTextWidth() + 20)
-			buyReagent:SetPoint("CENTER", NivayacBniv_BankReagent, 0, 0)
+			buyReagent:SetPoint("CENTER", Nivayamb_BankReagent, 0, 0)
 			buyReagent:SetScript("OnEnter", function(self)
 				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 				GameTooltip:AddLine(REAGENT_BANK_HELP, 1, 1, 1, true)
@@ -206,7 +206,7 @@ Event:SetScript('OnEvent', function(self, event, ...)
 			end)
 			buyReagent:SetScript("OnEvent", function(...)
 				buyReagent:UnregisterEvent("REAGENTBANK_PURCHASED")
-				NivayacBniv_Bank.reagentBtn:Show()
+				Nivayamb_Bank.reagentBtn:Show()
 				buyReagent:Hide()
 			end)
 
