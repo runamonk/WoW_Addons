@@ -186,7 +186,7 @@ end
 local JS = CreateFrame("Frame")
 JS:RegisterEvent("MERCHANT_SHOW")
 local function SellJunk()
-	--if not(cBnivCfg.SellJunk) or (UnitLevel("player") < 5) then return end
+	--if (UnitLevel("player") < 5) then return end
 	
 	local Profit, SoldCount = 0, 0
 	local item
