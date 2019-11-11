@@ -25,8 +25,8 @@ local itemSlotSize = 32
 ------------------------------------------
 -- MyContainer specific
 ------------------------------------------
-local cbNivaya = cargBags:GetImplementation("Nivaya")
-local MyContainer = cbNivaya:GetContainerClass()
+local cbmb = cargBags:GetImplementation("mb")
+local MyContainer = cbmb:GetContainerClass()
 
 local function GetClassColor(class)
 	if not RAID_CLASS_COLORS[class] then return {1, 1, 1} end
@@ -106,7 +106,7 @@ function MyContainer:OnContentsChanged(forced)
 
 	local buttonIDs = {}
   	for i, button in pairs(self.buttons) do
-		local item = cbNivaya:GetItemInfo(button.bagID, button.slotID)
+		local item = cbmb:GetItemInfo(button.bagID, button.slotID)
 		if item.link then
 			buttonIDs[i] = { item.id, item.rarity, button, item.count }
 		else
@@ -174,7 +174,7 @@ function MyContainer:OnContentsChanged(forced)
 	end
 
 	_BagsHidden[tName] = (not t) and isEmpty or false
-	cbNivaya:UpdateAnchors()
+	cbmb:UpdateAnchors()
 
 	--update all other bags as well
 	if needColumnUpdate and not forced then
@@ -207,7 +207,7 @@ local function SellJunk()
 
 	for BagID = 0, 4 do
 		for BagSlot = 1, GetContainerNumSlots(BagID) do
-			item = cbNivaya:GetItemInfo(BagID, BagSlot)
+			item = cbmb:GetItemInfo(BagID, BagSlot)
 			if item then
 				if item.rarity == 0 and item.sellPrice ~= 0 then
 					Profit = Profit + (item.sellPrice * item.count)
@@ -252,7 +252,7 @@ local resetNewItems = function(self)
 		local tNumSlots = GetContainerNumSlots(bag)
 		if tNumSlots > 0 then
 			for slot = 1, tNumSlots do
-				local item = cbNivaya:GetItemInfo(bag, slot)
+				local item = cbmb:GetItemInfo(bag, slot)
 				--print("resetNewItems", item.id)
 				if item.id then
 					if mnkBagsKnownItems[item.id] then
@@ -264,7 +264,7 @@ local resetNewItems = function(self)
 			end 
 		end
 	end
-	cbNivaya:UpdateBags()
+	cbmb:UpdateBags()
 end
 function cbNivResetNew()
 	resetNewItems()
@@ -493,7 +493,7 @@ function MyContainer:OnCreate(name, settings)
 			close:SetHighlightTexture("Interface\\AddOns\\mnkBags\\media\\CloseButton\\UI-Panel-MinimizeButton-Highlight", "ADD")
 			close:ClearAllPoints()
 			close:SetPoint("TOPRIGHT", 8, 8)
-			close:SetScript("OnClick", function(self) if cbNivaya:AtBank() then CloseBankFrame() else CloseAllBags() end end)
+			close:SetScript("OnClick", function(self) if cbmb:AtBank() then CloseBankFrame() else CloseAllBags() end end)
 		end
 	end
 		
@@ -657,6 +657,6 @@ end
 ------------------------------------------
 -- MyButton specific
 ------------------------------------------
-local MyButton = cbNivaya:GetItemButtonClass()
+local MyButton = cbmb:GetItemButtonClass()
 MyButton:Scaffold("Default")
 
