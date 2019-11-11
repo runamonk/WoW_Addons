@@ -86,10 +86,12 @@ function ItemButton:Create(tpl, parent)
 	if btnBIT then btnBIT:SetTexture("") end
 	
 	button:SetSize(32, 32)
+	
 	bFS = _G[button:GetName().."Count"]
+	bFS.Count = mnkLibs.createFontString(button, mnkLibs.Fonts.ap, 16, nil, nil, true)
 	bFS:ClearAllPoints()
 	bFS:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 1.5, 1.5);
-	bFS:SetFont(unpack(ns.options.fonts.itemCount))
+
 	return button
 end
 

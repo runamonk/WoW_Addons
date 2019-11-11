@@ -280,12 +280,12 @@ local UpdateDimensions = function(self)
 	end
 	if self.bagToggle then
 		local tBag = (self.name == "mb_Bag")
-		local fheight = (ns.options.fonts.standard[2] + 4)
+		local fheight = (20)
 		local extraHeight = (tBag and self.hintShown) and (fheight + 4) or 0
 		height = height + 24 + extraHeight
 	end
 	if self.Caption then		-- Space for captions
-		local fheight = (ns.options.fonts.standard[2] + 12)
+		local fheight = (28)
 		height = height + fheight
 	end
 	self:SetHeight(self.ContainerHeight + height)
@@ -351,8 +351,7 @@ local createIconButton = function (name, parent, texture, point, hint, isBag)
 		button.icon:SetVertexColor(0.8, 0.8, 0.8)
 	end
 	
-	button.tooltip = button:CreateFontString()
-	button.tooltip:SetFont(unpack(ns.options.fonts.standard))
+	button.tooltip = mnkLibs.createFontString(button, mnkLibs.Fonts.ap, 16, nil, nil, true)
 	button.tooltip:SetJustifyH("RIGHT")
 	button.tooltip:SetText(hint)
 	button.tooltip:SetTextColor(0.8, 0.8, 0.8)
@@ -446,13 +445,8 @@ function MyContainer:OnCreate(name, settings)
 	self.ContainerHeight = 0
 	self:UpdateDimensions()
 	self:SetWidth((itemSlotSize + 2) * self.Columns + 2)
-
-	-- The frame background
-	local color_rb = ns.options.colors.background[1]
-	local color_gb = ns.options.colors.background[2]
-	local color_bb = ns.options.colors.background[3]
-	local alpha_fb = ns.options.colors.background[4]
-
+	
+	
 	-- The frame background
 	local background = CreateFrame("Frame", nil, self)
 	background:SetBackdrop{
@@ -469,8 +463,8 @@ function MyContainer:OnCreate(name, settings)
 	background:SetPoint("BOTTOMRIGHT", 4, -4)
 
 	-- Caption, close button
-	local caption = background:CreateFontString(background, "OVERLAY", nil)
-	caption:SetFont(unpack(ns.options.fonts.standard))
+	local caption = mnkLibs.createFontString(background, mnkLibs.Fonts.ap, 16, nil, nil, true)
+	
 	if(caption) then
 		local t = L.bagCaptions[self.name] or (tBankBags and strsub(self.name, 5))
 		if not t then t = self.name end
@@ -639,9 +633,8 @@ function MyContainer:OnCreate(name, settings)
 		searchIcon:SetHeight(16)
 		
 		-- Hint
-		self.hint = background:CreateFontString(nil, "OVERLAY", nil)
+		self.hint = mnkLibs.createFontString(infoFrame, mnkLibs.Fonts.ap, 16, nil, nil, true)
 		self.hint:SetPoint("BOTTOMLEFT", infoFrame, -0.5, 31.5)
-		self.hint:SetFont(unpack(ns.options.fonts.standard))
 		self.hint:SetTextColor(1, 1, 1, 0.4)
 		self.hint:SetText("")
 		self.hintShown = true

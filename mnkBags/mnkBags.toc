@@ -6,9 +6,8 @@
 ## Dependencies: mnkLibs
 ## X-cargBags: cargBags
 
-config.lua
-
 cargBags\embed.xml
+
 localization.lua
 filters.lua
 style.lua
