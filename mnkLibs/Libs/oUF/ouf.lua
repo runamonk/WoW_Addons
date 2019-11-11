@@ -707,6 +707,8 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 	-- driver to create, update, and remove Blizz nameplates.
 	-- Disable only not forbidden nameplates.
 	NamePlateDriverFrame:HookScript('OnEvent', function(_, event, unit)
+		if UnitIsPlayer(unit) then return end
+		
 		if(event == 'NAME_PLATE_UNIT_ADDED' and unit) then
 			self:DisableBlizzard(unit)
 		end
@@ -735,6 +737,7 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 				end
 			end
 		elseif(event == 'PLAYER_TARGET_CHANGED') then
+			if UnitIsPlayer(unit) then return end		
 			local nameplate = C_NamePlate.GetNamePlateForUnit('target')
 			if(not nameplate) then return end
 
@@ -744,9 +747,9 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 				nameplateCallback(nameplate.unitFrame, event, 'target')
 			end
 		elseif(event == 'NAME_PLATE_UNIT_ADDED' and unit) then
+			if UnitIsPlayer(unit) then return end		
 			local nameplate = C_NamePlate.GetNamePlateForUnit(unit)
 			if(not nameplate) then return end
-
 			if(not nameplate.unitFrame) then
 				nameplate.style = style
 
@@ -768,9 +771,9 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 				nameplateCallback(nameplate.unitFrame, event, unit)
 			end
 		elseif(event == 'NAME_PLATE_UNIT_REMOVED' and unit) then
+			if UnitIsPlayer(unit) then return end
 			local nameplate = C_NamePlate.GetNamePlateForUnit(unit)
 			if(not nameplate) then return end
-
 			nameplate.unitFrame:SetAttribute('unit', nil)
 			nameplate.unitFrame:UpdateAllElements(event)
 
