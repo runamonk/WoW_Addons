@@ -1,73 +1,85 @@
-**Changes in 8.0.2:**
+**Changes in 9.3.1:**
+
+- _Val Voronov (2):_
+    1. auras: Add comments regarding anchoring restrictions
+    2. auras: Fix copypasta
+- 1 file changed, 10 insertions(+), 1 deletion(-)
+
+**Changes in 9.3.0:**
 
 - _Val Voronov (1):_
-    1. phaseindicator: Fix logic ([#446](https://github.com/oUF-wow/oUF/issues/446))
-- 1 file changed, 1 insertion(+), 1 deletion(-)
+    1. auras: Add .tooltipAnchor option ([#511](https://github.com/oUF-wow/oUF/issues/511))
+- 1 file changed, 21 insertions(+), 1 deletion(-)
 
-**Changes in 8.0.1:**
+**Changes in 9.2.2:**
 
 - _Val Voronov (1):_
-    1. phaseindicator: Add war mode support
-- 1 file changed, 1 insertion(+), 1 deletion(-)
+    1. blizzard: Do not hook nameplates' scripts more than once ([#508](https://github.com/oUF-wow/oUF/issues/508))
+- 1 file changed, 4 insertions(+), 1 deletion(-)
 
-**Changes in 8.0.0:**
+**Changes in 9.2.1:**
 
-- _Adrian L Lange (5):_
-    1. tags: Add extra units support
-    2. core: Further enforce global uniqueness
-    3. core: Add a fallback to global for PetBattleFrameHider
-    4. portrait: Add new event for updates
-    5. core: Declare PetBattleFrameHider in Lua
-- _Rainrider (22):_
-    1. ToC bump for 8.0
-    2. castbar: fix documentation copy/pasta
-    3. castbar: make the spellID an attribute and remove it from the list of PostUpdate arguments
-    4. castbar: document the element attributes meant for external use
-    5. castbar: don't pass the castID to PostUpdate
-    6. castbar: remove the cast name PostUpdate argument for *_STOP, *_FAILED and *_INTERRUPTED
-    7. core: fix header names generation ([#422](https://github.com/oUF-wow/oUF/issues/422))
-    8. power: use Enum.PowerType.Alternate instead of the global constant
-    9. alternativepower: use Enum.PowerType.Alternate instead of the global constant
-    10. tags: fix typo
-    11. runes: fix documentation typo
-    12. tags: update SPELL_POWER_* constants
-    13. classpower: update SPELL_POWER_* constants
-    14. castbar: remove rank returns from UnitCastingInfo and UnitChannelInfo
-    15. castbar: update for changed signature of UNIT_SPELLCAST_* events
-    16. powerprediction: UnitCastingInfo does not return spell ranks anymore
-    17. auras: UnitAura does not return spell ranks anymore
-    18. tags: UNIT_POWER is now named UNIT_POWER_UPDATE
-    19. power: UNIT_POWER is now named UNIT_POWER_UPDATE
-    20. alternativepower: UNIT_POWER is now named UNIT_POWER_UPDATE
-    21. stagger: take one more stock UI event into account
-    22. stagger: fix wrong event name and re-register stock UI events on disable
-- _Val Voronov (11):_
-    1. core: Proper vehicle fix
-    2. pvpindicator: Fix .Badge visibility logic
-    3. pvpindicator: Hide .Badge on disable
-    4. pvpindicator: Add honour level icon support
-    5. runes: Change var name
-    6. runes: Avoid unnecessary sorts if sorting isn't active
-    7. runes: Add sorting
-    8. auras: Remove aura count nil check
-    9. pvpindicator: Remove prestige
-    10. masterlooterindicator: Remove element
-    11. auras: Add aura count nil check
-- 15 files changed, 257 insertions(+), 416 deletions(-)
+- _Adrian L Lange (1):_
+    1. Use upstream version of the packager
+- _Val Voronov (2):_
+    1. Bump TOC for 8.2 ([#507](https://github.com/oUF-wow/oUF/issues/507))
+    2. blizzard: Do not re-parent nameplates ([#506](https://github.com/oUF-wow/oUF/issues/506))
+- 3 files changed, 13 insertions(+), 6 deletions(-)
 
-**Changes in 7.0.16:**
+**Changes in 9.2.0:**
+
+- _Val Voronov (1):_
+    1. tags: Update the system ([#501](https://github.com/oUF-wow/oUF/issues/501))
+- 1 file changed, 151 insertions(+), 102 deletions(-)
+
+**Changes in 9.1.3:**
 
 - _Rainrider (1):_
-    1. masterlooterindicator: fix for eventual nil masterlooter
-- _jukx (1):_
-    1. Update wowprogramming.com links in documentation
-- 9 files changed, 13 insertions(+), 15 deletions(-)
+    1. stagger: fix visibility toggling
+- 1 file changed, 2 insertions(+)
 
-**Changes in 7.0.15:**
+**Changes in 9.1.2:**
 
-- _Val Voronov (3):_
-    1. Update interface version ([#429](https://github.com/oUF-wow/oUF/issues/429))
-    2. Update LICENSE ([#428](https://github.com/oUF-wow/oUF/issues/428))
-    3. core: Add frame:IsEnabled() method ([#427](https://github.com/oUF-wow/oUF/issues/427))
-- 3 files changed, 11 insertions(+), 5 deletions(-)
+- _Rainrider (1):_
+    1. core: handle pass-through events for eventless frames as unitless
+- _Val Voronov (5):_
+    1. Renamed Private.UnitSelectionType to Private.unitSelectionType
+    2. Renamed Private.UnitExists to Private.unitExists
+    3. runes: Updated docs ([#494](https://github.com/oUF-wow/oUF/issues/494))
+    4. powerprediction: Use next instead of pairs
+    5. powerprediction: Fixed a typo
+- 10 files changed, 26 insertions(+), 26 deletions(-)
+
+**Changes in 9.1.1:**
+
+- _Rainrider (1):_
+    1. elements: do not toggle visibility on enable in elements where it is part of the update process
+- _Val Voronov (2):_
+    1. core: Prevent multiple instances of the nameplate driver ([#492](https://github.com/oUF-wow/oUF/issues/492))
+    2. core: Greatly reduced the number of UAE calls for the nameplates ([#491](https://github.com/oUF-wow/oUF/issues/491))
+- 4 files changed, 19 insertions(+), 15 deletions(-)
+
+**Changes in 9.1.0:**
+
+- _Val Voronov (5):_
+    1. core: Use _initialAttribute-* to set attributes
+    2. Add .colorSelection option to health and power elements ([#484](https://github.com/oUF-wow/oUF/issues/484))
+    3. threatindicator: Use a better default texture ([#486](https://github.com/oUF-wow/oUF/issues/486))
+    4. pvpclassificationindicator: Add the element ([#482](https://github.com/oUF-wow/oUF/issues/482))
+    5. core: Update the event system ([#483](https://github.com/oUF-wow/oUF/issues/483))
+- 9 files changed, 287 insertions(+), 39 deletions(-)
+
+**Changes in 9.0.2:**
+
+- _Rainrider (3):_
+    1. core: unregister the event when unit validation fails
+    2. core: do not use table.remove as it alters the index which also breaks the loop in the __call meta method
+    3. core: keep the event table even with one handler left
+- 2 files changed, 12 insertions(+), 17 deletions(-)
+
+**Changes in 9.0.1:**
+
+- _Rainrider (1):_
+    1. Update toc interface and a happy new year everyone
+- 2 files changed, 5 insertions(+), 5 deletions(-)
 
