@@ -87,8 +87,8 @@ function MyContainer:OnContentsChanged(forced)
 
 	local tName = self.name
 	local tBankBags = string.find(tName, "Bank")
-	local tBank = tBankBags or (tName == "cBniv_Bank")
-	local tReagent = (tName == "cBniv_BankReagent")
+	local tBank = tBankBags or (tName == "mb_Bank")
+	local tReagent = (tName == "mb_BankReagent")
 	
 	local numSlotsBag = {GetNumFreeSlots("bag")}
 	local numSlotsBank = {GetNumFreeSlots("bank")}
@@ -159,8 +159,8 @@ function MyContainer:OnContentsChanged(forced)
 
 	if (self.UpdateDimensions) then self:UpdateDimensions() end -- Update the bag's height
 	self:SetWidth((itemSlotSize + 4) * self.Columns + 4)
-	local t = (tName == "cBniv_Bag") or (tName == "cBniv_Bank") or (tName == "cBniv_BankReagent")
-	local tAS = (tName == "cBniv_Ammo") or (tName == "cBniv_Soulshards")
+	local t = (tName == "mb_Bag") or (tName == "mb_Bank") or (tName == "mb_BankReagent")
+	local tAS = (tName == "mb_Ammo") or (tName == "mb_Soulshards")
 	local bankShown = _Bags.bank:IsShown()
 	if (not tBankBags and _Bags.main:IsShown() and not (t or tAS)) or (tBankBags and bankShown) then 
 		if isEmpty then
@@ -227,7 +227,7 @@ JS:SetScript("OnEvent", function() SellJunk() end)
 
 -- Restack Items
 local restackItems = function(self)
-	local tBag, tBank = (self.name == "cBniv_Bag"), (self.name == "cBniv_Bank")
+	local tBag, tBank = (self.name == "mb_Bag"), (self.name == "mb_Bank")
 	--local loc = tBank and "bank" or "bags"
 	if tBank then
 		SortBankBags()
@@ -279,7 +279,7 @@ local UpdateDimensions = function(self)
 		height = height + 16	-- additional info display space
 	end
 	if self.bagToggle then
-		local tBag = (self.name == "cBniv_Bag")
+		local tBag = (self.name == "mb_Bag")
 		local fheight = (ns.options.fonts.standard[2] + 4)
 		local extraHeight = (tBag and self.hintShown) and (fheight + 4) or 0
 		height = height + 24 + extraHeight
@@ -418,7 +418,7 @@ function MyContainer:OnCreate(name, settings)
 	self.Settings = settings
 	self.name = name
 
-	local tBag, tBank, tReagent = (name == "cBniv_Bag"), (name == "cBniv_Bank"), (name == "cBniv_BankReagent")
+	local tBag, tBank, tReagent = (name == "mb_Bag"), (name == "mb_Bank"), (name == "mb_BankReagent")
 	local tBankBags = string.find(name, "Bank")
 
 	table.insert((tBankBags and BankFrames or BagFrames), self)
@@ -474,7 +474,7 @@ function MyContainer:OnCreate(name, settings)
 	if(caption) then
 		local t = L.bagCaptions[self.name] or (tBankBags and strsub(self.name, 5))
 		if not t then t = self.name end
-		if self.Name == "cBniv_ItemSets" then t=ItemSetCaption..t end
+		if self.Name == "mb_ItemSets" then t=ItemSetCaption..t end
 		caption:SetText(t)
 		caption:SetPoint("TOPLEFT", 3, -1)
 		self.Caption = caption

@@ -8,7 +8,7 @@ function cbNivaya:UpdateBags() for i = -3, 11 do cbNivaya:UpdateBag(i) end end
 local L = cBnivL
 cB_Filters = {}
 mnkBagsKnownItems = mnkBagsKnownItems or {}
---cBniv_CatInfo = {}
+--mb_CatInfo = {}
 cB_ItemClass = {}
 
 --------------------
