@@ -449,16 +449,19 @@ function MyContainer:OnCreate(name, settings)
 	
 	-- The frame background
 	local background = CreateFrame("Frame", nil, self)
-	background:SetBackdrop{
-		bgFile = Textures.Background,
-		edgeFile = Textures.Background,
-		tile = true, tileSize = 16, edgeSize = 1,
-		insets = {left = 1, right = 1, top = 1, bottom = 1},
-	}
+	mnkLibs.setBackdrop(background, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
+	mnkLibs.createBorder(self, 5,-5,-5,5, {1/3,1/3,1/3,1})
 	background:SetFrameStrata("HIGH")
 	background:SetFrameLevel(1)
-    background:SetBackdropColor(0, 0, 0, 1)
-    background:SetBackdropBorderColor(0.2, 0.2, 0.2)
+
+	if (tBank) then
+		background:SetBackdropColor(1/5, 1/8, 1/8, 1)
+	elseif (tBag) then
+		background:SetBackdropColor(1/8, 1/5, 1/8, 1)
+	else
+		background:SetBackdropColor(0, 0, 0, 1)
+	end
+	
 	background:SetPoint("TOPLEFT", -4, 4)
 	background:SetPoint("BOTTOMRIGHT", 4, -4)
 
@@ -474,12 +477,6 @@ function MyContainer:OnCreate(name, settings)
 		self.Caption = caption
 		
 		if (tBag or tBank) then
-			if (tBank) then
-				background:SetBackdropColor(1/5, 1/8, 1/8, 1)
-			elseif (tBag) then
-				background:SetBackdropColor(1/8, 1/5, 1/8, 1)
-			end
-			
 			local close = CreateFrame("Button", nil, self, "UIPanelCloseButton")
 			close:SetDisabledTexture("Interface\\AddOns\\mnkBags\\media\\CloseButton\\UI-Panel-MinimizeButton-Disabled")
 			close:SetNormalTexture("Interface\\AddOns\\mnkBags\\media\\CloseButton\\UI-Panel-MinimizeButton-Up")
