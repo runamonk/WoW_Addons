@@ -6,19 +6,11 @@ local L = mbLocals
 
 local mediaPath = [[Interface\AddOns\mnkBags\media\]]
 local Textures = {
-	Background =	mediaPath .. "texture",
 	Search =		mediaPath .. "Search",
 	BagToggle =		mediaPath .. "BagToggle",
 	ResetNew =		mediaPath .. "ResetNew",
 	Restack =		mediaPath .. "Restack",
-	Config =		mediaPath .. "Config",
-	SellJunk =		mediaPath .. "SellJunk",
-	Deposit =		mediaPath .. "Deposit",
-	TooltipIcon =	mediaPath .. "TooltipIcon",
-	Up =			mediaPath .. "Up",
-	Down =			mediaPath .. "Down",
-	Left =			mediaPath .. "Left",
-	Right =			mediaPath .. "Right",
+	Deposit =		mediaPath .. "Deposit"
 }
 
 local itemSlotSize = 32
@@ -27,12 +19,6 @@ local itemSlotSize = 32
 ------------------------------------------
 local cbmb = cargBags:GetImplementation("mb")
 local MyContainer = cbmb:GetContainerClass()
-
-local function GetClassColor(class)
-	if not RAID_CLASS_COLORS[class] then return {1, 1, 1} end
-	local classColors = CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[class] or RAID_CLASS_COLORS[class]
-	return {classColors.r, classColors.g, classColors.b}
-end
 
 local GetNumFreeSlots = function(bagType)
 	local free, max = 0, 0
@@ -307,34 +293,6 @@ local SetFrameMovable = function(f, v)
 	end
 end
 
-local classColor
-local function IconButton_OnEnter(self)
-	self.mouseover = true
-	
-	if not classColor then
-		classColor = GetClassColor(select(2, UnitClass("player")))
-	end
-	self.icon:SetVertexColor(classColor[1], classColor[2], classColor[3])
-	
-	if self.tooltip then
-		self.tooltip:Show()
-		self.tooltipIcon:Show()
-	end
-end
-
-local function IconButton_OnLeave(self)
-	self.mouseover = false
-	if self.tag == "SellJunk" then
-		self.icon:SetVertexColor(0.8, 0.8, 0.8)
-	else
-		self.icon:SetVertexColor(0.8, 0.8, 0.8)
-	end
-	if self.tooltip then
-		self.tooltip:Hide()
-		self.tooltipIcon:Hide()
-	end
-end
-
 local createIconButton = function (name, parent, texture, point, hint, isBag)
 	local button = CreateFrame("Button", nil, parent)
 	button:SetWidth(17)
@@ -351,24 +309,9 @@ local createIconButton = function (name, parent, texture, point, hint, isBag)
 		button.icon:SetVertexColor(0.8, 0.8, 0.8)
 	end
 	
-	button.tooltip = mnkLibs.createFontString(button, mnkLibs.Fonts.ap, 16, nil, nil, true)
-	button.tooltip:SetJustifyH("RIGHT")
-	button.tooltip:SetText(hint)
-	button.tooltip:SetTextColor(0.8, 0.8, 0.8)
-	button.tooltip:Hide()
-	
-	button.tooltipIcon = button:CreateTexture(nil, "ARTWORK")
-	button.tooltipIcon:SetWidth(16)
-	button.tooltipIcon:SetHeight(16)
-	button.tooltipIcon:SetTexture(Textures.TooltipIcon)
-	button.tooltipIcon:SetVertexColor(0.9, 0.2, 0.2)
-	button.tooltipIcon:Hide()
-	
-	button.tag = name
-	button:SetScript("OnEnter", function() IconButton_OnEnter(button) end)
-	button:SetScript("OnLeave", function() IconButton_OnLeave(button) end)
-	button.mouseover = false
-	
+	mnkLibs.setTooltip(button, hint)
+
+	button.tag = name	
 	return button
 end
 
@@ -570,12 +513,7 @@ function MyContainer:OnCreate(name, settings)
 		end
 		local ttPos = -(numButtons * 15 + 18)
 		if tBank then ttPos = ttPos + 3 end
-		for k,v in pairs(btnTable) do
-			v.tooltip:ClearAllPoints()
-			v.tooltip:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", ttPos, 5.5)
-			v.tooltipIcon:ClearAllPoints()
-			v.tooltipIcon:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", ttPos + 5, 1.5)
-		end
+
 	end
 
 	-- Item drop target
