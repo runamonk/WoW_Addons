@@ -32,7 +32,12 @@ local lastNameplate = nil
 
 function mnkNames.CreateStyle(self, unit)
     self.disableMovement = true
-    self:RegisterEvent('PLAYER_TARGET_CHANGED', mnkNames.OnNameplatesCallback)
+    self.frameValues = CreateFrame('Frame', nil, self)
+    self.frameValues:SetFrameLevel(self:GetFrameLevel()+50)
+    self.frameValues:SetSize(self:GetSize())
+    self.frameValues:SetAllPoints()
+	self.frameValues:RegisterEvent('PLAYER_TARGET_CHANGED', mnkNames.OnNameplatesCallback)
+	
     self.Health = CreateFrame("StatusBar", nil, self)
     self.Health:SetAllPoints()
     self.Health:SetStatusBarTexture(mnkLibs.Textures.background)
@@ -157,6 +162,7 @@ function mnkNames.PostUpdateIcon(element, unit, button, index)
 end
 
 function mnkNames.OnNameplatesCallback(self)
+	if not self then return end
     if (UnitExists('target') and UnitIsUnit('target', self.unit)) then
         if (lastNameplate ~= nil and lastNameplate ~= self) then
             lastNameplate:SetBackdropColor(0, 0, 0, 1)
