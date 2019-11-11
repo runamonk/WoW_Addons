@@ -5,7 +5,7 @@ mnkBags = CreateFrame('Frame', 'mnkBags', UIParent)
 mnkBags:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
 mnkBags:RegisterEvent("ADDON_LOADED")
 
-local cbNivaya = cargBags:GetImplementation("Nivaya")
+local cbmb = cargBags:GetImplementation("mb")
 
 local L = mbLocals
 _Bags = {}
@@ -20,61 +20,61 @@ function mnkBags:ADDON_LOADED(event, addon)
 	-----------------
 	-- Frame Spawns
 	-----------------
-	local C = cbNivaya:GetContainerClass()
+	local C = cbmb:GetContainerClass()
 
 	-- bank bags
-	_Bags.bankArmor		= C:New("mb_BankArmor")
-	_Bags.bankGem			= C:New("mb_BankGem")
-	_Bags.bankConsumables	= C:New("mb_BankCons")
-	_Bags.bankArtifactPower	= C:New("mb_BankArtifactPower")
-	_Bags.bankBattlePet	= C:New("mb_BankPet")
-	_Bags.bankQuest		= C:New("mb_BankQuest")
-	_Bags.bankTrade		= C:New("mb_BankTrade")
-	_Bags.bankReagent		= C:New("mb_BankReagent")
-	_Bags.bank			= C:New("mb_Bank")
+	_Bags.bankArmor	= 			C:New("mb_BankArmor")
+	_Bags.bankGem = 			C:New("mb_BankGem")
+	_Bags.bankConsumables = 	C:New("mb_BankCons")
+	_Bags.bankArtifactPower = 	C:New("mb_BankArtifactPower")
+	_Bags.bankBattlePet	= 		C:New("mb_BankPet")
+	_Bags.bankQuest	= 			C:New("mb_BankQuest")
+	_Bags.bankTrade	= 			C:New("mb_BankTrade")
+	_Bags.bankReagent = 		C:New("mb_BankReagent")
+	_Bags.bank = 				C:New("mb_Bank")
 		
-	_Bags.bankArmor		:SetExtendedFilter(cB_Filters.fItemClass, "BankArmor")
-	_Bags.bankGem			:SetExtendedFilter(cB_Filters.fItemClass, "BankGem")
-	_Bags.bankConsumables :SetExtendedFilter(cB_Filters.fItemClass, "BankConsumables")
-	_Bags.bankArtifactPower	:SetExtendedFilter(cB_Filters.fItemClass, "BankArtifactPower")
-	_Bags.bankBattlePet	:SetExtendedFilter(cB_Filters.fItemClass, "BankBattlePet")
-	_Bags.bankQuest		:SetExtendedFilter(cB_Filters.fItemClass, "BankQuest")
-	_Bags.bankTrade		:SetExtendedFilter(cB_Filters.fItemClass, "BankTradeGoods")
-	_Bags.bankReagent		:SetMultipleFilters(true, cB_Filters.fBankReagent, cB_Filters.fHideEmpty)
-	_Bags.bank			:SetMultipleFilters(true, cB_Filters.fBank, cB_Filters.fHideEmpty)
+	_Bags.bankArmor	:			SetExtendedFilter(cB_Filters.fItemClass, "BankArmor")
+	_Bags.bankGem :				SetExtendedFilter(cB_Filters.fItemClass, "BankGem")
+	_Bags.bankConsumables :		SetExtendedFilter(cB_Filters.fItemClass, "BankConsumables")
+	_Bags.bankArtifactPower :	SetExtendedFilter(cB_Filters.fItemClass, "BankArtifactPower")
+	_Bags.bankBattlePet :		SetExtendedFilter(cB_Filters.fItemClass, "BankBattlePet")
+	_Bags.bankQuest	:			SetExtendedFilter(cB_Filters.fItemClass, "BankQuest")
+	_Bags.bankTrade	: 			SetExtendedFilter(cB_Filters.fItemClass, "BankTradeGoods")
+	_Bags.bankReagent :			SetMultipleFilters(true, cB_Filters.fBankReagent, cB_Filters.fHideEmpty)
+	_Bags.bank :				SetMultipleFilters(true, cB_Filters.fBank, cB_Filters.fHideEmpty)
 
 	-- inventory bags
-	_Bags.bagJunk		= C:New("mb_Junk")
-	_Bags.bagNew		= C:New("mb_NewItems")
-	_Bags.armor		= C:New("mb_Armor")
-	_Bags.gem			= C:New("mb_Gem")
-	_Bags.quest		= C:New("mb_Quest")
-	_Bags.consumables	= C:New("mb_Consumables")
-	_Bags.artifactpower	= C:New("mb_ArtifactPower")
-	_Bags.battlepet	= C:New("mb_BattlePet")
-	_Bags.tradegoods	= C:New("mb_TradeGoods")
-	_Bags.main		= C:New("mb_Bag")
+	_Bags.bagJunk = 			C:New("mb_Junk")
+	_Bags.bagNew = 				C:New("mb_NewItems")
+	_Bags.armor	= 				C:New("mb_Armor")
+	_Bags.gem = 				C:New("mb_Gem")
+	_Bags.quest	= 				C:New("mb_Quest")
+	_Bags.consumables = 		C:New("mb_Consumables")
+	_Bags.artifactpower	= 		C:New("mb_ArtifactPower")
+	_Bags.battlepet	= 			C:New("mb_BattlePet")
+	_Bags.tradegoods = 			C:New("mb_TradeGoods")
+	_Bags.main = 				C:New("mb_Bag")
 
-	_Bags.bagJunk		:SetExtendedFilter(cB_Filters.fItemClass, "Junk")
-	_Bags.bagNew		:SetFilter(cB_Filters.fNewItems, true)
-	_Bags.armor		:SetExtendedFilter(cB_Filters.fItemClass, "Armor")
-	_Bags.gem			:SetExtendedFilter(cB_Filters.fItemClass, "Gem")
-	_Bags.quest		:SetExtendedFilter(cB_Filters.fItemClass, "Quest")
-	_Bags.consumables	:SetExtendedFilter(cB_Filters.fItemClass, "Consumables")
-	_Bags.artifactpower	:SetExtendedFilter(cB_Filters.fItemClass, "ArtifactPower")
-	_Bags.battlepet	:SetExtendedFilter(cB_Filters.fItemClass, "BattlePet")
-	_Bags.tradegoods	:SetExtendedFilter(cB_Filters.fItemClass, "TradeGoods")
-	_Bags.main		:SetMultipleFilters(true, cB_Filters.fBags, cB_Filters.fHideEmpty)
+	_Bags.bagJunk :				SetExtendedFilter(cB_Filters.fItemClass, "Junk")
+	_Bags.bagNew :				SetFilter(cB_Filters.fNewItems, true)
+	_Bags.armor	:				SetExtendedFilter(cB_Filters.fItemClass, "Armor")
+	_Bags.gem :					SetExtendedFilter(cB_Filters.fItemClass, "Gem")
+	_Bags.quest :				SetExtendedFilter(cB_Filters.fItemClass, "Quest")
+	_Bags.consumables :			SetExtendedFilter(cB_Filters.fItemClass, "Consumables")
+	_Bags.artifactpower	:		SetExtendedFilter(cB_Filters.fItemClass, "ArtifactPower")
+	_Bags.battlepet	:			SetExtendedFilter(cB_Filters.fItemClass, "BattlePet")
+	_Bags.tradegoods :			SetExtendedFilter(cB_Filters.fItemClass, "TradeGoods")
+	_Bags.main :				SetMultipleFilters(true, cB_Filters.fBags, cB_Filters.fHideEmpty)
 
 	_Bags.main:SetPoint("BOTTOMRIGHT", -20, 200)
 	_Bags.bank:SetPoint("TOPLEFT", 20, -50)
 	
-	cbNivaya:UpdateAnchors()
-	cbNivaya:Init()
-	--cbNivaya:ToggleBagPosButtons()
+	cbmb:UpdateAnchors()
+	cbmb:Init()
+	--cbmb:ToggleBagPosButtons()
 end
 
-function cbNivaya:UpdateAnchors()
+function cbmb:UpdateAnchors()
 	local lastBank, lastMain
 	--local t = {}	
 	--for k in pairs(_Bags) do table.insert(t, k) end
@@ -106,7 +106,7 @@ function cbNivaya:UpdateAnchors()
 	end
 end
 
-function cbNivaya:OnOpen()
+function cbmb:OnOpen()
 	for k,_ in pairs(_Bags) do
 		if (_Bags[k].name:sub(1, string.len('mb_Bank')) ~= 'mb_Bank') and not _BagsHidden[_Bags[k].name] then
 			_Bags[k]:Show()
@@ -114,13 +114,13 @@ function cbNivaya:OnOpen()
 	end
 end
 
-function cbNivaya:OnClose()
+function cbmb:OnClose()
 	for k,_ in pairs(_Bags) do
 		_Bags[k]:Hide()
 	end
 end
 
-function cbNivaya:OnBankOpened()
+function cbmb:OnBankOpened()
 	for k,_ in pairs(_Bags) do
 		if not _BagsHidden[_Bags[k].name] then
 			_Bags[k]:Show()
@@ -128,7 +128,7 @@ function cbNivaya:OnBankOpened()
 	end 
 end
 
-function cbNivaya:OnBankClosed()
+function cbmb:OnBankClosed()
 	for k,_ in pairs(_Bags) do
 		_Bags[k]:Hide()
 	end
@@ -172,9 +172,9 @@ Event:SetScript('OnEvent', function(self, event, ...)
 		for bagID = -3, 11 do
 			local slots = GetContainerNumSlots(bagID)
 			for slotID=1,slots do
-				local button = cbNivaya.buttonClass:New(bagID, slotID)
+				local button = cbmb.buttonClass:New(bagID, slotID)
 				buttonCollector[#buttonCollector+1] = button
-				cbNivaya:SetButton(bagID, slotID, nil)
+				cbmb:SetButton(bagID, slotID, nil)
 			end
 		end
 		for i,button in pairs(buttonCollector) do
@@ -183,16 +183,16 @@ Event:SetScript('OnEvent', function(self, event, ...)
 			end
 			button:Free()
 		end
-		cbNivaya:UpdateBags()
+		cbmb:UpdateBags()
 
 		if IsReagentBankUnlocked() then
-			Nivayamb_Bank.reagentBtn:Show()
+			mbmb_Bank.reagentBtn:Show()
 		else
-			Nivayamb_Bank.reagentBtn:Hide()
-			local buyReagent = CreateFrame("Button", nil, Nivayamb_BankReagent, "UIPanelButtonTemplate")
+			mbmb_Bank.reagentBtn:Hide()
+			local buyReagent = CreateFrame("Button", nil, mbmb_BankReagent, "UIPanelButtonTemplate")
 			buyReagent:SetText(BANKSLOTPURCHASE)
 			buyReagent:SetWidth(buyReagent:GetTextWidth() + 20)
-			buyReagent:SetPoint("CENTER", Nivayamb_BankReagent, 0, 0)
+			buyReagent:SetPoint("CENTER", mbmb_BankReagent, 0, 0)
 			buyReagent:SetScript("OnEnter", function(self)
 				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 				GameTooltip:AddLine(REAGENT_BANK_HELP, 1, 1, 1, true)
@@ -206,7 +206,7 @@ Event:SetScript('OnEvent', function(self, event, ...)
 			end)
 			buyReagent:SetScript("OnEvent", function(...)
 				buyReagent:UnregisterEvent("REAGENTBANK_PURCHASED")
-				Nivayamb_Bank.reagentBtn:Show()
+				mbmb_Bank.reagentBtn:Show()
 				buyReagent:Hide()
 			end)
 
@@ -223,5 +223,5 @@ function mnkBags:ResetItemClass()
 			cB_ItemClass[k] = nil
 		end
 	end
-	cbNivaya:UpdateBags()
+	cbmb:UpdateBags()
 end
