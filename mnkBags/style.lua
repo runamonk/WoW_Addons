@@ -173,7 +173,7 @@ function MyContainer:OnContentsChanged(forced)
 		end 
 	end
 
-	cB_BagHidden[tName] = (not t) and isEmpty or false
+	_BagsHidden[tName] = (not t) and isEmpty or false
 	cbNivaya:UpdateAnchors()
 
 	--update all other bags as well
