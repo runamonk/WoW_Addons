@@ -43,8 +43,8 @@ end
 local BagButton = cargBags:NewClass("BagButton", nil, "CheckButton")
 
 -- Default attributes
-BagButton.checkedTex = [[Interface\AddOns\mnkBags\media\BagHighlight]]
-BagButton.bgTex = [[Interface\AddOns\mnkBags\media\BagSlot]]
+BagButton.checkedTex = [[Interface\AddOns\mnkBags\cargBags\media\BagHighlight]]
+BagButton.bgTex = [[Interface\AddOns\mnkBags\cargBags\media\BagSlot]]
 BagButton.itemFadeAlpha = 0.2
 
 local buttonNum = 0
