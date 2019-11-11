@@ -1,16 +1,16 @@
-cBnivL = {}
+mbLocals = {}
 local gl = GetLocale()
 
-cBnivL.Search = SEARCH
-cBnivL.Armor = GetItemClassInfo(4)
-cBnivL.BattlePet = GetItemClassInfo(17)
-cBnivL.Consumables = GetItemClassInfo(0)
-cBnivL.Gem = GetItemClassInfo(3)
-cBnivL.Quest = GetItemClassInfo(12)
-cBnivL.Trades = GetItemClassInfo(7)
-cBnivL.Weapon = GetItemClassInfo(2)
-cBnivL.ArtifactPower = ARTIFACT_POWER
-cBnivL.bagCaptions = {
+mbLocals.Search = SEARCH
+mbLocals.Armor = GetItemClassInfo(4)
+mbLocals.BattlePet = GetItemClassInfo(17)
+mbLocals.Consumables = GetItemClassInfo(0)
+mbLocals.Gem = GetItemClassInfo(3)
+mbLocals.Quest = GetItemClassInfo(12)
+mbLocals.Trades = GetItemClassInfo(7)
+mbLocals.Weapon = GetItemClassInfo(2)
+mbLocals.ArtifactPower = ARTIFACT_POWER
+mbLocals.bagCaptions = {
 	["mb_Bank"] 			= BANK,
 	["mb_BankReagent"]	= REAGENT_BANK,
 	["mb_BankSets"]		= LOOT_JOURNAL_ITEM_SETS,
