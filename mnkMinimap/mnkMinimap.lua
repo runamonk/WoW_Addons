@@ -51,7 +51,7 @@ end
 function mnkMinimap:SetMinimapPositionAndSize()
     Minimap:SetMaskTexture(mnkLibs.Textures.minimap_mask)
     Minimap:ClearAllPoints()
-    Minimap:SetPoint('CENTER', UIParent, 'BOTTOM', 0, 68)
+    Minimap:SetPoint('CENTER', UIParent, 'BOTTOM', 0, 66)
     Minimap:SetSize(135,135) 
     Minimap:EnableMouseWheel()
 
