@@ -152,8 +152,12 @@ local function PostUpdateIcon(element, unit, button, index)
     button:SetScript('OnUpdate', function(self, elapsed) timer_OnUpdate(self, elapsed) end)
 end
 
-local function SetPlayerStatusFlag(self)
-    --print('afk: ', UnitIsAFK(self.unit))
+local function SetPlayerStatusFlag(self, combatFlag)
+	if not combatFlag or combatFlag == nil then
+        self.flagCombat:Hide()
+    else
+        self.flagCombat:Show()   
+	end
     if UnitIsAFK(self.unit) then
         self.flagAFK:Show()
     else
@@ -243,7 +247,12 @@ local function PlayerUnit(self)
         self.flagAFK:SetText(mnkLibs.Color(COLOR_BLUE)..'AFK')
         self.flagDND = mnkLibs.createFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
         self.flagDND:SetPoint('RIGHT', self.flagPVP, 'LEFT', 0, 0)
-        self.flagDND:SetText(mnkLibs.Color(COLOR_BLUE)..'DND') 
+        self.flagDND:SetText(mnkLibs.Color(COLOR_BLUE)..'DND')
+		self.flagCombat = mnkLibs.createFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
+        self.flagCombat:SetPoint('LEFT', self.HealthValue, 'RIGHT', 1, 0)
+        self.flagCombat:SetText('|cffff0000'..'×')
+        self.flagCombat:Hide()
+		
         SetPlayerStatusFlag(self)
         local t = {} 
         for i = 1, 10 do
@@ -268,16 +277,6 @@ local function PlayerUnit(self)
 
         self.ClassPower = t
         self.Runes = t
-        self.flagCombat = mnkLibs.createFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
-        self.flagCombat:SetPoint('LEFT', self.HealthValue, 'RIGHT', 1, 0)
-        self.flagCombat:SetText('|cffff0000'..'×')
-        self.flagCombat:Hide()
-	
-        self.frameValues:RegisterEvent('PLAYER_REGEN_ENABLED', function(unit) unit.flagCombat:Hide() end)
-        self.frameValues:RegisterEvent('PLAYER_REGEN_DISABLED', function(unit) unit.flagCombat:Show() end)
-        self.frameValues:RegisterEvent('PLAYER_FLAGS_CHANGED', function(self) SetPlayerStatusFlag(self) end)
-        self.frameValues:RegisterEvent('PLAYER_ENTERING_WORLD', function(self) SetPlayerStatusFlag(self) end)
-		
         self.Power = CreateFrame('StatusBar', nil, self.Health)
         self.Power:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
         self.Power:SetSize(self:GetWidth(), 3)
@@ -416,7 +415,11 @@ local function SetPlayerCastbarVis(bool)
 end
 
 function mnkUnits:DoOnEvent(event, unit)
-    if event == 'PLAYER_ENTERING_WORLD' then
+	if event == 'PLAYER_REGEN_DISABLED' then
+		SetPlayerStatusFlag(oUF_mnkUnitsPlayer, true)
+	elseif event == 'PLAYER_REGEN_ENABLED' then
+		SetPlayerStatusFlag(oUF_mnkUnitsPlayer, false)
+	elseif event == 'PLAYER_ENTERING_WORLD' then
         BuffFrame:UnregisterEvent('UNIT_AURA')
         BuffFrame:Hide()
         TemporaryEnchantFrame:Hide()
@@ -425,9 +428,11 @@ function mnkUnits:DoOnEvent(event, unit)
         CompactRaidFrameContainer:UnregisterAllEvents()
         CompactRaidFrameContainer:Hide()
         CompactRaidFrameContainer:Hide()
-
         CreateBottomPanel()
-        UpdateMirrorBars()
+        UpdateMirrorBars()		
+		SetPlayerStatusFlag(oUF_mnkUnitsPlayer)
+	elseif event == 'PLAYER_FLAGS_CHANGED' then
+		SetPlayerStatusFlag(oUF_mnkUnitsPlayer)
     elseif event == "NAME_PLATE_UNIT_ADDED" then -- hide player castbar when the personal bar is visible, there is a castbar there.
         if UnitIsUnit(unit, "player") then
             SetPlayerCastbarVis(false)
@@ -494,5 +499,8 @@ MainMenuBarVehicleLeaveButton:SetPushedTexture(mnkLibs.Textures.arrow_down_pushe
 
 mnkUnits:SetScript('OnEvent', mnkUnits.DoOnEvent)
 mnkUnits:RegisterEvent('PLAYER_ENTERING_WORLD')
+mnkUnits:RegisterEvent('PLAYER_FLAGS_CHANGED')
 mnkUnits:RegisterEvent('NAME_PLATE_UNIT_ADDED')
 mnkUnits:RegisterEvent('NAME_PLATE_UNIT_REMOVED')
+mnkUnits:RegisterEvent('PLAYER_REGEN_ENABLED')
+mnkUnits:RegisterEvent('PLAYER_REGEN_DISABLED')
