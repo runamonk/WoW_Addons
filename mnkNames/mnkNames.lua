@@ -6,7 +6,6 @@ local cvars = {
     nameplateGlobalScale = .8, 
     NamePlateHorizontalScale = .8, 
     NamePlateVerticalScale = .8, 
-    --nameplateLargerScale = 1.5, 
     nameplateLargerScale = .8, 
     nameplateMaxScale = .8, 
     nameplateMinScale = .8, 
@@ -161,20 +160,20 @@ function mnkNames.PostUpdateIcon(element, unit, button, index)
     button:SetScript('OnUpdate', function(self, elapsed) mnkNames.timer_OnUpdate(self, elapsed) end)
 end
 
-function mnkNames.OnNameplatesCallback(self)
+function mnkNames.OnNameplatesCallback(self)	
 	if not self and not UnitExists('target')  and (lastNameplate ~= nil) then 
-		lastNameplate:SetBackdropColor(0, 0, 0, 1)
-		return 
+		lastNameplate:SetBackdropColor(0, 0, 0, 1) 
+	elseif self then
+		if (UnitExists('target') and UnitIsUnit('target', self.unit)) then
+			if (lastNameplate ~= nil and lastNameplate ~= self) then
+				lastNameplate:SetBackdropColor(0, 0, 0, 1)
+			end
+			self:SetBackdropColor(1, 1, 1, 1)
+			lastNameplate = self
+		else
+			self:SetBackdropColor(0, 0, 0, 1)
+		end
 	end
-    if (UnitExists('target') and UnitIsUnit('target', self.unit)) then
-        if (lastNameplate ~= nil and lastNameplate ~= self) then
-            lastNameplate:SetBackdropColor(0, 0, 0, 1)
-        end
-        self:SetBackdropColor(1, 1, 1, 1)
-        lastNameplate = self
-    else
-        self:SetBackdropColor(0, 0, 0, 1)
-    end   
 end
 
 function mnkNames.DoOnEvent(self, event, unit, frame)
