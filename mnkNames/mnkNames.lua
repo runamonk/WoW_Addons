@@ -162,7 +162,10 @@ function mnkNames.PostUpdateIcon(element, unit, button, index)
 end
 
 function mnkNames.OnNameplatesCallback(self)
-	if not self then return end
+	if not self and not UnitExists('target')  and (lastNameplate ~= nil) then 
+		lastNameplate:SetBackdropColor(0, 0, 0, 1)
+		return 
+	end
     if (UnitExists('target') and UnitIsUnit('target', self.unit)) then
         if (lastNameplate ~= nil and lastNameplate ~= self) then
             lastNameplate:SetBackdropColor(0, 0, 0, 1)
