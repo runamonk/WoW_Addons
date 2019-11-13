@@ -170,34 +170,22 @@ local function SetPlayerStatusFlag(self, combatFlag)
     end          
 end
 
-local function UpdateThreat(self, event, unit)
-    if (unit ~= self.unit) then
-        return
-    end
-
-    local situation = UnitThreatSituation(unit)
-    if (situation and situation > 0) then
-        local r, g, b = GetThreatStatusColor(situation)
-        self.ThreatIndicator:SetBackdropColor(r, g, b, 1)
-    else
-        self.ThreatIndicator:SetBackdropColor(0, 0, 0, 0)
-    end
-end
-
 local function CreateUnit(self)
     self:RegisterForClicks('AnyUp')
     self:SetScript('OnEnter', UnitFrame_OnEnter)
     self:SetScript('OnLeave', UnitFrame_OnLeave)
-    mnkLibs.setBackdrop(self, nil, nil, 1, 1, 1, 1)
-    self:SetBackdropColor(1/6, 1/6, 1/6)
-    
+    mnkLibs.setBackdrop(self, nil, nil, 0, 0, 0, 0)
+    self:SetBackdropColor(1, 1, 1)
+    --self:SetBackdropColor(1/6, 1/6, 1/6)
     -- this isn't needed for party or raid, they set their own defaults and sometimes this causes a taint.
     if self.unit ~= 'party' and self.unit ~= 'raid' then
         self:SetSize(200, 20)
     end
     self.Health = CreateHealthBar(self)
-    self.Health:SetHeight(20)
+    self.Health:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0)
+	self.Health:SetPoint('RIGHT', self, 'RIGHT', 0, 0)
     self.Health:SetAllPoints()
+
     self.frameValues = CreateFrame('Frame', nil, self)
     self.frameValues:SetFrameLevel(self:GetFrameLevel()+50)
     self.frameValues:SetSize(self:GetSize())
@@ -232,12 +220,12 @@ local function PlayerUnit(self)
     if Config.showplayer then
         CreateUnit(self)
         CreateCastBar(self)
-        self:SetSize(200, 26)
+        self:SetSize(201, 20)
         self.HealthValue = mnkLibs.createFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
-        self.HealthValue:SetPoint('LEFT', self.Health, 1, 3)
+        self.HealthValue:SetPoint('LEFT', self.Health, 1, 0)
         self:Tag(self.HealthValue, '[mnku:status][mnku:perhp] [mnku:curhp]') 
         self.isResting = mnkLibs.createFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, nil, nil, true)
-        self.isResting:SetPoint('RIGHT', self.Health, 'RIGHT', 0, 3)
+        self.isResting:SetPoint('RIGHT', self.Health, 'RIGHT', 0, 0)
         self:Tag(self.isResting, '[|cFFFFFF00>resting<|r]')
         self.flagPVP = mnkLibs.createFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
         self.flagPVP:SetPoint('RIGHT', self.isResting, 'LEFT', 0, 0)
@@ -266,9 +254,9 @@ local function PlayerUnit(self)
             n:SetTextColor(0, 0, 0)
             
             if (i == 1) then
-                f:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 0, -2)
+                f:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 0, -8)
             else
-                f:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', ((f:GetWidth() + 2) * (i - 1)), -2)
+                f:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', ((f:GetWidth() + 2) * (i - 1)), -8)
             end
             
             t[i] = f
@@ -277,40 +265,38 @@ local function PlayerUnit(self)
 
         self.ClassPower = t
         self.Runes = t
-        self.Power = CreateFrame('StatusBar', nil, self.Health)
+	
+        self.Power = CreateFrame('StatusBar', nil, self)
         self.Power:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
         self.Power:SetSize(self:GetWidth(), 3)
-        self.Power:SetPoint('LEFT', self, 0, -9)
+        self.Power:SetPoint('TOPLEFT', self.Health, 'BOTTOMLEFT', 0, 0)	
         self.Power.frequentUpdates = true
         self.Power.colorPower = true
-        mnkLibs.setBackdrop(self.Power, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
-        self.Power:SetBackdropColor(1/7, 1/7, 1/7, 1)
-        self.AdditionalPower = CreateFrame('StatusBar', nil, self.Health)
+        --mnkLibs.setBackdrop(self.Power, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
+		--self.Power:SetBackdropColor(classColor.r/8, classColor.g/8, classColor.b/8, 1)
+		
+        self.AdditionalPower = CreateFrame('StatusBar', nil, self)
         self.AdditionalPower:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
         self.AdditionalPower:SetSize(self:GetWidth(), 3)
-        self.AdditionalPower:SetPoint('LEFT', self, 0, -12)
+        self.AdditionalPower:SetPoint('TOPLEFT', self.Power, 'BOTTOMLEFT', 0, 0)
         self.AdditionalPower.frequentUpdates = true
         self.AdditionalPower.colorPower = true
-        mnkLibs.setBackdrop(self.AdditionalPower, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
-        self.AdditionalPower:SetBackdropColor(1/7, 1/7, 1/7, 1)
-        self.AlternativePower = CreateFrame('StatusBar', nil, self)
+        --mnkLibs.setBackdrop(self.AdditionalPower, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
+        --self.AdditionalPower:SetBackdropColor(1/7, 1/7, 1/7, 1)
+
+		self.AlternativePower = CreateFrame('StatusBar', nil, self)
         self.AlternativePower:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
-        self.AlternativePower:SetHeight(25)
+        --self.AlternativePower:SetHeight(25)
         self.AlternativePower:SetSize(self:GetWidth()+2, 18)
         self.AlternativePower:SetPoint('LEFT', self, 'LEFT', -2, 0)
-        self.AlternativePower:SetPoint('BOTTOM', self, 'TOP', 0, 50)
-        mnkLibs.setBackdrop(self.AlternativePower, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
-        self.AlternativePower:SetBackdropColor(1/8, 1/8, 1/8, 1)
-        self.AlternativePower:SetStatusBarColor(1/2, 1/2, 1/2)
+        self.AlternativePower:SetPoint('BOTTOM', self, 'TOP', 0, 50)	
+		mnkLibs.setBackdrop(self.AlternativePower, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
+        self.AlternativePower:SetBackdropColor(1, 1, 1, 1)
+		self.AlternativePower:SetBackdropColor(1/8, 1/8, 1/8, 1)
         self.AlternativePower:SetFrameStrata('HIGH')
         self.AlternativePower:EnableMouse(true)
         mnkLibs.createBorder(self.AlternativePower, 1,-1,-1,1, {0, 0, 0, 1})
-        self.ThreatIndicator = CreateFrame('Frame', nil, self.Health)
-        self.ThreatIndicator:SetSize(self:GetWidth(), 1)
-        self.ThreatIndicator:SetPoint('CENTER', self, 0, -6)
-        self.ThreatIndicator:SetFrameStrata('LOW')
-        mnkLibs.setBackdrop(self.ThreatIndicator, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
-        self.ThreatIndicator.Override = UpdateThreat
+
         self.Auras = CreateFrame('Frame', nil, self)
         --self.Auras.onlyShowPlayer = true
         self.Auras.disableCooldown = true
