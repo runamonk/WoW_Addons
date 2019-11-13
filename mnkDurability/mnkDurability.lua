@@ -61,6 +61,8 @@ function mnkDurability.DoOnEnter(self)
         end
 
         local y, x = tooltip:AddLine(v.Text, nil, pct, mnkDurability.GetItemLevel(i))
+		local link = GetInventoryItemLink('player', i)
+		
         tooltip:SetCell(y, 2, i, 1 , StatusBarCellProvider, 0)
 
         tooltip:SetLineScript(y, 'OnMouseDown', mnkDurability.DoOnMouseDown, link)
