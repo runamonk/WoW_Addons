@@ -36,7 +36,6 @@ function mnkNames.CreateStyle(self, unit)
     self.frameValues:SetFrameLevel(self:GetFrameLevel()+50)
     self.frameValues:SetSize(self:GetSize())
     self.frameValues:SetAllPoints()
-	--self.frameValues:RegisterEvent('PLAYER_TARGET_CHANGED', mnkNames.OnNameplatesCallback)
 	
     self.Health = CreateFrame("StatusBar", nil, self)
     self.Health:SetAllPoints()
@@ -55,14 +54,17 @@ function mnkNames.CreateStyle(self, unit)
     self.HealthValue = mnkLibs.createFontString(self.Health, mnkLibs.Fonts.oswald, cfg_font_height, nil, nil, true)
     self.HealthValue:SetPoint('RIGHT', self.Health, -2, 0)
     self.HealthValue:SetWordWrap(false)
-	
-    self:Tag(self.HealthValue, '[mnku:curhp]')
-    self.Name = mnkLibs.createFontString(self.Health, mnkLibs.Fonts.oswald, cfg_font_height, nil, nil, true)
+	self:Tag(self.HealthValue, '[mnku:curhp]')
+    
+	self.Name = mnkLibs.createFontString(self.Health, mnkLibs.Fonts.oswald, cfg_font_height, nil, nil, true)
     self.Name:SetWordWrap(false)
     self.Name:SetPoint("LEFT", self.Health, 4, 0)
     self.Name:SetJustifyH("LEFT")
     self.Name:SetWidth(cfg_name_width-(self.HealthValue:GetWidth()+8))
     self:Tag(self.Name, '[mnku:name]')
+	
+	
+	
     self.Level = mnkLibs.createFontString(self.Health, mnkLibs.Fonts.oswald, cfg_font_height, nil, nil, true)
     self.Level:SetPoint("LEFT", self.Health, -20, 0)
     self.Level:SetJustifyH("LEFT")

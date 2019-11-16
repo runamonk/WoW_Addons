@@ -52,7 +52,11 @@ end
 tags['mnku:name'] = function(unit)
     local name = UnitName(unit)
     local rare = _TAGS['shortclassification'](unit) or ''
-    return mnkLibs.Color(COLOR_WHITE)..name..rare
+	if UnitIsPVP(unit) then
+		return mnkLibs.Color(COLOR_YELLOW)..name..rare
+	else
+		return mnkLibs.Color(COLOR_WHITE)..name..rare
+	end
 end
 
 tags['mnku:perhp'] = function(unit)
