@@ -272,8 +272,6 @@ local function PlayerUnit(self)
         self.Power:SetPoint('TOPLEFT', self.Health, 'BOTTOMLEFT', 0, 0)	
         self.Power.frequentUpdates = true
         self.Power.colorPower = true
-        --mnkLibs.setBackdrop(self.Power, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
-		--self.Power:SetBackdropColor(classColor.r/8, classColor.g/8, classColor.b/8, 1)
 		
         self.AdditionalPower = CreateFrame('StatusBar', nil, self)
         self.AdditionalPower:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
@@ -281,12 +279,9 @@ local function PlayerUnit(self)
         self.AdditionalPower:SetPoint('TOPLEFT', self.Power, 'BOTTOMLEFT', 0, 0)
         self.AdditionalPower.frequentUpdates = true
         self.AdditionalPower.colorPower = true
-        --mnkLibs.setBackdrop(self.AdditionalPower, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
-        --self.AdditionalPower:SetBackdropColor(1/7, 1/7, 1/7, 1)
 
 		self.AlternativePower = CreateFrame('StatusBar', nil, self)
         self.AlternativePower:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
-        --self.AlternativePower:SetHeight(25)
         self.AlternativePower:SetSize(self:GetWidth()+2, 18)
         self.AlternativePower:SetPoint('LEFT', self, 'LEFT', -2, 0)
         self.AlternativePower:SetPoint('BOTTOM', self, 'TOP', 0, 50)	
