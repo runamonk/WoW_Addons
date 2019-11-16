@@ -8,7 +8,7 @@ local tblAll = {}
 local tblCollected = {}
 local tblFavorites = {}
 
-local function parseFavorites()
+local function parseMounts()
 	tblFavorites = {}	
 	tblCollected = {}
 	
@@ -26,7 +26,7 @@ local function parseFavorites()
                 tblCollected[d].mID = mountID
                 tblCollected[d].mIcon = mIcon				
 			end
-			if isFavorite == true and isCollected == true and hideOnChar == false then
+			if isFavorite == true and isUsable == true and isCollected == true and hideOnChar == false then
                 c = (c + 1)
                 tblFavorites[c] = {}
                 tblFavorites[c].mName = mName
@@ -44,7 +44,7 @@ end
 local function getAllMounts()
 	tblAll = {}
 	tblAll = C_MountJournal.GetMountIDs()
-	parseFavorites()
+	parseMounts()
 	mnkFavoriteMounts.LDB.label = 'Favorite Mounts'
 	mnkFavoriteMounts.LDB.text = #tblFavorites .. '/' ..#tblCollected
 end
