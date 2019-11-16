@@ -61,7 +61,7 @@ function mnkFavoriteMounts:DoOnEvent(event)
         Hotkey, _ = GetBindingKey('RANDOM_MOUNT')
 		
         mnkFavoriteMounts.LDB.label = 'Favorite Mounts'
-    elseif event == 'PLAYER_ENTERING_WORLD' or event == 'COMPANION_LEARNED' then
+    elseif event == 'PLAYER_ENTERING_WORLD' or event == 'COMPANION_LEARNED' or event == 'COMPANION_UPDATE' then
 		getAllMounts() 
 	end
 end
@@ -73,7 +73,7 @@ function mnkFavoriteMounts.DoOnEnter(self)
     tooltip:SetFont(mnkLibs.DefaultTooltipFont)
     tooltip:SetHeaderFont(mnkLibs.DefaultTooltipFont)
     tooltip:Clear()
-
+	getAllMounts()
     if #tblFavorites > 0 then
         tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Favorites')
 
@@ -106,4 +106,5 @@ mnkFavoriteMounts:SetScript('OnEvent', mnkFavoriteMounts.DoOnEvent)
 mnkFavoriteMounts:RegisterEvent('PLAYER_LOGIN')
 mnkFavoriteMounts:RegisterEvent('PLAYER_ENTERING_WORLD')
 mnkFavoriteMounts:RegisterEvent('COMPANION_LEARNED')
+mnkFavoriteMounts:RegisterEvent('COMPANION_UPDATE')
 
