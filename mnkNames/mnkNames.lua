@@ -11,10 +11,11 @@ local cvars = {
     nameplateMinScale = .8, 
     nameplateSelectedScale = 1, 
     nameplateMaxAlpha = .4, 
-    nameplateMaxAlphaDistance = 40, 
+    nameplateMaxAlphaDistance = 90, 
     nameplateMinAlpha = .4, 
     nameplateMinAlphaDistance = 0, 
-    nameplateSelectedAlpha = 1
+    nameplateSelectedAlpha = 1,
+	nameplatePersonalShowAlways = 0
 }
 
 local cfg_name_width = 190
@@ -35,7 +36,7 @@ function mnkNames.CreateStyle(self, unit)
     self.frameValues:SetFrameLevel(self:GetFrameLevel()+50)
     self.frameValues:SetSize(self:GetSize())
     self.frameValues:SetAllPoints()
-	self.frameValues:RegisterEvent('PLAYER_TARGET_CHANGED', mnkNames.OnNameplatesCallback)
+	--self.frameValues:RegisterEvent('PLAYER_TARGET_CHANGED', mnkNames.OnNameplatesCallback)
 	
     self.Health = CreateFrame("StatusBar", nil, self)
     self.Health:SetAllPoints()
@@ -46,13 +47,15 @@ function mnkNames.CreateStyle(self, unit)
     self.Health.colorReaction = true
     self.Health.colorTapping = true
     self.Health.colorDisconnected = true
-    self.Health.bg = self.Health:CreateTexture(nil, "BACKGROUND")
+    self.Health.frequentUpdates = true
+	self.Health.bg = self.Health:CreateTexture(nil, "BACKGROUND")
     self.Health.bg:SetAllPoints(self.Health)
     self.Health.bg:SetAlpha(0.20)
     self.Health.bg:SetTexture(mnkLibs.Textures.bar)
     self.HealthValue = mnkLibs.createFontString(self.Health, mnkLibs.Fonts.oswald, cfg_font_height, nil, nil, true)
     self.HealthValue:SetPoint('RIGHT', self.Health, -2, 0)
     self.HealthValue:SetWordWrap(false)
+	
     self:Tag(self.HealthValue, '[mnku:curhp]')
     self.Name = mnkLibs.createFontString(self.Health, mnkLibs.Fonts.oswald, cfg_font_height, nil, nil, true)
     self.Name:SetWordWrap(false)
@@ -160,10 +163,12 @@ function mnkNames.PostUpdateIcon(element, unit, button, index)
     button:SetScript('OnUpdate', function(self, elapsed) mnkNames.timer_OnUpdate(self, elapsed) end)
 end
 
-function mnkNames.OnNameplatesCallback(self)	
-	if not self and not UnitExists('target')  and (lastNameplate ~= nil) then 
-		lastNameplate:SetBackdropColor(0, 0, 0, 1) 
-	elseif self then
+function mnkNames.OnNameplatesCallback(self)
+	if not self then
+		if lastNameplate then
+			lastNameplate:SetBackdropColor(0, 0, 0, 1)
+		end
+	else
 		if (UnitExists('target') and UnitIsUnit('target', self.unit)) then
 			if (lastNameplate ~= nil and lastNameplate ~= self) then
 				lastNameplate:SetBackdropColor(0, 0, 0, 1)
@@ -172,7 +177,7 @@ function mnkNames.OnNameplatesCallback(self)
 			lastNameplate = self
 		else
 			self:SetBackdropColor(0, 0, 0, 1)
-		end
+		end  		
 	end
 end
 
