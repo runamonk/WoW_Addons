@@ -37,7 +37,7 @@ local function GetFactionColor(standingid)
     elseif standingid >= 1 and standingid <= 3 then
         return COLOR_RED
     elseif standingid == 4 then
-        return COLOR_YELLOW
+        return COLOR_GREY
     elseif standingid == 5 then
         return COLOR_DKGREEN
     elseif standingid == 6 then
