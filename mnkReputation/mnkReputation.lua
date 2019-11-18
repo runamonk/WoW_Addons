@@ -137,7 +137,7 @@ function mnkReputation.DoOnEnter(self)
                               mnkLibs.Color(GetFactionColor(6))..' Honored: '..mnkLibs.Color(COLOR_WHITE)..iHonored..
 							  mnkLibs.Color(GetFactionColor(5))..' Friendly: '..mnkLibs.Color(COLOR_WHITE)..iFriendly.. 
 							  mnkLibs.Color(GetFactionColor(4))..' Neutral: '..mnkLibs.Color(COLOR_WHITE)..iNeutral
-							  ,'LEFT', 2)
+							  ,'LEFT', 2, StatusBarCellProvider)
     end
 
     mnkReputation.AddTabards(tooltip)
@@ -204,7 +204,6 @@ function StatusBarCell:InitializeCell()
 	self.fsName:SetJustifyH('LEFT')
     self.fsName:SetTextColor(1, 1, 1)
     self.fsName:SetFontObject(mnkLibs.DefaultTooltipFont)
-
     self.fsTogo = self.bar:CreateFontString(nil, 'OVERLAY')
     self.fsTogo:SetPoint('RIGHT', self.bar, 'RIGHT', -5, 0)
     self.fsTogo:SetWidth(100)
@@ -234,7 +233,8 @@ function StatusBarCell:SetupCell(tooltip, data, justification, font, r, g, b)
 		return self.bar:GetWidth(), self.bar:GetHeight()
 	else
 		-- Just text so create a background with the bar.
-		self.fsName:SetText("")
+		self.fsName:SetWidth(self.bar:GetWidth())
+		self.fsName:SetText(data)
 		self.fsTogo:SetText("")
 		self.bar:SetStatusBarColor(0, 0, 0, 0.5)
 		self.bar:SetValue(100, 100)
