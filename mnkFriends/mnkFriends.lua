@@ -85,10 +85,10 @@ function mnkFriends.DoOnEnter(self)
 			
             if friendInfo.gameAccountInfo.clientProgram == 'WoW' then 
                 local y, x = tooltip:AddLine(string.format('|T%s:16|t', WOW_ICON)..format('|cff%s%s', colors[friendInfo.gameAccountInfo.className:gsub(' ', ''):upper()] or 'ffffff', presenceName..' ('..toonName..')')..status, friendInfo.gameAccountInfo.characterLevel, friendInfo.gameAccountInfo.areaName, friendInfo.note)
-                tooltip:SetLineScript(y, 'OnMouseDown', mnkFriends.DoOnMouseDown, 'b_'..presenceName)
+                tooltip:SetLineScript(y, 'OnMouseDown', mnkFriends.DoOnMouseDown, 'b_'..friendInfo.gameAccountInfo.characterName..'-'..friendInfo.gameAccountInfo.realmName)
             else
                 local y, x = tooltip:AddLine(string.format('|T%s:16|t', BNET_ICON)..presenceName..status, '', '', noteText)
-                tooltip:SetLineScript(y, 'OnMouseDown', mnkFriends.DoOnMouseDown, 'b_'..presenceName)
+                tooltip:SetLineScript(y, 'OnMouseDown', mnkFriends.DoOnMouseDown, 'b_'..friendInfo.gameAccountInfo.characterName..'-'..friendInfo.gameAccountInfo.realmName)
             end
         end
     end
