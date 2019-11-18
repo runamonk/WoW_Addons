@@ -1,6 +1,7 @@
 mnkReputation = CreateFrame('Frame')
 mnkReputation.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 
+--https://www.wowace.com/projects/libqtip-1-0
 local libQTip = LibStub('LibQTip-1.0')
 local libAG = LibStub('AceGUI-3.0')
 local fConfig = nil
@@ -134,8 +135,9 @@ function mnkReputation.DoOnEnter(self)
         tooltip:SetCell(y, 1, mnkLibs.Color(GetFactionColor(8))..'Exalted: '..mnkLibs.Color(COLOR_WHITE)..iExalted..
                               mnkLibs.Color(GetFactionColor(7))..' Revered: '..mnkLibs.Color(COLOR_WHITE)..iRevered..
                               mnkLibs.Color(GetFactionColor(6))..' Honored: '..mnkLibs.Color(COLOR_WHITE)..iHonored..
-							  mnkLibs.Color(GetFactionColor(5))..' Friendly: '..mnkLibs.Color(COLOR_WHITE)..iFriendly 
-							  ,'LEFT', 2, StatusBarCellProvider)
+							  mnkLibs.Color(GetFactionColor(5))..' Friendly: '..mnkLibs.Color(COLOR_WHITE)..iFriendly.. 
+							  mnkLibs.Color(GetFactionColor(4))..' Neutral: '..mnkLibs.Color(COLOR_WHITE)..iNeutral
+							  ,'LEFT', 2)
     end
 
     mnkReputation.AddTabards(tooltip)
@@ -232,13 +234,12 @@ function StatusBarCell:SetupCell(tooltip, data, justification, font, r, g, b)
 		return self.bar:GetWidth(), self.bar:GetHeight()
 	else
 		-- Just text so create a background with the bar.
-		self.fsName:SetText(data)
+		self.fsName:SetText("")
 		self.fsTogo:SetText("")
 		self.bar:SetStatusBarColor(0, 0, 0, 0.5)
 		self.bar:SetValue(100, 100)
 		return self.bar:GetWidth(), self.bar:GetHeight()	
 	end
-
 end
 
 function StatusBarCell:ReleaseCell()
