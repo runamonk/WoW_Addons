@@ -115,7 +115,11 @@ function mnkMinimap:SetMinimapPositionAndSize()
     GameTimeFrame:SetNormalTexture(mnkLibs.Textures.minimap_calendar)
     GameTimeFrame:SetPushedTexture(nil)
     GameTimeFrame:SetHighlightTexture(nil)
-
+	
+	VehicleSeatIndicator:ClearAllPoints()
+	VehicleSeatIndicator:SetPoint('TOP', UIParent, 'BOTTOM', 0, 325)
+	VehicleSeatIndicator.SetPoint = mnkLibs.donothing()
+	
     local fs = GameTimeFrame:GetFontString()
     fs:ClearAllPoints()
     fs:SetPoint('CENTER',0,-5)
