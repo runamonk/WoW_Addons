@@ -139,7 +139,6 @@ function MyContainer:OnContentsChanged(forced)
 	_Bags.bank.EmptySlotCounter:SetText(GetNumFreeSlots("bank"))
 	_Bags.bankReagent.EmptySlotCounter:SetText(GetNumFreeSlots("bankReagent"))
 
-	
 	-- This variable stores the size of the item button container
 	self.ContainerHeight = (row + (col > 0 and 1 or 0)) * (itemSlotSize + 2)
 
@@ -365,13 +364,11 @@ function MyContainer:OnCreate(name, settings)
 	local numSlotsBag = {GetNumFreeSlots("bag")}
 	local numSlotsBank = {GetNumFreeSlots("bank")}
 	local numSlotsReagent = {GetNumFreeSlots("bankReagent")}
-	
 	local usedSlotsBag = numSlotsBag[2] - numSlotsBag[1]
 	local usedSlotsBank = numSlotsBank[2] - numSlotsBank[1]
 	local usedSlotsReagent = numSlotsReagent[2] - numSlotsReagent[1]
 
 	self:EnableMouse(true)
-	
 	self.UpdateDimensions = UpdateDimensions
 	
 	self:SetFrameStrata("HIGH")
@@ -385,7 +382,6 @@ function MyContainer:OnCreate(name, settings)
 	self.ContainerHeight = 0
 	self:UpdateDimensions()
 	self:SetWidth((itemSlotSize + 2) * self.Columns + 2)
-	
 	
 	-- The frame background
 	local background = CreateFrame("Frame", nil, self)
