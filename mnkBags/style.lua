@@ -255,22 +255,22 @@ end
 
 local UpdateDimensions = function(self)
 	local height = 0			-- Normal margin space
+
 	if self.BagBar and self.BagBar:IsShown() then
 		height = height + 40	-- Bag button space
 	end
-	if self.Space then
-		height = height + 16	-- additional info display space
-	end
+
 	if self.bagToggle then
 		local tBag = (self.name == "mb_Bag")
 		local fheight = (20)
-		local extraHeight = (tBag and self.hintShown) and (fheight + 4) or 0
-		height = height + 24 + extraHeight
+		height = height + 24
 	end
+	
 	if self.Caption then		-- Space for captions
 		local fheight = (28)
 		height = height + fheight
 	end
+	
 	self:SetHeight(self.ContainerHeight + height)
 end
 
@@ -408,7 +408,7 @@ function MyContainer:OnCreate(name, settings)
 	-- Caption, close button
 	local caption = mnkLibs.createFontString(background, mnkLibs.Fonts.ap, 16, nil, nil, true)
 	
-	if(caption) then
+	if (caption) then
 		local t = L.bagCaptions[self.name] or (tBankBags and strsub(self.name, 5))
 		if not t then t = self.name end
 		if self.Name == "mb_ItemSets" then t=ItemSetCaption..t end
@@ -418,12 +418,13 @@ function MyContainer:OnCreate(name, settings)
 		
 		if (tBag or tBank) then
 			local close = CreateFrame("Button", nil, self, "UIPanelCloseButton")
-			close:SetDisabledTexture("Interface\\AddOns\\mnkBags\\media\\CloseButton\\UI-Panel-MinimizeButton-Disabled")
-			close:SetNormalTexture("Interface\\AddOns\\mnkBags\\media\\CloseButton\\UI-Panel-MinimizeButton-Up")
-			close:SetPushedTexture("Interface\\AddOns\\mnkBags\\media\\CloseButton\\UI-Panel-MinimizeButton-Down")
-			close:SetHighlightTexture("Interface\\AddOns\\mnkBags\\media\\CloseButton\\UI-Panel-MinimizeButton-Highlight", "ADD")
+			close:SetDisabledTexture("Interface\\AddOns\\mnkBags\\media\\Close")
+			close:SetNormalTexture("Interface\\AddOns\\mnkBags\\media\\Close")
+			close:SetPushedTexture("Interface\\AddOns\\mnkBags\\media\\Close")
+			close:SetHighlightTexture("Interface\\AddOns\\mnkBags\\media\\Close")		
 			close:ClearAllPoints()
-			close:SetPoint("TOPRIGHT", 8, 8)
+			close:SetPoint("TOPRIGHT", 2, 2)
+			close:SetSize(12,12)
 			close:SetScript("OnClick", function(self) if cbmb:AtBank() then CloseBankFrame() else CloseAllBags() end end)
 		end
 	end
@@ -433,9 +434,8 @@ function MyContainer:OnCreate(name, settings)
 		self.resetBtn:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, 0)
 		self.resetBtn:SetScript("OnClick", function() resetNewItems(self) end)
 	end
-		
-		
-	--local tBtnOffs = 0
+	
+
   	if (tBag or tBank) then
 		-- Bag bar for changing bags
 		local bagType = tBag and "bags" or "bank"
@@ -460,12 +460,8 @@ function MyContainer:OnCreate(name, settings)
 		self.bagToggle:SetScript("OnClick", function()
 			if(self.BagBar:IsShown()) then 
 				self.BagBar:Hide()
-			--	if self.hint then self.hint:Show() end
-			--	self.hintShown = true
 			else
 				self.BagBar:Show()
-			--	if self.hint then self.hint:Hide() end
-			--	self.hintShown = false
 			end
 			self:UpdateDimensions()
 		end)
@@ -479,34 +475,15 @@ function MyContainer:OnCreate(name, settings)
 		if tBank then
 			local rbHint = REAGENTBANK_DEPOSIT
 			self.reagentBtn = createIconButton("SendReagents", self, Textures.Deposit, "BOTTOMRIGHT", rbHint, tBag)
-			--if self.optionsBtn then
-			--	self.reagentBtn:SetPoint("BOTTOMRIGHT", self.optionsBtn, "BOTTOMLEFT", 0, 0)
 			if self.restackBtn then
 				self.reagentBtn:SetPoint("BOTTOMRIGHT", self.restackBtn, "BOTTOMLEFT", 0, 0)
 			else
 				self.reagentBtn:SetPoint("BOTTOMRIGHT", self.bagToggle, "BOTTOMLEFT", 0, 0)
 			end
 			self.reagentBtn:SetScript("OnClick", function()
-				--print("Deposit!!!")
 				DepositReagentBank()
 			end)
 		end
-
-		-- Tooltip positions
-		local numButtons = 1
-		local btnTable = {self.bagToggle}
-		--if self.optionsBtn then numButtons = numButtons + 1; tinsert(btnTable, self.optionsBtn) end
-		if self.restackBtn then numButtons = numButtons + 1; tinsert(btnTable, self.restackBtn) end
-		if tBag then
-			if self.resetBtn then numButtons = numButtons + 1; tinsert(btnTable, self.resetBtn) end
-			if self.junkBtn then numButtons = numButtons + 1; tinsert(btnTable, self.junkBtn) end
-		end
-		if tBank then
-			if self.reagentBtn then numButtons = numButtons + 1; tinsert(btnTable, self.reagentBtn) end
-		end
-		local ttPos = -(numButtons * 15 + 18)
-		if tBank then ttPos = ttPos + 3 end
-
 	end
 
 	-- Item drop target
@@ -556,18 +533,6 @@ function MyContainer:OnCreate(name, settings)
 		searchIcon:SetPoint("BOTTOMLEFT", infoFrame, "BOTTOMLEFT", -3, 8)
 		searchIcon:SetWidth(16)
 		searchIcon:SetHeight(16)
-		
-		-- Hint
-		self.hint = mnkLibs.createFontString(infoFrame, mnkLibs.Fonts.ap, 16, nil, nil, true)
-		self.hint:SetPoint("BOTTOMLEFT", infoFrame, -0.5, 31.5)
-		self.hint:SetTextColor(1, 1, 1, 0.4)
-		self.hint:SetText("")
-		self.hintShown = true
-		
-		-- The money display
-		local money = self:SpawnPlugin("TagDisplay", "[money]", self)
-		money:SetPoint("TOPRIGHT", self, -30, 0)
-		money = mnkLibs.createFontString(self, mnkLibs.Fonts.ap, 12, nil, nil, true)
 	end
 	return self
 end
