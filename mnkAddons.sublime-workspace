@@ -1,0 +1,390 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "mnkBags/mnkBags.lua",
+			"settings":
+			{
+				"buffer_size": 6578,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "mnkUnits/mnkUnits.lua",
+			"settings":
+			{
+				"buffer_size": 20394,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "mnkBags/style.lua",
+			"settings":
+			{
+				"buffer_size": 16061,
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"packa",
+				"Package Control: Install Package"
+			],
+			[
+				"in",
+				"IndentX: Indent"
+			],
+			[
+				"pack",
+				"Package Control: Install Package"
+			],
+			[
+				"package control",
+				"Package Control: Remove Package"
+			],
+			[
+				"indent",
+				"IndentX: Indent"
+			],
+			[
+				"format",
+				"IndentX: Indent & format JSON"
+			],
+			[
+				"xml",
+				"Set Syntax: camlp4"
+			],
+			[
+				"install package",
+				"Package Control: Install Package"
+			],
+			[
+				"install",
+				"Install Package Control"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/D/Games/World of Warcraft/_retail_/Interface/AddOns/mnkUnits"
+	],
+	"file_history":
+	[
+		"/C/Users/ronhi/Desktop/test.xml",
+		"/D/Games/World of Warcraft/_retail_/Interface/AddOns/mnkBags/style.lua",
+		"/C/Users/ronhi/AppData/Roaming/Sublime Text 3/Packages/Package Control/Package Control.sublime-settings",
+		"/C/Users/ronhi/AppData/Roaming/Sublime Text 3/Packages/User/Package Control.sublime-settings",
+		"/D/Games/World of Warcraft/_retail_/Interface/AddOns/mnkLibs/LICENSE.txt",
+		"/D/Games/World of Warcraft/_retail_/Interface/AddOns/mnkBags/mnkBags.toc"
+	],
+	"find":
+	{
+		"height": 0.0
+	},
+	"find_in_files":
+	{
+		"height": 108.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"folders":
+	[
+		{
+			"path": "D:\\Games\\World of Warcraft\\_retail_\\Interface\\AddOns\\mnkBags"
+		},
+		{
+			"path": "D:\\Games\\World of Warcraft\\_retail_\\Interface\\AddOns\\mnkChat"
+		},
+		{
+			"path": "D:\\Games\\World of Warcraft\\_retail_\\Interface\\AddOns\\mnkDurability"
+		},
+		{
+			"path": "D:\\Games\\World of Warcraft\\_retail_\\Interface\\AddOns\\mnkFavoriteMounts"
+		},
+		{
+			"path": "D:\\Games\\World of Warcraft\\_retail_\\Interface\\AddOns\\mnkFriends"
+		},
+		{
+			"path": "D:\\Games\\World of Warcraft\\_retail_\\Interface\\AddOns\\mnkGearSets"
+		},
+		{
+			"path": "D:\\Games\\World of Warcraft\\_retail_\\Interface\\AddOns\\mnkGuild"
+		},
+		{
+			"path": "D:\\Games\\World of Warcraft\\_retail_\\Interface\\AddOns\\mnkMemory"
+		},
+		{
+			"path": "D:\\Games\\World of Warcraft\\_retail_\\Interface\\AddOns\\mnkLibs"
+		},
+		{
+			"path": "D:\\Games\\World of Warcraft\\_retail_\\Interface\\AddOns\\mnkMinimap"
+		},
+		{
+			"path": "D:\\Games\\World of Warcraft\\_retail_\\Interface\\AddOns\\mnkMisc"
+		},
+		{
+			"path": "D:\\Games\\World of Warcraft\\_retail_\\Interface\\AddOns\\mnkMoney"
+		},
+		{
+			"path": "D:\\Games\\World of Warcraft\\_retail_\\Interface\\AddOns\\mnkNames"
+		},
+		{
+			"path": "D:\\Games\\World of Warcraft\\_retail_\\Interface\\AddOns\\mnkNuisance"
+		},
+		{
+			"path": "D:\\Games\\World of Warcraft\\_retail_\\Interface\\AddOns\\mnkOld"
+		},
+		{
+			"path": "D:\\Games\\World of Warcraft\\_retail_\\Interface\\AddOns\\mnkProfessions"
+		},
+		{
+			"path": "D:\\Games\\World of Warcraft\\_retail_\\Interface\\AddOns\\mnkPC"
+		},
+		{
+			"path": "D:\\Games\\World of Warcraft\\_retail_\\Interface\\AddOns\\mnkReputation"
+		},
+		{
+			"path": "D:\\Games\\World of Warcraft\\_retail_\\Interface\\AddOns\\mnkTooltip"
+		},
+		{
+			"path": "D:\\Games\\World of Warcraft\\_retail_\\Interface\\AddOns\\mnkUnits"
+		},
+		{
+			"path": "D:\\Games\\World of Warcraft\\_retail_\\Interface\\AddOns\\mnkXP"
+		}
+	],
+	"groups":
+	[
+		{
+			"selected": 2,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "mnkBags/mnkBags.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6578,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua/Lua.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 756.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "mnkUnits/mnkUnits.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 20394,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5037,
+								5037
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua/Lua.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1728.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "mnkBags/style.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 16061,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								13728,
+								13728
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua/Lua.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 8640.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 41.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "",
+	"replace":
+	{
+		"height": 0.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 248.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
