@@ -427,6 +427,13 @@ function MyContainer:OnCreate(name, settings)
 			close:SetScript("OnClick", function(self) if cbmb:AtBank() then CloseBankFrame() else CloseAllBags() end end)
 		end
 	end
+
+	if self.name == 'mb_NewItems' then
+		self.resetBtn = createIconButton("ResetNew", self, Textures.ResetNew, "TOPRIGHT", "Reset New", tBag)
+		self.resetBtn:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, 0)
+		self.resetBtn:SetScript("OnClick", function() resetNewItems(self) end)
+	end
+		
 		
 	--local tBtnOffs = 0
   	if (tBag or tBank) then
@@ -462,21 +469,10 @@ function MyContainer:OnCreate(name, settings)
 			end
 			self:UpdateDimensions()
 		end)
-
-		-- Button to reset new items:
-		if tBag then
-			self.resetBtn = createIconButton("ResetNew", self, Textures.ResetNew, "BOTTOMRIGHT", "Reset New", tBag)
-			self.resetBtn:SetPoint("BOTTOMRIGHT", self.bagToggle, "BOTTOMLEFT", 0, 0)
-			self.resetBtn:SetScript("OnClick", function() resetNewItems(self) end)
-		end
 		
 		-- Button to restack items:
 		self.restackBtn = createIconButton("Restack", self, Textures.Restack, "BOTTOMRIGHT", "Restack", tBag)
-		if self.resetBtn then
-			self.restackBtn:SetPoint("BOTTOMRIGHT", self.resetBtn, "BOTTOMLEFT", 0, 0)
-		else
-			self.restackBtn:SetPoint("BOTTOMRIGHT", self.bagToggle, "BOTTOMLEFT", 0, 0)
-		end
+		self.restackBtn:SetPoint("BOTTOMRIGHT", self.bagToggle, "BOTTOMLEFT", 0, 0)
 		self.restackBtn:SetScript("OnClick", function() restackItems(self) end)
 		
 		-- Button to send reagents to Reagent Bank:
