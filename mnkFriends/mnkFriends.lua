@@ -20,7 +20,11 @@ function mnkFriends.DoOnMouseDown(self, arg, button)
 	end
 	
     if button == 'RightButton' then
-        InviteUnit(name)
+        if sendBNet then 
+			return 
+		else 
+			InviteUnit(name) 
+		end
     else
 		if sendBNet then 
 			ChatFrame_SendBNetTell(name)
@@ -88,7 +92,8 @@ function mnkFriends.DoOnEnter(self)
                 tooltip:SetLineScript(y, 'OnMouseDown', mnkFriends.DoOnMouseDown, 'b_'..friendInfo.gameAccountInfo.characterName..'-'..friendInfo.gameAccountInfo.realmName)
             else
                 local y, x = tooltip:AddLine(string.format('|T%s:16|t', BNET_ICON)..presenceName..status, '', '', noteText)
-                tooltip:SetLineScript(y, 'OnMouseDown', mnkFriends.DoOnMouseDown, 'b_'..friendInfo.gameAccountInfo.characterName..'-'..friendInfo.gameAccountInfo.realmName)
+				
+                tooltip:SetLineScript(y, 'OnMouseDown', mnkFriends.DoOnMouseDown, 'b_'..presenceName)
             end
         end
     end
