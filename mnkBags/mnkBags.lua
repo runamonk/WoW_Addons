@@ -71,7 +71,6 @@ function mnkBags:ADDON_LOADED(event, addon)
 	
 	cbmb:UpdateAnchors()
 	cbmb:Init()
-	--cbmb:ToggleBagPosButtons()
 end
 
 function cbmb:UpdateAnchors()
@@ -148,20 +147,6 @@ local SetFrameMovable = function(f, v)
 		f:SetScript("OnMouseDown", nil)
 		f:SetScript("OnMouseUp", nil)
 	end
-end
-
-local function StatusMsg(str1, str2, data, name, short)
-	local R,G,t = '|cFFFF0000', '|cFF00FF00', ''
-	if (data ~= nil) then t = data and G..(short and 'on|r' or 'enabled|r') or R..(short and 'off|r' or 'disabled|r') end
-	t = (name and '|cFFFFFF00mnkBags:|r ' or '')..str1..t..str2
-	ChatFrame1:AddMessage(t)
-end
-
-local function StatusMsgVal(str1, str2, data, name)
-	local G,t = '|cFF00FF00', ''
-	if (data ~= nil) then t = G..data..'|r' end
-	t = (name and '|cFFFFFF00mnkBags:|r ' or '')..str1..t..str2
-	ChatFrame1:AddMessage(t)
 end
 
 local buttonCollector = {}
