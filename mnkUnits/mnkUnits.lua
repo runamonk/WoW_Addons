@@ -2,6 +2,8 @@ mnkUnits = CreateFrame('frame')
 mnkUnits.oUF = oUF or ns.oUF
 local _, playerClass = UnitClass('player')
 local classColor = {}
+local _BossBanner_OnEvent = BossBanner_OnEvent;
+
 classColor.r, classColor.g, classColor.b, _ = GetClassColor(playerClass)
 --Tags are in mnkLibs\mnkuTags
 
@@ -396,7 +398,9 @@ local function SetPlayerCastbarVis(bool)
 end
 
 function mnkUnits:DoOnEvent(event, unit)
-	if event == 'PLAYER_REGEN_DISABLED' then
+    if event == 'PLAYER_LOGIN' then
+        LootWonAlertFrame_ShowAlert = mnkLibs.donothing()
+	elseif event == 'PLAYER_REGEN_DISABLED' then
 		SetPlayerStatusFlag(oUF_mnkUnitsPlayer, true)
 	elseif event == 'PLAYER_REGEN_ENABLED' then
 		SetPlayerStatusFlag(oUF_mnkUnitsPlayer, false)
@@ -479,9 +483,12 @@ MainMenuBarVehicleLeaveButton:SetNormalTexture(mnkLibs.Textures.arrow_down)
 MainMenuBarVehicleLeaveButton:SetPushedTexture(mnkLibs.Textures.arrow_down_pushed)
 
 mnkUnits:SetScript('OnEvent', mnkUnits.DoOnEvent)
+mnkUnits:RegisterEvent('PLAYER_LOGIN')
 mnkUnits:RegisterEvent('PLAYER_ENTERING_WORLD')
 mnkUnits:RegisterEvent('PLAYER_FLAGS_CHANGED')
 mnkUnits:RegisterEvent('NAME_PLATE_UNIT_ADDED')
 mnkUnits:RegisterEvent('NAME_PLATE_UNIT_REMOVED')
 mnkUnits:RegisterEvent('PLAYER_REGEN_ENABLED')
 mnkUnits:RegisterEvent('PLAYER_REGEN_DISABLED')
+
+
