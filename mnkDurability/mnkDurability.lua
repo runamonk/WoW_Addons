@@ -196,11 +196,23 @@ function mnkDurability.AddInventory(slotName)
     t[slotID].Current = c
     t[slotID].Max = m
     t[slotID].ItemID = GetInventoryItemID('player', slotID)
+    t[slotID].iLevel = mnkDurability.GetItemLevel(slotID)
 end
 
 function mnkDurability.GetAvgILevel()
-    local _, equipped = GetAverageItemLevel()
-    return equipped
+    -- GetAverageItemLevel() is not returning the correct updated ilevel.
+    -- so we'll calculate it ourselves.
+    local x = 0
+    local c = 0
+
+    for i in pairs(t) do 
+        if (t[i].iLevel ~= nil) and (t[i].iLevel ~= '-') then
+            c = c + 1
+            x = x + t[i].iLevel
+        end 
+    end    
+
+    return x/c
 end
 
 function mnkDurability.GetItemLevel(slotID)
