@@ -317,7 +317,7 @@ local function IsItemBOE(item)
 		scanTip:SetBagItem(item.bagID, item.slotID)
 		local l = ""
 
-		for i=2, scanTip:NumLines() do
+		for i=2, 5 do
 			if _G["scanTipTextLeft"..i] then
 				l = _G["scanTipTextLeft"..i]:GetText() or ""
 				if l and l:find(ITEM_BIND_ON_EQUIP) then
