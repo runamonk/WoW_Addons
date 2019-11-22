@@ -255,7 +255,7 @@ function mnkDurability:GetText()
     t = {}
     local Total = 0
     local Current = 0
-    local Lowest = 100
+    --local Lowest = 100
     local Percent = 100
     
     mnkDurability.AddInventory('HeadSlot')
@@ -277,9 +277,9 @@ function mnkDurability:GetText()
     
     for i in pairs(t) do 
         if (t[i].Max ~= nil) and (t[i].Current ~= nil) then
-            if (math.floor((t[i].Current / t[i].Max) * 100) < Lowest) then
-                Lowest = math.floor((t[i].Current / t[i].Max) * 100)
-            end
+            -- if (math.floor((t[i].Current / t[i].Max) * 100) < Lowest) then
+            --     Lowest = math.floor((t[i].Current / t[i].Max) * 100)
+            -- end
             
             Current = (Current + t[i].Current)
             Total = (Total + t[i].Max)
@@ -289,8 +289,8 @@ function mnkDurability:GetText()
     Percent = math.floor((Current / Total) * 100)
 
     if (Lowest ~= Percent) then
-        return Lowest..'%/'..Percent..'%'..mnkLibs.Color(COLOR_WHITE) ..' i'..mnkLibs.Color(COLOR_GOLD)..math.floor(mnkDurability.GetAvgILevel())
-    else
+    --     return Lowest..'%/'..Percent..'%'..mnkLibs.Color(COLOR_WHITE) ..' i'..mnkLibs.Color(COLOR_GOLD)..math.floor(mnkDurability.GetAvgILevel())
+    -- else
         return Percent..'%'..mnkLibs.Color(COLOR_WHITE)..' i'..mnkLibs.Color(COLOR_GOLD)..math.floor(mnkDurability.GetAvgILevel())
     end
 end

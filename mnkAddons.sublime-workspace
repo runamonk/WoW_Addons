@@ -3,6 +3,10 @@
 	{
 		"selected_items":
 		[
+			[
+				"_",
+				"_BossBanner_OnEvent"
+			]
 		]
 	},
 	"buffers":
@@ -19,7 +23,7 @@
 			"file": "mnkUnits/mnkUnits.lua",
 			"settings":
 			{
-				"buffer_size": 20394,
+				"buffer_size": 20582,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -29,6 +33,16 @@
 			"settings":
 			{
 				"buffer_size": 16061,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "mnkDurability/mnkDurability.lua",
+			"settings":
+			{
+				"buffer_size": 10286,
+				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		}
@@ -44,6 +58,10 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"Package Control: install",
+				"Package Control: Install Package"
+			],
 			[
 				"packa",
 				"Package Control: Install Package"
@@ -101,10 +119,16 @@
 	},
 	"expanded_folders":
 	[
+		"/D/Games/World of Warcraft/_retail_/Interface/AddOns/mnkBags",
+		"/D/Games/World of Warcraft/_retail_/Interface/AddOns/mnkBags/cargBags",
+		"/D/Games/World of Warcraft/_retail_/Interface/AddOns/mnkDurability",
+		"/D/Games/World of Warcraft/_retail_/Interface/AddOns/mnkReputation",
 		"/D/Games/World of Warcraft/_retail_/Interface/AddOns/mnkUnits"
 	],
 	"file_history":
 	[
+		"/C/Users/ronhi/Desktop/BossBannerHider/BossBannerHider.lua",
+		"/D/Games/World of Warcraft/_retail_/Interface/AddOns/mnkBags/cargBags/base/core.lua",
 		"/C/Users/ronhi/Desktop/test.xml",
 		"/D/Games/World of Warcraft/_retail_/Interface/AddOns/mnkBags/style.lua",
 		"/C/Users/ronhi/AppData/Roaming/Sublime Text 3/Packages/Package Control/Package Control.sublime-settings",
@@ -114,13 +138,16 @@
 	],
 	"find":
 	{
-		"height": 0.0
+		"height": 27.0
 	},
 	"find_in_files":
 	{
 		"height": 108.0,
 		"where_history":
 		[
+			"D:\\Games\\World of Warcraft\\_retail_\\Interface\\AddOns\\",
+			"D:\\Games\\World of Warcraft\\_retail_\\Interface\\AddOns\\mnkBags\\cargBags",
+			"<open folders>"
 		]
 	},
 	"find_state":
@@ -128,6 +155,10 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"LootWonAlertFrame_ShowAlert",
+			"BossBanner",
+			"blizzard",
+			"cbmb"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -211,7 +242,7 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 3,
 			"sheets":
 			[
 				{
@@ -237,10 +268,10 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 756.0,
+						"translation.y": 1944.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
@@ -249,15 +280,24 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 20394,
+						"buffer_size": 20582,
 						"regions":
 						{
+							"bookmarks":
+							{
+								"flags": 144,
+								"icon": "bookmark",
+								"regions":
+								[
+								],
+								"scope": "bookmarks"
+							}
 						},
 						"selection":
 						[
 							[
-								5037,
-								5037
+								16836,
+								16863
 							]
 						],
 						"settings":
@@ -267,10 +307,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1728.0,
+						"translation.y": 6912.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
@@ -286,8 +326,8 @@
 						"selection":
 						[
 							[
-								13728,
-								13728
+								4905,
+								4905
 							]
 						],
 						"settings":
@@ -296,7 +336,37 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 8640.0,
+						"translation.y": 7020.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "mnkDurability/mnkDurability.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 10286,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								6982,
+								6982
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua/Lua.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 3348.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
@@ -307,7 +377,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 0.0
+		"height": 27.0
 	},
 	"input":
 	{
@@ -344,7 +414,7 @@
 	"project": "",
 	"replace":
 	{
-		"height": 0.0
+		"height": 50.0
 	},
 	"save_all_on_build": true,
 	"select_file":

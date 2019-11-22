@@ -114,7 +114,7 @@ local function timer_OnUpdate(button, elapsed)
     if (button.timercount and button.timercount ~= math.huge) then
         button.timercount = max(button.timercount - elapsed, 0)
         if button.timercount > 0 then
-            button.timer:SetText(formatTime(button.timercount))
+            button.timer:SetText(mnkLibs.formatTime(button.timercount))
             if button.timercount <= 3 then
                 button.timer:SetTextColor(1, 0, 0)
                 button.border:SetBackdropBorderColor(1,0,0,1)
