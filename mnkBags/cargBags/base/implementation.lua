@@ -316,15 +316,17 @@ local function IsItemBOE(item)
 		scanTip:SetBagItem(item.bagID, item.slotID)
 		local l = ""
 		local max = scanTip:NumLines()
-		if max > 5 then max = 5 end
-		for i=2, max do
-			if _G["scanTipTextLeft"..i] then
-				l = _G["scanTipTextLeft"..i]:GetText() or ""
-			
-				if l and l:find(ITEM_BIND_ON_EQUIP) then
-					return true
-				end
-			end 
+		if max > 3 then max = 3 end
+        if max >= 2 then
+			for i=2, max do
+				if _G["scanTipTextLeft"..i] then
+					l = _G["scanTipTextLeft"..i]:GetText() or ""
+				
+					if l and l:find(ITEM_BIND_ON_EQUIP) then
+						return true
+					end
+				end 
+			end
 		end
 	end
 	return false
