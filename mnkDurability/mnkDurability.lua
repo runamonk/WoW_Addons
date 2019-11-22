@@ -232,7 +232,10 @@ function mnkDurability.GetItemLevel(slotID)
         tip:ClearLines()
         tip:SetOwner(UIParent,"ANCHOR_NONE")
         tip:SetInventoryItem("player", slotID)
-        for i=1, 5 do
+        local max = scanTip:NumLines()
+        if max > 5 then max = 5 end
+
+        for i=1, max do
             local l = _G["scanTipTextLeft"..i]:GetText() or ""
             if l and l:find('Item Level') then
                 local _, i = string.find(l, 'Item Level%s%d')

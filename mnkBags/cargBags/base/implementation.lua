@@ -315,7 +315,9 @@ local function IsItemBOE(item)
 		scanTip:SetOwner(UIParent,"ANCHOR_NONE")
 		scanTip:SetBagItem(item.bagID, item.slotID)
 		local l = ""
-		for i=2, 5 do
+		local max = scanTip:NumLines()
+		if max > 5 then max = 5 end
+		for i=2, max do
 			if _G["scanTipTextLeft"..i] then
 				l = _G["scanTipTextLeft"..i]:GetText() or ""
 			
