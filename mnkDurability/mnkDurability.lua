@@ -232,21 +232,22 @@ function mnkDurability.GetItemLevel(slotID)
         tip:ClearLines()
         tip:SetOwner(UIParent,"ANCHOR_NONE")
         tip:SetInventoryItem("player", slotID)
-        local max = scanTip:NumLines()
-        if max > 5 then max = 5 end
-
-        for i=1, max do
-            local l = _G["scanTipTextLeft"..i]:GetText() or ""
-            if l and l:find('Item Level') then
-                local _, i = string.find(l, 'Item Level%s%d')
-                -- check for boosted levels ie Chromeie scenarios.
-                local _, x = string.find(l, " (", 1, true)
-                --print(t, ' ', x)
-                if x then
-                    return string.sub(l, i, x-2) or '-'
-                end
-                return string.sub(l, i) or -'-'            
-            end 
+        local max = tip:NumLines()
+        if max > 3 then max = 3 end
+        if max >= 2 then
+            for i=2, max do
+                local l = _G["scanTipTextLeft"..i]:GetText() or ""
+                if l and l:find('Item Level') then
+                    local _, i = string.find(l, 'Item Level%s%d')
+                    -- check for boosted levels ie Chromeie scenarios.
+                    local _, x = string.find(l, " (", 1, true)
+                    --print(t, ' ', x)
+                    if x then
+                        return string.sub(l, i, x-2) or '-'
+                    end
+                    return string.sub(l, i) or -'-'            
+                end 
+            end
         end
     end
 
