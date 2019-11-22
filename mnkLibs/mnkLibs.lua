@@ -163,7 +163,7 @@ function mnkLibs.formatPlayerName(fullName)
     end
 end
 
-function formatTime(s)
+function mnkLibs.formatTime(s)
     local day, hour, minute = 86400, 3600, 60
   
     if s >= day then
@@ -178,13 +178,6 @@ function formatTime(s)
 
 function mnkLibs.PrintError(Message)
     UIErrorsFrame:AddMessage(Message, 1.0, 0.0, 0.0)
-end
-
-function mnkLibs.round(x, n)
-    n = math.pow(10, n or 0)
-    x = x * n
-    if x >= 0 then x = math.floor(x + 0.5) else x = math.ceil(x - 0.5) end
-    return x / n
 end
 
 function mnkLibs.setBackdrop(self, bgfile, edgefile, inset_l, inset_r, inset_t, inset_b)
