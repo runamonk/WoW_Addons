@@ -216,36 +216,35 @@ function mnkDurability.GetAvgILevel()
 end
 
 function mnkDurability.GetItemLevel(slotID)
-	-- local link = GetInventoryItemLink('player', slotID); 
+	local link = GetInventoryItemLink('player', slotID); 
+    -- GetDetailedItemLevelInfo() is not accurate.
 	-- local level = 0
-	
 	-- if link then
 		-- level = GetDetailedItemLevelInfo(link);
 	-- end
-	
 	-- if level == 0 then
 		-- return '-'
 	-- else
 		-- return level
 	-- end
-	 
-
-    local tip = CreateFrame("GameTooltip", "scanTip", UIParent, "GameTooltipTemplate")
-    tip:ClearLines()
-    tip:SetOwner(UIParent,"ANCHOR_NONE")
-    tip:SetInventoryItem("player", slotID)
-    for i=1, 5 do
-        local l = _G["scanTipTextLeft"..i]:GetText()
-        if l and l:find('Item Level') then
-            local _, i = string.find(l, 'Item Level%s%d')
-            -- check for boosted levels ie Chromeie scenarios.
-            local _, x = string.find(l, " (", 1, true)
-            --print(t, ' ', x)
-            if x then
-                return string.sub(l, i, x-2) or '-'
-            end
-            return string.sub(l, i) or -'-'            
-        end 
+	if link then
+        local tip = CreateFrame("GameTooltip", "scanTip", UIParent, "GameTooltipTemplate")
+        tip:ClearLines()
+        tip:SetOwner(UIParent,"ANCHOR_NONE")
+        tip:SetInventoryItem("player", slotID)
+        for i=1, 5 do
+            local l = _G["scanTipTextLeft"..i]:GetText() or ""
+            if l and l:find('Item Level') then
+                local _, i = string.find(l, 'Item Level%s%d')
+                -- check for boosted levels ie Chromeie scenarios.
+                local _, x = string.find(l, " (", 1, true)
+                --print(t, ' ', x)
+                if x then
+                    return string.sub(l, i, x-2) or '-'
+                end
+                return string.sub(l, i) or -'-'            
+            end 
+        end
     end
 
     return '-'
