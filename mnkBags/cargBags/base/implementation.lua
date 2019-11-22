@@ -309,24 +309,21 @@ local ilvlSubTypes = {
 }
 
 local function IsItemBOE(item)
-	if item.link and (item.type and (ilvlTypes[item.type] or item.subType and ilvlSubTypes[item.subType])) and item.level > 0 then		
+	if item.link and (item.type and (ilvlTypes[item.type] or item.subType and ilvlSubTypes[item.subType])) and item.level > 0 then	
+		local scanTip = CreateFrame("GameTooltip", "scanTip", UIParent, "GameTooltipTemplate")
 		scanTip:ClearLines()
 		scanTip:SetHyperlink(item.link)	
 		scanTip:SetOwner(UIParent,"ANCHOR_NONE")
 		scanTip:SetBagItem(item.bagID, item.slotID)
 		local l = ""
-		local max = scanTip:NumLines()
-		if max > 3 then max = 3 end
-        if max >= 2 then
-			for i=2, max do
-				if _G["scanTipTextLeft"..i] then
-					l = _G["scanTipTextLeft"..i]:GetText() or ""
-				
-					if l and l:find(ITEM_BIND_ON_EQUIP) then
-						return true
-					end
-				end 
-			end
+
+		for i=2, scanTip:NumLines() do
+			if _G["scanTipTextLeft"..i] then
+				l = _G["scanTipTextLeft"..i]:GetText() or ""
+				if l and l:find(ITEM_BIND_ON_EQUIP) then
+					return true
+				end
+			end 
 		end
 	end
 	return false
