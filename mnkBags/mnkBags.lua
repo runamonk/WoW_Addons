@@ -7,7 +7,7 @@ mnkBags:RegisterEvent("ADDON_LOADED")
 
 local cbmb = cargBags:GetImplementation("mb")
 
-local L = mbLocals
+--local L = mbLocals
 _Bags = {}
 _BagsHidden = {}
 mnkBagsGlobals = {}
