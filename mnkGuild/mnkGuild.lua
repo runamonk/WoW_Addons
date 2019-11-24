@@ -38,21 +38,18 @@ function mnkGuild.DoOnEnter(self)
         
         local GuildName = GetGuildInfo('player')
         tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..GuildName)
-        --local l = tooltip:AddLine();
-        --tooltip:SetCell(l, 1, GetGuildRosterMOTD(), 5);
         
         local y, x = tooltip:AddLine('')
         --SetCell(lineNum, colNum, value[, font][, justification][, colSpan][, provider][, leftPadding][, rightPadding][, maxWidth][, minWidth][, ...])
         tooltip:SetCell(y, 1, GetGuildRosterMOTD(), nil, 'LEFT', 5, nil, nil, nil, 450, nil)
-
-
         tooltip:AddHeader(' ')
         tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Name', mnkLibs.Color(COLOR_GOLD)..'Level', mnkLibs.Color(COLOR_GOLD)..'Rank', mnkLibs.Color(COLOR_GOLD)..'Zone', mnkLibs.Color(COLOR_GOLD)..'Note')
         
         for i = 1, #t do
             local y = tooltip:AddLine(t[i].ClassNameStatus, t[i].level, t[i].rank, t[i].zone, t[i].note)
-            tooltip:SetLineScript(y, 'OnMouseDown', mnkGuild.MouseHandler, t[i].name)
+            tooltip:SetLineScript(y, 'OnMouseDown', mnkGuild.DoOnMouseDown, t[i])
         end
+
         tooltip:AddLine(' ')
 
         local l = tooltip:AddLine()
@@ -73,12 +70,26 @@ function mnkGuild.DoOnEnter(self)
     tooltip:Show()
 end
 
-function mnkGuild.MouseHandler(self, arg, button) 
+function mnkGuild.DoOnMouseDown(self, arg, button) 
+    local sendBNet = false
+   
+    if arg.client == 'b' then
+        sendBNet = true
+    end
+    
     if button == 'RightButton' then
-        InviteUnit(arg)
+        if sendBNet then 
+            return
+        else
+            --InviteUnit(arg.name)
+            C_PartyInfo.InviteUnit(arg.name)
+        end 
     else
-        ChatFrame_SendSmartTell(arg)
-        --SetItemRef('player:'..arg, '|Hplayer:'..arg..'|h['..arg..'|h', 'LeftButton')
+        if sendBNet then 
+            ChatFrame_SendBNetTell(arg.name)
+        else
+            ChatFrame_SendTell(arg.name)
+        end
     end
 end
 
@@ -124,6 +135,13 @@ function mnkGuild.UpdateText()
                     t[x].rank = rank
                     t[x].zone = zone
                     t[x].note = note
+
+                    if online then
+                        t[x].client = 'p'
+                    else
+                         t[x].client = 'b'
+                    end
+
                     if isMobile then
                         t[x].ClassNameStatus = t[x].ClassNameStatus..mnkLibs.Color(COLOR_WHITE)..'*'
                     end
