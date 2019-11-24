@@ -4,6 +4,8 @@ local cargBags = ns.cargBags
 mnkBags = CreateFrame('Frame', 'mnkBags', UIParent)
 mnkBags:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
 mnkBags:RegisterEvent("ADDON_LOADED")
+mnkBags:RegisterEvent('MERCHANT_SHOW')
+
 
 local cbmb = cargBags:GetImplementation("mb")
 local _
@@ -71,6 +73,26 @@ function mnkBags:ADDON_LOADED(event, addon)
 	
 	cbmb:UpdateAnchors()
 	cbmb:Init()
+end
+
+function mnkBags:MERCHANT_SHOW(event, addon)
+	if (not MerchantFrame:IsShown()) then return end
+	local p = 0
+	for k,_ in pairs(_Bags.bagJunk.buttons) do
+		-- just in case they close the form while selling.
+		if (not MerchantFrame:IsShown()) then return end
+		local b = _Bags.bagJunk.buttons[k]
+		local item = cbmb:GetItemInfo(b.bagID, b.slotID)
+		if item then
+			if item.rarity == 0 and item.sellPrice ~= 0 then
+				p = p + (item.sellPrice * item.count)
+				UseContainerItem(b.bagID, b.slotID)
+			end
+		end
+	end
+	if p > 0 then
+		print('Junk sold for: ', GetCoinTextureString(p))
+	end
 end
 
 function cbmb:UpdateAnchors()

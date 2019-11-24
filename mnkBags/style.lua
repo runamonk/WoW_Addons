@@ -179,34 +179,6 @@ function MyContainer:OnContentsChanged(forced)
 	end
 end
 
--- Sell Junk
-local JS = CreateFrame("Frame")
-JS:RegisterEvent("MERCHANT_SHOW")
-local function SellJunk()
-	--if (UnitLevel("player") < 5) then return end
-	
-	local Profit, SoldCount = 0, 0
-	local item
-
-	for BagID = 0, 4 do
-		for BagSlot = 1, GetContainerNumSlots(BagID) do
-			item = cbmb:GetItemInfo(BagID, BagSlot)
-			if item then
-				if item.rarity == 0 and item.sellPrice ~= 0 then
-					Profit = Profit + (item.sellPrice * item.count)
-					SoldCount = SoldCount + 1
-					UseContainerItem(BagID, BagSlot)
-				end
-			end
-		end
-	end
-	
-	if Profit > 0 then
-		print('Junk sold for: ', GetCoinTextureString(Profit))
-	end
-end
-JS:SetScript("OnEvent", function() SellJunk() end)
-
 -- Restack Items
 local restackItems = function(self)
 	local tBag, tBank = (self.name == "mb_Bag"), (self.name == "mb_Bank")
@@ -296,12 +268,7 @@ local createIconButton = function (name, parent, texture, point, hint, isBag)
 	button.icon:SetWidth(16)
 	button.icon:SetHeight(16)
 	button.icon:SetTexture(texture)
-	if name == "SellJunk" then
-		button.icon:SetVertexColor(0.8, 0.8, 0.8)
-	else
-		button.icon:SetVertexColor(0.8, 0.8, 0.8)
-	end
-	
+	button.icon:SetVertexColor(0.8, 0.8, 0.8)
 	mnkLibs.setTooltip(button, hint)
 
 	button.tag = name	
