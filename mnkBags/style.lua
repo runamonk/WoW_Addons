@@ -1,9 +1,6 @@
 local addon, ns = ...
 local cargBags = ns.cargBags
 
-local _
-local L = mbLocals
-
 local mediaPath = [[Interface\AddOns\mnkBags\media\]]
 local Textures = {
 	Search =		mediaPath .. "Search",
@@ -13,6 +10,7 @@ local Textures = {
 	Deposit =		mediaPath .. "Deposit"
 }
 
+local _
 local itemSlotSize = 32
 ------------------------------------------
 -- MyContainer specific
@@ -404,7 +402,7 @@ function MyContainer:OnCreate(name, settings)
 	local caption = mnkLibs.createFontString(background, mnkLibs.Fonts.ap, 16, nil, nil, true)
 	
 	if (caption) then
-		local t = L.bagCaptions[self.name] or (tBankBags and strsub(self.name, 5))
+		local t = mbLocals.bagCaptions[self.name] or (tBankBags and strsub(self.name, 5))
 		if not t then t = self.name end
 		if self.Name == "mb_ItemSets" then t=ItemSetCaption..t end
 		caption:SetText(t)

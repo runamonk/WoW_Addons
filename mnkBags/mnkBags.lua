@@ -6,8 +6,8 @@ mnkBags:SetScript('OnEvent', function(self, event, ...) self[event](self, event,
 mnkBags:RegisterEvent("ADDON_LOADED")
 
 local cbmb = cargBags:GetImplementation("mb")
+local _
 
---local L = mbLocals
 _Bags = {}
 _BagsHidden = {}
 mnkBagsGlobals = {}
