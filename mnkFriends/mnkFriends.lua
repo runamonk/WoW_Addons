@@ -23,7 +23,8 @@ function mnkFriends.DoOnMouseDown(self, arg, button)
         if sendBNet then 
             return
         else
-		  InviteUnit(name)
+		  C_PartyInfo.InviteUnit(name)
+          --InviteUnit(name)
         end 
     else
 		if sendBNet then 
