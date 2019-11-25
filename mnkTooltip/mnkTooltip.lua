@@ -5,6 +5,7 @@ mnkTooltip = CreateFrame('Frame')
 local colors = {}
 local cls = ''
 for class, color in pairs(RAID_CLASS_COLORS) do colors[class] = string.format('%02x%02x%02x', color.r * 255, color.g * 255, color.b * 255) end
+local _
 
 local function SetBackdrop()
     -- GameTooltip_UpdateStyle was blowing away my backdrop.

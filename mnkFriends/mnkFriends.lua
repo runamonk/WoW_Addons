@@ -6,7 +6,7 @@ local FRIENDS_TEXTURE_BROADCAST = 'Interface\\FriendsFrame\\BroadcastIcon'
 local FRIENDS_TEXTURE_ONLINE = 'Interface\\FriendsFrame\\StatusIcon-Online'
 local BNET_ICON = 'Interface\\FriendsFrame\\Battlenet-Portrait'
 local WOW_ICON = 'Interface\\FriendsFrame\\Battlenet-WoWicon'
-
+local _
 local LastFriendsOnline = 0
 local colors = {}
 for class, color in pairs(RAID_CLASS_COLORS) do colors[class] = string.format('%02x%02x%02x', color.r * 255, color.g * 255, color.b * 255) end

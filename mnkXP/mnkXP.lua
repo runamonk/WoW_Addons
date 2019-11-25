@@ -2,6 +2,7 @@ mnkXP = CreateFrame('Frame')
 mnkXP.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 
 local LibQTip = LibStub('LibQTip-1.0')
+local _
 
 function mnkXP:DoOnEvent(event)
     if event == 'PLAYER_LOGIN' then

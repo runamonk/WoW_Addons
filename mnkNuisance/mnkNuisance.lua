@@ -4,6 +4,7 @@ mnkNuisance_bBlockEnabled = true
 
 local LibQTip = LibStub('LibQTip-1.0')
 local BlockThisSession = 0
+local _
 
 function mnkNuisance:DoOnEvent(event, arg1)
     if event == 'PLAYER_LOGIN' then

@@ -7,6 +7,7 @@ local libAG = LibStub('AceGUI-3.0')
 local tblAll = {}
 local tblCollected = {}
 local tblFavorites = {}
+local _
 
 local function parseMounts()
 	tblFavorites = {}	

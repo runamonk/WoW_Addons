@@ -3,7 +3,7 @@ mnkMinimap = CreateFrame('Frame')
 local _, playerClass = UnitClass('player')
 local classColor = {}
 classColor.r, classColor.g, classColor.b, _ = GetClassColor(playerClass)
-
+local _
 
 local function MinimapZoom(self, direction)
     if (direction > 0) then 

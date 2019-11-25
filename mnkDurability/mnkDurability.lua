@@ -4,7 +4,7 @@ mnkDurability.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 local LibQTip = LibStub('LibQTip-1.0')
 local t = {}
 local StatusBarCellProvider, StatusBarCell = LibQTip:CreateCellProvider()
-
+local _
 
 function mnkDurability:DoOnEvent(event, arg1)
     --print(event, ' ', arg1)

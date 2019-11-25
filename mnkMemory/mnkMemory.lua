@@ -5,7 +5,7 @@ local LibQTip = LibStub('LibQTip-1.0')
 
 local _Elapsed = 0
 local SPACER = '       '
-
+local _
 function mnkMemory:DoOnEvent(event)
     if event == 'PLAYER_LOGIN' then
         mnkMemory.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkMemory', {

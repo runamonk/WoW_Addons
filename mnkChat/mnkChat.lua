@@ -10,6 +10,8 @@ mnkChat_db.NEW_MESSAGES = 0
 
 local MAX_MESSAGES = 10
 local font = CreateFont('tooltipFont')
+local _
+
 font:SetFont(mnkLibs.Fonts.abf, 12)
 
 local StickyTypeChannels = {

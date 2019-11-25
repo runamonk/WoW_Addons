@@ -18,6 +18,7 @@ local cvars = {
 	nameplatePersonalShowAlways = 0
 }
 
+local _
 local cfg_name_width = 190
 local cfg_name_height = 12
 local cfg_frame_width = 200
