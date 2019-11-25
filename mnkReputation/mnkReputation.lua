@@ -10,6 +10,7 @@ local StatusBarCellProvider, StatusBarCell = libQTip:CreateCellProvider()
 mnkReputation_db = {}
 mnkReputation_db.Watched = {}
 mnkReputation_db.AutoTabardName = nil
+local _
 
 local tblAllFactions = {}
 local tblTabards = {}

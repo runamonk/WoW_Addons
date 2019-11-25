@@ -3,6 +3,7 @@ mnkMoney.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 local libQTip = LibStub('LibQTip-1.0')
 local SPACER = '       '
 local currencyOnHand = 0
+local _
 
 function mnkMoney.DoOnClick(self)
     ToggleCharacter('TokenFrame')
@@ -202,11 +203,9 @@ mnkMoney:SetScript('OnEvent', mnkMoney.DoOnEvent)
 
 --mnkMoney:RegisterEvent('BAG_UPDATE')
 mnkMoney:RegisterEvent('CHAT_MSG_CURRENCY')
-mnkMoney:RegisterEvent('CHAT_MSG_LOOT')
+--mnkMoney:RegisterEvent('CHAT_MSG_LOOT')
 mnkMoney:RegisterEvent('CURRENCY_DISPLAY_UPDATE')
 mnkMoney:RegisterEvent('LOOT_OPENED')
---mnkMoney:RegisterEvent('MERCHANT_CLOSED')
---mnkMoney:RegisterEvent('MERCHANT_SHOW')
 mnkMoney:RegisterEvent('PLAYER_ENTERING_WORLD')
 mnkMoney:RegisterEvent('PLAYER_LOGIN')
 mnkMoney:RegisterEvent('PLAYER_MONEY')

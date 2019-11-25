@@ -5,7 +5,7 @@ local LibQTip = LibStub('LibQTip-1.0')
 local t = {}
 local colors = {}
 local maxLevel = GetMaxPlayerLevel()
-
+local _
 for class, color in pairs(RAID_CLASS_COLORS) do colors[class] = string.format('%02x%02x%02x', color.r * 255, color.g * 255, color.b * 255) end
 
 function mnkGuild:DoOnEvent(event)

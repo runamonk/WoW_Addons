@@ -3,6 +3,7 @@ mnkPC.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 
 local LibQTip = LibStub('LibQTip-1.0')
 local _Elapsed = 0
+local _
 
 function mnkPC:DoOnEvent(event)
     if event == 'PLAYER_LOGIN' then

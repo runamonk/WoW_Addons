@@ -2,7 +2,7 @@ mnkUnits = CreateFrame('frame')
 mnkUnits.oUF = oUF or ns.oUF
 local _, playerClass = UnitClass('player')
 local classColor = {}
-local _BossBanner_OnEvent = BossBanner_OnEvent;
+local _
 
 classColor.r, classColor.g, classColor.b, _ = GetClassColor(playerClass)
 --Tags are in mnkLibs\mnkuTags

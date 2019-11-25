@@ -3,6 +3,7 @@ mnkProfessions.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 local libQTip = LibStub('LibQTip-1.0')
 local SPACER = '       '
 local t = {}
+local _
 
 function mnkProfessions.DoOnClick(self)
     ToggleSpellBook(BOOKTYPE_PROFESSION)
