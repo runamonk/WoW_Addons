@@ -70,9 +70,9 @@ function cargBags:GetImplementation(name)
 end
 
 local function toggleBag(forceopen)	cargBags.blizzard:Toggle(forceopen)	end
-local function toggleNoForce()		cargBags.blizzard:Toggle()			end
-local function openBag()				cargBags.blizzard:Show()			end
-local function closeBag()				cargBags.blizzard:Hide()			end
+local function toggleNoForce() cargBags.blizzard:Toggle() end
+local function openBag() cargBags.blizzard:Show() end
+local function closeBag() cargBags.blizzard:Hide()	end
 
 --- Overwrites Blizzards Bag-Toggle-Functions with the implementation's ones
 --  @param name <string> The name of the implementation [optional]
