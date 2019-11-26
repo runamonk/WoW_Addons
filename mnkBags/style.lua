@@ -12,13 +12,66 @@ local Textures = {
 
 local _
 local itemSlotSize = 32
-------------------------------------------
--- MyContainer specific
-------------------------------------------
+local BagFrames, BankFrames =  {}, {}
 local cbmb = cargBags:GetImplementation("mb")
 local MyContainer = cbmb:GetContainerClass()
 
-local GetNumFreeSlots = function(bagType)
+local function createIconButton(name, parent, texture, point, hint, isBag)
+	local button = CreateFrame("Button", nil, parent)
+	button:SetWidth(17)
+	button:SetHeight(17)
+	
+	button.icon = button:CreateTexture(nil, "ARTWORK")
+	button.icon:SetPoint(point, button, point, point == "BOTTOMLEFT" and 2 or -2, 2)
+	button.icon:SetWidth(16)
+	button.icon:SetHeight(16)
+	button.icon:SetTexture(texture)
+	button.icon:SetVertexColor(0.8, 0.8, 0.8)
+	mnkLibs.setTooltip(button, hint)
+
+	button.tag = name	
+	return button
+end
+
+local function GetFirstFreeSlot(bagtype)
+	if bagtype == "bag" then
+		for i = 0,4 do
+			local t = GetContainerNumFreeSlots(i)
+			if t > 0 then
+				local tNumSlots = GetContainerNumSlots(i)
+				for j = 1,tNumSlots do
+					local tLink = GetContainerItemLink(i,j)
+					if not tLink then return i,j end
+				end
+			end
+		end
+	elseif bagtype == "bankReagent" then
+		local bagID = -3
+		local t = GetContainerNumFreeSlots(bagID)
+		if t > 0 then
+			local tNumSlots = GetContainerNumSlots(bagID)
+			for j = 1,tNumSlots do
+				local tLink = GetContainerItemLink(bagID,j)
+				if not tLink then return bagID,j end
+			end
+		end
+	else
+		local containerIDs = {-1,5,6,7,8,9,10,11}
+		for _,i in next, containerIDs do
+			local t = GetContainerNumFreeSlots(i)
+			if t > 0 then
+				local tNumSlots = GetContainerNumSlots(i)
+				for j = 1,tNumSlots do
+					local tLink = GetContainerItemLink(i,j)
+					if not tLink then return i,j end
+				end
+			end
+		end	
+	end
+	return false
+end
+
+local function GetNumFreeSlots(bagType)
 	local free, max = 0, 0
 	if bagType == "bag" then
 		for i = 0,4 do
@@ -38,35 +91,64 @@ local GetNumFreeSlots = function(bagType)
 	return free, max
 end
 
-local QuickSort;
-do
-	local func = function(v1, v2)
-		if (v1 == nil) or (v2 == nil) then return (v1 and true or false) end
-		if v1[1] == -1 or v2[1] == -1 then
-			return v1[1] > v2[1] -- empty slots last
-		elseif v1[2] ~= v2[2] then
-			if v1[2] and v2[2] then
-				return v1[2] > v2[2] -- higher quality first
-			elseif (v1[2] == nil) or (v2[2] == nil) then
-				return (v1[2] and true or false)
-			else
-				return false
+local function resetNewItems()
+	mnkBagsKnownItems = mnkBagsKnownItems or {}
+	if not mnkBagsGlobals.clean then
+		for item, numItem in next, mnkBagsKnownItems do
+			if type(item) == "string" then
+				mnkBagsKnownItems[item] = nil
 			end
-		elseif v1[1] ~= v2[1] then
-			return v1[1] > v2[1] -- group identical item ids
-		else
-			return v1[4] > v2[4] -- full/larger stacks first
 		end
-	end;
-	QuickSort = function(tbl) table.sort(tbl, func) end
+		mnkBagsGlobals.clean = true
+	end
+	for bag = 0, 4 do
+		local tNumSlots = GetContainerNumSlots(bag)
+		if tNumSlots > 0 then
+			for slot = 1, tNumSlots do
+				local item = cbmb:GetItemInfo(bag, slot)
+				if item.id then
+					if mnkBagsKnownItems[item.id] then
+						mnkBagsKnownItems[item.id] = mnkBagsKnownItems[item.id] + (item.stackCount and item.stackCount or 0)
+					else
+						mnkBagsKnownItems[item.id] = item.stackCount and item.stackCount or 0
+					end
+				end
+			end 
+		end
+	end
+	cbmb:UpdateBags()
 end
 
-local BagFrames, BankFrames =  {}, {}
+local function restackItems(self)
+	local tBag, tBank = (self.name == "mb_Bag"), (self.name == "mb_Bank")
+	if tBank then
+		SortBankBags()
+		SortReagentBankBags()
+	elseif tBag then
+		SortBags()
+	end
+end
+
+local function SetFrameMovable(f, v)
+	f:SetMovable(true)
+	f:SetUserPlaced(true)
+	f:RegisterForClicks("LeftButton", "RightButton")
+	if v then 
+		f:SetScript("OnMouseDown", function() 
+			f:ClearAllPoints() 
+			f:StartMoving() 
+		end)
+		f:SetScript("OnMouseUp",  f.StopMovingOrSizing)
+	else
+		f:SetScript("OnMouseDown", nil)
+		f:SetScript("OnMouseUp", nil)
+	end
+end
 
 function MyContainer:OnContentsChanged(forced)
 
 	local col, row = 0, 0
-	local yPosOffs = self.Caption and 20 or 0
+	local yPosOffs = 20
 	local isEmpty = true
 
 	local tName = self.name
@@ -82,26 +164,36 @@ function MyContainer:OnContentsChanged(forced)
 	local usedSlotsBank = numSlotsBank[2] - numSlotsBank[1]
 	local usedSlotsReagent = numSlotsReagent[2] - numSlotsReagent[1]
 	
-	local oldColums = self.Columns
+	local oldColumns = self.Columns
 	
 	self.Columns = 12
 	
-	local needColumnUpdate = (self.Columns ~= oldColums)
+	local needColumnUpdate = (self.Columns ~= oldColumns)
 
 	local buttonIDs = {}
   	for i, button in pairs(self.buttons) do
-		local item = cbmb:GetItemInfo(button.bagID, button.slotID)
-		if item.link then
-			buttonIDs[i] = { item.id, item.rarity, button, item.count }
-		else
-			buttonIDs[i] = { -1, -2, button, -1 }
-		end
+  		--local item = cbmb:GetItemInfo(button.bagID, button.slotID)
+  		local clink = GetContainerItemLink(button.bagID, button.slotID)
+  		if clink then
+  			local name = select(1, GetItemInfo(clink))
+  			buttonIDs[i] = { name, button}
+  		else
+  			buttonIDs[i] = { nil, button}
+  		end
 	end
 	
-	QuickSort(buttonIDs) 
+	-- sort by name.
+	local function sort(v1, v2)
+		if (v1[1] == nil) and (v2[1] == nil) then return false end
+		if (v1[1] == nil) or (v2[1] == nil) then return (v1[1] and true or false) end
+
+ 		return v1[1] < v2[1] 
+	end
+
+	table.sort(buttonIDs, sort)
 
 	for _,v in ipairs(buttonIDs) do
-		local button = v[3]
+		local button = v[2]
 		button:ClearAllPoints()
 	  
 		local xPos = col * (itemSlotSize + 4) + 2
@@ -116,7 +208,7 @@ function MyContainer:OnContentsChanged(forced)
 		end
 		isEmpty = false
 	end
-	
+
 	-- compress empty slots.
 	local xPos = col * (itemSlotSize + 4) + 2
 	local yPos = (-1 * row * (itemSlotSize + 4)) - yPosOffs
@@ -139,8 +231,7 @@ function MyContainer:OnContentsChanged(forced)
 
 	-- This variable stores the size of the item button container
 	self.ContainerHeight = (row + (col > 0 and 1 or 0)) * (itemSlotSize + 2)
-
-	if (self.UpdateDimensions) then self:UpdateDimensions() end -- Update the bag's height
+	self:UpdateDimensions(self)
 	self:SetWidth((itemSlotSize + 4) * self.Columns + 4)
 	local t = (tName == "mb_Bag") or (tName == "mb_Bank") or (tName == "mb_BankReagent")
 	local tAS = (tName == "mb_Ammo") or (tName == "mb_Soulshards")
@@ -179,143 +270,7 @@ function MyContainer:OnContentsChanged(forced)
 	end
 end
 
--- Restack Items
-local restackItems = function(self)
-	local tBag, tBank = (self.name == "mb_Bag"), (self.name == "mb_Bank")
-	--local loc = tBank and "bank" or "bags"
-	if tBank then
-		SortBankBags()
-		SortReagentBankBags()
-	elseif tBag then
-		SortBags()
-	end
-end
-
--- Reset New
-local resetNewItems = function(self)
-	mnkBagsKnownItems = mnkBagsKnownItems or {}
-	if not mnkBagsGlobals.clean then
-		for item, numItem in next, mnkBagsKnownItems do
-			if type(item) == "string" then
-				mnkBagsKnownItems[item] = nil
-			end
-		end
-		mnkBagsGlobals.clean = true
-	end
-	for bag = 0, 4 do
-		local tNumSlots = GetContainerNumSlots(bag)
-		if tNumSlots > 0 then
-			for slot = 1, tNumSlots do
-				local item = cbmb:GetItemInfo(bag, slot)
-				--print("resetNewItems", item.id)
-				if item.id then
-					if mnkBagsKnownItems[item.id] then
-						mnkBagsKnownItems[item.id] = mnkBagsKnownItems[item.id] + (item.stackCount and item.stackCount or 0)
-					else
-						mnkBagsKnownItems[item.id] = item.stackCount and item.stackCount or 0
-					end
-				end
-			end 
-		end
-	end
-	cbmb:UpdateBags()
-end
-
-local UpdateDimensions = function(self)
-	local height = 0			-- Normal margin space
-
-	if self.BagBar and self.BagBar:IsShown() then
-		height = height + 40	-- Bag button space
-	end
-
-	if self.bagToggle then
-		local tBag = (self.name == "mb_Bag")
-		local fheight = (20)
-		height = height + 24
-	end
-	
-	if self.Caption then		-- Space for captions
-		local fheight = (28)
-		height = height + fheight
-	end
-	
-	self:SetHeight(self.ContainerHeight + height)
-end
-
-local SetFrameMovable = function(f, v)
-	f:SetMovable(true)
-	f:SetUserPlaced(true)
-	f:RegisterForClicks("LeftButton", "RightButton")
-	if v then 
-		f:SetScript("OnMouseDown", function() 
-			f:ClearAllPoints() 
-			f:StartMoving() 
-		end)
-		f:SetScript("OnMouseUp",  f.StopMovingOrSizing)
-	else
-		f:SetScript("OnMouseDown", nil)
-		f:SetScript("OnMouseUp", nil)
-	end
-end
-
-local createIconButton = function (name, parent, texture, point, hint, isBag)
-	local button = CreateFrame("Button", nil, parent)
-	button:SetWidth(17)
-	button:SetHeight(17)
-	
-	button.icon = button:CreateTexture(nil, "ARTWORK")
-	button.icon:SetPoint(point, button, point, point == "BOTTOMLEFT" and 2 or -2, 2)
-	button.icon:SetWidth(16)
-	button.icon:SetHeight(16)
-	button.icon:SetTexture(texture)
-	button.icon:SetVertexColor(0.8, 0.8, 0.8)
-	mnkLibs.setTooltip(button, hint)
-
-	button.tag = name	
-	return button
-end
-
-
-local GetFirstFreeSlot = function(bagtype)
-	if bagtype == "bag" then
-		for i = 0,4 do
-			local t = GetContainerNumFreeSlots(i)
-			if t > 0 then
-				local tNumSlots = GetContainerNumSlots(i)
-				for j = 1,tNumSlots do
-					local tLink = GetContainerItemLink(i,j)
-					if not tLink then return i,j end
-				end
-			end
-		end
-	elseif bagtype == "bankReagent" then
-		local bagID = -3
-		local t = GetContainerNumFreeSlots(bagID)
-		if t > 0 then
-			local tNumSlots = GetContainerNumSlots(bagID)
-			for j = 1,tNumSlots do
-				local tLink = GetContainerItemLink(bagID,j)
-				if not tLink then return bagID,j end
-			end
-		end
-	else
-		local containerIDs = {-1,5,6,7,8,9,10,11}
-		for _,i in next, containerIDs do
-			local t = GetContainerNumFreeSlots(i)
-			if t > 0 then
-				local tNumSlots = GetContainerNumSlots(i)
-				for j = 1,tNumSlots do
-					local tLink = GetContainerItemLink(i,j)
-					if not tLink then return i,j end
-				end
-			end
-		end	
-	end
-	return false
-end
-
 function MyContainer:OnCreate(name, settings)
-	--print("MyContainer:OnCreate", name)
 	settings = settings or {}
 	self.Settings = settings
 	self.name = name
@@ -333,8 +288,6 @@ function MyContainer:OnCreate(name, settings)
 	local usedSlotsReagent = numSlotsReagent[2] - numSlotsReagent[1]
 
 	self:EnableMouse(true)
-	self.UpdateDimensions = UpdateDimensions
-	
 	self:SetFrameStrata("HIGH")
 	tinsert(UISpecialFrames, self:GetName()) -- Close on "Esc"
 
@@ -344,7 +297,7 @@ function MyContainer:OnCreate(name, settings)
 
 	self.Columns = 12
 	self.ContainerHeight = 0
-	self:UpdateDimensions()
+	self:UpdateDimensions(self)
 	self:SetWidth((itemSlotSize + 2) * self.Columns + 2)
 	
 	-- The frame background
@@ -397,24 +350,20 @@ function MyContainer:OnCreate(name, settings)
 	
 
   	if (tBag or tBank) then
-		-- Bag bar for changing bags
-		local bagType = tBag and "bags" or "bank"
+		local bagButtons = self:SpawnPlugin("BagBar", tBag and "backpack+bags" or "bank")
+
+		if tBag then
+			bagButtons:SetSize(bagButtons:LayoutButtons("grid", 4))
+		else
+			bagButtons:SetSize(bagButtons:LayoutButtons("grid", 7))
+		end
 		
-		local tS = tBag and "backpack+bags" or "bank"
-		local tI = tBag and 4 or 7
-				
-		local bagButtons = self:SpawnPlugin("BagBar", tS)
-		bagButtons:SetSize(bagButtons:LayoutButtons("grid", tI))
 		bagButtons.highlightFunction = function(button, match) button:SetAlpha(match and 1 or 0.1) end
 		bagButtons.isGlobal = true
-		
-		bagButtons:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -2, tBag and 40 or 25)
+		bagButtons:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -2, 25)
 		bagButtons:Hide()
 
-		-- main window gets a fake bag button for toggling key ring
 		self.BagBar = bagButtons
-		
-		-- We don't need the bag bar every time, so let's create a toggle button for them to show
 		self.bagToggle = createIconButton("Bags", self, Textures.BagToggle, "BOTTOMRIGHT", "Toggle Bags", tBag)
 		self.bagToggle:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 0)
 		self.bagToggle:SetScript("OnClick", function()
@@ -423,7 +372,7 @@ function MyContainer:OnCreate(name, settings)
 			else
 				self.BagBar:Show()
 			end
-			self:UpdateDimensions()
+			self:UpdateDimensions(self)
 		end)
 		
 		-- Button to restack items:
@@ -440,9 +389,7 @@ function MyContainer:OnCreate(name, settings)
 			else
 				self.reagentBtn:SetPoint("BOTTOMRIGHT", self.bagToggle, "BOTTOMLEFT", 0, 0)
 			end
-			self.reagentBtn:SetScript("OnClick", function()
-				DepositReagentBank()
-			end)
+			self.reagentBtn:SetScript("OnClick", function()	DepositReagentBank() end)
 		end
 	end
 
@@ -477,24 +424,40 @@ function MyContainer:OnCreate(name, settings)
 	end
 	
 	if tBag then
-		local infoFrame = CreateFrame("Button", nil, self)
-		infoFrame:SetPoint("BOTTOMLEFT", 5, -6)
-		infoFrame:SetPoint("BOTTOMRIGHT", -86, -6)
-		infoFrame:SetHeight(32)
+		local SearchBox = CreateFrame("Button", nil, self)
+		SearchBox:SetPoint("BOTTOMLEFT", 5, -6)
+		SearchBox:SetPoint("BOTTOMRIGHT", -86, -6)
+		SearchBox:SetHeight(16)
 
 		-- Search bar
-		local search = self:SpawnPlugin("SearchBar", infoFrame)
+		local search = self:SpawnPlugin("SearchBar", SearchBox)
 		search.isGlobal = true
 		search.highlightFunction = function(button, match) button:SetAlpha(match and 1 or 0.1) end
 		
-		local searchIcon = background:CreateTexture(nil, "ARTWORK")
-		searchIcon:SetTexture(Textures.Search)
-		searchIcon:SetVertexColor(0.8, 0.8, 0.8)
-		searchIcon:SetPoint("BOTTOMLEFT", infoFrame, "BOTTOMLEFT", -3, 8)
-		searchIcon:SetWidth(16)
-		searchIcon:SetHeight(16)
+		local SearchIcon = background:CreateTexture(nil, "ARTWORK")
+		SearchIcon:SetTexture(Textures.Search)
+		SearchIcon:SetVertexColor(0.8, 0.8, 0.8)
+		SearchIcon:SetPoint("BOTTOMLEFT", SearchBox, "BOTTOMLEFT", -3, 8)
+		SearchIcon:SetWidth(16)
+		SearchIcon:SetHeight(16)
 	end
 	return self
+end
+
+ function MyContainer:UpdateDimensions(self)
+	local height = 0	
+
+	if self.bagToggle then
+		if self.BagBar and self.BagBar:IsShown() then 
+			height = 60
+		else 
+			height = 16
+		end
+	else
+		height = 0
+	end
+	
+	self:SetHeight(self.ContainerHeight + height + 28)
 end
 
 ------------------------------------------
