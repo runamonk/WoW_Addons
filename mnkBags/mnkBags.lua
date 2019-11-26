@@ -75,6 +75,7 @@ function mnkBags:ADDON_LOADED(event, addon)
 	cbmb:Init()
 end
 
+--sell junk
 function mnkBags:MERCHANT_SHOW(event, addon)
 	if (not MerchantFrame:IsShown()) then return end
 	local p = 0
@@ -128,8 +129,6 @@ function cbmb:UpdateAnchors()
 end
 
 function cbmb:OnOpen()
-	print('bags opened')
-	mnkLibs.PrintError('bags opened')
 	for k,_ in pairs(_Bags) do
 		if (_Bags[k].name:sub(1, string.len('mb_Bank')) ~= 'mb_Bank') and not _BagsHidden[_Bags[k].name] then
 			_Bags[k]:Show()
@@ -138,8 +137,6 @@ function cbmb:OnOpen()
 end
 
 function cbmb:OnClose()
-	print('bags closed')
-	mnkLibs.PrintError('bags closed')
 	for k,_ in pairs(_Bags) do
 		_Bags[k]:Hide()
 	end
