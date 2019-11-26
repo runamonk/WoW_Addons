@@ -5,10 +5,8 @@ local cbmb = cargBags:NewImplementation("mb")
 cbmb:RegisterBlizzard()
 function cbmb:UpdateBags() for i = -3, 11 do cbmb:UpdateBag(i) end end
 
-local L = mbLocals
 cB_Filters = {}
 mnkBagsKnownItems = mnkBagsKnownItems or {}
---mb_CatInfo = {}
 cB_ItemClass = {}
 
 --------------------
@@ -44,13 +42,14 @@ function cbmb:ClassifyItem(item)
 
 	-- type based filters
 	if item.type then
-		if		(item.type == L.Armor) or (item.type == L.Weapon)	then cB_ItemClass[item.id] = "Armor"; return true
-		elseif	(item.type == L.Gem)								then cB_ItemClass[item.id] = "Gem"; return true
-		elseif	(item.type == L.Quest)								then cB_ItemClass[item.id] = "Quest"; return true
-		elseif	(item.type == L.Trades)								then cB_ItemClass[item.id] = "TradeGoods"; return true
-		elseif	(item.type == L.Consumables)						then cB_ItemClass[item.id] = "Consumables"; return true
-		elseif	(item.type == ARTIFACT_POWER)						then cB_ItemClass[item.id] = "ArtifactPower"; return true
-		elseif	(item.type == L.BattlePet)							then cB_ItemClass[item.id] = "BattlePet"; return true
+		--print(item.name, ' ', item.type, ' ', item.subType)
+		if		(item.type == mbLocals.Armor) or (item.type == mbLocals.Weapon)	then cB_ItemClass[item.id] = "Armor"; return true
+		elseif	(item.type == mbLocals.Gem)	then cB_ItemClass[item.id] = "Gem"; return true
+		elseif	(item.type == mbLocals.Quest) then cB_ItemClass[item.id] = "Quest"; return true
+		elseif	(item.type == mbLocals.Trades) then cB_ItemClass[item.id] = "TradeGoods"; return true
+		elseif	(item.type == mbLocals.Consumables)	then cB_ItemClass[item.id] = "Consumables"; return true
+		elseif	(item.type == ARTIFACT_POWER) then cB_ItemClass[item.id] = "ArtifactPower"; return true
+		elseif	(item.type == mbLocals.BattlePet) then cB_ItemClass[item.id] = "BattlePet"; return true
 		end
 	end
 	
