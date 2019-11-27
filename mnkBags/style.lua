@@ -105,12 +105,15 @@ local function resetNewItems()
 		local tNumSlots = GetContainerNumSlots(bag)
 		if tNumSlots > 0 then
 			for slot = 1, tNumSlots do
-				local item = cbmb:GetItemInfo(bag, slot)
-				if item.id then
-					if mnkBagsKnownItems[item.id] then
-						mnkBagsKnownItems[item.id] = mnkBagsKnownItems[item.id] + (item.stackCount and item.stackCount or 0)
+
+  				local clink = GetContainerItemLink(bag, slot)
+  				if clink then
+					local itemID = select(1, GetItemInfoInstant(clink))
+					local itemCount = GetItemCount(clink)
+					if mnkBagsKnownItems[itemID] then
+						mnkBagsKnownItems[itemID] = mnkBagsKnownItems[itemID] + itemCount
 					else
-						mnkBagsKnownItems[item.id] = item.stackCount and item.stackCount or 0
+						mnkBagsKnownItems[itemID] = itemCount
 					end
 				end
 			end 

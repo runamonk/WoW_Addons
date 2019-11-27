@@ -49,6 +49,7 @@ local mt_gen_key = {__index = function(self,k) self[k] = {}; return self[k]; end
 ]]
 function ItemButton:New(bagID, slotID)
 	self.recycled = self.recycled or setmetatable({}, mt_gen_key)
+	
 
 	local tpl, parent = self:GetTemplate(bagID)
 	local button = table.remove(self.recycled[tpl]) or self:Create(tpl, parent)

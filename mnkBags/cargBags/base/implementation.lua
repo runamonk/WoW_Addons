@@ -32,7 +32,6 @@ Implementation.itemKeys = {}
 local toBagSlot = cargBags.ToBagSlot
 local L
 
-
 --[[!
 	Creates a new instance of the class
 	@param name <string>
@@ -57,6 +56,7 @@ function Implementation:New(name)
 	impl.bagSizes = {} -- @property bagSizes <table> Holds the size of all bags
 	impl.events = {} -- @property events <table> Holds all event callbacks
 	impl.notInited = true -- @property notInited <bool>
+	impl.itemCache = {}
 
 	tinsert(UISpecialFrames, name) 
 
@@ -329,6 +329,40 @@ local function IsItemBOE(item)
 	return false
 end
 
+local function copyTable(src, dest)
+	for index, value in pairs(src) do
+		if type(value) == "table" then
+			dest[index] = {}
+			copyTable(value, dest[index])
+		else
+			dest[index] = value
+		end
+	end
+end
+
+function Implementation:IsCached(clink, itemTable, bagID, slotID)
+	for i, _ in pairs(self.itemCache) do 
+		if self.itemCache[i].link == clink then
+			--print('IsCached: ', clink)
+			copyTable(self.itemCache[i].itemTable, itemTable)
+			itemTable.slotID = slotID
+		    itemTable.bagID = bagID
+	     	itemTable.link = clink
+			return true
+		end
+	end
+
+	return false
+end
+
+function Implementation:doCacheItem(itemTable)
+	local i = #self.itemCache+1
+	self.itemCache[i] = {}
+	self.itemCache[i].link = itemTable.link
+	self.itemCache[i].itemTable = {}
+	copyTable(itemTable, self.itemCache[i].itemTable)
+end
+
 function Implementation:GetItemInfo(bagID, slotID, i)
 	i = i or defaultItem
 	for k in pairs(i) do i[k] = nil end
@@ -338,14 +372,15 @@ function Implementation:GetItemInfo(bagID, slotID, i)
 	i.boe = false
 
 	local clink = GetContainerItemLink(bagID, slotID)
-	
-	if(clink) then
+	if (clink) then
+		-- check if the item has been cached yet, if so we'll pull it from memory instead of the server.
+		if self:IsCached(clink, i, bagID, slotID) then return i	end
 		local _
 		i.texture, i.count, i.locked, i.quality, i.readable, _, _, _, _, i.id = GetContainerItemInfo(bagID, slotID)
 		i.cdStart, i.cdFinish, i.cdEnable = GetContainerItemCooldown(bagID, slotID)
 		i.isQuestItem, i.questID, i.questActive = GetContainerItemQuestInfo(bagID, slotID)
 		i.isInSet, i.setName = GetContainerItemEquipmentSetInfo(bagID, slotID)
-
+		--print(clink)
 		-- *edits by Lars "Goldpaw" Norberg for WoW 5.0.4 (MoP)
 		-- last return value here, "texture", doesn't show for battle pets
 		local texture
@@ -388,7 +423,16 @@ function Implementation:GetItemInfo(bagID, slotID, i)
 			_, _, i.rarity, i.level, i.minLevel, i.type, i.subType, i.stackCount, i.equipLoc, texture, i.sellPrice  = GetItemInfo(i.id)
 		end
 		--print("GetItemInfo:", i.isInSet, i.setName, i.name)
+	else
+		i = i or defaultItem
+		for k in pairs(i) do i[k] = nil end
+
+		i.bagID = bagID
+		i.slotID = slotID
+		i.boe = false		
 	end
+	--cache the item info so that we're not constantly looking it up and causing freezing or ui crashes.
+	self:doCacheItem(i)
 	return i
 end
 
