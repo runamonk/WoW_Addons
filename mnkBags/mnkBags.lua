@@ -79,30 +79,33 @@ end
 function mnkBags:MERCHANT_SHOW(event, addon)
 	if (not MerchantFrame:IsShown()) then return end
 	local p = 0
+	-- don't update all the bags iteminfo every single time you sell junk, wait till the end and then it only one time.
+	cbmb.PauseUpdates = true
 	for k,_ in pairs(_Bags.bagJunk.buttons) do
 		-- just in case they close the form while selling.
-		if (not MerchantFrame:IsShown()) then return end
-		local b = _Bags.bagJunk.buttons[k]
-		local item = cbmb:GetItemInfo(b.bagID, b.slotID)
-		if item then
-			if item.rarity == 0 and item.sellPrice ~= 0 then
-				p = p + (item.sellPrice * item.count)
-				UseContainerItem(b.bagID, b.slotID)
+		if (MerchantFrame:IsShown()) then 
+			local b = _Bags.bagJunk.buttons[k]
+			local clink = GetContainerItemLink(b.bagID, b.slotID)
+			if clink then
+				-- doing it this way so it's less of a hit, parsing for boe causes lots of overhead.
+				local _, _, rarity, _, _, _, _, _, _, _, sellPrice, _, _, _, _, _, _ = GetItemInfo(clink)
+				local stackCount = GetItemCount(clink)
+				if rarity == 0 and sellPrice ~= 0 then
+					p = p + (sellPrice * stackCount)
+					UseContainerItem(b.bagID, b.slotID)
+				end
 			end
 		end
 	end
 	if p > 0 then
 		print('Junk sold for: ', GetCoinTextureString(p))
 	end
+	cbmb.PauseUpdates = false
+	cbmb:UpdateBags()
 end
 
 function cbmb:UpdateAnchors()
 	local lastBank, lastMain
-	--local t = {}	
-	--for k in pairs(_Bags) do table.insert(t, k) end
-	--table.sort(t)
-	--for _, k in ipairs(t) do print(k, ' ', _Bags[k]) end
-	
 	for k,_ in pairs(_Bags) do
 		
 		if not ((k == 'main') or (k == 'bank')) then
