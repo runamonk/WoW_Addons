@@ -3,7 +3,13 @@ local cargBags = ns.cargBags
 
 local cbmb = cargBags:NewImplementation("mb")
 cbmb:RegisterBlizzard()
-function cbmb:UpdateBags() for i = -3, 11 do cbmb:UpdateBag(i) end end
+cbmb.PauseUpdates = false
+
+function cbmb:UpdateBags()
+	if cbmb.PauseUpdates then return end
+	for i = -3, 11 do cbmb:UpdateBag(i) 
+	end 
+end
 
 cB_Filters = {}
 mnkBagsKnownItems = mnkBagsKnownItems or {}

@@ -317,7 +317,7 @@ local function IsItemBOE(item)
 		scanTip:SetBagItem(item.bagID, item.slotID)
 		local l = ""
 
-		for i=2, 5 do
+		for i=2, 3 do
 			if _G["scanTipTextLeft"..i] then
 				l = _G["scanTipTextLeft"..i]:GetText() or ""
 				if l and l:find(ITEM_BIND_ON_EQUIP) then
@@ -354,6 +354,7 @@ function Implementation:GetItemInfo(bagID, slotID, i)
 		i.link = clink
 		-- get the actual item level for items we want it to be shown
 		if (i.type and (ilvlTypes[i.type] or i.subType and ilvlSubTypes[i.subType])) and i.level > 0 then
+			--print(i.link, ' ', i.type)
 			i.boe = IsItemBOE(i)
 			if i.rarity == LE_ITEM_QUALITY_ARTIFACT then
 				-- for artifact weapons, GetItemInfo returns the actual ilvl
@@ -386,8 +387,6 @@ function Implementation:GetItemInfo(bagID, slotID, i)
 			if not i.id then i.id = 138019 end
 			_, _, i.rarity, i.level, i.minLevel, i.type, i.subType, i.stackCount, i.equipLoc, texture, i.sellPrice  = GetItemInfo(i.id)
 		end
-		
-		
 		--print("GetItemInfo:", i.isInSet, i.setName, i.name)
 	end
 	return i
