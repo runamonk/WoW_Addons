@@ -12,6 +12,8 @@ local Textures = {
 
 local _
 local itemSlotSize = 32
+local itemSlotPadding = 4
+local itemSlotSpacer = 2
 local BagFrames, BankFrames =  {}, {}
 local cbmb = cargBags:GetImplementation("mb")
 local MyContainer = cbmb:GetContainerClass()
@@ -105,7 +107,6 @@ local function resetNewItems()
 		local tNumSlots = GetContainerNumSlots(bag)
 		if tNumSlots > 0 then
 			for slot = 1, tNumSlots do
-
   				local clink = GetContainerItemLink(bag, slot)
   				if clink then
 					local itemID = select(1, GetItemInfoInstant(clink))
@@ -199,8 +200,8 @@ function MyContainer:OnContentsChanged(forced)
 		local button = v[2]
 		button:ClearAllPoints()
 	  
-		local xPos = col * (itemSlotSize + 4) + 2
-		local yPos = (-1 * row * (itemSlotSize + 4)) - yPosOffs
+		local xPos = col * (itemSlotSize + itemSlotPadding) + itemSlotSpacer
+		local yPos = (-1 * row * (itemSlotSize + itemSlotPadding)) - yPosOffs
 
 		button:SetPoint("TOPLEFT", self, "TOPLEFT", xPos, yPos)
 		if(col >= self.Columns-1) then
@@ -213,8 +214,8 @@ function MyContainer:OnContentsChanged(forced)
 	end
 
 	-- compress empty slots.
-	local xPos = col * (itemSlotSize + 4) + 2
-	local yPos = (-1 * row * (itemSlotSize + 4)) - yPosOffs
+	local xPos = col * (itemSlotSize + itemSlotPadding) + itemSlotSpacer
+	local yPos = (-1 * row * (itemSlotSize + itemSlotPadding)) - yPosOffs
 
 	local tDrop = self.DropTarget
 	if tDrop then
@@ -232,10 +233,8 @@ function MyContainer:OnContentsChanged(forced)
 	_Bags.bank.EmptySlotCounter:SetText(GetNumFreeSlots("bank"))
 	_Bags.bankReagent.EmptySlotCounter:SetText(GetNumFreeSlots("bankReagent"))
 
-	-- This variable stores the size of the item button container
-	self.ContainerHeight = (row + (col > 0 and 1 or 0)) * (itemSlotSize + 2)
 	self:UpdateDimensions(self)
-	self:SetWidth((itemSlotSize + 4) * self.Columns + 4)
+
 	local t = (tName == "mb_Bag") or (tName == "mb_Bank") or (tName == "mb_BankReagent")
 	local tAS = (tName == "mb_Ammo") or (tName == "mb_Soulshards")
 	local bankShown = _Bags.bank:IsShown()
@@ -299,9 +298,7 @@ function MyContainer:OnCreate(name, settings)
 	end
 
 	self.Columns = 12
-	self.ContainerHeight = 0
 	self:UpdateDimensions(self)
-	self:SetWidth((itemSlotSize + 2) * self.Columns + 2)
 	
 	-- The frame background
 	local background = CreateFrame("Frame", nil, self)
@@ -448,19 +445,29 @@ function MyContainer:OnCreate(name, settings)
 end
 
  function MyContainer:UpdateDimensions(self)
-	local height = 0	
+	local BagBarHeight = 0
+	local CaptionHeight = 28
+	local rows = 1	
 
 	if self.bagToggle then
 		if self.BagBar and self.BagBar:IsShown() then 
-			height = 60
+			BagBarHeight = 60
 		else 
-			height = 16
+			BagBarHeight = 16
 		end
 	else
-		height = 0
+		BagBarHeight = 0
 	end
-	
-	self:SetHeight(self.ContainerHeight + height + 28)
+
+	if #self.buttons > 0 then
+		rows = mnkLibs.Round((#self.buttons/self.Columns),1)
+		if (rows == 0) then rows = 1 end
+		if ((rows * self.Columns) < #self.buttons) then rows = (rows + 1) end
+		--print(self:GetName(), ' ', self.columns, ' ', #self.buttons, ' ', rows)
+	end
+
+	self:SetWidth((itemSlotSize + itemSlotPadding) * self.Columns )
+	self:SetHeight(((itemSlotSize + itemSlotPadding) * rows) + (BagBarHeight + CaptionHeight))
 end
 
 ------------------------------------------
