@@ -342,14 +342,9 @@ end
 
 function Implementation:IsCached(clink, item, bagID, slotID)
 	for i, _ in pairs(self.itemCache) do 
-		if self.itemCache[i].link == clink then
+		if self.itemCache[i].link == clink and self.itemCache[i].bagID == bagID and self.itemCache[i].slotID == slotID then
 			--print('IsCached: ', clink)
 			copyTable(self.itemCache[i].item, item)
-			-- overwrite cached info.
-			item.count = select(2, GetContainerItemInfo(bagID, slotID))
-			item.slotID = slotID
-		    item.bagID = bagID
-	     	item.link = clink
 			return true
 		end
 	end
@@ -357,18 +352,21 @@ function Implementation:IsCached(clink, item, bagID, slotID)
 	return false
 end
 
-function Implementation:doCacheItem(item)
+function Implementation:doCacheItem(item, bagID, slotID)
 	local i = #self.itemCache+1
 	self.itemCache[i] = {}
 	self.itemCache[i].link = item.link
+	self.itemCache[i].bagID = bagID
+	self.itemCache[i].slotID = slotID
 	self.itemCache[i].item = {}
+
 	copyTable(item, self.itemCache[i].item)
 end
 
-function Implementation:doDeleteCacheItem(link)
+function Implementation:doDeleteCacheItem(link, bagID, slotID)
 	--print('doDeleteCacheItem: ', link)
 	for i, _ in pairs(self.itemCache) do 
-		if self.itemCache[i].link == link then
+		if self.itemCache[i].link == link and self.itemCache[i].bagID == bagID and self.itemCache[i].slotID == slotID then
 			table.remove(self.itemCache, i)
 			return
 		end
@@ -440,7 +438,7 @@ function Implementation:GetItemInfo(bagID, slotID, i)
 				_, _, i.rarity, i.level, i.minLevel, i.type, i.subType, i.stackCount, i.equipLoc, texture, i.sellPrice  = GetItemInfo(i.id)
 			end
 			--cache the item info so that we're not constantly looking it up and causing freezing or ui crashes.
-			self:doCacheItem(i)
+			self:doCacheItem(i, bagID, slotID)
 			return i
 		end
 		--print("GetItemInfo:", i.isInSet, i.setName, i.name)
@@ -462,7 +460,7 @@ function Implementation:UpdateSlot(bagID, slotID)
 	if(container) then
 		if(button) then
 			if(container ~= button.container) then
-				self:doDeleteCacheItem(item.link)
+				self:doDeleteCacheItem(item.link, bagID, slotID)
 				button.container:RemoveButton(button)
 				container:AddButton(button)
 			end
