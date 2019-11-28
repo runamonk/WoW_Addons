@@ -26,7 +26,7 @@ DEPENDENCIES
 ]]
 local addon, ns = ...
 local cargBags = ns.cargBags
-local scanTip = CreateFrame("GameTooltip", "scanTip", UIParent, "GameTooltipTemplate")
+--local scanTip = CreateFrame("GameTooltip", "scanTip", UIParent, "GameTooltipTemplate")
 
 local function ItemButton_Scaffold(self)
 	local name = self:GetName()
@@ -90,13 +90,13 @@ local function ItemButton_Update(self, item)
 		self.Count:Hide()
 	end
 	self.count = item.count -- Thank you Blizz for not using local variables >.> (BankFrame.lua @ 234 )
-	--print(item.bindOn)
+
 	if item.boe then
 		self.boe:Show()
 	else
 		self.boe:Hide()	
 	end
-	
+
 	-- Item Level
 	if item.link then
 		if (item.type and (ilvlTypes[item.type] or item.subType and ilvlSubTypes[item.subType])) and item.level > 0 then
