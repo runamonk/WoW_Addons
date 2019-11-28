@@ -340,14 +340,15 @@ local function copyTable(src, dest)
 	end
 end
 
-function Implementation:IsCached(clink, itemTable, bagID, slotID)
+function Implementation:IsCached(clink, item, bagID, slotID)
+
 	for i, _ in pairs(self.itemCache) do 
 		if self.itemCache[i].link == clink then
 			--print('IsCached: ', clink)
-			copyTable(self.itemCache[i].itemTable, itemTable)
-			itemTable.slotID = slotID
-		    itemTable.bagID = bagID
-	     	itemTable.link = clink
+			copyTable(self.itemCache[i].item, item)
+			item.slotID = slotID
+		    item.bagID = bagID
+	     	item.link = clink
 			return true
 		end
 	end
@@ -355,15 +356,27 @@ function Implementation:IsCached(clink, itemTable, bagID, slotID)
 	return false
 end
 
-function Implementation:doCacheItem(itemTable)
+function Implementation:doCacheItem(item)
 	local i = #self.itemCache+1
 	self.itemCache[i] = {}
-	self.itemCache[i].link = itemTable.link
-	self.itemCache[i].itemTable = {}
-	copyTable(itemTable, self.itemCache[i].itemTable)
+	self.itemCache[i].link = item.link
+	self.itemCache[i].item = {}
+	copyTable(item, self.itemCache[i].item)
+end
+
+function Implementation:doDeleteCacheItem(link)
+	--print('doDeleteCacheItem: ', link)
+	for i, _ in pairs(self.itemCache) do 
+		if self.itemCache[i].link == link then
+			table.remove(self.itemCache, i)
+			return
+		end
+	end
 end
 
 function Implementation:GetItemInfo(bagID, slotID, i)
+	if i and i.link then print('GetItemInfo:', i.link) end
+
 	i = i or defaultItem
 	for k in pairs(i) do i[k] = nil end
 
@@ -445,10 +458,11 @@ function Implementation:UpdateSlot(bagID, slotID)
 	local item = self:GetItemInfo(bagID, slotID)
 	local button = self:GetButton(bagID, slotID)
 	local container = self:GetContainerForItem(item, button)
-
+	--print(item.link, ' ', bagID, ' ', slotID)
 	if(container) then
 		if(button) then
 			if(container ~= button.container) then
+				self:doDeleteCacheItem(item.link)
 				button.container:RemoveButton(button)
 				container:AddButton(button)
 			end
@@ -457,9 +471,9 @@ function Implementation:UpdateSlot(bagID, slotID)
 			self:SetButton(bagID, slotID, button)
 			container:AddButton(button)
 		end
-
 		button:Update(item)
 	elseif(button) then
+		--self:doDeleteCacheItem(item.link)
 		button.container:RemoveButton(button)
 		self:SetButton(bagID, slotID, nil)
 		button:Free()
@@ -556,6 +570,7 @@ function Implementation:ITEM_LOCK_CHANGED(event, bagID, slotID)
 	local button = self:GetButton(bagID, slotID)
 	if(button) then
 		local item = self:GetItemInfo(bagID, slotID)
+		self:doDeleteCacheItem(item.link)
 		button:UpdateLock(item)
 	end
 end
