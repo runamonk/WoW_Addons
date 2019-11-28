@@ -198,9 +198,9 @@ Event:SetScript('OnEvent', function(self, event, ...)
 		cbmb:UpdateBags()
 
 		if IsReagentBankUnlocked() then
-			mbmb_Bank.reagentBtn:Show()
+			mbmb_BankReagent.reagentBtn:Show()
 		else
-			mbmb_Bank.reagentBtn:Hide()
+			mbmb_BankReagent.reagentBtn:Hide()
 			local buyReagent = CreateFrame("Button", nil, mbmb_BankReagent, "UIPanelButtonTemplate")
 			buyReagent:SetText(BANKSLOTPURCHASE)
 			buyReagent:SetWidth(buyReagent:GetTextWidth() + 20)

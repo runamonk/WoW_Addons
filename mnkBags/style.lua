@@ -346,6 +346,12 @@ function MyContainer:OnCreate(name, settings)
 		self.resetBtn:SetScript("OnClick", function() resetNewItems(self) end)
 	end
 	
+	if self.name == 'mb_BankReagent' then
+		self.reagentBtn = createIconButton("SendReagents", self, Textures.Deposit, "TOPRIGHT", REAGENTBANK_DEPOSIT, tBag)
+		self.reagentBtn:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, 0)
+		self.reagentBtn:SetScript("OnClick", function()	DepositReagentBank() end)
+	end
+
   	if (tBag or tBank) then
 		local bagButtons = self:SpawnPlugin("BagBar", tBag and "backpack+bags" or "bank")
 
@@ -376,18 +382,6 @@ function MyContainer:OnCreate(name, settings)
 		self.restackBtn = createIconButton("Restack", self, Textures.Restack, "BOTTOMRIGHT", "Restack", tBag)
 		self.restackBtn:SetPoint("BOTTOMRIGHT", self.bagToggle, "BOTTOMLEFT", 0, 0)
 		self.restackBtn:SetScript("OnClick", function() restackItems(self) end)
-		
-		-- Button to send reagents to Reagent Bank:
-		if tBank then
-			local rbHint = REAGENTBANK_DEPOSIT
-			self.reagentBtn = createIconButton("SendReagents", self, Textures.Deposit, "BOTTOMRIGHT", rbHint, tBag)
-			if self.restackBtn then
-				self.reagentBtn:SetPoint("BOTTOMRIGHT", self.restackBtn, "BOTTOMLEFT", 0, 0)
-			else
-				self.reagentBtn:SetPoint("BOTTOMRIGHT", self.bagToggle, "BOTTOMLEFT", 0, 0)
-			end
-			self.reagentBtn:SetScript("OnClick", function()	DepositReagentBank() end)
-		end
 	end
 
 	-- Item drop target
