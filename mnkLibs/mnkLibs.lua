@@ -180,6 +180,11 @@ function mnkLibs.PrintError(Message)
     UIErrorsFrame:AddMessage(Message, 1.0, 0.0, 0.0)
 end
 
+function mnkLibs.Round(n, mult)
+    mult = mult or 1
+    return math.floor((n + mult/2)/mult) * mult
+end
+
 function mnkLibs.setBackdrop(self, bgfile, edgefile, inset_l, inset_r, inset_t, inset_b)
     if not bgFile then
         bgfile = 'Interface\\ChatFrame\\ChatFrameBackground'
