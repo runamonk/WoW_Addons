@@ -46,8 +46,6 @@ local function getAllMounts()
 	tblAll = {}
 	tblAll = C_MountJournal.GetMountIDs()
 	parseMounts()
-	mnkFavoriteMounts.LDB.label = 'Favorite Mounts'
-	mnkFavoriteMounts.LDB.text = #tblFavorites .. '/' ..#tblCollected
 end
 
 function mnkFavoriteMounts:DoOnEvent(event)
@@ -68,15 +66,17 @@ function mnkFavoriteMounts:DoOnEvent(event)
 end
 
 function mnkFavoriteMounts.DoOnEnter(self)
+    getAllMounts()
+
     local tooltip = libQTip:Acquire('mnkFavoriteMountssToolTip', 1, 'LEFT')
     self.tooltip = tooltip
     tooltip.step = 50 
     tooltip:SetFont(mnkLibs.DefaultTooltipFont)
     tooltip:SetHeaderFont(mnkLibs.DefaultTooltipFont)
     tooltip:Clear()
-	getAllMounts()
+	
     if #tblFavorites > 0 then
-        tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Favorites')
+        tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Favorites - '..mnkLibs.Color(COLOR_GOLD)..#tblFavorites)
 
         for i = 1, #tblFavorites do
             local y = tooltip:AddLine(string.format('|T%s:16|t', tblFavorites[i].mIcon)..' '..tblFavorites[i].mName)
@@ -86,6 +86,8 @@ function mnkFavoriteMounts.DoOnEnter(self)
 
     if (#tblFavorites == 0) then
         tooltip:AddLine(mnkLibs.Color(COLOR_GOLD)..'No favorite mounts defined.')
+    else
+        tooltip:AddLine(mnkLibs.Color(COLOR_GOLD)..'Total mounts collected ' ..#tblCollected)   
     end
 
     tooltip:SetAutoHideDelay(.1, self)
@@ -105,7 +107,7 @@ end
 
 mnkFavoriteMounts:SetScript('OnEvent', mnkFavoriteMounts.DoOnEvent)
 mnkFavoriteMounts:RegisterEvent('PLAYER_LOGIN')
-mnkFavoriteMounts:RegisterEvent('PLAYER_ENTERING_WORLD')
-mnkFavoriteMounts:RegisterEvent('COMPANION_LEARNED')
-mnkFavoriteMounts:RegisterEvent('COMPANION_UPDATE')
+--mnkFavoriteMounts:RegisterEvent('PLAYER_ENTERING_WORLD')
+--mnkFavoriteMounts:RegisterEvent('COMPANION_LEARNED')
+--mnkFavoriteMounts:RegisterEvent('COMPANION_UPDATE')
 
