@@ -447,9 +447,11 @@ end
  function MyContainer:UpdateDimensions(self)
 	local BagBarHeight = 0
 	local CaptionHeight = 28
+	local buttonCount = 0
 	local rows = 1	
 
 	if self.bagToggle then
+		buttonCount = 1
 		if self.BagBar and self.BagBar:IsShown() then 
 			BagBarHeight = 60
 		else 
@@ -459,15 +461,17 @@ end
 		BagBarHeight = 0
 	end
 
-	if #self.buttons > 0 then
+	buttonCount = buttonCount + #self.buttons
+
+	if buttonCount > 0 then
 		rows = mnkLibs.Round((#self.buttons/self.Columns),1)
 		if (rows == 0) then rows = 1 end
-		if ((rows * self.Columns) < #self.buttons) then rows = (rows + 1) end
-		--print(self:GetName(), ' ', self.columns, ' ', #self.buttons, ' ', rows)
+		if ((rows * self.Columns) < buttonCount) then rows = (rows + 1) end
+		--print(self:GetName(), ' ', self.columns, ' ', buttonCount, ' ', rows)
 	end
 
 	self:SetWidth((itemSlotSize + itemSlotPadding) * self.Columns )
-	self:SetHeight(((itemSlotSize + itemSlotPadding) * rows) + (BagBarHeight + CaptionHeight))
+	self:SetHeight(((itemSlotSize + itemSlotPadding) * rows) + (BagBarHeight + CaptionHeight) - 8)
 end
 
 ------------------------------------------
