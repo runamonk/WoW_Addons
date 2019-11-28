@@ -107,14 +107,12 @@ local function resetNewItems()
 		local tNumSlots = GetContainerNumSlots(bag)
 		if tNumSlots > 0 then
 			for slot = 1, tNumSlots do
-  				local clink = GetContainerItemLink(bag, slot)
-  				if clink then
-					local itemID = select(1, GetItemInfoInstant(clink))
-					local itemCount = GetItemCount(clink)
-					if mnkBagsKnownItems[itemID] then
-						mnkBagsKnownItems[itemID] = mnkBagsKnownItems[itemID] + itemCount
+				local item = cbmb:GetItemInfo(bag, slot)
+				if item.id then
+					if mnkBagsKnownItems[item.id] then
+						mnkBagsKnownItems[item.id] = mnkBagsKnownItems[item.id] + (item.stackCount and item.stackCount or 0)
 					else
-						mnkBagsKnownItems[itemID] = itemCount
+						mnkBagsKnownItems[item.id] = item.stackCount and item.stackCount or 0
 					end
 				end
 			end 
@@ -348,7 +346,6 @@ function MyContainer:OnCreate(name, settings)
 		self.resetBtn:SetScript("OnClick", function() resetNewItems(self) end)
 	end
 	
-
   	if (tBag or tBank) then
 		local bagButtons = self:SpawnPlugin("BagBar", tBag and "backpack+bags" or "bank")
 
