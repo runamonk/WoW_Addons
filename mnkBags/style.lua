@@ -451,7 +451,7 @@ end
 	local rows = 1	
 
 	if self.bagToggle then
-		buttonCount = 1
+		buttonCount = 1 -- dropbutton/emptybuttoncounter
 		if self.BagBar and self.BagBar:IsShown() then 
 			BagBarHeight = 60
 		else 
