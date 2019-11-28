@@ -308,6 +308,17 @@ local ilvlSubTypes = {
 	[GetItemSubClassInfo(3,11)] = true	--Artifact Relic
 }
 
+local function copyTable(src, dest)
+	for index, value in pairs(src) do
+		if type(value) == "table" then
+			dest[index] = {}
+			copyTable(value, dest[index])
+		else
+			dest[index] = value
+		end
+	end
+end
+
 local function IsItemBOE(item)
 	if item.link and (item.type and (ilvlTypes[item.type] or item.subType and ilvlSubTypes[item.subType])) and item.level > 0 then	
 		local scanTip = CreateFrame("GameTooltip", "scanTip", UIParent, "GameTooltipTemplate")
@@ -329,23 +340,13 @@ local function IsItemBOE(item)
 	return false
 end
 
-local function copyTable(src, dest)
-	for index, value in pairs(src) do
-		if type(value) == "table" then
-			dest[index] = {}
-			copyTable(value, dest[index])
-		else
-			dest[index] = value
-		end
-	end
-end
-
 function Implementation:IsCached(clink, item, bagID, slotID)
-
 	for i, _ in pairs(self.itemCache) do 
 		if self.itemCache[i].link == clink then
 			--print('IsCached: ', clink)
 			copyTable(self.itemCache[i].item, item)
+			-- overwrite cached info.
+			item.count = select(2, GetContainerItemInfo(bagID, slotID))
 			item.slotID = slotID
 		    item.bagID = bagID
 	     	item.link = clink
@@ -375,8 +376,6 @@ function Implementation:doDeleteCacheItem(link)
 end
 
 function Implementation:GetItemInfo(bagID, slotID, i)
-	if i and i.link then print('GetItemInfo:', i.link) end
-
 	i = i or defaultItem
 	for k in pairs(i) do i[k] = nil end
 
@@ -387,66 +386,67 @@ function Implementation:GetItemInfo(bagID, slotID, i)
 	local clink = GetContainerItemLink(bagID, slotID)
 	if (clink) then
 		-- check if the item has been cached yet, if so we'll pull it from memory instead of the server.
-		if self:IsCached(clink, i, bagID, slotID) then return i	end
-		local _
-		i.texture, i.count, i.locked, i.quality, i.readable, _, _, _, _, i.id = GetContainerItemInfo(bagID, slotID)
-		i.cdStart, i.cdFinish, i.cdEnable = GetContainerItemCooldown(bagID, slotID)
-		i.isQuestItem, i.questID, i.questActive = GetContainerItemQuestInfo(bagID, slotID)
-		i.isInSet, i.setName = GetContainerItemEquipmentSetInfo(bagID, slotID)
-		--print(clink)
-		-- *edits by Lars "Goldpaw" Norberg for WoW 5.0.4 (MoP)
-		-- last return value here, "texture", doesn't show for battle pets
-		local texture
-		i.name, i.link, i.rarity, i.level, i.minLevel, i.type, i.subType, i.stackCount, i.equipLoc, texture, i.sellPrice  = GetItemInfo(clink)
-		-- get the first link return because otherwise ilvl for artifacts will bug
-		i.link = clink
-		-- get the actual item level for items we want it to be shown
-		if (i.type and (ilvlTypes[i.type] or i.subType and ilvlSubTypes[i.subType])) and i.level > 0 then
-			--print(i.link, ' ', i.type)
-			i.boe = IsItemBOE(i)
-			if i.rarity == LE_ITEM_QUALITY_ARTIFACT then
-				-- for artifact weapons, GetItemInfo returns the actual ilvl
-			else
-				i.level = GetDetailedItemLevelInfo(clink) or i.level	--GetContainerItemLevel(clink, bagID, slotID) or i.level
+		if self:IsCached(clink, i, bagID, slotID) then 
+			return i	
+		else
+			local _
+			i.texture, i.count, i.locked, i.quality, i.readable, _, _, _, _, i.id = GetContainerItemInfo(bagID, slotID)
+			i.cdStart, i.cdFinish, i.cdEnable = GetContainerItemCooldown(bagID, slotID)
+			i.isQuestItem, i.questID, i.questActive = GetContainerItemQuestInfo(bagID, slotID)
+			i.isInSet, i.setName = GetContainerItemEquipmentSetInfo(bagID, slotID)
+			--print(clink)
+			-- *edits by Lars "Goldpaw" Norberg for WoW 5.0.4 (MoP)
+			-- last return value here, "texture", doesn't show for battle pets
+			local texture
+
+			i.name, i.link, i.rarity, i.level, i.minLevel, i.type, i.subType, i.stackCount, i.equipLoc, texture, i.sellPrice  = GetItemInfo(clink)
+			-- get the first link return because otherwise ilvl for artifacts will bug
+			i.link = clink
+			-- get the actual item level for items we want it to be shown
+			if (i.type and (ilvlTypes[i.type] or i.subType and ilvlSubTypes[i.subType])) and i.level > 0 then
+				--print(i.link, ' ', i.type)
+				if IsItemBOE(i) then
+					i.boe = true
+				end
+				if i.rarity == LE_ITEM_QUALITY_ARTIFACT then
+					-- for artifact weapons, GetItemInfo returns the actual ilvl
+				else
+					i.level = GetDetailedItemLevelInfo(clink) or i.level	--GetContainerItemLevel(clink, bagID, slotID) or i.level
+				end
 			end
-		end
-		-- get the item spell to determine if the item is an Artifact Power boosting item
-		if IsArtifactPowerItem(i.id) then
-			i.type = ARTIFACT_POWER
-		end
-		-- texture
-		i.texture = i.texture or texture
-		
-		-- battle pet info must be extracted from the itemlink
-		if (clink:find("battlepet")) then
-			if not(L) then
-				L = cargBags:GetLocalizedTypes()
+			-- get the item spell to determine if the item is an Artifact Power boosting item
+			if IsArtifactPowerItem(i.id) then
+				i.type = ARTIFACT_POWER
 			end
-			local data, name = strmatch(clink, "|H(.-)|h(.-)|h")
-			local  _, _, level, rarity, _, _, _, id = strmatch(data, "(%w+):(%d+):(%d+):(%d+):(%d+):(%d+):(%d+):(%d+)")
-			i.type = L.ItemClass["Battle Pets"]
-			i.rarity = tonumber(rarity) or 0
-			i.id = tonumber(id) or 0
-			i.name = name
-			i.minLevel = level
-		elseif (clink:find("keystone")) then
-			local data, name = strsplit("[", clink)
-			i.name = strsplit("]", name)
-			if not i.id then i.id = 138019 end
-			_, _, i.rarity, i.level, i.minLevel, i.type, i.subType, i.stackCount, i.equipLoc, texture, i.sellPrice  = GetItemInfo(i.id)
+			-- texture
+			i.texture = i.texture or texture
+			
+			-- battle pet info must be extracted from the itemlink
+			if (clink:find("battlepet")) then
+				if not(L) then
+					L = cargBags:GetLocalizedTypes()
+				end
+				local data, name = strmatch(clink, "|H(.-)|h(.-)|h")
+				local  _, _, level, rarity, _, _, _, id = strmatch(data, "(%w+):(%d+):(%d+):(%d+):(%d+):(%d+):(%d+):(%d+)")
+				i.type = L.ItemClass["Battle Pets"]
+				i.rarity = tonumber(rarity) or 0
+				i.id = tonumber(id) or 0
+				i.name = name
+				i.minLevel = level
+			elseif (clink:find("keystone")) then
+				local data, name = strsplit("[", clink)
+				i.name = strsplit("]", name)
+				if not i.id then i.id = 138019 end
+				_, _, i.rarity, i.level, i.minLevel, i.type, i.subType, i.stackCount, i.equipLoc, texture, i.sellPrice  = GetItemInfo(i.id)
+			end
+			--cache the item info so that we're not constantly looking it up and causing freezing or ui crashes.
+			self:doCacheItem(i)
+			return i
 		end
 		--print("GetItemInfo:", i.isInSet, i.setName, i.name)
 	else
-		i = i or defaultItem
-		for k in pairs(i) do i[k] = nil end
-
-		i.bagID = bagID
-		i.slotID = slotID
-		i.boe = false		
+		return i
 	end
-	--cache the item info so that we're not constantly looking it up and causing freezing or ui crashes.
-	self:doCacheItem(i)
-	return i
 end
 
 --[[!
