@@ -69,7 +69,7 @@ function mnkBags:ADDON_LOADED(event, addon)
 	_Bags.main :				SetMultipleFilters(true, cB_Filters.fBags, cB_Filters.fHideEmpty)
 
 	_Bags.main:SetPoint("BOTTOMRIGHT", -20, 200)
-	_Bags.bank:SetPoint("TOPLEFT", 20, -50)
+	_Bags.bank:SetPoint("BOTTOMLEFT", 20, 200)
 	
 	cbmb:UpdateAnchors()
 	cbmb:Init()
@@ -105,28 +105,24 @@ function mnkBags:MERCHANT_SHOW(event, addon)
 end
 
 function cbmb:UpdateAnchors()
-	local lastBank, lastMain
-	for k,_ in pairs(_Bags) do
-		
+
+	local function SetBagAnchor(bag, lastbag)
+		if lastbag:ShowOrHide() then
+			bag:SetPoint("BOTTOMLEFT", lastbag, "TOPLEFT", 0, 12)
+		else
+			bag:SetPoint("BOTTOMLEFT", lastbag, "BOTTOMLEFT", 0, 0)
+		end
+	end
+
+	local lastBank, lastMain = _Bags.bank, _Bags.main
+	for k,_ in pairs(_Bags) do	
 		if not ((k == 'main') or (k == 'bank')) then
 			_Bags[k]:ClearAllPoints()					
 			if (_Bags[k].name:sub(1, string.len('mb_Bank')) == 'mb_Bank') then	
-				if not lastBank then lastBank = _Bags.bank end
-				
-				if lastBank:ShowOrHide() then
-					_Bags[k]:SetPoint("TOPLEFT", lastBank, "BOTTOMLEFT", 0, -12)
-				else
-					_Bags[k]:SetPoint("TOPLEFT", lastBank, "TOPLEFT", 0, 0)
-				end
+				SetBagAnchor(_Bags[k], lastBank)
 				lastBank = _Bags[k]
 			else
-				if not lastMain then lastMain = _Bags.main end
-
-				if lastMain:ShowOrHide() then
-					_Bags[k]:SetPoint("BOTTOMLEFT", lastMain, "TOPLEFT", 0, 12)
-				else
-					_Bags[k]:SetPoint("BOTTOMLEFT", lastMain, "BOTTOMLEFT", 0, 0)
-				end
+				SetBagAnchor(_Bags[k], lastMain)
 				lastMain = _Bags[k]
 			end		
 		end
