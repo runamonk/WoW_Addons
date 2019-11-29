@@ -301,12 +301,11 @@ function MyContainer:OnCreate(name, settings)
 			self.pluginBagBar = self:SpawnPlugin("BagBar", "backpack+bags")
 			self.pluginBagBar:SetSize(self.pluginBagBar:LayoutButtons("grid", 4))
 			self.SearchButton = CreateFrame("Button", nil, self)
-			self.SearchButton:SetWidth(self:GetWidth()-32) -- subtract both buttons.
-			self.SearchButton:SetHeight(16)
+
+			self.SearchButton:SetWidth((itemSlotSize+itemSlotPadding) * self.Columns-itemSlotSize) -- subtract both buttons.
+			self.SearchButton:SetHeight(18)
 			self.SearchButton:SetPoint("BOTTOMLEFT", 5, -8)
 			self.SearchButton:SetPoint("BOTTOMRIGHT", -86, -8)
-
-
 			self.pluginSearch = self:SpawnPlugin("SearchBar", self.SearchButton)
 			self.pluginSearch.isGlobal = true
 			self.pluginSearch.highlightFunction = function(button, match) button:SetAlpha(match and 1 or 0.1) end
