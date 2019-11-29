@@ -343,7 +343,7 @@ end
 function Implementation:IsCached(clink, item, bagID, slotID)
 	for i, _ in pairs(self.itemCache) do 
 		if self.itemCache[i].link == clink and self.itemCache[i].bagID == bagID and self.itemCache[i].slotID == slotID then
-			--print('IsCached: ', clink)
+			print('IsCached: ', clink)
 			copyTable(self.itemCache[i].item, item)
 			return true
 		end
@@ -456,11 +456,11 @@ function Implementation:UpdateSlot(bagID, slotID)
 	local item = self:GetItemInfo(bagID, slotID)
 	local button = self:GetButton(bagID, slotID)
 	local container = self:GetContainerForItem(item, button)
+	self:doDeleteCacheItem(item.link, bagID, slotID)
 	--print(item.link, ' ', bagID, ' ', slotID)
 	if(container) then
 		if(button) then
-			if(container ~= button.container) then
-				self:doDeleteCacheItem(item.link, bagID, slotID)
+			if(container ~= button.container) then			
 				button.container:RemoveButton(button)
 				container:AddButton(button)
 			end
@@ -471,7 +471,6 @@ function Implementation:UpdateSlot(bagID, slotID)
 		end
 		button:Update(item)
 	elseif(button) then
-		--self:doDeleteCacheItem(item.link)
 		button.container:RemoveButton(button)
 		self:SetButton(bagID, slotID, nil)
 		button:Free()
@@ -515,7 +514,10 @@ end
 ]]
 function Implementation:BAG_UPDATE(event, bagID, slotID)
 	if(bagID and slotID) then
+		local item = self:GetItemInfo(bagID, slotID)
+		self:doDeleteCacheItem(item.link, bagID, slotID)
 		self:UpdateSlot(bagID, slotID)
+
 	elseif(bagID) then
 		self:UpdateBag(bagID)
 	else
@@ -568,7 +570,7 @@ function Implementation:ITEM_LOCK_CHANGED(event, bagID, slotID)
 	local button = self:GetButton(bagID, slotID)
 	if(button) then
 		local item = self:GetItemInfo(bagID, slotID)
-		self:doDeleteCacheItem(item.link)
+		self:doDeleteCacheItem(item.link, bagID, slotID)
 		button:UpdateLock(item)
 	end
 end
@@ -585,7 +587,6 @@ function Implementation:PLAYERBANKSLOTS_CHANGED(event, bagID, slotID)
 	else
 		bagID = bagID - NUM_BANKGENERIC_SLOTS
 	end
-
 	self:BAG_UPDATE(event, bagID, slotID)
 end
 

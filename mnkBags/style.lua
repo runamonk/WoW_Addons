@@ -224,23 +224,23 @@ function MyContainer:OnContentsChanged(forced)
 	cbmb:UpdateAnchors()
 
 	--update all other bags as well
-	-- if needColumnUpdate and not forced then
-	-- 	if tBankBags then
-	-- 		local t = BankFrames
-	-- 		for i=1,#t do
-	-- 			if t[i].name ~= tName then
-	-- 				t[i]:OnContentsChanged(true)
-	-- 			end
-	-- 		end
-	-- 	else
-	-- 		local t = BagFrames
-	-- 		for i=1,#t do
-	-- 			if t[i].name ~= tName then
-	-- 				t[i]:OnContentsChanged(true)
-	-- 			end
-	-- 		end
-	-- 	end
-	-- end
+	if needColumnUpdate and not forced then
+		if tBankBags then
+			local t = BankFrames
+			for i=1,#t do
+				if t[i].name ~= tName then
+					t[i]:OnContentsChanged(true)
+				end
+			end
+		else
+			local t = BagFrames
+			for i=1,#t do
+				if t[i].name ~= tName then
+					t[i]:OnContentsChanged(true)
+				end
+			end
+		end
+	end
 end
 
 function MyContainer:OnCreate(name, settings)
@@ -390,7 +390,8 @@ end
 function MyContainer:ShowOrHide()
 	local result = (#self.buttons > 0) or false
 
-	-- alway show primary/reagent bags
+	-- alway show primary/reagent bags 
+	-- add checks for bags with ammo or soul in the name?
 	if ((self.name == 'mb_BankReagent') and cbmb:AtBank()) or ((self.name == 'mb_Bank') and cbmb:AtBank()) or (self.name == 'mb_Bag') then		
 		result = true
 	elseif (self.name == 'mb_BankReagent') and not cbmb:AtBank() then
