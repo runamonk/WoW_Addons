@@ -408,12 +408,14 @@ function MyContainer:UpdateDimensions(self)
 	local buttonCount = 0
 	local rows = 1	
 
-	if self.bagToggle then
+	if self.bagToggle or self.name == 'mb_BankReagent' then
 		buttonCount = 1 -- dropbutton/emptybuttoncounter
-		if self.pluginBagBar and self.pluginBagBar:IsShown() then 
-			BagBarHeight = 60
-		else 
-			BagBarHeight = 16
+		if self.bagToggle then 
+			if self.pluginBagBar and self.pluginBagBar:IsShown() then 
+				BagBarHeight = 60
+			else 
+				BagBarHeight = 16
+			end
 		end
 	else
 		BagBarHeight = 0
