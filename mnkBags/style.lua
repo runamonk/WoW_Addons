@@ -125,8 +125,8 @@ end
 local function restackItems(self)
 	local tBag, tBank = (self.name == "mb_Bag"), (self.name == "mb_Bank")
 	if tBank then
+		self:RegisterEvent('BAG_UPDATE_DELAYED')
 		SortBankBags()
-		SortReagentBankBags()
 	elseif tBag then
 		SortBags()
 	end
@@ -429,6 +429,11 @@ function MyContainer:UpdateDimensions(self)
 
 	self:SetWidth((itemSlotSize + itemSlotPadding) * self.Columns )
 	self:SetHeight(((itemSlotSize + itemSlotPadding) * rows) + (BagBarHeight + CaptionHeight) - 8)
+end
+
+function MyContainer:BAG_UPDATE_DELAYED()
+	self:UnregisterEvent('BAG_UPDATE_DELAYED')
+	SortReagentBankBags()
 end
 
 ------------------------------------------
