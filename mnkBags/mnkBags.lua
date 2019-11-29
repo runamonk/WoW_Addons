@@ -11,7 +11,7 @@ local cbmb = cargBags:GetImplementation("mb")
 local _
 
 _Bags = {}
-_BagsHidden = {}
+
 mnkBagsGlobals = {}
 
 
@@ -112,7 +112,8 @@ function cbmb:UpdateAnchors()
 			_Bags[k]:ClearAllPoints()					
 			if (_Bags[k].name:sub(1, string.len('mb_Bank')) == 'mb_Bank') then	
 				if not lastBank then lastBank = _Bags.bank end
-				if not _BagsHidden[lastBank.name] then
+				
+				if lastBank:ShowOrHide() then
 					_Bags[k]:SetPoint("TOPLEFT", lastBank, "BOTTOMLEFT", 0, -12)
 				else
 					_Bags[k]:SetPoint("TOPLEFT", lastBank, "TOPLEFT", 0, 0)
@@ -120,7 +121,8 @@ function cbmb:UpdateAnchors()
 				lastBank = _Bags[k]
 			else
 				if not lastMain then lastMain = _Bags.main end
-				if not _BagsHidden[lastMain.name] then
+
+				if lastMain:ShowOrHide() then
 					_Bags[k]:SetPoint("BOTTOMLEFT", lastMain, "TOPLEFT", 0, 12)
 				else
 					_Bags[k]:SetPoint("BOTTOMLEFT", lastMain, "BOTTOMLEFT", 0, 0)
@@ -133,7 +135,7 @@ end
 
 function cbmb:OnOpen()
 	for k,_ in pairs(_Bags) do
-		if (_Bags[k].name:sub(1, string.len('mb_Bank')) ~= 'mb_Bank') and not _BagsHidden[_Bags[k].name] then
+		if (_Bags[k].name:sub(1, string.len('mb_Bank')) ~= 'mb_Bank') and _Bags[k]:ShowOrHide() then
 			_Bags[k]:Show()
 		end
 	end
@@ -148,7 +150,7 @@ end
 function cbmb:OnBankOpened()
 
 	for k,_ in pairs(_Bags) do
-		if not _BagsHidden[_Bags[k].name] then
+		if _Bags[k]:ShowOrHide() then
 			_Bags[k]:Show()
 		end
 	end 
@@ -157,22 +159,6 @@ end
 function cbmb:OnBankClosed()
 	for k,_ in pairs(_Bags) do
 		_Bags[k]:Hide()
-	end
-end
-
-local SetFrameMovable = function(f, v)
-	f:SetMovable(true)
-	f:SetUserPlaced(true)
-	f:RegisterForClicks("LeftButton", "RightButton")
-	if v then 
-		f:SetScript("OnMouseDown", function() 
-			f:ClearAllPoints() 
-			f:StartMoving() 
-		end)
-		f:SetScript("OnMouseUp",  f.StopMovingOrSizing)
-	else
-		f:SetScript("OnMouseDown", nil)
-		f:SetScript("OnMouseUp", nil)
 	end
 end
 
