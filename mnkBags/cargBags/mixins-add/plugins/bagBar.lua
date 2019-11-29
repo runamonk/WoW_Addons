@@ -177,24 +177,27 @@ function BagButton:OnClick()
 	end
 
 	if(PutItemInBag((self.GetInventorySlot and self:GetInventorySlot()) or self.invID)) then return end
-
+	
+	-- runamonk don't need this and it's confusing that it's here at all.
 	-- Somehow we need to disconnect this from the filter-sieve
-	local container = self.bar.container
-	if(container and container.SetFilter) then
-		if(not self.filter) then
-			local bagID = self.bagID
-			self.filter = function(i) return i.bagID ~= bagID end
-		end
-		self.hidden = not self.hidden
+	if self.bar.AllowFilter then
+		local container = self.bar.container
+		if(container and container.SetFilter) then
+			if(not self.filter) then
+				local bagID = self.bagID
+				self.filter = function(i) return i.bagID ~= bagID end
+			end
+			self.hidden = not self.hidden
 
-		if(self.bar.isGlobal) then
-			for i, container in pairs(container.implementation.contByID) do
+			if(self.bar.isGlobal) then
+				for i, container in pairs(container.implementation.contByID) do
+					container:SetFilter(self.filter, self.hidden)
+					container.implementation:OnEvent("BAG_UPDATE", self.bagID)
+				end
+			else
 				container:SetFilter(self.filter, self.hidden)
 				container.implementation:OnEvent("BAG_UPDATE", self.bagID)
 			end
-		else
-			container:SetFilter(self.filter, self.hidden)
-			container.implementation:OnEvent("BAG_UPDATE", self.bagID)
 		end
 	end
 end
@@ -239,7 +242,7 @@ cargBags:RegisterPlugin("BagBar", function(self, bags)
 
 	local bar = CreateFrame("Frame",  nil, self)
 	bar.container = self
-
+	bar.AllowFilter = true
 	bar.layouts = cargBags.classes.Container.layouts
 	bar.LayoutButtons = cargBags.classes.Container.LayoutButtons
 
