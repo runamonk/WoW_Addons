@@ -107,7 +107,7 @@ end
 function cbmb:UpdateAnchors()
 
 	local function SetBagAnchor(bag, lastbag)
-		if lastbag:ShowOrHide() then
+		if lastbag:ShowOrHide() or (lastbag == _Bags.bank or lastbag == _Bags.main) then
 			bag:SetPoint("BOTTOMLEFT", lastbag, "TOPLEFT", 0, 12)
 		else
 			bag:SetPoint("BOTTOMLEFT", lastbag, "BOTTOMLEFT", 0, 0)
