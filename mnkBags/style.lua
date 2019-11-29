@@ -238,7 +238,11 @@ function MyContainer:OnContentsChanged(forced)
 	local bankShown = _Bags.bank:IsShown()
 	if (not tBankBags and _Bags.main:IsShown() and not (t or tAS)) or (tBankBags and bankShown) then 
 		if isEmpty then
-			self:Hide()
+			-- don't hide the empty reagent bag.
+			if (tName ~= 'mb_BankReagent') or (tName == 'mb_BankReagent' and not IsReagentBankUnlocked()) then
+				self:Hide()
+			end
+
 			if bankShown then
 				_Bags.bank:Show()
 			end
@@ -246,7 +250,8 @@ function MyContainer:OnContentsChanged(forced)
 			self:Show()
 		end 
 	end
-
+	
+	--_Bags.bank:IsShown()
 	_BagsHidden[tName] = (not t) and isEmpty or false
 	cbmb:UpdateAnchors()
 
