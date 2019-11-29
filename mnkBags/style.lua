@@ -223,24 +223,25 @@ function MyContainer:OnContentsChanged(forced)
 
 	cbmb:UpdateAnchors()
 
+	--runamonk Why???
 	--update all other bags as well
-	if needColumnUpdate and not forced then
-		if tBankBags then
-			local t = BankFrames
-			for i=1,#t do
-				if t[i].name ~= tName then
-					t[i]:OnContentsChanged(true)
-				end
-			end
-		else
-			local t = BagFrames
-			for i=1,#t do
-				if t[i].name ~= tName then
-					t[i]:OnContentsChanged(true)
-				end
-			end
-		end
-	end
+	-- if needColumnUpdate and not forced then
+	-- 	if tBankBags then
+	-- 		local t = BankFrames
+	-- 		for i=1,#t do
+	-- 			if t[i].name ~= tName then
+	-- 				t[i]:OnContentsChanged(true)
+	-- 			end
+	-- 		end
+	-- 	else
+	-- 		local t = BagFrames
+	-- 		for i=1,#t do
+	-- 			if t[i].name ~= tName then
+	-- 				t[i]:OnContentsChanged(true)
+	-- 			end
+	-- 		end
+	-- 	end
+	-- end
 end
 
 function MyContainer:OnCreate(name, settings)
