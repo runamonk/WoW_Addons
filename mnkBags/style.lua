@@ -300,9 +300,12 @@ function MyContainer:OnCreate(name, settings)
 			self.pluginBagBar = self:SpawnPlugin("BagBar", "backpack+bags")
 			self.pluginBagBar:SetSize(self.pluginBagBar:LayoutButtons("grid", 4))
 			self.SearchButton = CreateFrame("Button", nil, self)
-			self.SearchButton:SetPoint("BOTTOMLEFT", 5, -6)
-			self.SearchButton:SetPoint("BOTTOMRIGHT", -86, -6)
+			self.SearchButton:SetWidth(self:GetWidth()-32) -- subtract both buttons.
 			self.SearchButton:SetHeight(16)
+			self.SearchButton:SetPoint("BOTTOMLEFT", 5, -8)
+			self.SearchButton:SetPoint("BOTTOMRIGHT", -86, -8)
+
+
 			self.pluginSearch = self:SpawnPlugin("SearchBar", self.SearchButton)
 			self.pluginSearch.isGlobal = true
 			self.pluginSearch.highlightFunction = function(button, match) button:SetAlpha(match and 1 or 0.1) end
@@ -334,7 +337,6 @@ function MyContainer:OnCreate(name, settings)
 			self:UpdateDimensions(self)
 		end)
 		
-
 		self.restackBtn = createIconButton("Restack", self, Textures.Restack, "BOTTOMRIGHT", "Restack", tBag)
 		self.restackBtn:SetPoint("BOTTOMRIGHT", self.bagToggle, "BOTTOMLEFT", 0, 0)
 		self.restackBtn:SetScript("OnClick", function() restackItems(self) end)
@@ -381,7 +383,6 @@ function MyContainer:OnCreate(name, settings)
 		self.DropTarget:Show()
 		self.EmptySlotCounter:Show()
 	end
-	
 
 	self:UpdateDimensions(self)
 	return self
