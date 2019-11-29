@@ -15,6 +15,7 @@ local itemSlotSize = 32
 local itemSlotPadding = 4
 local itemSlotSpacer = 2
 local BagFrames, BankFrames =  {}, {}
+
 local cbmb = cargBags:GetImplementation("mb")
 local MyContainer = cbmb:GetContainerClass()
 
@@ -131,27 +132,10 @@ local function restackItems(self)
 	end
 end
 
-local function SetFrameMovable(f, v)
-	f:SetMovable(true)
-	f:SetUserPlaced(true)
-	f:RegisterForClicks("LeftButton", "RightButton")
-	if v then 
-		f:SetScript("OnMouseDown", function() 
-			f:ClearAllPoints() 
-			f:StartMoving() 
-		end)
-		f:SetScript("OnMouseUp",  f.StopMovingOrSizing)
-	else
-		f:SetScript("OnMouseDown", nil)
-		f:SetScript("OnMouseUp", nil)
-	end
-end
-
 function MyContainer:OnContentsChanged(forced)
 
 	local col, row = 0, 0
 	local yPosOffs = 20
-	local isEmpty = true
 
 	local tName = self.name
 	local tBankBags = string.find(tName, "Bank")
@@ -174,7 +158,6 @@ function MyContainer:OnContentsChanged(forced)
 
 	local buttonIDs = {}
   	for i, button in pairs(self.buttons) do
-  		--local item = cbmb:GetItemInfo(button.bagID, button.slotID)
   		local clink = GetContainerItemLink(button.bagID, button.slotID)
   		if clink then
   			local name = select(1, GetItemInfo(clink))
@@ -208,7 +191,6 @@ function MyContainer:OnContentsChanged(forced)
 		else
 			col = col + 1
 		end
-		isEmpty = false
 	end
 
 	-- compress empty slots.
@@ -233,56 +215,55 @@ function MyContainer:OnContentsChanged(forced)
 
 	self:UpdateDimensions(self)
 
-	local t = (tName == "mb_Bag") or (tName == "mb_Bank") or (tName == "mb_BankReagent")
-	local tAS = (tName == "mb_Ammo") or (tName == "mb_Soulshards")
-	local bankShown = _Bags.bank:IsShown()
-	if (not tBankBags and _Bags.main:IsShown() and not (t or tAS)) or (tBankBags and bankShown) then 
-		if isEmpty then
-			-- don't hide the empty reagent bag.
-			if (tName ~= 'mb_BankReagent') or (tName == 'mb_BankReagent' and not IsReagentBankUnlocked()) then
-				self:Hide()
-			end
-
-			if bankShown then
-				_Bags.bank:Show()
-			end
-		else
-			self:Show()
-		end 
+	if self:ShowOrHide() then
+		self:Show()
+	else
+		self:Hide()
 	end
-	
-	--_Bags.bank:IsShown()
-	_BagsHidden[tName] = (not t) and isEmpty or false
+
 	cbmb:UpdateAnchors()
 
 	--update all other bags as well
-	if needColumnUpdate and not forced then
-		if tBankBags then
-			local t = BankFrames
-			for i=1,#t do
-				if t[i].name ~= tName then
-					t[i]:OnContentsChanged(true)
-				end
-			end
-		else
-			local t = BagFrames
-			for i=1,#t do
-				if t[i].name ~= tName then
-					t[i]:OnContentsChanged(true)
-				end
-			end
-		end
-	end
+	-- if needColumnUpdate and not forced then
+	-- 	if tBankBags then
+	-- 		local t = BankFrames
+	-- 		for i=1,#t do
+	-- 			if t[i].name ~= tName then
+	-- 				t[i]:OnContentsChanged(true)
+	-- 			end
+	-- 		end
+	-- 	else
+	-- 		local t = BagFrames
+	-- 		for i=1,#t do
+	-- 			if t[i].name ~= tName then
+	-- 				t[i]:OnContentsChanged(true)
+	-- 			end
+	-- 		end
+	-- 	end
+	-- end
 end
 
 function MyContainer:OnCreate(name, settings)
 	settings = settings or {}
 	self.Settings = settings
 	self.name = name
+	self.Columns = 12
+	self:EnableMouse(true)
+	self:SetFrameStrata("HIGH")
+
+	self.Caption = mnkLibs.createFontString(self, mnkLibs.Fonts.ap, 16, nil, nil, true)
+	self.Caption:SetText(mbLocals.bagCaptions[self.name])
+	self.Caption:SetPoint("TOPLEFT", 0, 2)
+
+	self.background = CreateFrame("Frame", nil, self)
+	mnkLibs.setBackdrop(self, mnkLibs.Textures.background, nil, 4, 4, 4, 4)
+	mnkLibs.createBorder(self, 5,-5,-5,5, {1/3,1/3,1/3,1})
+	self.background:SetFrameStrata("HIGH")
+	self.background:SetFrameLevel(1)
+	self:SetBackdropColor(0, 0, 0, 1)
 
 	local tBag, tBank, tReagent = (name == "mb_Bag"), (name == "mb_Bank"), (name == "mb_BankReagent")
 	local tBankBags = string.find(name, "Bank")
-
 	table.insert((tBankBags and BankFrames or BagFrames), self)
 	
 	local numSlotsBag = {GetNumFreeSlots("bag")}
@@ -292,57 +273,71 @@ function MyContainer:OnCreate(name, settings)
 	local usedSlotsBank = numSlotsBank[2] - numSlotsBank[1]
 	local usedSlotsReagent = numSlotsReagent[2] - numSlotsReagent[1]
 
-	self:EnableMouse(true)
-	self:SetFrameStrata("HIGH")
 	tinsert(UISpecialFrames, self:GetName()) -- Close on "Esc"
 
 	if (tBag or tBank) then 
-		SetFrameMovable(self, true) 
-	end
+		self:SetMovable(true)
+		self:SetUserPlaced(true)
+		self:RegisterForClicks("LeftButton", "RightButton")
+		self:SetScript("OnMouseDown", function() 
+			self:ClearAllPoints() 
+			self:StartMoving() 
+		end)
+		self:SetScript("OnMouseUp",  self.StopMovingOrSizing)
 
-	self.Columns = 12
-	self:UpdateDimensions(self)
-	
-	-- The frame background
-	local background = CreateFrame("Frame", nil, self)
-	mnkLibs.setBackdrop(background, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
-	mnkLibs.createBorder(self, 5,-5,-5,5, {1/3,1/3,1/3,1})
-	background:SetFrameStrata("HIGH")
-	background:SetFrameLevel(1)
+		self.CloseButton = CreateFrame("Button", nil, self, "UIPanelCloseButton")
+		self.CloseButton:SetDisabledTexture("Interface\\AddOns\\mnkBags\\media\\Close")
+		self.CloseButton:SetNormalTexture("Interface\\AddOns\\mnkBags\\media\\Close")
+		self.CloseButton:SetPushedTexture("Interface\\AddOns\\mnkBags\\media\\Close")
+		self.CloseButton:SetHighlightTexture("Interface\\AddOns\\mnkBags\\media\\Close")		
+		self.CloseButton:ClearAllPoints()
+		self.CloseButton:SetPoint("TOPRIGHT", 2, 0)
+		self.CloseButton:SetSize(12,12)
+		self.CloseButton:SetScript("OnClick", function(self) if cbmb:AtBank() then CloseBankFrame() else CloseAllBags() end end)
 
-	if (tBank) then
-		background:SetBackdropColor(1/5, 1/8, 1/8, 1)
-	elseif (tBag) then
-		background:SetBackdropColor(1/8, 1/5, 1/8, 1)
-	else
-		background:SetBackdropColor(0, 0, 0, 1)
-	end
-	
-	background:SetPoint("TOPLEFT", -4, 4)
-	background:SetPoint("BOTTOMRIGHT", 4, -4)
-
-	-- Caption, close button
-	local caption = mnkLibs.createFontString(background, mnkLibs.Fonts.ap, 16, nil, nil, true)
-	
-	if (caption) then
-		local t = mbLocals.bagCaptions[self.name] or (tBankBags and strsub(self.name, 5))
-		if not t then t = self.name end
-		if self.Name == "mb_ItemSets" then t=ItemSetCaption..t end
-		caption:SetText(t)
-		caption:SetPoint("TOPLEFT", 3, -1)
-		self.Caption = caption
-		
-		if (tBag or tBank) then
-			local close = CreateFrame("Button", nil, self, "UIPanelCloseButton")
-			close:SetDisabledTexture("Interface\\AddOns\\mnkBags\\media\\Close")
-			close:SetNormalTexture("Interface\\AddOns\\mnkBags\\media\\Close")
-			close:SetPushedTexture("Interface\\AddOns\\mnkBags\\media\\Close")
-			close:SetHighlightTexture("Interface\\AddOns\\mnkBags\\media\\Close")		
-			close:ClearAllPoints()
-			close:SetPoint("TOPRIGHT", 2, 2)
-			close:SetSize(12,12)
-			close:SetScript("OnClick", function(self) if cbmb:AtBank() then CloseBankFrame() else CloseAllBags() end end)
+		if tBag then
+			self:SetBackdropColor(1/8, 1/5, 1/8, 1)
+			self.pluginBagBar = self:SpawnPlugin("BagBar", "backpack+bags")
+			self.pluginBagBar:SetSize(self.pluginBagBar:LayoutButtons("grid", 4))
+			self.SearchButton = CreateFrame("Button", nil, self)
+			self.SearchButton:SetPoint("BOTTOMLEFT", 5, -6)
+			self.SearchButton:SetPoint("BOTTOMRIGHT", -86, -6)
+			self.SearchButton:SetHeight(16)
+			self.pluginSearch = self:SpawnPlugin("SearchBar", self.SearchButton)
+			self.pluginSearch.isGlobal = true
+			self.pluginSearch.highlightFunction = function(button, match) button:SetAlpha(match and 1 or 0.1) end
+			self.SearchIcon = self:CreateTexture(nil, "ARTWORK") 
+			self.SearchIcon:SetTexture(Textures.Search)
+			self.SearchIcon:SetVertexColor(0.8, 0.8, 0.8)
+			self.SearchIcon:SetPoint("BOTTOMLEFT", self.SearchButton, "BOTTOMLEFT", -3, 8)
+			self.SearchIcon:SetWidth(16)
+			self.SearchIcon:SetHeight(16)
+		else
+			self:SetBackdropColor(1/5, 1/8, 1/8, 1)
+			self.pluginBagBar = self:SpawnPlugin("BagBar", "bank")
+			self.pluginBagBar:SetSize(self.pluginBagBar:LayoutButtons("grid", 7))
 		end
+		
+		self.pluginBagBar.highlightFunction = function(button, match) button:SetAlpha(match and 1 or 0.1) end
+		self.pluginBagBar.isGlobal = true
+		self.pluginBagBar:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -2, 25)
+		self.pluginBagBar:Hide()
+
+		self.bagToggle = createIconButton("Bags", self, Textures.BagToggle, "BOTTOMRIGHT", "Toggle Bags", tBag)
+		self.bagToggle:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 4, -4)
+		self.bagToggle:SetScript("OnClick", function()
+			if(self.pluginBagBar:IsShown()) then 
+				self.pluginBagBar:Hide()
+			else
+				self.pluginBagBar:Show()
+			end
+			self:UpdateDimensions(self)
+		end)
+		
+
+		self.restackBtn = createIconButton("Restack", self, Textures.Restack, "BOTTOMRIGHT", "Restack", tBag)
+		self.restackBtn:SetPoint("BOTTOMRIGHT", self.bagToggle, "BOTTOMLEFT", 0, 0)
+		self.restackBtn:SetScript("OnClick", function() restackItems(self) end)
 	end
 
 	if self.name == 'mb_NewItems' then
@@ -353,40 +348,8 @@ function MyContainer:OnCreate(name, settings)
 	
 	if self.name == 'mb_BankReagent' then
 		self.reagentBtn = createIconButton("SendReagents", self, Textures.Deposit, "TOPRIGHT", REAGENTBANK_DEPOSIT, tBag)
-		self.reagentBtn:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, 0)
+		self.reagentBtn:SetPoint("TOPRIGHT", self, "TOPRIGHT", 4, 0)
 		self.reagentBtn:SetScript("OnClick", function()	DepositReagentBank() end)
-	end
-
-  	if (tBag or tBank) then
-		local bagButtons = self:SpawnPlugin("BagBar", tBag and "backpack+bags" or "bank")
-
-		if tBag then
-			bagButtons:SetSize(bagButtons:LayoutButtons("grid", 4))
-		else
-			bagButtons:SetSize(bagButtons:LayoutButtons("grid", 7))
-		end
-		
-		bagButtons.highlightFunction = function(button, match) button:SetAlpha(match and 1 or 0.1) end
-		bagButtons.isGlobal = true
-		bagButtons:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -2, 25)
-		bagButtons:Hide()
-
-		self.BagBar = bagButtons
-		self.bagToggle = createIconButton("Bags", self, Textures.BagToggle, "BOTTOMRIGHT", "Toggle Bags", tBag)
-		self.bagToggle:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 0)
-		self.bagToggle:SetScript("OnClick", function()
-			if(self.BagBar:IsShown()) then 
-				self.BagBar:Hide()
-			else
-				self.BagBar:Show()
-			end
-			self:UpdateDimensions(self)
-		end)
-		
-		-- Button to restack items:
-		self.restackBtn = createIconButton("Restack", self, Textures.Restack, "BOTTOMRIGHT", "Restack", tBag)
-		self.restackBtn:SetPoint("BOTTOMRIGHT", self.bagToggle, "BOTTOMLEFT", 0, 0)
-		self.restackBtn:SetScript("OnClick", function() restackItems(self) end)
 	end
 
 	-- Item drop target
@@ -419,28 +382,25 @@ function MyContainer:OnCreate(name, settings)
 		self.EmptySlotCounter:Show()
 	end
 	
-	if tBag then
-		local SearchBox = CreateFrame("Button", nil, self)
-		SearchBox:SetPoint("BOTTOMLEFT", 5, -6)
-		SearchBox:SetPoint("BOTTOMRIGHT", -86, -6)
-		SearchBox:SetHeight(16)
 
-		-- Search bar
-		local search = self:SpawnPlugin("SearchBar", SearchBox)
-		search.isGlobal = true
-		search.highlightFunction = function(button, match) button:SetAlpha(match and 1 or 0.1) end
-		
-		local SearchIcon = background:CreateTexture(nil, "ARTWORK")
-		SearchIcon:SetTexture(Textures.Search)
-		SearchIcon:SetVertexColor(0.8, 0.8, 0.8)
-		SearchIcon:SetPoint("BOTTOMLEFT", SearchBox, "BOTTOMLEFT", -3, 8)
-		SearchIcon:SetWidth(16)
-		SearchIcon:SetHeight(16)
-	end
+	self:UpdateDimensions(self)
 	return self
 end
 
- function MyContainer:UpdateDimensions(self)
+function MyContainer:ShowOrHide()
+	local result = (#self.buttons > 0) or false
+
+	-- alway show primary/reagent bags
+	if ((self.name == 'mb_BankReagent') and cbmb:AtBank()) or ((self.name == 'mb_Bank') and cbmb:AtBank()) or (self.name == 'mb_Bag') then		
+		result = true
+	elseif (self.name == 'mb_BankReagent') and not cbmb:AtBank() then
+		result = false
+	end
+
+	return result
+end
+
+function MyContainer:UpdateDimensions(self)
 	local BagBarHeight = 0
 	local CaptionHeight = 28
 	local buttonCount = 0
@@ -448,7 +408,7 @@ end
 
 	if self.bagToggle then
 		buttonCount = 1 -- dropbutton/emptybuttoncounter
-		if self.BagBar and self.BagBar:IsShown() then 
+		if self.pluginBagBar and self.pluginBagBar:IsShown() then 
 			BagBarHeight = 60
 		else 
 			BagBarHeight = 16
