@@ -322,8 +322,9 @@ function MyContainer:OnCreate(name, settings)
 			self.pluginBagBar:SetSize(self.pluginBagBar:LayoutButtons("grid", 7))
 		end
 		
-		self.pluginBagBar.highlightFunction = function(button, match) button:SetAlpha(match and 1 or 0.1) end
+		--self.pluginBagBar.highlightFunction = function(button, match) button:SetAlpha(match and 1 or 0.1) end
 		self.pluginBagBar.isGlobal = true
+		self.pluginBagBar.AllowFilter = false
 		self.pluginBagBar:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -2, 25)
 		self.pluginBagBar:Hide()
 
