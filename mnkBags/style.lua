@@ -132,29 +132,29 @@ local function restackItems(self)
 	end
 end
 
-function MyContainer:OnContentsChanged(forced)
+function MyContainer:OnContentsChanged()
 
 	local col, row = 0, 0
-	local yPosOffs = 20
+	local CaptionHeight = 20
 
-	local tName = self.name
-	local tBankBags = string.find(tName, "Bank")
-	local tBank = tBankBags or (tName == "mb_Bank")
-	local tReagent = (tName == "mb_BankReagent")
+	-- local tName = self.name
+	-- local tBankBags = string.find(tName, "Bank")
+	-- local tBank = tBankBags or (tName == "mb_Bank")
+	-- local tReagent = (tName == "mb_BankReagent")
 	
-	local numSlotsBag = {GetNumFreeSlots("bag")}
-	local numSlotsBank = {GetNumFreeSlots("bank")}
-	local numSlotsReagent = {GetNumFreeSlots("bankReagent")}
+	-- local numSlotsBag = {GetNumFreeSlots("bag")}
+	-- local numSlotsBank = {GetNumFreeSlots("bank")}
+	-- local numSlotsReagent = {GetNumFreeSlots("bankReagent")}
 	
-	local usedSlotsBag = numSlotsBag[2] - numSlotsBag[1]
-	local usedSlotsBank = numSlotsBank[2] - numSlotsBank[1]
-	local usedSlotsReagent = numSlotsReagent[2] - numSlotsReagent[1]
+	-- local usedSlotsBag = numSlotsBag[2] - numSlotsBag[1]
+	-- local usedSlotsBank = numSlotsBank[2] - numSlotsBank[1]
+	-- local usedSlotsReagent = numSlotsReagent[2] - numSlotsReagent[1]
 	
 	local oldColumns = self.Columns
 	
 	self.Columns = 12
 	
-	local needColumnUpdate = (self.Columns ~= oldColumns)
+	--local needColumnUpdate = (self.Columns ~= oldColumns)
 
 	local buttonIDs = {}
   	for i, button in pairs(self.buttons) do
@@ -182,7 +182,7 @@ function MyContainer:OnContentsChanged(forced)
 		button:ClearAllPoints()
 	  
 		local xPos = col * (itemSlotSize + itemSlotPadding) + itemSlotSpacer
-		local yPos = (-1 * row * (itemSlotSize + itemSlotPadding)) - yPosOffs
+		local yPos = (-1 * row * (itemSlotSize + itemSlotPadding)) - CaptionHeight
 
 		button:SetPoint("TOPLEFT", self, "TOPLEFT", xPos, yPos)
 		if(col >= self.Columns-1) then
@@ -195,7 +195,7 @@ function MyContainer:OnContentsChanged(forced)
 
 	-- compress empty slots.
 	local xPos = col * (itemSlotSize + itemSlotPadding) + itemSlotSpacer
-	local yPos = (-1 * row * (itemSlotSize + itemSlotPadding)) - yPosOffs
+	local yPos = (-1 * row * (itemSlotSize + itemSlotPadding)) - CaptionHeight
 
 	local tDrop = self.DropTarget
 	if tDrop then
@@ -360,13 +360,11 @@ function MyContainer:OnCreate(name, settings)
 		self.DropTarget = CreateFrame("ItemButton", self.name.."DropTarget", self)
 		local dtNT = _G[self.DropTarget:GetName().."NormalTexture"]
 		if dtNT then dtNT:SetTexture(nil) end
-		
 		self.DropTarget.bg = CreateFrame("Frame", nil, self.DropTarget)
 		self.DropTarget.bg:SetAllPoints()	
 		mnkLibs.setBackdrop(self.DropTarget.bg, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
 		self.DropTarget.bg:SetBackdropColor(1, 1, 1, 0.1)
 		self.DropTarget.bg:SetBackdropBorderColor(0, 0, 0, 1)
-
 		self.DropTarget:SetWidth(itemSlotSize+1)
 		self.DropTarget:SetHeight(itemSlotSize+1)
 		
@@ -376,11 +374,9 @@ function MyContainer:OnCreate(name, settings)
 		end
 		self.DropTarget:SetScript("OnMouseUp", DropTargetProcessItem)
 		self.DropTarget:SetScript("OnReceiveDrag", DropTargetProcessItem)
-
 		self.EmptySlotCounter = mnkLibs.createFontString(self, mnkLibs.Fonts.ap, 16, nil, nil, true)
 		self.EmptySlotCounter:SetPoint("BOTTOMRIGHT", self.DropTarget, "BOTTOMRIGHT", -3, 3)
-		self.EmptySlotCounter:SetJustifyH("LEFT")
-		
+		self.EmptySlotCounter:SetJustifyH("LEFT")	
 		self.DropTarget:Show()
 		self.EmptySlotCounter:Show()
 	end
