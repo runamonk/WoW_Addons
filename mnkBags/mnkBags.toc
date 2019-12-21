@@ -2,13 +2,10 @@
 ## Title: mnkBags
 ## Author: runamonk
 ## SavedVariables: 
-## SavedVariablesPerCharacter: mnkBagsKnownItems, mnkBagsGlobals
+## SavedVariablesPerCharacter: mnkBagsKnownItems
 ## Dependencies: mnkLibs
 ## X-cargBags: cargBags
 
 cargBags\embed.xml
-
 localization.lua
-filters.lua
-style.lua
 mnkBags.lua

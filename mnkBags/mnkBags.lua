@@ -1,86 +1,50 @@
 local addon, ns = ...
 local cargBags = ns.cargBags
+local cbmb = cargBags:NewImplementation("mnkBags")
+local mnkBagsContainer = cbmb:GetContainerClass()
+local mnkBagsButton = cbmb:GetItemButtonClass()
+local mnkBags = CreateFrame('Frame', 'mnkBags')
 
-mnkBags = CreateFrame('Frame', 'mnkBags', UIParent)
 mnkBags:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
-mnkBags:RegisterEvent("ADDON_LOADED")
+mnkBags:RegisterEvent('PLAYER_ENTERING_WORLD')
 mnkBags:RegisterEvent('MERCHANT_SHOW')
 
+mnkBagsKnownItems = mnkBagsKnownItems or {}
 
-local cbmb = cargBags:GetImplementation("mb")
 local _
+local itemSlotSize = 32
+local itemSlotPadding = 4
+local itemSlotSpacer = 2
+local _Bags = {}
+local mediaPath = [[Interface\AddOns\mnkBags\media\]]
+local Textures = {
+	Search =		mediaPath .. "Search",
+	BagToggle =		mediaPath .. "BagToggle",
+	ResetNew =		mediaPath .. "ResetNew",
+	Restack =		mediaPath .. "Restack",
+	Deposit =		mediaPath .. "Deposit"
+}
 
-_Bags = {}
-
-mnkBagsGlobals = {}
-
-
-function mnkBags:ADDON_LOADED(event, addon)
-
-	if (addon ~= 'mnkBags') then return end
-	self:UnregisterEvent(event)
-	-----------------
-	-- Frame Spawns
-	-----------------
-	local C = cbmb:GetContainerClass()
-
-	-- bank bags
-	_Bags.bankArmor	= 			C:New("mb_BankArmor")
-	_Bags.bankGem = 			C:New("mb_BankGem")
-	_Bags.bankConsumables = 	C:New("mb_BankCons")
-	_Bags.bankArtifactPower = 	C:New("mb_BankArtifactPower")
-	_Bags.bankBattlePet	= 		C:New("mb_BankPet")
-	_Bags.bankQuest	= 			C:New("mb_BankQuest")
-	_Bags.bankTrade	= 			C:New("mb_BankTrade")
-	_Bags.bankReagent = 		C:New("mb_BankReagent")
-	_Bags.bank = 				C:New("mb_Bank")
-		
-	_Bags.bankArmor	:			SetExtendedFilter(cB_Filters.fItemClass, "BankArmor")
-	_Bags.bankGem :				SetExtendedFilter(cB_Filters.fItemClass, "BankGem")
-	_Bags.bankConsumables :		SetExtendedFilter(cB_Filters.fItemClass, "BankConsumables")
-	_Bags.bankArtifactPower :	SetExtendedFilter(cB_Filters.fItemClass, "BankArtifactPower")
-	_Bags.bankBattlePet :		SetExtendedFilter(cB_Filters.fItemClass, "BankBattlePet")
-	_Bags.bankQuest	:			SetExtendedFilter(cB_Filters.fItemClass, "BankQuest")
-	_Bags.bankTrade	: 			SetExtendedFilter(cB_Filters.fItemClass, "BankTradeGoods")
-	_Bags.bankReagent :			SetMultipleFilters(true, cB_Filters.fBankReagent, cB_Filters.fHideEmpty)
-	_Bags.bank :				SetMultipleFilters(true, cB_Filters.fBank, cB_Filters.fHideEmpty)
-
-	-- inventory bags
-	_Bags.bagJunk = 			C:New("mb_Junk")
-	_Bags.bagNew = 				C:New("mb_NewItems")
-	_Bags.armor	= 				C:New("mb_Armor")
-	_Bags.gem = 				C:New("mb_Gem")
-	_Bags.quest	= 				C:New("mb_Quest")
-	_Bags.consumables = 		C:New("mb_Consumables")
-	_Bags.artifactpower	= 		C:New("mb_ArtifactPower")
-	_Bags.battlepet	= 			C:New("mb_BattlePet")
-	_Bags.tradegoods = 			C:New("mb_TradeGoods")
-	_Bags.main = 				C:New("mb_Bag")
-
-	_Bags.bagJunk :				SetExtendedFilter(cB_Filters.fItemClass, "Junk")
-	_Bags.bagNew :				SetFilter(cB_Filters.fNewItems, true)
-	_Bags.armor	:				SetExtendedFilter(cB_Filters.fItemClass, "Armor")
-	_Bags.gem :					SetExtendedFilter(cB_Filters.fItemClass, "Gem")
-	_Bags.quest :				SetExtendedFilter(cB_Filters.fItemClass, "Quest")
-	_Bags.consumables :			SetExtendedFilter(cB_Filters.fItemClass, "Consumables")
-	_Bags.artifactpower	:		SetExtendedFilter(cB_Filters.fItemClass, "ArtifactPower")
-	_Bags.battlepet	:			SetExtendedFilter(cB_Filters.fItemClass, "BattlePet")
-	_Bags.tradegoods :			SetExtendedFilter(cB_Filters.fItemClass, "TradeGoods")
-	_Bags.main :				SetMultipleFilters(true, cB_Filters.fBags, cB_Filters.fHideEmpty)
-
-	_Bags.main:SetPoint("BOTTOMRIGHT", -20, 200)
-	_Bags.bank:SetPoint("BOTTOMLEFT", 20, 200)
+local function createIconButton(name, parent, texture, point, hint)
+	local button = CreateFrame("Button", nil, parent)
+	button:SetWidth(17)
+	button:SetHeight(17)
 	
-	cbmb:UpdateAnchors()
-	cbmb:Init()
+	button.icon = button:CreateTexture(nil, "ARTWORK")
+	button.icon:SetPoint(point, button, point, point == "BOTTOMLEFT" and 2 or -2, 2)
+	button.icon:SetWidth(16)
+	button.icon:SetHeight(16)
+	button.icon:SetTexture(texture)
+	button.icon:SetVertexColor(0.8, 0.8, 0.8)
+	mnkLibs.setTooltip(button, hint)
+
+	button.tag = name	
+	return button
 end
 
---sell junk
 function mnkBags:MERCHANT_SHOW(event, addon)
 	if (not MerchantFrame:IsShown()) then return end
 	local p = 0
-	-- don't update all the bags iteminfo every single time you sell junk, wait till the end and then it only one time.
-	cbmb.PauseUpdates = true
 	for k,_ in pairs(_Bags.bagJunk.buttons) do
 		-- just in case they close the form while selling.
 		if (MerchantFrame:IsShown()) then 
@@ -100,38 +64,19 @@ function mnkBags:MERCHANT_SHOW(event, addon)
 	if p > 0 then
 		print('Junk sold for: ', GetCoinTextureString(p))
 	end
-	cbmb.PauseUpdates = false
-	cbmb:UpdateBags()
 end
 
-function cbmb:UpdateAnchors()
-
-	local function SetBagAnchor(bag, lastbag)
-		if lastbag:ShowOrHide() or (lastbag == _Bags.bank or lastbag == _Bags.main) then
-			bag:SetPoint("BOTTOMLEFT", lastbag, "TOPLEFT", 0, 12)
-		else
-			bag:SetPoint("BOTTOMLEFT", lastbag, "BOTTOMLEFT", 0, 0)
-		end
-	end
-
-	local lastBank, lastMain = _Bags.bank, _Bags.main
-	for k,_ in pairs(_Bags) do	
-		if not ((k == 'main') or (k == 'bank')) then
-			_Bags[k]:ClearAllPoints()					
-			if (_Bags[k].name:sub(1, string.len('mb_Bank')) == 'mb_Bank') then	
-				SetBagAnchor(_Bags[k], lastBank)
-				lastBank = _Bags[k]
-			else
-				SetBagAnchor(_Bags[k], lastMain)
-				lastMain = _Bags[k]
-			end		
-		end
+function mnkBags:PLAYER_ENTERING_WORLD(event, addon)
+	if cbmb.notInited then
+		mnkBagsButton:Scaffold("Default")
+		cbmb:RegisterBlizzard()
+		cbmb:Init()
 	end
 end
 
 function cbmb:OnOpen()
 	for k,_ in pairs(_Bags) do
-		if (_Bags[k].name:sub(1, string.len('mb_Bank')) ~= 'mb_Bank') and _Bags[k]:ShowOrHide() then
+		if _Bags[k]:ShowOrHide() then
 			_Bags[k]:Show()
 		end
 	end
@@ -144,78 +89,506 @@ function cbmb:OnClose()
 end
 
 function cbmb:OnBankOpened()
-
-	for k,_ in pairs(_Bags) do
-		if _Bags[k]:ShowOrHide() then
-			_Bags[k]:Show()
-		end
-	end 
+	cbmb:OnOpen()
 end
 
 function cbmb:OnBankClosed()
+	cbmb:OnClose()
+end
+
+function cbmb:OnInit()
+	local function IsBank(item)
+		return (item.bagID == -1 or item.bagID >= 5 and item.bagID <= 11)
+	end
+
+	local function IsMain(item)
+		return (item.bagID >= 0 and item.bagID <= 4) 
+	end
+
+	local function ItemNotNull(item)
+		return (item ~= nil) and (item.link ~= nil)
+	end
+
+	_Bags.bankArmor	= mnkBagsContainer:New("mb_BankArmor")
+	_Bags.bankGem = mnkBagsContainer:New("mb_BankGem")
+	_Bags.bankConsumables =	mnkBagsContainer:New("mb_BankCons")
+	_Bags.bankArtifactPower = mnkBagsContainer:New("mb_BankArtifactPower")
+	_Bags.bankBattlePet	= mnkBagsContainer:New("mb_BankBattlePet")
+	_Bags.bankQuest	= mnkBagsContainer:New("mb_BankQuest")
+	_Bags.bankTrade	= mnkBagsContainer:New("mb_BankTrade")
+	_Bags.bankReagent = mnkBagsContainer:New("mb_BankReagent")
+	_Bags.bank = mnkBagsContainer:New("mb_Bank")
+
+	_Bags.bankArmor:SetFilter(function(item) return ItemNotNull(item) and IsBank(item) and ((item.type == mbLocals.Armor) or (item.type == mbLocals.Weapon)) end, true)
+	_Bags.bankGem:SetFilter(function(item) return ItemNotNull(item) and IsBank(item) and (item.type == mbLocals.Gem) end, true)
+	_Bags.bankQuest:SetFilter(function(item) return ItemNotNull(item) and IsBank(item) and (item.type == mbLocals.Quest) end, true)
+	_Bags.bankConsumables:SetFilter(function(item) return ItemNotNull(item) and IsBank(item) and (item.type == mbLocals.Consumables) end, true)
+	_Bags.bankArtifactPower:SetFilter(function(item) return ItemNotNull(item) and IsBank(item) and (item.type == mbLocals.ArtifactPower) end, true)
+	_Bags.bankBattlePet:SetFilter(function(item) return ItemNotNull(item) and IsBank(item) and (item.type == mbLocals.BattlePet) end, true)
+	_Bags.bankTrade:SetFilter(function(item) return ItemNotNull(item) and IsBank(item) and (item.type == mbLocals.Trades) end, true)
+	_Bags.bankReagent:SetFilter(function(item) return ItemNotNull(item) and (item.bagID == -3) end, true)
+	_Bags.bank:SetFilter(function(item) return ItemNotNull(item) and IsBank(item) end, true)
+
+	_Bags.bagJunk = mnkBagsContainer:New("mb_Junk")
+	_Bags.bagNew = mnkBagsContainer:New("mb_NewItems")
+	_Bags.armor	= mnkBagsContainer:New("mb_Armor")
+	_Bags.gem = mnkBagsContainer:New("mb_Gem")
+	_Bags.quest	= mnkBagsContainer:New("mb_Quest")
+	_Bags.consumables = mnkBagsContainer:New("mb_Consumables")
+	_Bags.artifactpower	= mnkBagsContainer:New("mb_ArtifactPower")
+	_Bags.battlepet	= mnkBagsContainer:New("mb_BattlePet")
+	_Bags.tradegoods = mnkBagsContainer:New("mb_TradeGoods")
+	_Bags.main = mnkBagsContainer:New("mb_Bag")
+
+	_Bags.bagJunk:SetFilter(function(item) return ItemNotNull(item) and IsMain(item) and (item.rarity == 0) end, true)
+	_Bags.bagNew:SetFilter(function(item) return ItemNotNull(item) and IsMain(item) and  (mnkLibs.GetIndexInTable(mnkBagsKnownItems, item.link) == 0) end, true)
+	_Bags.armor:SetFilter(function(item) return ItemNotNull(item) and IsMain(item) and ((item.type == mbLocals.Armor) or (item.type == mbLocals.Weapon)) end, true)
+	_Bags.gem:SetFilter(function(item) return ItemNotNull(item) and IsMain(item) and (item.type == mbLocals.Gem) end, true)
+	_Bags.quest:SetFilter(function(item) return ItemNotNull(item) and IsMain(item) and (item.type == mbLocals.Quest) end, true)
+	_Bags.consumables:SetFilter(function(item) return ItemNotNull(item) and IsMain(item) and (item.type == mbLocals.Consumables) end, true)
+	_Bags.artifactpower:SetFilter(function(item) return ItemNotNull(item) and IsMain(item) and (item.type == mbLocals.ArtifactPower) end, true)
+	_Bags.battlepet:SetFilter(function(item) return ItemNotNull(item) and IsMain(item) and (item.type == mbLocals.BattlePet) end, true)
+	_Bags.tradegoods:SetFilter(function(item) return ItemNotNull(item) and IsMain(item) and (item.type == mbLocals.Trades) end, true)
+	_Bags.main:SetFilter(function(item) return ItemNotNull(item) and IsMain(item) end, true)
+
+	_Bags.main:SetPoint('BOTTOMRIGHT', -20, 200)
+	_Bags.bank:SetPoint('BOTTOMRIGHT', _Bags.main, 'BOTTOMLEFT', -20, 0)
+
 	for k,_ in pairs(_Bags) do
-		_Bags[k]:Hide()
+		_Bags[k]:OnContentsChanged(true)
+	end
+
+	cbmb:UpdateAnchors()
+end
+
+function cbmb:UpdateAllBags()
+	for k,_ in pairs(_Bags) do
+		_Bags[k]:OnContentsChanged(true)
+	end
+	cbmb:UpdateAnchors()
+end
+
+function cbmb:UpdateAnchors()
+	local function SetBagAnchor(bag, lastbag, parentbag)
+
+		local h = GetScreenHeight()
+		local i = bag:GetHeight()
+		local t = lastbag:GetTop()
+		-- Check if the bag will end up off the top of the screen, if so then start a new column of containers.
+		if (t + i) > h then
+			if parentbag.mywifeisahorder then
+				bag:SetPoint("BOTTOMRIGHT", parentbag.mywifeisahorder, "BOTTOMLEFT", -16, 0)
+			else
+				bag:SetPoint("BOTTOMRIGHT", parentbag, "BOTTOMLEFT", -16, 0)	
+			end
+			parentbag.mywifeisahorder = bag
+			return
+		end
+		
+		if lastbag:ShowOrHide() or (lastbag == _Bags.bank or lastbag == _Bags.main) then
+			bag:SetPoint("BOTTOMLEFT", lastbag, "TOPLEFT", 0, 12)
+		else
+			bag:SetPoint("BOTTOMLEFT", lastbag, "BOTTOMLEFT", 0, 0)
+		end
+	end
+	--print('UpdateAnchors()')
+	local lastBank, lastMain = _Bags.bank, _Bags.main
+	_Bags.bank.mywifeisahorder = nil
+	_Bags.main.mywifeisahorder = nil
+
+	for k,_ in pairs(_Bags) do	
+		if not ((k == 'main') or (k == 'bank')) then
+			_Bags[k]:ClearAllPoints()					
+			if (_Bags[k].name:sub(1, string.len('mb_Bank')) == 'mb_Bank') then	
+				SetBagAnchor(_Bags[k], lastBank, _Bags.bank)
+				lastBank = _Bags[k]
+			else
+				SetBagAnchor(_Bags[k], lastMain, _Bags.main)
+				lastMain = _Bags[k]
+			end
+		end
 	end
 end
 
-local buttonCollector = {}
-local Event =  CreateFrame('Frame', nil)
-Event:RegisterEvent("PLAYER_ENTERING_WORLD")
-Event:SetScript('OnEvent', function(self, event, ...)
-	if event == "PLAYER_ENTERING_WORLD" then
-		for bagID = -3, 11 do
-			local slots = GetContainerNumSlots(bagID)
-			for slotID=1,slots do
-				local button = cbmb.buttonClass:New(bagID, slotID)
-				buttonCollector[#buttonCollector+1] = button
-				cbmb:SetButton(bagID, slotID, nil)
+function cbmb:UpdateBags()
+	for i = -3, 11 do 
+		cbmb:UpdateBag(i) 
+	end 
+end
+
+function mnkBagsContainer:GetFirstFreeSlot(self)
+	if self == _Bags.bank then		
+		local containerIDs = {-1,5,6,7,8,9,10,11}
+		for _,i in next, containerIDs do
+			local t = GetContainerNumFreeSlots(i)
+			if t > 0 then
+				local tNumSlots = GetContainerNumSlots(i)
+				for j = 1,tNumSlots do
+					local tLink = GetContainerItemLink(i,j)
+					if not tLink then return i,j end
+				end
+			end
+		end	
+	elseif self == _Bags.bankReagent then
+		local bagID = -3
+		local t = GetContainerNumFreeSlots(bagID)
+		if t > 0 then
+			local tNumSlots = GetContainerNumSlots(bagID)
+			for j = 1,tNumSlots do
+				local tLink = GetContainerItemLink(bagID,j)
+				if not tLink then return bagID,j end
 			end
 		end
-		for i,button in pairs(buttonCollector) do
-			if button.container then
-				button.container:RemoveButton(button)
+	elseif self == _Bags.main then
+		for i = 0,4 do
+			local t = GetContainerNumFreeSlots(i)
+			if t > 0 then
+				local tNumSlots = GetContainerNumSlots(i)
+				for j = 1,tNumSlots do
+					local tLink = GetContainerItemLink(i,j)
+					if not tLink then return i,j end
+				end
 			end
-			button:Free()
 		end
-		cbmb:UpdateBags()
+	end
+	return false
+end
+
+function mnkBagsContainer:GetNumFreeSlots(self)
+	local free, max = 0, 0
+	if self == _Bags.main then
+		for i = 0,4 do
+			free = free + GetContainerNumFreeSlots(i)
+			max = max + GetContainerNumSlots(i)
+		end
+	elseif self == _Bags.bankReagent then
+		free = GetContainerNumFreeSlots(-3)
+		max = GetContainerNumSlots(-3)
+	elseif self == _Bags.bank then
+		local containerIDs = {-1,5,6,7,8,9,10,11}
+		for _,i in next, containerIDs do	
+			free = free + GetContainerNumFreeSlots(i)
+			max = max + GetContainerNumSlots(i)
+		end
+	end
+	return free, max
+end
+
+function mnkBagsContainer:DepositReagentBank()
+	DepositReagentBank()
+end
+
+function mnkBagsContainer:OnContentsChanged(skipUpdateAnchors)
+	if cbmb.SkipOnChange then return end
+
+	--print('OnChanged ',  self.name)
+	local col, row = 0, 0
+	local CaptionHeight = 20
+	local buttonIDs = {}
+
+  	for i, button in pairs(self.buttons) do
+  		local clink = GetContainerItemLink(button.bagID, button.slotID)
+
+  		if clink then
+  			--local name = select(1, GetItemInfo(clink))
+  			local item = cbmb:GetItemInfo(button.bagID, button.slotID)
+  			buttonIDs[i] = {item.name, item.count, button}
+  		else
+  			buttonIDs[i] = {nil, 0, button}
+  		end
+	end
+	
+	-- sort by name and count
+	local function sort(v1, v2)
+		if (v1[1] == nil) and (v2[1] == nil) then return false end
+		if (v1[1] == nil) or (v2[1] == nil) then return (v1[1] and true or false) end
+
+ 		return (v1[1] < v2[1]) or ((v1[1] == v2[1]) and (v1[2] > v2[2]))
+	end
+
+	table.sort(buttonIDs, sort)
+
+	for _,v in ipairs(buttonIDs) do
+		local button = v[3]
+		button:ClearAllPoints()
+	  
+		local xPos = col * (itemSlotSize + itemSlotPadding) + itemSlotSpacer
+		local yPos = (-1 * row * (itemSlotSize + itemSlotPadding)) - CaptionHeight
+
+		button:SetPoint("TOPLEFT", self, "TOPLEFT", xPos, yPos)
+		if(col >= self.Columns-1) then
+			col = 0
+			row = row + 1
+		else
+			col = col + 1
+		end
+	end
+
+	-- compress empty slots.
+	local xPos = col * (itemSlotSize + itemSlotPadding) + itemSlotSpacer
+	local yPos = (-1 * row * (itemSlotSize + itemSlotPadding)) - CaptionHeight
+
+	local tDrop = self.Drop
+	if tDrop then
+		tDrop:ClearAllPoints()
+		tDrop:SetPoint("TOPLEFT", self, "TOPLEFT", xPos, yPos)
+		if(col >= self.Columns-1) then
+			col = 0
+			row = row + 1
+		else
+			col = col + 1
+		end
+	end
+
+	self:UpdateDimensions(self)
+
+	if self:ShowOrHide() then
+		self:Show()
+	else
+		self:Hide()
+	end
+
+	mnkBagsContainer:UpdateFreeSlots()
+
+	if not skipUpdateAnchors then
+		cbmb:UpdateAnchors()
+	end
+end
+
+function mnkBagsContainer:OnCreate(name)
+	if not name then return end
+	self.name = name
+
+	-- this works better than inserting the the frame in the UISpecialFrames table.
+	-- if you go to the bank and have both the bank and your bank open, then press esc the bank won't come back up until you've toggled again.
+	self:EnableKeyboard(1);
+	self:SetScript("OnKeyDown",function(self,key)
+		if key == 'ESCAPE' then
+			self:SetPropagateKeyboardInput(false)
+			ToggleAllBags()
+		else
+			self:SetPropagateKeyboardInput(true)
+		end
+	end);
+
+	self.Columns = 12
+	self:EnableMouse(true)
+	self:SetFrameStrata("HIGH")
+	self.Caption = mnkLibs.createFontString(self, mnkLibs.Fonts.ap, 16, nil, nil, true)
+	self.Caption:SetText(mbLocals.bagCaptions[self.name])
+	self.Caption:SetPoint("TOPLEFT", 0, 2)
+	self:SetScript('OnShow', function (self) self:OnShow() end)
+	self.background = CreateFrame("Frame", nil, self)
+	mnkLibs.setBackdrop(self, mnkLibs.Textures.background, nil, 4, 4, 4, 4)
+	mnkLibs.createBorder(self, 4,-4,-5,5, {1/3,1/3,1/3,1})
+	self.background:SetFrameStrata("HIGH")
+	self.background:SetFrameLevel(1)
+	self:SetBackdropColor(0, 0, 0, 1)
+
+	local isMain = (name == "mb_Bag") 
+	local isBank = (name == "mb_Bank")
+	local isReagent = (name == "mb_BankReagent")
+
+	if (isMain or isBank) then 
+		self:SetBackdropColor(1/8, 1/8, 1/8, 1)
+		self:SetMovable(true)
+		self:SetUserPlaced(true)
+		self:RegisterForClicks("LeftButton", "RightButton")
+		self:SetScript("OnMouseDown", function() 
+			self:ClearAllPoints() 
+			self:StartMoving() 
+		end)
+		self:SetScript("OnMouseUp",  self.StopMovingOrSizing)
+
+		self.CloseButton = CreateFrame("Button", nil, self, "UIPanelCloseButton")
+		self.CloseButton:SetDisabledTexture("Interface\\AddOns\\mnkBags\\media\\Close")
+		self.CloseButton:SetNormalTexture("Interface\\AddOns\\mnkBags\\media\\Close")
+		self.CloseButton:SetPushedTexture("Interface\\AddOns\\mnkBags\\media\\Close")
+		self.CloseButton:SetHighlightTexture("Interface\\AddOns\\mnkBags\\media\\Close")		
+		self.CloseButton:ClearAllPoints()
+		self.CloseButton:SetPoint("TOPRIGHT", 2, 0)
+		self.CloseButton:SetSize(12,12)
+		self.CloseButton:SetScript("OnClick", function(self) if cbmb:AtBank() then CloseBankFrame() else CloseAllBags() end end)
+
+		if isMain then
+			self.pluginBagBar = self:SpawnPlugin("BagBar", "backpack+bags")
+			self.pluginBagBar:SetSize(self.pluginBagBar:LayoutButtons("grid", 4))
+			self.SearchButton = CreateFrame("Button", nil, self)
+			self.SearchButton:SetWidth((itemSlotSize+itemSlotPadding) * self.Columns-itemSlotSize) -- subtract both buttons.
+			self.SearchButton:SetHeight(18)
+			self.SearchButton:SetPoint("BOTTOMLEFT", 5, -8)
+			self.SearchButton:SetPoint("BOTTOMRIGHT", -86, -8)
+			self.pluginSearch = self:SpawnPlugin("SearchBar", self.SearchButton)
+			self.pluginSearch.isGlobal = true
+			self.pluginSearch.highlightFunction = function(button, match) button:SetAlpha(match and 1 or 0.1) end
+			self.SearchIcon = self:CreateTexture(nil, "ARTWORK") 
+			self.SearchIcon:SetTexture(Textures.Search)
+			self.SearchIcon:SetVertexColor(0.8, 0.8, 0.8)
+			self.SearchIcon:SetPoint("BOTTOMLEFT", self.SearchButton, "BOTTOMLEFT", -3, 8)
+			self.SearchIcon:SetWidth(16)
+			self.SearchIcon:SetHeight(16)
+		else
+			self.pluginBagBar = self:SpawnPlugin("BagBar", "bank")
+			self.pluginBagBar:SetSize(self.pluginBagBar:LayoutButtons("grid", 7))
+		end
+		
+		self.pluginBagBar.isGlobal = true
+		self.pluginBagBar.AllowFilter = false
+		self.pluginBagBar:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -2, 25)
+		self.pluginBagBar:Hide()
+
+		self.bagToggle = createIconButton("Bags", self, Textures.BagToggle, "BOTTOMRIGHT", "Toggle Bags")
+		self.bagToggle:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 4, -4)
+		self.bagToggle:SetScript("OnClick", function()
+			if(self.pluginBagBar:IsShown()) then 
+				self.pluginBagBar:Hide()
+			else
+				self.pluginBagBar:Show()
+			end
+			self:UpdateDimensions(self)
+		end)
+		self.restackBtn = createIconButton("Restack", self, Textures.Restack, "BOTTOMRIGHT", "Restack")
+		self.restackBtn:SetPoint("BOTTOMRIGHT", self.bagToggle, "BOTTOMLEFT", 0, 0)
+		self.restackBtn:SetScript("OnClick", function() mnkBagsContainer:RestackItems(self) end)		
+	end
+
+	if self.name == 'mb_NewItems' then
+		self.resetBtn = createIconButton("ResetNew", self, Textures.ResetNew, "TOPRIGHT", "Reset New")
+		self.resetBtn:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, 0)
+		self.resetBtn:SetScript("OnClick", function() self:ResetNewItems() end)
+	end
+	
+	if isReagent then
+		self.reagentBtn = createIconButton("SendReagents", self, Textures.Deposit, "TOPRIGHT", REAGENTBANK_DEPOSIT)
+		self.reagentBtn:SetPoint("TOPRIGHT", self, "TOPRIGHT", 4, 0)
+		self.reagentBtn:SetScript("OnClick", function()	 mnkBagsContainer:DepositReagentBank() end)
+
+		self.restackBtn = createIconButton("Restack", self, Textures.Restack, "BOTTOMRIGHT", "Restack")
+		self.restackBtn:SetPoint("TOPRIGHT", self.reagentBtn, "TOPLEFT", -3, 1)
+		self.restackBtn:SetScript("OnClick", function() mnkBagsContainer:RestackItems(self) end)
+	end
+
+	if (isMain or isBank or isReagent) then
+		self.Drop = CreateFrame("ItemButton", self.name.."Drop", self)
+		self.Drop.NormalTexture = _G[self.Drop:GetName().."NormalTexture"]
+		self.Drop.NormalTexture:SetTexture(nil)
+		self.Drop:SetSize(itemSlotSize,itemSlotSize)
+		self.Empty = mnkLibs.createFontString(self, mnkLibs.Fonts.ap, 16, nil, nil, true)
+		self.Empty:SetPoint("BOTTOMRIGHT", self.Drop, "BOTTOMRIGHT", -3, 3)
+		self.Empty:SetJustifyH("LEFT")
+		mnkLibs.createBorder(self.Drop, 1,-1,-1,1, {1/2,1/2,1/2,1})
+		self.Drop:Show()
+		self.Empty:Show()
+
+		local GetFirstFreeSlot = function()
+			if self.Empty:GetText() == '0' or nil then
+				mnkLibs.PrintError('Bag is full')
+			else
+				PickupContainerItem(mnkBagsContainer:GetFirstFreeSlot(self))
+			end
+		end
+		self.Drop:SetScript("OnMouseUp", GetFirstFreeSlot)
+		self.Drop:SetScript("OnReceiveDrag", GetFirstFreeSlot)
+	end
+	
+	self:UpdateDimensions(self)
+	return self
+end
+
+function mnkBagsContainer:OnShow()
+	-- fill the Reagent bag.
+	if self == _Bags.bankReagent then
+		-- Fill the bag but don't do the OnChange events until the very end. This is less intensive.
+		cbmb.SkipOnChange = true
+		cbmb:UpdateBag(-3)
+		cbmb.SkipOnChange = false
+		_Bags.bankReagent:OnContentsChanged()
 
 		if IsReagentBankUnlocked() then
-			mbmb_BankReagent.reagentBtn:Show()
+			self.reagentBtn:Show()
 		else
-			mbmb_BankReagent.reagentBtn:Hide()
-			local buyReagent = CreateFrame("Button", nil, mbmb_BankReagent, "UIPanelButtonTemplate")
+			self.reagentBtn:Hide()
+			local buyReagent = CreateFrame("Button", nil, self, "UIPanelButtonTemplate")
 			buyReagent:SetText(BANKSLOTPURCHASE)
 			buyReagent:SetWidth(buyReagent:GetTextWidth() + 20)
-			buyReagent:SetPoint("CENTER", mbmb_BankReagent, 0, 0)
-			buyReagent:SetScript("OnEnter", function(self)
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-				GameTooltip:AddLine(REAGENT_BANK_HELP, 1, 1, 1, true)
-				GameTooltip:Show()
-			end)
-			buyReagent:SetScript("OnLeave", function()
-				GameTooltip:Hide()
-			end)
-			buyReagent:SetScript("OnClick", function()
-				StaticPopup_Show("CONFIRM_BUY_REAGENTBANK_TAB")
-			end)
-			buyReagent:SetScript("OnEvent", function(...)
-				buyReagent:UnregisterEvent("REAGENTBANK_PURCHASED")
-				mbmb_Bank.reagentBtn:Show()
-				buyReagent:Hide()
-			end)
-
+			buyReagent:SetPoint("CENTER", self, 0, 0)
+			mnkLibs.setTooltip(buyReagent, REAGENT_BANK_HELP)
+			buyReagent:SetScript("OnClick", function() StaticPopup_Show("CONFIRM_BUY_REAGENTBANK_TAB") end)
+			buyReagent:SetScript("OnEvent", function(...) buyReagent:UnregisterEvent("REAGENTBANK_PURCHASED") self.reagentBtn:Show() buyReagent:Hide() end)
 			buyReagent:RegisterEvent("REAGENTBANK_PURCHASED")
 		end
-
-		self:UnregisterEvent("PLAYER_ENTERING_WORLD")
 	end
-end)
+end
 
-function mnkBags:ResetItemClass()
-	for k,v in pairs(cB_ItemClass) do
-		if v == "NoClass" then
-			cB_ItemClass[k] = nil
+function mnkBagsContainer:ResetNewItems()
+	for k,_ in pairs(_Bags.bagNew.buttons) do
+		local b = _Bags.bagNew.buttons[k]
+		local clink = GetContainerItemLink(b.bagID, b.slotID)
+
+		if mnkLibs.GetIndexInTable(mnkBagsKnownItems, clink) == 0 then			
+			mnkBagsKnownItems[#mnkBagsKnownItems+1] = clink
 		end
 	end
 	cbmb:UpdateBags()
+end
+
+function mnkBagsContainer:RestackItems(self)
+	if self == _Bags.bankReagent then
+		SortReagentBankBags()
+	elseif self == _Bags.bank then
+		SortBankBags()
+	elseif self == _Bags.main then
+		SortBags()
+	end
+end
+
+function mnkBagsContainer:ShowOrHide()
+	local result = (#self.buttons > 0) or false
+	-- alway show primary/reagent bags 
+	if ((self == _Bags.bankReagent) and cbmb:AtBank()) or ((self == _Bags.bank) and cbmb:AtBank()) or (self == _Bags.main) then		
+		result = true
+	elseif (self == _Bags.bankReagent) and not cbmb:AtBank() then
+		result = false
+	end
+
+	return result
+end
+
+function mnkBagsContainer:UpdateDimensions(self)
+	local BagBarHeight = 0
+	local CaptionHeight = 28
+	local buttonCount = 0
+	local rows = 1	
+
+	-- primary bags or bankRequest bag should always have an free slot counter.
+	if self.bagToggle or self == _Bags.bankReagent then
+		buttonCount = 1
+		if self.bagToggle then 
+			if self.pluginBagBar and self.pluginBagBar:IsShown() then 
+				BagBarHeight = 60
+			else 
+				BagBarHeight = 16
+			end
+		end
+	else
+		BagBarHeight = 0
+	end
+
+	buttonCount = buttonCount + #self.buttons
+
+	if buttonCount > 0 then
+		rows = mnkLibs.Round((#self.buttons/self.Columns),1)
+		if (rows == 0) then rows = 1 end
+		if ((rows * self.Columns) < buttonCount) then rows = (rows + 1) end
+		--print(self:GetName(), ' ', self.columns, ' ', buttonCount, ' ', rows)
+	end
+
+	self:SetWidth((itemSlotSize + itemSlotPadding) * self.Columns )
+	self:SetHeight(((itemSlotSize + itemSlotPadding) * rows) + (BagBarHeight + CaptionHeight) - 8)
+end
+
+function mnkBagsContainer:UpdateFreeSlots()
+	_Bags.main.Empty:SetText(mnkBagsContainer:GetNumFreeSlots(_Bags.main))
+	_Bags.bank.Empty:SetText(mnkBagsContainer:GetNumFreeSlots(_Bags.bank))
+	_Bags.bankReagent.Empty:SetText(mnkBagsContainer:GetNumFreeSlots(_Bags.bankReagent))
 end

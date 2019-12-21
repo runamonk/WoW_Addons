@@ -31,16 +31,23 @@ local function CreateCastBar(self)
     self.castbarbg = CreateFrame('Frame', nil, self)
     self.castbarbg:SetPoint('LEFT', self, 'LEFT', -1, 0)
     self.castbarbg:SetPoint('BOTTOM', self, 'TOP', 0, 4)
+
     mnkLibs.setBackdrop(self.castbarbg, nil, nil, 0, 0, 0, 0)
+
     self.castbarbg:SetBackdropColor(0, 0, 0, 1)
-    self.castbarbg:SetFrameStrata('MEDIUM')
-    self.castbarbg:SetSize(self:GetWidth()+2, 18)
-    mnkLibs.createBorder(self.castbarbg, 1,-1,-1,1, {1,1,1,1})
+    self.castbarbg:SetFrameStrata('HIGH')
+    self.castbarbg:SetSize(self:GetWidth()+4, 18)
+    
+    mnkLibs.createBorder(self.castbarbg, 0,0,0,0, {1,1,1,1})
     self.castbarbg:Hide()
     self.Castbar = CreateFrame('StatusBar', nil, self.castbarbg)
-    self.Castbar:SetAllPoints()
+    self.Castbar:SetSize(self.castbarbg:GetSize())
+    self.Castbar:SetPoint('TOPLEFT', self.castbarbg, 1, -1)
+    self.Castbar:SetPoint('BOTTOMRIGHT', self.castbarbg, -1, 1)
+    
     self.Castbar:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
     self.Castbar:SetStatusBarColor(1/5, 1/5, 1/5, 1)
+
     if UnitIsPlayer(self.unit) then
         self.Castbar.Text = mnkLibs.createFontString(self.Castbar, mnkLibs.Fonts.oswald, 16,  nil, nil, true)
         self.Castbar.Text:SetPoint('LEFT', self.Castbar, 2, 0)
@@ -71,7 +78,7 @@ end
 local function CreateBottomPanel()
     local pback = CreateFrame('Frame', 'mnkBottom', UIParent)
     mnkLibs.setBackdrop(pback, nil, nil, 1, 1, 1, 1)
-    pback:SetBackdropColor(0, 0, 0, 0.8)
+    pback:SetBackdropColor(0, 0, 0, 1)
     pback:SetHeight(170)
     pback:SetWidth(UIParent:GetWidth())
     pback:SetPoint('BOTTOM',0,0)
@@ -81,17 +88,17 @@ local function CreateBottomPanel()
 
     local pplayer = CreateFrame('Frame', 'mnkBottom', UIParent)
     mnkLibs.setBackdrop(pplayer, nil, nil, 1, 1, 1, 1)
-    pplayer:SetBackdropColor(0, 0, 0, 0.8)
+    pplayer:SetBackdropColor(0, 0, 0, 1)
     pplayer:SetHeight(64)
     pplayer:SetWidth(281)
 	pplayer:SetPoint('CENTER', UIParent, 'BOTTOM', 0, 203)
     pplayer:SetFrameStrata('BACKGROUND')
-    mnkLibs.createBorder(pplayer, 1, -1, -1, 1, {classColor.r, classColor.g, classColor.b, .5})
+    mnkLibs.createBorder(pplayer, 1, 0, -1, 1, {classColor.r, classColor.g, classColor.b, .5})
     pplayer:Show()
 
     local pbackLeft = CreateFrame('Frame', 'mnkButtonsLeft', pback)
     mnkLibs.setBackdrop(pbackLeft, nil, nil, 1, 1, 1, 1)
-    pbackLeft:SetBackdropColor(1/5, 1/5, 1/5, 0.8)
+    pbackLeft:SetBackdropColor(classColor.r/7, classColor.g/7, classColor.b/7, 1)
     pbackLeft:SetHeight(128)
     pbackLeft:SetWidth(469)
 	pbackLeft:SetPoint('CENTER', UIParent, 'BOTTOM', -340, 60)
@@ -101,7 +108,7 @@ local function CreateBottomPanel()
 
     local pbackRight = CreateFrame('Frame', 'mnkButtonsRight', pback)
     mnkLibs.setBackdrop(pbackRight, nil, nil, 1, 1, 1, 1)
-    pbackRight:SetBackdropColor(1/5, 1/5, 1/5, 0.8)
+    pbackRight:SetBackdropColor(classColor.r/7, classColor.g/7, classColor.b/7, 1)
     pbackRight:SetHeight(128)
     pbackRight:SetWidth(469)
 	pbackRight:SetPoint('CENTER', UIParent, 'BOTTOM', 340, 60)
@@ -134,13 +141,13 @@ end
 local function PostCreateIcon(Auras, button)
     button.count = mnkLibs.createFontString(button, mnkLibs.Fonts.ap, 10,  nil, nil, true)
     button.count:ClearAllPoints()
-    button.count:SetPoint('TOPRIGHT', button, 0, 2)
+    button.count:SetPoint('TOPRIGHT', button, 0, 1)
     button.timer = mnkLibs.createFontString(button, mnkLibs.Fonts.ap, 10,  nil, nil, true)
     button.timer:ClearAllPoints()
-    button.timer:SetPoint('BOTTOMLEFT', button, 0, 0)
+    button.timer:SetPoint('BOTTOMLEFT', button, 1, 1)
     button.icon:SetTexCoord(.07, .93, .07, .93)
     button:SetScript('OnClick', function(self, button) CancelUnitBuff('player', self:GetName():match('%d')) end)
-    mnkLibs.createBorder(button, 1,-1,-1,1, {0,0,0,1})
+    mnkLibs.createBorder(button, 0,0,0,0, {0,0,0,1})
 end
 
 local function PostUpdateIcon(element, unit, button, index)
@@ -293,20 +300,30 @@ local function PlayerUnit(self)
         self.AlternativePower:SetFrameStrata('HIGH')
         self.AlternativePower:EnableMouse(true)
         mnkLibs.createBorder(self.AlternativePower, 1,-1,-1,1, {0, 0, 0, 1})
-
-        self.Auras = CreateFrame('Frame', nil, self)
-        --self.Auras.onlyShowPlayer = true
-        self.Auras.disableCooldown = true
-        self.Auras['growth-x'] = 'RIGHT'
-        self.Auras['growth-y'] = 'UP'
-        self.Auras.spacing = 4
-        self.Auras.numTotal = 18
-        self.Auras.size = 16
-        self.Auras:SetPoint('LEFT', self, 'LEFT', -1, 0)
-        self.Auras:SetPoint('BOTTOM', self, 'TOP', 0 , 5)
-        self.Auras:SetSize(16*12, 34)
-        self.Auras.PostCreateIcon = PostCreateIcon
-        self.Auras.PostUpdateIcon = PostUpdateIcon   
+        self.Buffs = CreateFrame('Frame', nil, self)
+        self.Buffs.initialAnchor = 'BOTTOMRIGHT'
+        self.Buffs.onlyShowPlayer = true
+        self.Buffs.disableCooldown = true
+        self.Buffs['growth-x'] = 'LEFT'
+        self.Buffs['growth-y'] = 'UP'
+        self.Buffs.spacing = 2
+        self.Buffs.numTotal = 16
+        self.Buffs.size = 16
+        self.Buffs:SetSize(16*12, 34)
+        self.Buffs:SetPoint('BOTTOMRIGHT', self, 'BOTTOMLEFT', -4, -23)
+        self.Buffs.PostCreateIcon = PostCreateIcon
+        self.Buffs.PostUpdateIcon = PostUpdateIcon
+        self.Debuffs = CreateFrame('Frame', nil, self)
+        self.Debuffs.disableCooldown = true
+        self.Debuffs['growth-x'] = 'RIGHT'
+        self.Debuffs['growth-y'] = 'UP'
+        self.Debuffs.spacing = 2
+        self.Debuffs.numTotal = 16
+        self.Debuffs.size = 16
+        self.Debuffs:SetPoint('BOTTOMLEFT', self, 'BOTTOMRIGHT', 4, -23)
+        self.Debuffs:SetSize(16*12, 34)
+        self.Debuffs.PostCreateIcon = PostCreateIcon
+        self.Debuffs.PostUpdateIcon = PostUpdateIcon   
     end
 end
 
