@@ -23,51 +23,13 @@
 	<Script file='base\implementation.lua' />
 	<Script file='base\container.lua' />
 	<Script file='base\itembutton.lua' />
-
-	<!--
-		Sieves
-		They provide different approaches of sorting items into the right container
-		You need to choose one
-	-->
-	<!--<Script file='base-add\bags.sieve.lua' />-->
 	<Script file='base-add\filters.sieve.lua' />
-
-	<!--
-		Mixins are optional 'add-ins'
-		They provide often used low-level functions
-		All optional
-	-->
 	<Script file='mixins\api-common.lua' />
 	<Script file='mixins\locale.lua' />
 	<Script file='mixins\parseBags.lua' />
 	<Script file='mixins\textFilter.lua' />
-
-	<!--
-		 Default additions for api-common
-	-->
 	<Script file='mixins-add\layouts.lua' />
-	<Script file='mixins-add\sorts.lua' />
-
-	<!--
-		Item keys, providing additional data in the ItemTable
-		All optional
-	-->
-	<Script file='mixins-add\itemkeys\basic.lua' />
-	<Script file='mixins-add\itemkeys\equipSets.lua' />
-	<Script file='mixins-add\itemkeys\tooltip.lua' />
-
-	<!--
-		Plugins for your containers
-		All optional
-	-->
 	<Script file='mixins-add\plugins\bagBar.lua' />
 	<Script file='mixins-add\plugins\searchBar.lua' />
-	<Script file='mixins-add\plugins\tagDisplay.lua' />
-
-	<!--
-		 Scaffolds, initial styling for your ItemButtons
-		 All optional
-	-->
-
 	<Script file='mixins-add\default.scaffold.lua' />
 </Ui>

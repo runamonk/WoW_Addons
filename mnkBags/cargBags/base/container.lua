@@ -46,15 +46,10 @@ function Container:New(name, ...)
 	container.name = name
 	container.buttons = {}
 	container.bags = setmetatable({container = container}, mt_bags)
-	container:ScheduleContentCallback()
-
 	container.implementation.contByName[name] = container -- Make this into pretty function?
 	table.insert(container.implementation.contByID, container)
-
 	container:SetParent(self.implementation)
-
 	if(container.OnCreate) then container:OnCreate(name, ...) end
-
 	return container
 end
 
@@ -67,10 +62,10 @@ end
 function Container:AddButton(button)
 	button.container = self
 	button:SetParent(self.bags[button.bagID])
-	self:ScheduleContentCallback()
 	table.insert(self.buttons, button)
 	if(button.OnAdd) then button:OnAdd(self) end
 	if(self.OnButtonAdd) then self:OnButtonAdd(button) end
+	self:OnContentsChanged()
 end
 
 --[[!
@@ -82,34 +77,13 @@ end
 function Container:RemoveButton(button)
 	for i, single in ipairs(self.buttons) do
 		if(button == single) then
-			self:ScheduleContentCallback()
 			button.container = nil
 			if(button.OnRemove) then button:OnRemove(self) end
 			if(self.OnButtonRemove) then self:OnButtonRemove(button) end
-			return table.remove(self.buttons, i)
+			table.remove(self.buttons, i)
 		end
 	end
-end
-
---[[
-	@callback OnContentsChanged()
-]]
-local updater, scheduled = CreateFrame"Frame", {}
-updater:Hide()
-updater:SetScript("OnUpdate", function(self)
-	self:Hide()
-	for container in pairs(scheduled) do
-		if(container.OnContentsChanged) then container:OnContentsChanged() end
-		scheduled[container] = nil
-	end
-end)
-
---[[
-	Schedules a Content-callback in the next update
-]]
-function Container:ScheduleContentCallback()
-	scheduled[self] = true
-	updater:Show()
+	self:OnContentsChanged()
 end
 
 --[[

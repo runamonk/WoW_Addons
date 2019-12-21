@@ -1,4 +1,4 @@
-local parent, ns = ...
+local _, ns = ...
 oUF = ns.oUF
 
 mnkLibs = CreateFrame('Frame')
@@ -56,13 +56,15 @@ function mnkLibs.convertRGBtoHex(r, g, b)
     return string.format('|cff%02x%02x%02x', r, g, b)
 end
 
+
+
 function mnkLibs.createBorder(parent, top, bottom, left, right, color)
     parent.border = CreateFrame("Frame", nil, parent)
     parent.border:SetPoint('TOP', top, top)
     parent.border:SetPoint('BOTTOM', bottom, bottom)
     parent.border:SetPoint('LEFT', left, left)
     parent.border:SetPoint('RIGHT', right, right)
-    parent.border:SetBackdrop({ edgeFile = [[Interface\Buttons\WHITE8x8]], edgeSize = 1 })
+    parent.border:SetBackdrop({ edgeFile = [[Interface\ChatFrame\ChatFrameBackground]], edgeSize = .9 })
     parent.border:SetBackdropBorderColor(unpack(color)) 
 end
 
@@ -175,6 +177,15 @@ function mnkLibs.formatTime(s)
     end
     return format('%d', mod(s, minute))
   end
+
+ function mnkLibs.GetIndexInTable(table, val)
+   for i=1,#table do
+      if table[i] == val then 
+         return i
+      end
+   end
+   return 0
+end
 
 function mnkLibs.PrintError(Message)
     UIErrorsFrame:AddMessage(Message, 1.0, 0.0, 0.0)

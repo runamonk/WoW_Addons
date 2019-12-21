@@ -26,20 +26,16 @@ DEPENDENCIES
 ]]
 local addon, ns = ...
 local cargBags = ns.cargBags
---local scanTip = CreateFrame("GameTooltip", "scanTip", UIParent, "GameTooltipTemplate")
 
 local function ItemButton_Scaffold(self)
 	local name = self:GetName()
 	self:SetSize(32, 32)
-
 	self.Icon = _G[name.."IconTexture"]
 	self.Count = _G[name.."Count"]
 	self.Cooldown = _G[name.."Cooldown"]
 	self.Quest = _G[name.."IconQuestTexture"]
-	
 	mnkLibs.createBorder(self, 1,-1,-1,1, {1,1,1,1})
 	self.Border = self.border
-	
     self.Count = mnkLibs.createFontString(self, mnkLibs.Fonts.ap, 16, nil, nil, true)
     self.Count:SetPoint('BOTTOMRIGHT', 0, 0)
 
@@ -152,12 +148,12 @@ end
 ]]
 local function ItemButton_UpdateQuest(self, item)
 	if item.questID or item.isQuestItem then
-		self.Border:SetBackdropBorderColor(1, 1, 0, 1)
+		self.Border:SetBackdropBorderColor(1, 1, 0, 0.8)
 	elseif item.rarity and item.rarity > 1 then
 		local r, g, b = GetItemQualityColor(item.rarity)
-		self.Border:SetBackdropBorderColor(r, g, b, 1)
+		self.Border:SetBackdropBorderColor(r, g, b, 0.8)
 	else
-		self.Border:SetBackdropBorderColor(0, 0, 0, 1)
+		self.Border:SetBackdropBorderColor(0.5, 0.5, 0.5, 0.8)
 	end
 	if(self.OnUpdateQuest) then self:OnUpdateQuest(item) end
 end

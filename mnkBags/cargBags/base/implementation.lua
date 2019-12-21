@@ -58,8 +58,6 @@ function Implementation:New(name)
 	impl.notInited = true -- @property notInited <bool>
 	impl.itemCache = {}
 
-	tinsert(UISpecialFrames, name) 
-
 	self.instances[name] = impl
 
 	return impl
@@ -70,15 +68,11 @@ end
 	@callback OnOpen
 ]]
 function Implementation:OnShow()
-	if(self.notInited) then
-		if not(InCombatLockdown()) then -- initialization of bags in combat taints the itembuttons within - Lars Norberg
-			self:Init()
-		else
-			return
-		end
+	if (self.notInited) and (not InCombatLockdown()) then
+		self:Init()
 	end
 
-	if(self.OnOpen) then self:OnOpen() end
+	if (self.OnOpen) then self:OnOpen() end
 	self:OnEvent("BAG_UPDATE")
 end
 
@@ -97,8 +91,8 @@ end
 	Toggles the implementation
 	@param forceopen <bool> Only open it
 ]]
-function Implementation:Toggle(forceopen)
-	if(not forceopen and self:IsShown()) then
+function Implementation:Toggle()
+	if self:IsShown() then
 		self:Hide()
 	else
 		self:Show()
@@ -461,7 +455,7 @@ function Implementation:UpdateSlot(bagID, slotID)
 	local button = self:GetButton(bagID, slotID)
 	local container = self:GetContainerForItem(item, button)
 	
-	--print(item.link, ' ', bagID, ' ', slotID)
+	--print('UpdateSlot() ', item.link, ' ', bagID, ' ', slotID)
 	if(container) then
 		if(button) then
 			if(container ~= button.container) then
@@ -520,17 +514,20 @@ end
 	@callback Container:OnBagUpdate(bagID, slotID)
 ]]
 function Implementation:BAG_UPDATE(event, bagID, slotID)
+	--print(event, ' ', bagID, ' : ', slotID)
 	if(bagID and slotID) then
 		--local item = self:GetItemInfo(bagID, slotID)
 		--self:doDeleteCacheItem(item.link, bagID, slotID)
 		self:UpdateSlot(bagID, slotID)
-
 	elseif(bagID) then
 		self:UpdateBag(bagID)
 	else
+		self.SkipOnChange = true
 		for bagID = -2, 11 do
 			self:UpdateBag(bagID)
 		end
+		self.SkipOnChange = false
+		self:UpdateAllBags()	
 	end
 end
 

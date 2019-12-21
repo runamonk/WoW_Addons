@@ -19,6 +19,7 @@ mbLocals.bagCaptions = {
 	["mb_BankTrade"]			= BAG_FILTER_TRADE_GOODS,
 	["mb_BankCons"]				= BAG_FILTER_CONSUMABLES,
 	["mb_BankArtifactPower"]	= ARTIFACT_POWER,
+	["mb_BankBattlePet"]		= AUCTION_CATEGORY_BATTLE_PETS,
 	["mb_Junk"]					= BAG_FILTER_JUNK,
 	["mb_ItemSets"]				= LOOT_JOURNAL_ITEM_SETS,
 	["mb_Armor"]				= BAG_FILTER_EQUIPMENT,

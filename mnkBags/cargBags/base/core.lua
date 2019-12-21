@@ -25,7 +25,11 @@ local global = GetAddOnMetadata(parent, 'X-cargBags')
 --  @name cargBags
 --  This class provides the underlying fundamental functions, such as
 --  class-generation, helper-functions and the Blizzard-replacement
-local cargBags = CreateFrame("Button")
+--local cargBags = CreateFrame("Button")
+local cargBags = CreateFrame('Frame', 'cargBags')
+local BankFrame = _G.BankFrame
+local CloseBankFrame = _G.CloseBankFrame
+
 
 ns.cargBags = cargBags
 if(global) then
@@ -69,40 +73,21 @@ function cargBags:GetImplementation(name)
 	return self.classes.Implementation:Get(name)
 end
 
-local function toggleBag(forceopen)	cargBags.blizzard:Toggle(forceopen)	end
-local function toggleNoForce() cargBags.blizzard:Toggle() end
-local function openBag() cargBags.blizzard:Show() end
-local function closeBag() cargBags.blizzard:Hide()	end
-
---- Overwrites Blizzards Bag-Toggle-Functions with the implementation's ones
---  @param name <string> The name of the implementation [optional]
-function cargBags:ReplaceBlizzard(name)
-	local impl = arg1 and cargBags:GetImplementation(name) or self.blizzard
-	self.blizzard = impl
-
-	-- Can we maybe live without hooking ToggleBag(id)?
-	ToggleAllBags = toggleNoForce
-	ToggleBag = toggleNoForce
-	ToggleBackpack = toggleNoForce
-
-	OpenAllBags = toggleBag	-- Name is misleading, Blizz-function actually toggles bags
-	OpenBackpack = toggleBag -- Blizz does not provide toggling here
-	CloseAllBags = closeBag
-	CloseBackpack = closeBag
-
-	BankFrame:UnregisterAllEvents()
-end
-
 --- Flags the implementation to handle Blizzards Bag-Toggle-Functions
 --  @param implementation <Implementation>
 function cargBags:RegisterBlizzard(implementation)
 	self.blizzard = implementation
+	
+	ToggleBag = function () self.blizzard:Toggle() end
+	OpenBag = function () self.blizzard:Show() end
+	CloseBag = function () self.blizzard:Hide() end
+	ToggleAllBags = function () self.blizzard:Toggle() end
+	ToggleBackpack = function () self.blizzard:Toggle() end
+	CloseAllBags = function () self.blizzard:Hide() end
+	CloseBackpack = function () self.blizzard:Hide() end
+	OpenBackpack = function () self.blizzard:Show() end
 
-	if(IsLoggedIn()) then
-		self:ReplaceBlizzard(self.blizzard)
-	else
-		self:RegisterEvent("PLAYER_LOGIN")
-	end
+	BankFrame:UnregisterAllEvents()
 end
 
 --- Fires an event for all implementations
@@ -119,35 +104,30 @@ end
 
 cargBags:RegisterEvent("BANKFRAME_OPENED")
 cargBags:RegisterEvent("BANKFRAME_CLOSED")
-
 cargBags:SetScript("OnEvent", function(self, event)
-	if(not self.blizzard) then return end
+	if (not self) or (not self.blizzard) then return end
 
-	local impl = self.blizzard
-
-	if(event == "PLAYER_LOGIN") then
-		self:ReplaceBlizzard(impl)
-	elseif(event == "BANKFRAME_OPENED") then
+	if(event == "BANKFRAME_OPENED") then
 		self.atBank = true
 
-		if(impl:IsShown()) then
-			impl:OnEvent("BAG_UPDATE")
+		if(self.blizzard:IsShown()) then
+			self.blizzard:OnEvent("BAG_UPDATE")
 		else
-			impl:Show()
+			self.blizzard:Show()
 		end
 
-		if(impl.OnBankOpened) then
-			impl:OnBankOpened()
+		if(self.blizzard.OnBankOpened) then
+			self.blizzard:OnBankOpened()
 		end
 	elseif(event == "BANKFRAME_CLOSED") then
 		self.atBank = nil
 
-		if(impl:IsShown()) then
-			impl:Hide()
+		if(self.blizzard:IsShown()) then
+			self.blizzard:Hide()
 		end
 
-		if(impl.OnBankClosed) then
-			impl:OnBankClosed()
+		if(self.blizzard.OnBankClosed) then
+			self.blizzard:OnBankClosed()
 		end
 	end
 end)
