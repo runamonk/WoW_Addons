@@ -12,7 +12,10 @@ function mnkMisc:DoOnEvent(event, ...)
         elseif addonName == myaddonName then
             SetCVar('alwaysCompareItems', 0)
             SetCVar('autoLootDefault', 1)
+            --SetCVar('floatingCombatTextCombatDamage', 1)
             SetCVar('enableFloatingCombatText', 1)
+            SetCVar('colorChatNamesByClass', 1)
+            SetCVar('chatStyle', 'classic')
             OrderHall_CheckCommandBar = mnkLibs.donothing
         end
     end    
@@ -24,11 +27,16 @@ function SlashCmdList.RL(msg, editbox)
 end
 
 -- Hide dragon heads
-MainMenuBarArtFrame.LeftEndCap:Hide()
-MainMenuBarArtFrame.RightEndCap:Hide()
+-- MainMenuBarArtFrame.LeftEndCap:Hide()
+-- MainMenuBarArtFrame.RightEndCap:Hide()
 
---Hide open all mail button, it's buggy.
+--Hide open all mail button, we both hate it.
 OpenAllMail:Hide()
+
+BossBanner:Hide()
+BossBanner.Hide = mnkLibs.donothing()
+BossBanner.Show = mnkLibs.donothing()
+BossBanner:UnregisterAllEvents()
 
 mnkMisc:SetScript('OnEvent', mnkMisc.DoOnEvent)
 mnkMisc:RegisterEvent('ADDON_LOADED')
