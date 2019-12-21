@@ -3,17 +3,17 @@ mnkNames.oUF = oUF or ns.oUF
 --Tags are in mnkLibs\mnkuTags
 
 local cvars = {
-    nameplateGlobalScale = .8, 
-    NamePlateHorizontalScale = .8, 
-    NamePlateVerticalScale = .8, 
-    nameplateLargerScale = .8, 
-    nameplateMaxScale = .8, 
-    nameplateMinScale = .8, 
+    nameplateGlobalScale = .6, 
+    NamePlateHorizontalScale = .6, 
+    -- NamePlateVerticalScale = .8, 
+    -- nameplateLargerScale = .8, 
+    -- nameplateMaxScale = .8, 
+    -- nameplateMinScale = .8, 
     nameplateSelectedScale = 1, 
-    nameplateMaxAlpha = .4, 
-    nameplateMaxAlphaDistance = 90, 
-    nameplateMinAlpha = .4, 
-    nameplateMinAlphaDistance = 0, 
+    nameplateMaxAlpha = .3, 
+    nameplateMaxAlphaDistance = 4, 
+    nameplateMinAlpha = .3, 
+    nameplateMinAlphaDistance = 4, 
     nameplateSelectedAlpha = 1,
 	nameplatePersonalShowAlways = 0
 }
@@ -37,14 +37,13 @@ function mnkNames.CreateStyle(self, unit)
     self.frameValues:SetFrameLevel(self:GetFrameLevel()+50)
     self.frameValues:SetSize(self:GetSize())
     self.frameValues:SetAllPoints()
-	
     self.Health = CreateFrame("StatusBar", nil, self)
     self.Health:SetAllPoints()
     self.Health:SetStatusBarTexture(mnkLibs.Textures.background)
     self.Health:GetStatusBarTexture():SetHorizTile(false)
-    self.Health.colorHealth = true
+    self.Health.colorHealth = false
     self.Health.colorClass = true
-    self.Health.colorReaction = true
+    self.Health.colorReaction = false
     self.Health.colorTapping = true
     self.Health.colorDisconnected = true
     self.Health.frequentUpdates = true
@@ -52,20 +51,17 @@ function mnkNames.CreateStyle(self, unit)
     self.Health.bg:SetAllPoints(self.Health)
     self.Health.bg:SetAlpha(0.20)
     self.Health.bg:SetTexture(mnkLibs.Textures.bar)
+
     self.HealthValue = mnkLibs.createFontString(self.Health, mnkLibs.Fonts.oswald, cfg_font_height, nil, nil, true)
     self.HealthValue:SetPoint('RIGHT', self.Health, -2, 0)
     self.HealthValue:SetWordWrap(false)
 	self:Tag(self.HealthValue, '[mnku:curhp]')
-    
 	self.Name = mnkLibs.createFontString(self.Health, mnkLibs.Fonts.oswald, cfg_font_height, nil, nil, true)
     self.Name:SetWordWrap(false)
     self.Name:SetPoint("LEFT", self.Health, 4, 0)
     self.Name:SetJustifyH("LEFT")
     self.Name:SetWidth(cfg_name_width-(self.HealthValue:GetWidth()+8))
     self:Tag(self.Name, '[mnku:name]')
-	
-	
-	
     self.Level = mnkLibs.createFontString(self.Health, mnkLibs.Fonts.oswald, cfg_font_height, nil, nil, true)
     self.Level:SetPoint("LEFT", self.Health, -20, 0)
     self.Level:SetJustifyH("LEFT")
@@ -98,7 +94,6 @@ function mnkNames.CreateStyle(self, unit)
     self.Castbar.PostCastNotInterruptible = mnkNames.CastbarSpellUpdate
     self.Castbar.PostCastStart = mnkNames.CastbarSpellUpdate
     self.Castbar.PostChannelStart = mnkNames.CastbarSpellUpdate
-
     self.Debuffs = CreateFrame("Frame", nil, self)
     self.Debuffs:SetSize((cfg_debuffs_num * (cfg_debuffs_size + 9)) / cfg_debuffs_rows, (cfg_debuffs_size + 9) * cfg_debuffs_rows)
     self.Debuffs.num = cfg_debuffs_num
@@ -172,6 +167,22 @@ function mnkNames.OnNameplatesCallback(self)
 			lastNameplate:SetBackdropColor(0, 0, 0, 1)
 		end
 	else
+        local s = UnitClassification(self.unit)
+       
+        if s == 'rare' or s == 'rareelite' or s == 'worldboss' then
+            self.Health:SetStatusBarColor(0.5, 0.3, 1, 1)
+        else
+            local i = UnitReaction(self.unit, 'player')
+            
+            if i and i <= 3 then
+                self.Health:SetStatusBarColor(1, 0, 0, 1) 
+            elseif i and i > 5 then
+                self.Health:SetStatusBarColor(0, 1, 0, 1)
+            else 
+                self.Health:SetStatusBarColor(0.7, 0.7, 0, 1)
+            end
+        end
+
 		if (UnitExists('target') and UnitIsUnit('target', self.unit)) then
 			if (lastNameplate ~= nil and lastNameplate ~= self) then
 				lastNameplate:SetBackdropColor(0, 0, 0, 1)
@@ -184,30 +195,7 @@ function mnkNames.OnNameplatesCallback(self)
 	end
 end
 
-function mnkNames.DoOnEvent(self, event, unit, frame)
-    -- Hide the default castbar when the personal bar is visible. 
-    if event == 'NAME_PLATE_UNIT_ADDED' and UnitIsUnit(unit, "player") then
-        mnkNames.SetCastbarVis(false)
-    elseif event == 'NAME_PLATE_UNIT_REMOVED' and UnitIsUnit(unit, "player")  then
-        mnkNames.SetCastbarVis(true)
-    end    
-end
-
-function mnkNames.SetCastbarVis(bool)
-    if bool == false then
-        CastingBarFrame.Show = CastingBarFrame.Hide
-        CastingBarFrame:Hide()
-    else
-       CastingBarFrame.Show = nil     
-    end
-end
-
-
 mnkNames.oUF:RegisterStyle("mnkNames", mnkNames.CreateStyle)
 mnkNames.oUF:SetActiveStyle("mnkNames")
 mnkNames.oUF:SpawnNamePlates("mnkNames", mnkNames.OnNameplatesCallback, cvars)
 
-mnkNames:SetScript('OnEvent', mnkNames.DoOnEvent)
-mnkNames:RegisterEvent('PLAYER_ENTERING_WORLD')
-mnkNames:RegisterEvent('NAME_PLATE_UNIT_ADDED')
-mnkNames:RegisterEvent('NAME_PLATE_UNIT_REMOVED')
