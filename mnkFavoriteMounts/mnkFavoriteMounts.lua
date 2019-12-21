@@ -46,9 +46,10 @@ local function getAllMounts()
 	tblAll = {}
 	tblAll = C_MountJournal.GetMountIDs()
 	parseMounts()
+    mnkFavoriteMounts.LDB.text = mnkLibs.Color(COLOR_GOLD)..#tblFavorites..mnkLibs.Color(COLOR_WHITE)..' of '..mnkLibs.Color(COLOR_GOLD)..#tblCollected
 end
 
-function mnkFavoriteMounts:DoOnEvent(event)
+function mnkFavoriteMounts:DoOnEvent(event, firstTime)
     if event == 'PLAYER_LOGIN' then
         mnkFavoriteMounts.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkFavoriteMountss', {
             icon = 'Interface\\Icons\\Ability_mount_blackpanther.blp', 
@@ -60,7 +61,7 @@ function mnkFavoriteMounts:DoOnEvent(event)
         Hotkey, _ = GetBindingKey('RANDOM_MOUNT')
 		
         mnkFavoriteMounts.LDB.label = 'Favorite Mounts'
-    elseif event == 'PLAYER_ENTERING_WORLD' or event == 'COMPANION_LEARNED' or event == 'COMPANION_UPDATE' then
+    elseif (event == 'PLAYER_ENTERING_WORLD' and firstTime) or event == 'COMPANION_LEARNED' or event == 'COMPANION_UPDATE' then
 		getAllMounts() 
 	end
 end
@@ -105,7 +106,7 @@ end
 
 mnkFavoriteMounts:SetScript('OnEvent', mnkFavoriteMounts.DoOnEvent)
 mnkFavoriteMounts:RegisterEvent('PLAYER_LOGIN')
---mnkFavoriteMounts:RegisterEvent('PLAYER_ENTERING_WORLD')
---mnkFavoriteMounts:RegisterEvent('COMPANION_LEARNED')
---mnkFavoriteMounts:RegisterEvent('COMPANION_UPDATE')
+mnkFavoriteMounts:RegisterEvent('PLAYER_ENTERING_WORLD')
+mnkFavoriteMounts:RegisterEvent('COMPANION_LEARNED')
+mnkFavoriteMounts:RegisterEvent('COMPANION_UPDATE')
 
