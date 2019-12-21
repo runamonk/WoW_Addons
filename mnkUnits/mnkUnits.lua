@@ -31,22 +31,18 @@ local function CreateCastBar(self)
     self.castbarbg = CreateFrame('Frame', nil, self)
     self.castbarbg:SetPoint('LEFT', self, 'LEFT', -1, 0)
     self.castbarbg:SetPoint('BOTTOM', self, 'TOP', 0, 4)
-
     mnkLibs.setBackdrop(self.castbarbg, nil, nil, 0, 0, 0, 0)
-
     self.castbarbg:SetBackdropColor(0, 0, 0, 1)
     self.castbarbg:SetFrameStrata('HIGH')
     self.castbarbg:SetSize(self:GetWidth()+4, 18)
-    
-    mnkLibs.createBorder(self.castbarbg, 0,0,0,0, {1,1,1,1})
     self.castbarbg:Hide()
+  
     self.Castbar = CreateFrame('StatusBar', nil, self.castbarbg)
     self.Castbar:SetSize(self.castbarbg:GetSize())
-    self.Castbar:SetPoint('TOPLEFT', self.castbarbg, 1, -1)
-    self.Castbar:SetPoint('BOTTOMRIGHT', self.castbarbg, -1, 1)
-    
+    self.Castbar:SetPoint('TOPLEFT', self.castbarbg)
+    self.Castbar:SetPoint('BOTTOMRIGHT', self.castbarbg)
     self.Castbar:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
-    self.Castbar:SetStatusBarColor(1/5, 1/5, 1/5, 1)
+    self.Castbar:SetStatusBarColor(classColor.r/3, classColor.g/3, classColor.b/3, 1)
 
     if UnitIsPlayer(self.unit) then
         self.Castbar.Text = mnkLibs.createFontString(self.Castbar, mnkLibs.Fonts.oswald, 16,  nil, nil, true)

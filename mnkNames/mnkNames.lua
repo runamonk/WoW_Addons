@@ -3,12 +3,12 @@ mnkNames.oUF = oUF or ns.oUF
 --Tags are in mnkLibs\mnkuTags
 
 local cvars = {
-    nameplateGlobalScale = .6, 
-    NamePlateHorizontalScale = .6, 
-    -- NamePlateVerticalScale = .8, 
-    -- nameplateLargerScale = .8, 
-    -- nameplateMaxScale = .8, 
-    -- nameplateMinScale = .8, 
+    nameplateGlobalScale = .8, 
+    --NamePlateHorizontalScale = .6, 
+    NamePlateVerticalScale = 1, 
+    nameplateLargerScale = 1, 
+    nameplateMaxScale = 1, 
+    nameplateMinScale = .6, 
     nameplateSelectedScale = 1, 
     nameplateMaxAlpha = .3, 
     nameplateMaxAlphaDistance = 4, 
