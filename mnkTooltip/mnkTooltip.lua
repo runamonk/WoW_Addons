@@ -35,10 +35,6 @@ end
 
 local function OnTooltipSetSpell(self)
     SetBackdrop()   
-    local id = select(3, self:GetSpell())
-    if id ~= nil and id ~= '' then
-        GameTooltip:AddLine(mnkLibs.Color(COLOR_WHITE)..'Spell ID: '..id)
-    end
 end
 
 local function OnTooltipSetUnit()
@@ -110,17 +106,13 @@ local function OnTooltipSetItem()
 end
 
 local function OnShow()
-    -- if InCombatLockdown() then 
-    --     GameTooltip:Hide()
-    -- else
-         SetBackdrop()
-    -- end
+    SetBackdrop()
 end
 
 hooksecurefunc('GameTooltip_SetDefaultAnchor', function(tooltip, parent)
     local f = GetMouseFocus()
     
-    if f == WorldFrame or type(f) == 'table' then
+    if not f or f == WorldFrame or type(f) == 'table' then
         tooltip:SetOwner(parent, 'ANCHOR_CURSOR')
     else
         tooltip:ClearAllPoints()

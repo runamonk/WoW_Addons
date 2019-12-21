@@ -26,6 +26,8 @@ function mnkNuisance:DoOnEvent(event, arg1)
         if mnkNuisance_bBlockEnabled == true then
             CancelDuel()
             StaticPopup_Hide('DUEL_REQUESTED')
+            BlockThisSession = (BlockThisSession + 1)
+            mnkNuisance.SetIcon()
             mnkLibs.PrintError('Duel declined automtically.')
         end
     elseif (event == 'PARTY_INVITE_REQUEST') then

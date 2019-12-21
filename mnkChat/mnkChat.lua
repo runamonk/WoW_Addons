@@ -2,7 +2,6 @@ mnkChat = CreateFrame('Frame')
 mnkChat.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 mnkChat.hooks = {}
 local libQTip = LibStub('LibQTip-1.0')
-local myaddonName = ...
 
 mnkChat_db = {}
 mnkChat_db.Messages = {}

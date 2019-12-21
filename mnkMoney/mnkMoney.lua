@@ -66,20 +66,26 @@ function mnkMoney:DoOnEvent(event, arg1, arg2)
                         
                         local itemName, _, rarity, _, _, itemType, subType, _, _, itemIcon, _ = GetItemInfo(l)
                         if rarity > 0 then
-                            local x = 0
-                            x = GetItemCount(l)
-                            local _,_,_,color = GetItemQualityColor(rarity)
-                            --print('3 ', x)
-                            if x > 0 then
-								-- timing issue where I don't know if the new items are in the inventory or not. 
-                                --x = ' ['..x + q..']'
-								x = ' ['..x..']'
-                            else
-                                x = ' '
-                            end
-                            
-                            local s = string.format('|T%s:12|t %s', itemIcon, '|c'..color..itemName..mnkLibs.Color(COLOR_WHITE)..c..x)
-                            CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false)
+                            local frameEvent = CreateFrame('Frame', 'mnkMoneyEvent', nil) 
+                            -- wait for a bag update to be called and then get the actual count, this way we know for sure
+                            -- itemcount is correct and includes the newly looted item.
+                            frameEvent:SetScript('OnEvent', 
+                                function() 
+                                    frameEvent:UnregisterEvent('BAG_UPDATE')
+                                    local x = 0
+                                    x = GetItemCount(l)
+                                    local _,_,_,color = GetItemQualityColor(rarity)
+                                    --print('3 ', x) 
+                                    if x > 0 then
+                                        x = ' ['..x..']'
+                                    else
+                                        x = ' '
+                                    end
+        
+                                    local s = string.format('|T%s:12|t %s', itemIcon, '|c'..color..itemName..mnkLibs.Color(COLOR_WHITE)..c..x)
+                                    CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false) 
+                                end)
+                            frameEvent:RegisterEvent('BAG_UPDATE')
                         end -- if itemtype
                     end -- else
                 end -- l
@@ -203,7 +209,7 @@ mnkMoney:SetScript('OnEvent', mnkMoney.DoOnEvent)
 
 --mnkMoney:RegisterEvent('BAG_UPDATE')
 mnkMoney:RegisterEvent('CHAT_MSG_CURRENCY')
---mnkMoney:RegisterEvent('CHAT_MSG_LOOT')
+mnkMoney:RegisterEvent('CHAT_MSG_LOOT')
 mnkMoney:RegisterEvent('CURRENCY_DISPLAY_UPDATE')
 mnkMoney:RegisterEvent('LOOT_OPENED')
 mnkMoney:RegisterEvent('PLAYER_ENTERING_WORLD')

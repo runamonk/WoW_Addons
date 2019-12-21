@@ -76,7 +76,7 @@ function mnkFavoriteMounts.DoOnEnter(self)
     tooltip:Clear()
 	
     if #tblFavorites > 0 then
-        tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Favorites - '..mnkLibs.Color(COLOR_GOLD)..#tblFavorites)
+        tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Favorites - '..mnkLibs.Color(COLOR_GOLD)..#tblFavorites..' of '..#tblCollected)
 
         for i = 1, #tblFavorites do
             local y = tooltip:AddLine(string.format('|T%s:16|t', tblFavorites[i].mIcon)..' '..tblFavorites[i].mName)
@@ -86,8 +86,6 @@ function mnkFavoriteMounts.DoOnEnter(self)
 
     if (#tblFavorites == 0) then
         tooltip:AddLine(mnkLibs.Color(COLOR_GOLD)..'No favorite mounts defined.')
-    else
-        tooltip:AddLine(mnkLibs.Color(COLOR_GOLD)..'Total mounts collected ' ..#tblCollected)   
     end
 
     tooltip:SetAutoHideDelay(.1, self)
