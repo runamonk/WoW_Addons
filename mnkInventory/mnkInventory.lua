@@ -20,7 +20,6 @@ mnkInventory:RegisterEvent('PLAYER_UNGHOST')
 mnkInventory:RegisterEvent('UPDATE_INVENTORY_ALERTS')
 
 function mnkInventory:CONFIRM_XP_LOSS()
-	--print('CONFIRM_XP_LOSS')
 	self:UpdateAll()
 end
 
@@ -34,7 +33,6 @@ function mnkInventory:MERCHANT_SHOW(event, ...)
         RepairAllItems()
         local eventFrame = CreateFrame('Frame')
         eventFrame:SetScript('OnEvent', function() 
-        	--print('UPDATE_INVENTORY_DURABILITY')
         	eventFrame:UnregisterEvent('UPDATE_INVENTORY_DURABILITY')
         	self:UpdateAll()
     	end)
@@ -47,7 +45,6 @@ function mnkInventory:MERCHANT_SHOW(event, ...)
 end
 
 function mnkInventory:PLAYER_DEAD()
-	--print('PLAYER_DEAD')
 	self:UpdateAll()
 end
 
@@ -58,7 +55,6 @@ function mnkInventory:PLAYER_ENTERING_WORLD(event, firstTime)
 end
 
 function mnkInventory:PLAYER_EQUIPMENT_CHANGED(event, slotid, hasCurrent)
-	--print('PLAYER_EQUIPMENT_CHANGED', ' ', slotid, ' ', hasCurrent)
 	self:UpdateSlotInfo(slotid)
 	self:CalculateAverageiLevel()
 end
@@ -75,17 +71,14 @@ function mnkInventory:PLAYER_LOGIN(event, ...)
 end
 
 function mnkInventory:PLAYER_UNGHOST()
-	--print('PLAYER_UNGHOST')
 	self:UpdateAll()
 end
 
 function mnkInventory:CHAT_MSG_COMBAT_MISC_INFO()
-	--print('CHAT_MSG_COMBAT_MISC_INFO')
 	self:UpdateAll()
 end
 
 function mnkInventory:UPDATE_INVENTORY_ALERTS()
-	--print('UPDATE_INVENTORY_ALERTS')
 	self:UpdateAll()
 end
 
@@ -114,7 +107,6 @@ function mnkInventory:GetInventoryItems()
 	for slotid=1, MAX_SLOTS do
 		self:UpdateSlotInfo(slotid)
 	end
-	--self:SetText()
 end
 
 function mnkInventory:GetItemDurability(slotid)
@@ -170,7 +162,6 @@ function mnkInventory.OnEnter(self)
 	    GameTooltip:Hide()
 	end
 
-	--print('OnEnter')
     local tooltip = LibQTip:Acquire('mnkInventoryTooltip', 5, 'LEFT', 'LEFT', 'RIGHT', 'RIGHT', 'RIGHT')
     self.tooltip = tooltip
     tooltip:SetFont(mnkLibs.DefaultTooltipFont)
@@ -203,10 +194,7 @@ function mnkInventory.OnEnter(self)
 	        tooltip:SetLineScript(y, 'OnEnter', OnMouseEnter, v.link)
 	        tooltip:SetLineScript(y, 'OnLeave', OnMouseLeave, v.link)
 	    end  
-    end
-    -- tooltip:AddLine(' ')
-    -- tooltip:AddLine('Average gear level', '', '', AverageItemLevel)
-    
+    end   
     tooltip:SetAutoHideDelay(.1, self)
     tooltip:SmartAnchorTo(self)
     tooltip:SetFrameStrata('HIGH')
