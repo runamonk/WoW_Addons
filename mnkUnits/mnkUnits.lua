@@ -43,7 +43,7 @@ local function CreateCastBar(self)
     self.Castbar:SetPoint('TOPLEFT', self.castbarbg)
     self.Castbar:SetPoint('BOTTOMRIGHT', self.castbarbg)
     self.Castbar:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
-    self.Castbar:SetStatusBarColor(classColor.r/3, classColor.g/3, classColor.b/3, 1)
+    self.Castbar:SetStatusBarColor(classColor.r/5, classColor.g/5, classColor.b/5, 1)
 
     if UnitIsPlayer(self.unit) then
         self.Castbar.Text = mnkLibs.createFontString(self.Castbar, mnkLibs.Fonts.oswald, 16,  nil, nil, true)
