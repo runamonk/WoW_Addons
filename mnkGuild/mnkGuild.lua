@@ -127,7 +127,9 @@ function mnkGuild.UpdateText()
                     x = x + 1
                     --TTexturePath:size1:size2:xoffset:yoffset:dimx:dimy:coordx1:coordx2:coordy1:coordy2:red:green:blue|t
                     local c1, c2, c3, c4 = unpack(CLASS_ICON_TCOORDS[classFileName])
-                    local classIcon = string.format('|TInterface\\GLUES\\CHARACTERCREATE\\UI-CHARACTERCREATE-CLASSES:16:16:0:0:256:256:%s:%s:%s:%s|t', c1 * 256, c2 * 256, c3 * 256, c4 * 256)
+                    --local classIcon = string.format('|TInterface\\GLUES\\CHARACTERCREATE\\UI-CHARACTERCREATE-CLASSES:16:16:0:0:256:256:%s:%s:%s:%s|t', c1 * 256, c2 * 256, c3 * 256, c4 * 256)
+                    local classIcon = string.format('|TInterface\\GLUES\\CHARACTERCREATE\\UI-CHARACTERCREATE-CLASSES:16:16:0:0:256:256:%s:%s:%s:%s|t', (c1 * 256)+4, (c2 * 256)-4, (c3 * 256)+4, (c4 * 256)-4)
+
                     t[x] = {}
                     t[x].ClassNameStatus = classIcon..format(' |cff%s%s', colors[class:gsub(' ', ''):upper()] or 'ffffff', mnkLibs.formatPlayerName(name))..mnkGuild.GetStatus(status)
                     t[x].name = name

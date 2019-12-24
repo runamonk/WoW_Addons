@@ -40,33 +40,39 @@ function mnkProfessions.DoOnEnter(self)
 
     if prof1 ~= nil then
         local name, icon, skillLevel, maxSkillLevel, _, _, _, _, _, _ = GetProfessionInfo(prof1)
+        icon = icon..':16:16:0:0:64:64:4:60:4:60'
         
-        tooltip:AddLine(string.format('|T%s:16|t %s', icon, name), SPACER, skillLevel..'/'..maxSkillLevel)
+        tooltip:AddLine(string.format('|T%s|t %s', icon, name), SPACER, skillLevel..'/'..maxSkillLevel)
     end
 
     if prof2 ~= nil then
         local name, icon, skillLevel, maxSkillLevel, _, _, _, _, _, _ = GetProfessionInfo(prof2)
-        tooltip:AddLine(string.format('|T%s:16|t %s', icon, name), SPACER, skillLevel..'/'..maxSkillLevel)
+        icon = icon..':16:16:0:0:64:64:4:60:4:60'
+        tooltip:AddLine(string.format('|T%s|t %s', icon, name), SPACER, skillLevel..'/'..maxSkillLevel)
     end
 
     if archaeology ~= nil then
         local name, icon, skillLevel, maxSkillLevel, _, _, _, _, _, _ = GetProfessionInfo(archaeology)
-        tooltip:AddLine(string.format('|T%s:16|t %s', icon, name), SPACER, skillLevel..'/'..maxSkillLevel)
+        icon = icon..':16:16:0:0:64:64:4:60:4:60'
+        tooltip:AddLine(string.format('|T%s|t %s', icon, name), SPACER, skillLevel..'/'..maxSkillLevel)
     end
 
     if fishing ~= nil then
         local name, icon, skillLevel, maxSkillLevel, _, _, _, _, _, _ = GetProfessionInfo(fishing)
-        tooltip:AddLine(string.format('|T%s:16|t %s', icon, name), SPACER, skillLevel..'/'..maxSkillLevel)
+        icon = icon..':16:16:0:0:64:64:4:60:4:60'
+        tooltip:AddLine(string.format('|T%s|t %s', icon, name), SPACER, skillLevel..'/'..maxSkillLevel)
     end 
     
     if cooking ~= nil then
         local name, icon, skillLevel, maxSkillLevel, _, _, _, _, _, _ = GetProfessionInfo(cooking)
-        tooltip:AddLine(string.format('|T%s:16|t %s', icon, name), SPACER, skillLevel..'/'..maxSkillLevel)
+        icon = icon..':16:16:0:0:64:64:4:60:4:60'
+        tooltip:AddLine(string.format('|T%s|t %s', icon, name), SPACER, skillLevel..'/'..maxSkillLevel)
     end 
 
     if firstAid ~= nil then
         local name, icon, skillLevel, maxSkillLevel, _, _, _, _, _, _ = GetProfessionInfo(firstAid)
-        tooltip:AddLine(string.format('|T%s:16|t %s', icon, name), SPACER, skillLevel..'/'..maxSkillLevel)
+        icon = icon..':16:16:0:0:64:64:4:60:4:60'
+        tooltip:AddLine(string.format('|T%s|t %s', icon, name), SPACER, skillLevel..'/'..maxSkillLevel)
     end 
 
     tooltip:SetAutoHideDelay(.1, self)
@@ -78,10 +84,11 @@ end
 function mnkProfessions.GetProfText(p)
     if p ~= nil then
         local _, icon, skillLevel, maxSkillLevel, _, _, _, _, _, _ = GetProfessionInfo(p)
+        icon = icon..':16:16:0:0:64:64:4:60:4:60'
         if skillLevel == maxSkillLevel then
-            return string.format('|T%s:16|t', icon) ..' '..mnkLibs.Color(COLOR_WHITE)..maxSkillLevel
+            return string.format('|T%s|t', icon) ..' '..mnkLibs.Color(COLOR_WHITE)..maxSkillLevel
         else 
-            return string.format('|T%s:16|t', icon) ..' '..mnkLibs.Color(COLOR_WHITE)..skillLevel..'/'..maxSkillLevel
+            return string.format('|T%s|t', icon) ..' '..mnkLibs.Color(COLOR_WHITE)..skillLevel..'/'..maxSkillLevel
         end
     else
         return ''

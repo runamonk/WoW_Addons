@@ -40,7 +40,7 @@ function mnkGearSets.DoOnEnter(self)
             --name, texture, setIndex, isEquipped, totalItems, equippedItems, inventoryItems, missingItems, ignoredSlots = C_EquipmentSet.GetEquipmentSetInfo(index)
             --print(i, ' ', name, ' ', icon)
             if name ~= nil then
-                local y, x = tooltip:AddLine(string.format('|T%s:16|t %s', icon, name))
+                local y, x = tooltip:AddLine(string.format('|T%s|t %s', icon..':16:16:0:0:64:64:4:60:4:60', name))
                 tooltip:SetLineScript(y, 'OnMouseDown', mnkGearSets.DoOnSetClick, name)
             end
         end
@@ -61,5 +61,5 @@ end
 
 mnkGearSets:SetScript('OnEvent', mnkGearSets.DoOnEvent)
 mnkGearSets:RegisterEvent('PLAYER_LOGIN')
-mnkGearSets:RegisterEvent('UNIT_INVENTORY_CHANGED')
+--mnkGearSets:RegisterEvent('UNIT_INVENTORY_CHANGED')
 mnkGearSets:RegisterEvent('EQUIPMENT_SETS_CHANGED')

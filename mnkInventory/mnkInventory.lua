@@ -333,13 +333,13 @@ function StatusBarCell:SetupCell(tooltip, data, justification, font, r, g, b)
         
         self.fsTogo:SetText()
         if azeriteItem and azeriteItem:GetItemName() == itemName then
-            itemName = string.format('|T%s:12|t %s', itemTexture, '|c'..color..itemName..' [Level '..C_AzeriteItem.GetPowerLevel(azeriteItemLocation)..']')
+            itemName = string.format('|T%s|t %s', itemTexture..':16:16:0:0:64:64:4:60:4:60', '|c'..color..itemName..' [Level '..C_AzeriteItem.GetPowerLevel(azeriteItemLocation)..']')
             
             self.bar:SetValue(math.min((azItemXP/azItemTotalXP) * 100, 100))
             self.fsTogo:SetText(mnkLibs.formatNumToPercentage(azItemXP/azItemTotalXP)..' - '..(azItemTotalXP-azItemXP)..' to next level')
             showBar = true
         else
-            itemName = string.format('|T%s:12|t %s', itemTexture, '|c'..color..itemName)
+            itemName = string.format('|T%s|t %s', itemTexture..':16:16:0:0:64:64:4:60:4:60', '|c'..color..itemName)
             showBar = false
         end
     else
