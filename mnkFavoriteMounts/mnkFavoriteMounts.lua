@@ -80,7 +80,7 @@ function mnkFavoriteMounts.DoOnEnter(self)
         tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Favorites - '..mnkLibs.Color(COLOR_GOLD)..#tblFavorites..' of '..#tblCollected)
 
         for i = 1, #tblFavorites do
-            local y = tooltip:AddLine(string.format('|T%s:16|t', tblFavorites[i].mIcon)..' '..tblFavorites[i].mName)
+            local y = tooltip:AddLine(string.format('|T%s|t', tblFavorites[i].mIcon..':16:16:0:0:64:64:4:60:4:60')..' '..tblFavorites[i].mName)
             tooltip:SetLineScript(y, 'OnMouseDown', mnkFavoriteMounts.DoOnMouseDown, tblFavorites[i].mID)
         end 
     end
