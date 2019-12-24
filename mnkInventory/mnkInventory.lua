@@ -86,6 +86,7 @@ function mnkInventory:CalculateAverageiLevel()
     --AverageItemLevel = math.floor(select(2, GetAverageItemLevel()))
     --GetAverageItemLevel() is returning a cached calculation, so it's out of sync when I need it.
     local t = 0
+    AverageItemLevel = 0
 
     for i=0, #tInventoryItems do
     	if tInventoryItems[i] and tInventoryItems[i].link then
@@ -99,7 +100,9 @@ function mnkInventory:CalculateAverageiLevel()
 	    	end
     	end
     end
-    AverageItemLevel = math.floor(t/16) -- divide by 16 (slots)
+    if t > 0 then
+        AverageItemLevel = math.floor(t/16) -- divide by 16 (slots)
+    end
 end
 
 function mnkInventory:GetInventoryItems()
@@ -215,7 +218,11 @@ function mnkInventory:SetText()
         end 
     end
 
-    Percent = math.floor((Current / Total) * 100)
+    if Current > 0 and Total > 0 then
+        Percent = math.floor((Current / Total) * 100)
+    else
+        Percent = '0'
+    end
     
     self:CalculateAverageiLevel()
 	self.LDB.text =  Percent..'%'..mnkLibs.Color(COLOR_WHITE)..' i'..mnkLibs.Color(COLOR_GOLD)..AverageItemLevel
