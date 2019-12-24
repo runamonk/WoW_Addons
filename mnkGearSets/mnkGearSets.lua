@@ -19,7 +19,9 @@ end
 
 function mnkGearSets.DoOnClick(self, button)
     ToggleCharacter('PaperDollFrame')
-    --ToggleCharacter('EquipmentManager')
+    if CharacterFrame:IsShown() then
+        PaperDollSidebarTab3:Click()
+    end
 end
 
 function mnkGearSets.DoOnEnter(self)
