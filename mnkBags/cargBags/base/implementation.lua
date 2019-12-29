@@ -364,6 +364,7 @@ function Implementation:doDeleteCacheItem(link, bagID, slotID)
 	for i, _ in pairs(self.itemCache) do
 		if not link and self.itemCache[i].bagID == bagID and self.itemCache[i].slotID == slotID then
 			table.remove(self.itemCache, i)
+			return
 		elseif self.itemCache[i].link == link and self.itemCache[i].bagID == bagID and self.itemCache[i].slotID == slotID then
 			table.remove(self.itemCache, i)
 			return
@@ -500,6 +501,7 @@ function Implementation:UpdateBag(bagID)
 	for slotID=numSlots+1, lastSlots do
 		local button = self:GetButton(bagID, slotID)
 		if(button) then
+			self:doDeleteCacheItem(nil, bagID, slotID)
 			button.container:RemoveButton(button)
 			self:SetButton(bagID, slotID, nil)
 			button:Free()
