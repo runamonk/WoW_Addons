@@ -23,8 +23,6 @@ function mnkMisc:DoOnEvent(event, ...)
         -- to auto loot and sometimes cause an instant disconnect.
         if GetCVar('autoLootDefault') == 1 then return end
 
-        local itemCount = 0
-
         for i = GetNumLootItems(), 1, -1 do
             local link = GetLootSlotLink(i)
 
@@ -42,13 +40,12 @@ function mnkMisc:DoOnEvent(event, ...)
                     local itemName, _, rarity, _, _, itemType, subType, _, _, itemIcon, _ = GetItemInfo(link)
                     if rarity and rarity > 0 then
                         local _,_,_,color = GetItemQualityColor(rarity)
-                        itemCount = GetItemCount(link)
+                        local itemCount = GetItemCount(link)
                         if itemCount > 1 then
                             itemCount = ' ['..itemCount..']'
                         else
                             itemCount = ' '
                         end
-
                         local s = string.format('|T%s:12|t %s', itemIcon, '|c'..color..itemName..mnkLibs.Color(COLOR_WHITE)..itemCount)
                         --print(s)
                         CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false)
