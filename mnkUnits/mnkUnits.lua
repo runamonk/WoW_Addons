@@ -3,6 +3,7 @@ mnkUnits.oUF = oUF or ns.oUF
 local _, playerClass = UnitClass('player')
 local classColor = {}
 local _
+local firstTime = true
 
 classColor.r, classColor.g, classColor.b, _ = GetClassColor(playerClass)
 --Tags are in mnkLibs\mnkuTags
@@ -414,13 +415,15 @@ end
 function mnkUnits:DoOnEvent(event, arg1)
     if event == 'PLAYER_LOGIN' then
         LootWonAlertFrame_ShowAlert = mnkLibs.donothing()
+        firstTime = true
 	elseif event == 'PLAYER_REGEN_DISABLED' then
 		SetPlayerStatusFlag(oUF_mnkUnitsPlayer, true)
 	elseif event == 'PLAYER_REGEN_ENABLED' then
 		SetPlayerStatusFlag(oUF_mnkUnitsPlayer, false)
 	elseif event == 'PLAYER_ENTERING_WORLD' then
-        -- firstTime
-        if arg1 then
+        if firstTime then
+            SetCVar("NameplatePersonalShowAlways",0)
+
             AlertFrame:UnregisterAllEvents()
             AlertFrame.Show = mnkLibs.donothing()
             AlertFrame:Hide()
@@ -435,17 +438,10 @@ function mnkUnits:DoOnEvent(event, arg1)
             CreateBottomPanel()
             UpdateMirrorBars()		
     		SetPlayerStatusFlag(oUF_mnkUnitsPlayer)
+            firstTime = false
         end
 	elseif event == 'PLAYER_FLAGS_CHANGED' then
 		SetPlayerStatusFlag(oUF_mnkUnitsPlayer)
-    elseif event == "NAME_PLATE_UNIT_ADDED" then -- hide player castbar when the personal bar is visible, there is a castbar there.
-        if UnitIsUnit(arg1, "player") then
-            SetPlayerCastbarVis(false)
-        else
-            SetPlayerCastbarVis(true)    
-        end
-    elseif event == "NAME_PLATE_UNIT_REMOVED" then
-        SetPlayerCastbarVis(true)
     end    
 end
 
@@ -506,7 +502,5 @@ mnkUnits:SetScript('OnEvent', mnkUnits.DoOnEvent)
 mnkUnits:RegisterEvent('PLAYER_LOGIN')
 mnkUnits:RegisterEvent('PLAYER_ENTERING_WORLD')
 mnkUnits:RegisterEvent('PLAYER_FLAGS_CHANGED')
-mnkUnits:RegisterEvent('NAME_PLATE_UNIT_ADDED')
-mnkUnits:RegisterEvent('NAME_PLATE_UNIT_REMOVED')
 mnkUnits:RegisterEvent('PLAYER_REGEN_ENABLED')
 mnkUnits:RegisterEvent('PLAYER_REGEN_DISABLED')
