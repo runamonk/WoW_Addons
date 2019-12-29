@@ -11,15 +11,54 @@ function mnkMisc:DoOnEvent(event, ...)
             end)
         elseif addonName == myaddonName then
             SetCVar('alwaysCompareItems', 0)
-            SetCVar('autoLootDefault', 1)
+            SetCVar('autoLootDefault', 0)
             --SetCVar('floatingCombatTextCombatDamage', 1)
             SetCVar('enableFloatingCombatText', 1)
             SetCVar('colorChatNamesByClass', 1)
             SetCVar('chatStyle', 'classic')
             OrderHall_CheckCommandBar = mnkLibs.donothing
         end
-    end    
+    elseif event == 'LOOT_READY' then
+        -- don't run with auto loot enabled, it will conflict with blizzard code 
+        -- to auto loot and sometimes cause an instant disconnect.
+        if GetCVar('autoLootDefault') == 1 then return end
+
+        local itemCount = 0
+
+        for i = GetNumLootItems(), 1, -1 do
+            local link = GetLootSlotLink(i)
+
+            LootSlot(i)
+            ConfirmLootSlot(i)
+            
+            if link then
+                if link:find('battlepet') then
+                    local _, speciesID, _, rarity = (':'):split(link)
+                    local color = GetItemQualityColor(rarity)
+                    local name, icon = C_PetJournal.GetPetInfoBySpeciesID(speciesID)
+                    local s = string.format('|T%s:12|t %s', icon, '|c'..color..name)
+                    CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false)
+                else
+                    local itemName, _, rarity, _, _, itemType, subType, _, _, itemIcon, _ = GetItemInfo(link)
+                    if rarity and rarity > 0 then
+                        local _,_,_,color = GetItemQualityColor(rarity)
+                        itemCount = GetItemCount(link)
+                        if itemCount > 1 then
+                            itemCount = ' ['..itemCount..']'
+                        else
+                            itemCount = ' '
+                        end
+
+                        local s = string.format('|T%s:12|t %s', itemIcon, '|c'..color..itemName..mnkLibs.Color(COLOR_WHITE)..itemCount)
+                        --print(s)
+                        CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false)
+                    end
+                end
+            end 
+        end
+    end
 end
+
 
 SLASH_RL1 = '/rl'
 function SlashCmdList.RL(msg, editbox)
@@ -38,6 +77,10 @@ BossBanner.Hide = mnkLibs.donothing()
 BossBanner.Show = mnkLibs.donothing()
 BossBanner:UnregisterAllEvents()
 
+LootFrame:Hide()
+LootFrame.Show = mnkLibs.donothing()
+LootFrame:UnregisterAllEvents()
+
 mnkMisc:SetScript('OnEvent', mnkMisc.DoOnEvent)
 mnkMisc:RegisterEvent('ADDON_LOADED')
-
+mnkMisc:RegisterEvent('LOOT_READY')

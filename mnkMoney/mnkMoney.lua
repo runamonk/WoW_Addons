@@ -21,77 +21,8 @@ function mnkMoney:DoOnEvent(event, arg1, arg2)
     end
     if event == 'PLAYER_ENTERING_WORLD' then
         currencyOnHand = GetMoney()
-    elseif event == 'CHAT_MSG_LOOT' or event == 'CHAT_MSG_CURRENCY' or event == 'PLAYER_MONEY' then
-        --print(event)
-        if event == 'CHAT_MSG_LOOT' then
-            if arg1 ~= nil then
-                local LOOT_ITEM_PATTERN = (LOOT_ITEM_SELF):gsub('%%s', '(.+)')
-                local LOOT_ITEM_PUSH_PATTERN = (LOOT_ITEM_PUSHED_SELF):gsub('%%s', '(.+)')
-                local LOOT_ITEM_MULTIPLE_PATTERN = (LOOT_ITEM_SELF_MULTIPLE):gsub('%%s', '(.+)'):gsub('%%d', '(%%d+)')
-                local LOOT_ITEM_PUSH_MULTIPLE_PATTERN = (LOOT_ITEM_PUSHED_SELF_MULTIPLE):gsub('%%s', '(.+)'):gsub('%%d', '(%%d+)')
-                local LOOT_ITEM_CREATED_SELF_PATTERN = LOOT_ITEM_CREATED_SELF:gsub('%%s', '(.+)')
-                local l, q = arg1:match(LOOT_ITEM_MULTIPLE_PATTERN)
-
-                --print(l,' * ',q)
-                if not l then
-                    l, q = arg1:match(LOOT_ITEM_PUSH_MULTIPLE_PATTERN)
-                    if not l then
-                        q, l = 1, arg1:match(LOOT_ITEM_PATTERN)
-                        if not l then
-                            q, l = 1, arg1:match(LOOT_ITEM_PUSH_PATTERN)
-                            if not l then
-                                q, l = 1, arg1:match(LOOT_ITEM_CREATED_SELF_PATTERN)
-                            end
-                        end
-                    end
-                end -- not l
-
-                --print('2 ',l)
-                if l ~= nil then
-                    q = tonumber(q) or 0
-
-                    if l:find('battlepet') then
-                        local _, speciesID, _, rarity = (':'):split(l)
-                        local color = GetItemQualityColor(rarity)
-                        local name, icon = C_PetJournal.GetPetInfoBySpeciesID(speciesID)
-                        local s = string.format('|T%s:12|t %s', icon, '|c'..color..name)
-                        CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false)
-                    else
-                        local c = ''
-                        if q > 1 then
-                            c = ' x '..q
-                        else
-                            c = ''
-                        end
-                        
-                        local itemName, _, rarity, _, _, itemType, subType, _, _, itemIcon, _ = GetItemInfo(l)
-                        if rarity > 0 then
-                            local frameEvent = CreateFrame('Frame', 'mnkMoneyEvent', nil) 
-                            -- wait for a bag update to be called and then get the actual count, this way we know for sure
-                            -- itemcount is correct and includes the newly looted item.
-                            frameEvent:SetScript('OnEvent', 
-                                function() 
-                                    frameEvent:UnregisterEvent('BAG_UPDATE')
-                                    local x = 0
-                                    x = GetItemCount(l)
-                                    local _,_,_,color = GetItemQualityColor(rarity)
-                                    --print('3 ', x) 
-                                    if x > 0 then
-                                        x = ' ['..x..']'
-                                    else
-                                        x = ' '
-                                    end
-        
-                                    local s = string.format('|T%s:12|t %s', itemIcon, '|c'..color..itemName..mnkLibs.Color(COLOR_WHITE)..c..x)
-                                    CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false) 
-                                end)
-                            frameEvent:RegisterEvent('BAG_UPDATE')
-                        end -- if itemtype
-                    end -- else
-                end -- l
-            end -- arg1
-        end -- CHAT_MSG_LOOT
-        
+    elseif event == 'CHAT_MSG_CURRENCY' or event == 'PLAYER_MONEY' then
+      
         if event == 'PLAYER_MONEY' then
             local currency = GetMoney() or 0
             local x = 0
@@ -207,11 +138,8 @@ end
 
 mnkMoney:SetScript('OnEvent', mnkMoney.DoOnEvent)
 
---mnkMoney:RegisterEvent('BAG_UPDATE')
 mnkMoney:RegisterEvent('CHAT_MSG_CURRENCY')
-mnkMoney:RegisterEvent('CHAT_MSG_LOOT')
 mnkMoney:RegisterEvent('CURRENCY_DISPLAY_UPDATE')
-mnkMoney:RegisterEvent('LOOT_OPENED')
 mnkMoney:RegisterEvent('PLAYER_ENTERING_WORLD')
 mnkMoney:RegisterEvent('PLAYER_LOGIN')
 mnkMoney:RegisterEvent('PLAYER_MONEY')
