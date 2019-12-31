@@ -546,6 +546,6 @@ mnkReputation:RegisterEvent('ZONE_CHANGED')
 mnkReputation:RegisterEvent('CHAT_MSG_LOOT')
 mnkReputation:RegisterEvent('UPDATE_FACTION')
 mnkReputation:RegisterEvent('GROUP_ROSTER_UPDATE')
-mnkReputation:RegisterEvent('BAG_UPDATE')
+--mnkReputation:RegisterEvent('BAG_UPDATE')
 
 

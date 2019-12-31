@@ -68,11 +68,13 @@ function mnkFriends.DoOnEnter(self)
         end
     end
     
-    if x > 0 then
-        tooltip:AddLine(' ')
-    end
+
     
     local _, i = BNGetNumFriends()
+
+    if x > 0 and i > 0 then
+        tooltip:AddLine(' ')
+    end
     
     for x = 1, i do
         local _, presenceName, battleTag, _, toonName, toonID, _, isOnline, lastOnline, _, _, _, noteText, _, _, _ = BNGetFriendInfo(x)
@@ -146,7 +148,7 @@ end
 mnkFriends:SetScript('OnEvent', mnkFriends.DoOnEvent)
 mnkFriends:RegisterEvent('PLAYER_LOGIN')
 mnkFriends:RegisterEvent('FRIENDLIST_UPDATE')
-mnkFriends:RegisterEvent('PLAYER_FLAGS_CHANGED')
+--mnkFriends:RegisterEvent('PLAYER_FLAGS_CHANGED')
 mnkFriends:RegisterEvent('BN_FRIEND_ACCOUNT_OFFLINE')
 mnkFriends:RegisterEvent('BN_FRIEND_ACCOUNT_ONLINE')
 mnkFriends:RegisterEvent('BN_FRIEND_INFO_CHANGED')
