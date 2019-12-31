@@ -146,7 +146,7 @@ function mnkNames.PostCreateIcon(Auras, button)
     button.timer:SetPoint('BOTTOMLEFT', button, 0, 0)
     button.timer:SetTextColor(1, 1, 1)
     button.icon:SetTexCoord(.07, .93, .07, .93)
-    mnkLibs.createBorder(button, 1,-1,-1,1, {0,0,0,1})
+    mnkLibs.createBorder(button, 0.8, -0.8, -0.8, 0.8, {0,0,0,1})
 end
 
 function mnkNames.PostUpdateIcon(element, unit, button, index)

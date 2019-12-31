@@ -34,7 +34,7 @@ function mnkMisc:DoOnEvent(event, ...)
                     local _, speciesID, _, rarity = (':'):split(link)
                     local color = GetItemQualityColor(rarity)
                     local name, icon = C_PetJournal.GetPetInfoBySpeciesID(speciesID)
-                    local s = string.format('|T%s:12|t %s', icon, '|c'..color..name)
+                    local s = string.format('|T%s|t %s', icon..':16:16:0:0:64:64:4:60:4:60', '|c'..color..name)
                     CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false)
                 else
                     local itemName, _, rarity, _, _, itemType, subType, _, _, itemIcon, _ = GetItemInfo(link)
@@ -46,7 +46,7 @@ function mnkMisc:DoOnEvent(event, ...)
                         else
                             itemCount = ' '
                         end
-                        local s = string.format('|T%s:12|t %s', itemIcon, '|c'..color..itemName..mnkLibs.Color(COLOR_WHITE)..itemCount)
+                        local s = string.format('|T%s|t %s', itemIcon..':16:16:0:0:64:64:4:60:4:60', '|c'..color..itemName..mnkLibs.Color(COLOR_WHITE)..itemCount)
                         --print(s)
                         CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false)
                     end

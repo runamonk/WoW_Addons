@@ -476,7 +476,7 @@ function mnkBagsContainer:OnCreate(name)
 		self.Empty = mnkLibs.createFontString(self, mnkLibs.Fonts.ap, 16, nil, nil, true)
 		self.Empty:SetPoint("BOTTOMRIGHT", self.Drop, "BOTTOMRIGHT", -3, 3)
 		self.Empty:SetJustifyH("LEFT")
-		mnkLibs.createBorder(self.Drop, 1,-1,-1,1, {1/2,1/2,1/2,1})
+		mnkLibs.createBorder(self.Drop, 0.8, -0.8, -0.8, 0.8, {1/2,1/2,1/2,1})
 		self.Drop:Show()
 		self.Empty:Show()
 
