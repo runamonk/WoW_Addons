@@ -6,17 +6,15 @@ local FRIENDS_TEXTURE_BROADCAST = 'Interface\\FriendsFrame\\BroadcastIcon'
 local FRIENDS_TEXTURE_ONLINE = 'Interface\\FriendsFrame\\StatusIcon-Online'
 local BNET_ICON = 'Interface\\FriendsFrame\\Battlenet-Portrait'
 local WOW_ICON = 'Interface\\FriendsFrame\\Battlenet-WoWicon'
-local _
 local LastFriendsOnline = 0
 local colors = {}
-for class, color in pairs(RAID_CLASS_COLORS) do colors[class] = string.format('%02x%02x%02x', color.r * 255, color.g * 255, color.b * 255) end
 
 function mnkFriends.DoOnMouseDown(self, arg, button) 
 	local sendBNet = false
 	local name = string.sub(arg,3,string.len(arg))
 	
-	if string.sub(arg, 1, 2) == 'b_' then
-		sendBNet = true
+	if string.sub(arg, 1, 2) ~= 'w_' then
+        sendBNet = true
 	end
 	
     if button == 'RightButton' then
@@ -38,6 +36,9 @@ end
 function mnkFriends.DoOnEnter(self)
     local tooltip = LibQTip:Acquire('mnkFriendsTooltip', 5, 'LEFT', 'LEFT', 'LEFT', 'LEFT', 'LEFT')
     local status = ""
+    local t = {}
+    local info = nil
+
     self.tooltip = tooltip
     tooltip:SetFont(mnkLibs.DefaultTooltipFont)
     tooltip:SetHeaderFont(mnkLibs.DefaultTooltipFont)
@@ -46,59 +47,79 @@ function mnkFriends.DoOnEnter(self)
     local x = mnkFriends.GetNumFriendsOnline()
     if x > 0 then
         tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Name', mnkLibs.Color(COLOR_GOLD)..'Level', mnkLibs.Color(COLOR_GOLD)..'Zone', mnkLibs.Color(COLOR_GOLD)..'Note')
+
+        x = C_FriendList.GetNumFriends()
+        local c = 0
+        for i = 1, x do
+            info = C_FriendList.GetFriendInfoByIndex(i)
+            if info and info.connected then
+                c = c + 1
+                t[c] = {}
+                t[c].name = info.name
+                t[c].nameformatted = format('|cff%s%s', colors[info.className:gsub(' ', ''):upper()] or 'ffffff', info.name)
+                t[c].level = info.level
+                t[c].zone = info.area
+                t[c].note = info.notes
+                t[c].client = 'WoW' 
+
+                if info.afk then
+                    t[c].status = mnkLibs.Color(COLOR_GREEN)..' <AFK>'
+                elseif info.dnd then
+                    t[c].status = mnkLibs.Color(COLOR_RED)..' <DND>'
+                end
+            end
+        end
+        
+        local _, x = BNGetNumFriends()
+
+        for i = 1, x do
+            info = C_BattleNet.GetFriendAccountInfo(i)
+            if info and info.gameAccountInfo.isOnline then
+                c = c + 1
+                t[c] = {}
+                
+                if info.gameAccountInfo.clientProgram == 'WoW' then
+                    t[c].name = info.gameAccountInfo.characterName
+                    t[c].nameformatted = format('|cff%s%s', colors[info.gameAccountInfo.className:gsub(' ', ''):upper()] or 'ffffff', info.gameAccountInfo.characterName)
+                    t[c].level = info.gameAccountInfo.characterLevel
+                    t[c].zone = info.gameAccountInfo.areaName 
+                    t[c].client = info.gameAccountInfo.clientProgram 
+                else
+                    t[c].name = info.accountName
+                    t[c].client = info.gameAccountInfo.clientProgram 
+                end
+
+                t[c].note = info.note
+                if info.isAFK then
+                    t[c].status = mnkLibs.Color(COLOR_GREEN)..' <AFK>'
+                elseif info.isDND then
+                    t[c].status = mnkLibs.Color(COLOR_RED)..' <DND>'
+                end
+            end        
+        end
+
+        local sortedTable = {}
+
+        local sort_func = function(a, b)
+            return a.name < b.name
+        end
+        
+        table.sort(t, sort_func)
+
+        for i = 1, #t do
+           -- print(t[i].name, ' ', t[i].zone)
+            if t[i].client == 'WoW' then
+                local y, x = tooltip:AddLine(t[i].nameformatted..status, t[i].level, t[i].zone, t[i].note)
+                tooltip:SetLineScript(y, 'OnMouseDown', mnkFriends.DoOnMouseDown, 'w_'..t[i].name)
+            else
+                local y, x = tooltip:AddLine(t[i].name..status, '', '', t[i].note)
+                tooltip:SetLineScript(y, 'OnMouseDown', mnkFriends.DoOnMouseDown, 'b_'..t[i].name)      
+            end 
+        end
+
     else
         local l = tooltip:AddLine()
         tooltip:SetCell(l, 1, 'No friends are online.', 5)
-    end
-
-    for i = 1, x do
-        local info = C_FriendList.GetFriendInfoByIndex(i)
-
-        if info and info.connected and info.name ~= nil then 
-			if info.afk then
-				status = mnkLibs.Color(COLOR_GREEN)..' <AFK>'
-			elseif info.dnd then
-				status = mnkLibs.Color(COLOR_RED)..' <DND>'
-			else
-				status = " "
-			end
-			
-			local y, x = tooltip:AddLine(string.format('|T%s:16|t', WOW_ICON)..format('|cff%s%s', colors[info.className:gsub(' ', ''):upper()] or 'ffffff', info.name)..status, info.level, info.area, info.notes)
-			tooltip:SetLineScript(y, 'OnMouseDown', mnkFriends.DoOnMouseDown, 'p_'..info.name)
-        end
-    end
-    
-
-    
-    local _, i = BNGetNumFriends()
-
-    if x > 0 and i > 0 then
-        tooltip:AddLine(' ')
-    end
-    
-    for x = 1, i do
-        local _, presenceName, battleTag, _, toonName, toonID, _, isOnline, lastOnline, _, _, _, noteText, _, _, _ = BNGetFriendInfo(x)
-
-        if isOnline then
-			local friendInfo = C_BattleNet.GetFriendAccountInfo(x)
-
-			if friendInfo.isAFK then
-				status = mnkLibs.Color(COLOR_GREEN)..' <AFK>'
-			elseif friendInfo.isDND then
-				status = mnkLibs.Color(COLOR_RED)..' <DND>'
-			else
-				status = " "
-			end
-			
-            if friendInfo.gameAccountInfo.clientProgram == 'WoW' then 
-                local y, x = tooltip:AddLine(string.format('|T%s:16|t', WOW_ICON)..format('|cff%s%s', colors[friendInfo.gameAccountInfo.className:gsub(' ', ''):upper()] or 'ffffff', presenceName..' ('..toonName..')')..status, friendInfo.gameAccountInfo.characterLevel, friendInfo.gameAccountInfo.areaName, friendInfo.note)
-                tooltip:SetLineScript(y, 'OnMouseDown', mnkFriends.DoOnMouseDown, 'p_'..friendInfo.gameAccountInfo.characterName..'-'..friendInfo.gameAccountInfo.realmName)
-            else
-                local y, x = tooltip:AddLine(string.format('|T%s:16|t', BNET_ICON)..presenceName..status, '', '', noteText)
-				
-                tooltip:SetLineScript(y, 'OnMouseDown', mnkFriends.DoOnMouseDown, 'b_'..presenceName)
-            end
-        end
     end
     
     tooltip:AddLine(' ')
@@ -118,7 +139,7 @@ function mnkFriends.DoOnClick(self)
 end
 
 function mnkFriends.GetNumFriendsOnline()
-    C_FriendList.ShowFriends()
+    --C_FriendList.ShowFriends()
 	local i =  C_FriendList.GetNumOnlineFriends()
 	local numBNetTotal, numBNetOnline = BNGetNumFriends()
 
@@ -140,6 +161,7 @@ function mnkFriends:DoOnEvent(event)
             OnEnter = mnkFriends.DoOnEnter, 
             OnClick = mnkFriends.DoOnClick
         })
+        for class, color in pairs(RAID_CLASS_COLORS) do colors[class] = string.format('%02x%02x%02x', color.r * 255, color.g * 255, color.b * 255) end
     end
     self.LDB.label = 'Friends'
     self.LDB.text = mnkFriends.GetNumFriendsOnline()
@@ -151,4 +173,4 @@ mnkFriends:RegisterEvent('FRIENDLIST_UPDATE')
 --mnkFriends:RegisterEvent('PLAYER_FLAGS_CHANGED')
 mnkFriends:RegisterEvent('BN_FRIEND_ACCOUNT_OFFLINE')
 mnkFriends:RegisterEvent('BN_FRIEND_ACCOUNT_ONLINE')
-mnkFriends:RegisterEvent('BN_FRIEND_INFO_CHANGED')
+--mnkFriends:RegisterEvent('BN_FRIEND_INFO_CHANGED')
