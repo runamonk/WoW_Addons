@@ -102,10 +102,7 @@ function mnkFriends.DoOnEnter(self)
 
         local sortedTable = {}
 
-        local sort_func = function(a, b)
-            return a.name < b.name
-        end
-        
+        local sort_func = function(a, b) return a.name < b.name end
         table.sort(t, sort_func)
 
         for i = 1, #t do

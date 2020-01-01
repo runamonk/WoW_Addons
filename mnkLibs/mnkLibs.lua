@@ -179,12 +179,12 @@ function mnkLibs.formatTime(s)
   end
 
  function mnkLibs.GetIndexInTable(table, val)
-   for i=1,#table do
-      if table[i] == val then 
-         return i
-      end
-   end
-   return 0
+    for i=1,#table do
+        if table[i] == val then
+            return i
+        end
+    end
+    return 0
 end
 
 function mnkLibs.PrintError(Message)
