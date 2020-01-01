@@ -9,7 +9,7 @@ mnkBags:SetScript('OnEvent', function(self, event, ...) self[event](self, event,
 mnkBags:RegisterEvent('PLAYER_ENTERING_WORLD')
 mnkBags:RegisterEvent('MERCHANT_SHOW')
 
-mnkBagsKnownItems = mnkBagsKnownItems or {}
+mnkBagsKnownItems = {}
 
 local _
 local itemSlotSize = 32
@@ -141,7 +141,7 @@ function cbmb:OnInit()
 	_Bags.main = mnkBagsContainer:New("mb_Bag")
 
 	_Bags.bagJunk:SetFilter(function(item) return ItemNotNull(item) and IsMain(item) and (item.rarity == 0) end, true)
-	_Bags.bagNew:SetFilter(function(item) return ItemNotNull(item) and IsMain(item) and  (mnkLibs.GetIndexInTable(mnkBagsKnownItems, item.link) == 0) end, true)
+	_Bags.bagNew:SetFilter(function(item) return ItemNotNull(item) and IsMain(item) and  (mnkLibs.GetIndexInTable(mnkBagsKnownItems, item.id) == 0) end, true)
 	_Bags.armor:SetFilter(function(item) return ItemNotNull(item) and IsMain(item) and ((item.type == mbLocals.Armor) or (item.type == mbLocals.Weapon)) end, true)
 	_Bags.gem:SetFilter(function(item) return ItemNotNull(item) and IsMain(item) and (item.type == mbLocals.Gem) end, true)
 	_Bags.quest:SetFilter(function(item) return ItemNotNull(item) and IsMain(item) and (item.type == mbLocals.Quest) end, true)
@@ -157,7 +157,7 @@ function cbmb:OnInit()
 	for k,_ in pairs(_Bags) do
 		_Bags[k]:OnContentsChanged(true)
 	end
-
+	--print(#mnkBagsKnownItems)
 	cbmb:UpdateAnchors()
 end
 
@@ -524,9 +524,9 @@ function mnkBagsContainer:ResetNewItems()
 	for k,_ in pairs(_Bags.bagNew.buttons) do
 		local b = _Bags.bagNew.buttons[k]
 		local clink = GetContainerItemLink(b.bagID, b.slotID)
-
-		if mnkLibs.GetIndexInTable(mnkBagsKnownItems, clink) == 0 then			
-			mnkBagsKnownItems[#mnkBagsKnownItems+1] = clink
+		local itemid = select(1, GetItemInfoInstant(clink))
+		if mnkLibs.GetIndexInTable(mnkBagsKnownItems, itemid) == 0 then			
+			mnkBagsKnownItems[#mnkBagsKnownItems+1] = itemid
 		end
 	end
 	cbmb:UpdateBags()
