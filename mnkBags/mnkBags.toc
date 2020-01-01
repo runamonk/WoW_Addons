@@ -1,10 +1,8 @@
 ## Interface: 80200
 ## Title: mnkBags
 ## Author: runamonk
-## SavedVariables: 
 ## SavedVariablesPerCharacter: mnkBagsKnownItems
 ## Dependencies: mnkLibs
-## X-cargBags: cargBags
 
 cargBags\embed.xml
 localization.lua
