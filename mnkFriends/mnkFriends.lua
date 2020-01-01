@@ -79,13 +79,15 @@ function mnkFriends.DoOnEnter(self)
                 t[c] = {}
                 
                 if info.gameAccountInfo.clientProgram == 'WoW' then
-                    t[c].name = info.gameAccountInfo.characterName
+                    t[c].name = info.gameAccountInfo.characterName 
                     t[c].nameformatted = format('|cff%s%s', colors[info.gameAccountInfo.className:gsub(' ', ''):upper()] or 'ffffff', info.gameAccountInfo.characterName)
                     t[c].level = info.gameAccountInfo.characterLevel
                     t[c].zone = info.gameAccountInfo.areaName 
                     t[c].client = info.gameAccountInfo.clientProgram 
                 else
-                    t[c].name = info.accountName
+                    --local accountname = BNet_GetBNetAccountName(info)
+                    --print(accountname)
+                    t[c].name = string.sub(info.battleTag, 1, string.find(info.battleTag, '#')-1) 
                     t[c].client = info.gameAccountInfo.clientProgram 
                 end
 
