@@ -1,111 +1,99 @@
-mnkFavoriteMounts = CreateFrame('Frame')
+mnkFavoriteMounts = CreateFrame('Frame', 'mnkFavoriteMounts')
 mnkFavoriteMounts.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
+
+mnkFavoriteMounts:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
+mnkFavoriteMounts:RegisterEvent('PLAYER_LOGIN')
+mnkFavoriteMounts:RegisterEvent('COMPANION_LEARNED')
 
 local libQTip = LibStub('LibQTip-1.0')
 local libAG = LibStub('AceGUI-3.0')
 
 local tblAll = {}
-local tblCollected = {}
-local tblFavorites = {}
-local _
+local intCollected = 0
+local tFavorites = {}
 
-local function parseMounts()
-	tblFavorites = {}	
-	tblCollected = {}
-	
-	local c = 0
-	local d = 0 
-	
+function mnkFavoriteMounts:GetAllMounts()
+    tblAll = {}
+    tFavorites = {}   
+    tblAll = C_MountJournal.GetMountIDs()
+
+    local c = 0
+    intCollected = 0
+    
     if #tblAll > 0 then
         for i = 1, #tblAll do
             local mName, spellID, mIcon, active, isUsable, _, isFavorite, _, _, hideOnChar, isCollected, mountID = C_MountJournal.GetMountInfoByID(tblAll[i])
             
-			if isCollected == true and hideOnChar == false then
-				d = (d + 1)
-				tblCollected[d] = {}
-                tblCollected[d].mName = mName
-                tblCollected[d].mID = mountID
-                tblCollected[d].mIcon = mIcon				
-			end
-			if isFavorite == true then
+            if isCollected then
+                intCollected = intCollected + 1         
+            end
+
+            if isFavorite then
                 --print(mName, ' ', 'isCol:', isCollected, ' isFavorite:', isFavorite, ' hideOnChar:', hideOnChar)
                 c = (c + 1)
-                tblFavorites[c] = {}
-                tblFavorites[c].mName = mName
-                tblFavorites[c].mID = mountID
-                tblFavorites[c].mIcon = mIcon
+                tFavorites[c] = {}
+                tFavorites[c].mName = mName
+                tFavorites[c].mID = mountID
+                tFavorites[c].mIcon = mIcon
             end
         end
         
         local sort_func = function(a, b) return a.mName < b.mName end
-        table.sort(tblFavorites, sort_func)
-		table.sort(tblCollected, sort_func)
-    end	
+        table.sort(tFavorites, sort_func)
+    end
+    mnkFavoriteMounts.LDB.text = mnkLibs.Color(COLOR_GOLD)..#tFavorites..mnkLibs.Color(COLOR_WHITE)..' of '..mnkLibs.Color(COLOR_GOLD)..intCollected 
 end
 
-local function getAllMounts()
-	tblAll = {}
-	tblAll = C_MountJournal.GetMountIDs()
-	parseMounts()
-    mnkFavoriteMounts.LDB.text = mnkLibs.Color(COLOR_GOLD)..#tblFavorites..mnkLibs.Color(COLOR_WHITE)..' of '..mnkLibs.Color(COLOR_GOLD)..#tblCollected
+function mnkFavoriteMounts:OnClick()
+    ToggleCollectionsJournal(1)
 end
 
-function mnkFavoriteMounts:DoOnEvent(event, firstTime)
-    --print(event)
-    if event == 'PLAYER_LOGIN' then
-        mnkFavoriteMounts.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkFavoriteMountss', {
-            icon = 'Interface\\Icons\\Ability_mount_blackpanther.blp', 
-            type = 'data source', 
-            OnEnter = mnkFavoriteMounts.DoOnEnter, 
-            OnClick = mnkFavoriteMounts.DoOnClick
-        })
+function mnkFavoriteMounts:OnEnter(parent)
 
-        mnkFavoriteMounts.LDB.label = 'Favorite Mounts'
-    elseif (event == 'PLAYER_ENTERING_WORLD') or event == 'COMPANION_LEARNED' then
-		getAllMounts() 
-	end
-end
+    local function OnMouseDown(button, arg)
+        C_MountJournal.SummonByID(arg)
+    end
 
-function mnkFavoriteMounts.DoOnEnter(self)
-    getAllMounts()
+    self:GetAllMounts()
 
-    local tooltip = libQTip:Acquire('mnkFavoriteMountssToolTip', 1, 'LEFT')
+    local tooltip = libQTip:Acquire('mnkFavoriteMountsToolTip', 1, 'LEFT')
     self.tooltip = tooltip
     tooltip.step = 50 
     tooltip:SetFont(mnkLibs.DefaultTooltipFont)
     tooltip:SetHeaderFont(mnkLibs.DefaultTooltipFont)
     tooltip:Clear()
-	
-    if #tblFavorites > 0 then
-        tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Favorites - '..mnkLibs.Color(COLOR_GOLD)..#tblFavorites..' of '..#tblCollected)
+    
+    if #tFavorites > 0 then
+        tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Favorites - '..mnkLibs.Color(COLOR_GOLD)..#tFavorites..' of '..intCollected)
 
-        for i = 1, #tblFavorites do
-            local y = tooltip:AddLine(string.format('|T%s|t', tblFavorites[i].mIcon..':16:16:0:0:64:64:4:60:4:60')..' '..tblFavorites[i].mName)
-            tooltip:SetLineScript(y, 'OnMouseDown', mnkFavoriteMounts.DoOnMouseDown, tblFavorites[i].mID)
+        for i = 1, #tFavorites do
+            local y = tooltip:AddLine(string.format('|T%s|t', tFavorites[i].mIcon..':16:16:0:0:64:64:4:60:4:60')..' '..tFavorites[i].mName)
+            tooltip:SetLineScript(y, 'OnMouseDown', OnMouseDown, tFavorites[i].mID)
         end 
     end
 
-    if (#tblFavorites == 0) then
+    if (#tFavorites == 0) then
         tooltip:AddLine(mnkLibs.Color(COLOR_GOLD)..'No favorite mounts defined.')
     end
 
-    tooltip:SetAutoHideDelay(.1, self)
-    tooltip:SmartAnchorTo(self)
+    tooltip:SetAutoHideDelay(.1, parent)
+    tooltip:SmartAnchorTo(parent)
     tooltip:UpdateScrolling(500)
     tooltip:SetBackdropBorderColor(0, 0, 0, 0)
     tooltip:Show()
 end
 
-function mnkFavoriteMounts.DoOnClick(self, button)
-    ToggleCollectionsJournal(1)
+function mnkFavoriteMounts:COMPANION_LEARNED()
+    self:GetAllMounts()
 end
 
-function mnkFavoriteMounts.DoOnMouseDown(button, arg)
-    C_MountJournal.SummonByID(arg)
+function mnkFavoriteMounts:PLAYER_LOGIN()
+    mnkFavoriteMounts.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkFavoriteMounts', {
+        icon = 'Interface\\Icons\\Ability_mount_blackpanther.blp', 
+        type = 'data source', 
+        OnEnter = function(parent) self:OnEnter(parent) end, 
+        OnClick = function() self:OnClick() end  
+    })
+    mnkFavoriteMounts.LDB.label = 'Favorite Mounts'
+    self:GetAllMounts()
 end
-
-mnkFavoriteMounts:SetScript('OnEvent', mnkFavoriteMounts.DoOnEvent)
-mnkFavoriteMounts:RegisterEvent('PLAYER_LOGIN')
-mnkFavoriteMounts:RegisterEvent('PLAYER_ENTERING_WORLD')
-mnkFavoriteMounts:RegisterEvent('COMPANION_LEARNED')
-
