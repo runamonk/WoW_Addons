@@ -5,7 +5,6 @@ local tInventoryItems = {}
 local LibQTip = LibStub('LibQTip-1.0')
 local StatusBarCellProvider, StatusBarCell = LibQTip:CreateCellProvider()
 local AverageItemLevel = 0
-local afterFirstTime = false
 local MAX_SLOTS = 19
 
 mnkInventory:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
@@ -18,6 +17,10 @@ mnkInventory:RegisterEvent('CONFIRM_XP_LOSS')
 mnkInventory:RegisterEvent('PLAYER_DEAD')
 mnkInventory:RegisterEvent('PLAYER_UNGHOST')
 mnkInventory:RegisterEvent('UPDATE_INVENTORY_ALERTS')
+
+function mnkInventory:CHAT_MSG_COMBAT_MISC_INFO()
+    self:UpdateAll()
+end
 
 function mnkInventory:CONFIRM_XP_LOSS()
 	self:UpdateAll()
@@ -59,22 +62,18 @@ function mnkInventory:PLAYER_EQUIPMENT_CHANGED(event, slotid, hasCurrent)
 	self:CalculateAverageiLevel()
 end
 
-function mnkInventory:PLAYER_LOGIN(event, ...)
+function mnkInventory:PLAYER_LOGIN()
 	self.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkInventory', {
 	    icon = 'Interface\\Icons\\Inv_chest_plate15.blp', 
 	    type = 'data source', 
-	    OnEnter = mnkInventory.OnEnter, 
-	    OnClick = mnkInventory.OnClick
+	    OnEnter = function (parent) mnkInventory:OnEnter(parent) end, 
+	    OnClick = function () mnkInventory.OnClick() end
         })
 	self.LDB.label = 'Inventory'
 	self:GetInventoryItems()
 end
 
 function mnkInventory:PLAYER_UNGHOST()
-	self:UpdateAll()
-end
-
-function mnkInventory:CHAT_MSG_COMBAT_MISC_INFO()
 	self:UpdateAll()
 end
 
@@ -148,7 +147,11 @@ function mnkInventory:GetItemLevel(slotid)
     return 0
 end
 
-function mnkInventory.OnEnter(self)
+function mnkInventory:OnClick()
+    ToggleCharacter('PaperDollFrame')
+end
+
+function mnkInventory:OnEnter(parent)
 	local function OnMouseDown(self, arg, button) 
     	ChatEdit_InsertLink(arg)
 	end
@@ -198,15 +201,11 @@ function mnkInventory.OnEnter(self)
 	        tooltip:SetLineScript(y, 'OnLeave', OnMouseLeave, v.link)
 	    end  
     end   
-    tooltip:SetAutoHideDelay(.1, self)
-    tooltip:SmartAnchorTo(self)
+    tooltip:SetAutoHideDelay(.1, parent)
+    tooltip:SmartAnchorTo(parent)
     tooltip:SetFrameStrata('HIGH')
     tooltip:SetBackdropBorderColor(0, 0, 0, 0)
     tooltip:Show()
-end
-
-function mnkInventory.OnClick(self)
-	ToggleCharacter('PaperDollFrame')
 end
 
 function mnkInventory:SetText()
@@ -279,6 +278,10 @@ function mnkInventory:TidyEquipLocName(itemEquipLoc)
 	end
 end
 
+function StatusBarCell:getContentHeight()
+    return self.bar:GetHeight()
+end
+
 function StatusBarCell:InitializeCell()
     self.bar = CreateFrame('StatusBar',nil, self)
     self.bar:SetSize(350, 16)
@@ -325,6 +328,7 @@ function StatusBarCell:SetupCell(tooltip, data, justification, font, r, g, b)
     local showBar = false
     if link then
         itemName, _, itemRarity, _, _, _, _, _, _, itemTexture, _ = GetItemInfo(link)
+        --print(link, ' ', itemName, ' ', itemTexture)
         if itemRarity then             
             _, _, _, color = GetItemQualityColor(itemRarity)
         else
@@ -333,6 +337,9 @@ function StatusBarCell:SetupCell(tooltip, data, justification, font, r, g, b)
         
         self.fsTogo:SetText()
         if azeriteItem and azeriteItem:GetItemName() == itemName then
+            if not itemTexture then
+                print(link, ' ', itemName)
+            end
             itemName = string.format('|T%s|t %s', itemTexture..':16:16:0:0:64:64:4:60:4:60', '|c'..color..itemName..' [Level '..C_AzeriteItem.GetPowerLevel(azeriteItemLocation)..']')
             
             self.bar:SetValue(math.min((azItemXP/azItemTotalXP) * 100, 100))
@@ -362,8 +369,4 @@ end
 
 function StatusBarCell:ReleaseCell()
 
-end
-
-function StatusBarCell:getContentHeight()
-    return self.bar:GetHeight()
 end
