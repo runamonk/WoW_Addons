@@ -1,0 +1,7 @@
+## Interface: 82500
+## Title: mnkLoots
+## Notes: Display scrolling notifications for looted items.
+## Author: runamonk
+## Version: 1
+
+mnkLoots.lua
