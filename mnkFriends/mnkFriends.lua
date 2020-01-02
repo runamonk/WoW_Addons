@@ -22,7 +22,6 @@ function mnkFriends.DoOnMouseDown(self, arg, button)
             return
         else
 		  C_PartyInfo.InviteUnit(name)
-          --InviteUnit(name)
         end 
     else
 		if sendBNet then 
@@ -85,9 +84,8 @@ function mnkFriends.DoOnEnter(self)
                     t[c].zone = info.gameAccountInfo.areaName 
                     t[c].client = info.gameAccountInfo.clientProgram 
                 else
-                    --local accountname = BNet_GetBNetAccountName(info)
-                    --print(accountname)
                     t[c].name = string.sub(info.battleTag, 1, string.find(info.battleTag, '#')-1) 
+                    t[c].zone = info.gameAccountInfo.richPresence
                     t[c].client = info.gameAccountInfo.clientProgram 
                 end
 
@@ -100,8 +98,6 @@ function mnkFriends.DoOnEnter(self)
             end        
         end
 
-        local sortedTable = {}
-
         local sort_func = function(a, b) return a.name < b.name end
         table.sort(t, sort_func)
 
@@ -111,7 +107,7 @@ function mnkFriends.DoOnEnter(self)
                 local y, x = tooltip:AddLine(t[i].nameformatted..status, t[i].level, t[i].zone, t[i].note)
                 tooltip:SetLineScript(y, 'OnMouseDown', mnkFriends.DoOnMouseDown, 'w_'..t[i].name)
             else
-                local y, x = tooltip:AddLine(t[i].name..status, '', '', t[i].note)
+                local y, x = tooltip:AddLine(t[i].name..status, '', t[i].zone, t[i].note)
                 tooltip:SetLineScript(y, 'OnMouseDown', mnkFriends.DoOnMouseDown, 'b_'..t[i].name)      
             end 
         end
