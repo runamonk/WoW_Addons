@@ -1,31 +1,68 @@
 mnkGuild = CreateFrame('Frame')
 mnkGuild.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
+mnkGuild:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
+mnkGuild:RegisterEvent('GUILD_ROSTER_UPDATE')
+mnkGuild:RegisterEvent('GUILD_MOTD')
+mnkGuild:RegisterEvent('PLAYER_LOGIN')
+mnkGuild:RegisterEvent('PLAYER_GUILD_UPDATE')
 
 local LibQTip = LibStub('LibQTip-1.0')
 local t = {}
 local colors = {}
-local maxLevel = GetMaxPlayerLevel()
-local _
+
 for class, color in pairs(RAID_CLASS_COLORS) do colors[class] = string.format('%02x%02x%02x', color.r * 255, color.g * 255, color.b * 255) end
 
-function mnkGuild:DoOnEvent(event)
-    if event == 'PLAYER_LOGIN' then
-        mnkGuild.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkGuild', {
-            icon = 'Interface\\GuildFrame\\GuildLogo-NoLogo', 
-            type = 'data source', 
-            OnEnter = mnkGuild.DoOnEnter, 
-            OnClick = mnkGuild.DoOnClick
-        })
-        self.LDB.label = 'Guild'
-    end
-    mnkGuild.UpdateText()
+function mnkGuild:GUILD_MOTD()
+    mnkGuild:UpdateText()  
 end
 
-function mnkGuild.DoOnClick(self)
+function mnkGuild:GUILD_ROSTER_UPDATE()
+    mnkGuild:UpdateText()  
+end 
+
+function mnkGuild:PLAYER_GUILD_UPDATE()
+    mnkGuild:UpdateText()  
+end 
+
+function mnkGuild:PLAYER_LOGIN()
+    mnkGuild.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkGuild', {
+        icon = 'Interface\\GuildFrame\\GuildLogo-NoLogo', 
+        type = 'data source', 
+        OnEnter = function (parent) mnkGuild:OnEnter(parent) end, 
+        OnClick = function () mnkGuild:OnClick() end
+    })
+    self.LDB.label = 'Guild'
+    mnkGuild:UpdateText()  
+end
+
+function mnkGuild:OnClick()
     ToggleGuildFrame()
 end
 
-function mnkGuild.DoOnEnter(self)
+function mnkGuild:OnEnter(parent)
+    local function OnClick(self, arg, button) 
+        local sendBNet = false
+       
+        if arg.client == 'b' then
+            sendBNet = true
+        end
+        
+        if button == 'RightButton' then
+            if sendBNet then 
+                return
+            else
+                --InviteUnit(arg.name)
+                C_PartyInfo.InviteUnit(arg.name)
+            end 
+        else
+            if sendBNet then 
+                ChatFrame_SendBNetTell(arg.name)
+            else
+                ChatFrame_SendTell(arg.name)
+            end
+        end
+    end
+
     local tooltip = LibQTip:Acquire('mnkGuildTooltip', 5, 'LEFT', 'LEFT', 'LEFT', 'LEFT', 'LEFT')
     
     self.tooltip = tooltip
@@ -47,7 +84,7 @@ function mnkGuild.DoOnEnter(self)
         
         for i = 1, #t do
             local y = tooltip:AddLine(t[i].ClassNameStatus, t[i].level, t[i].rank, t[i].zone, t[i].note)
-            tooltip:SetLineScript(y, 'OnMouseDown', mnkGuild.DoOnMouseDown, t[i])
+            tooltip:SetLineScript(y, 'OnMouseDown', OnClick, t[i])
         end
 
         tooltip:AddLine(' ')
@@ -63,50 +100,27 @@ function mnkGuild.DoOnEnter(self)
         tooltip:SetCell(l, 1, 'You are not in a guild.', 5)
     end
     tooltip.step = 50 
-    tooltip:SetAutoHideDelay(.1, self)
-    tooltip:SmartAnchorTo(self)
+    tooltip:SetAutoHideDelay(.1, parent)
+    tooltip:SmartAnchorTo(parent)
     tooltip:UpdateScrolling(500)
     tooltip:SetBackdropBorderColor(0, 0, 0, 0)
     tooltip:Show()
 end
 
-function mnkGuild.DoOnMouseDown(self, arg, button) 
-    local sendBNet = false
-   
-    if arg.client == 'b' then
-        sendBNet = true
-    end
-    
-    if button == 'RightButton' then
-        if sendBNet then 
-            return
+function mnkGuild:UpdateText()
+    local function Status(statusid)
+        if statusid == 0 then
+            return ''
+        elseif statusid == 1 then
+            return mnkLibs.Color(COLOR_GREEN)..'<Away>'
+        elseif statusid == 2 then
+            return mnkLibs.Color(COLOR_RED)..'<Busy>'
         else
-            --InviteUnit(arg.name)
-            C_PartyInfo.InviteUnit(arg.name)
-        end 
-    else
-        if sendBNet then 
-            ChatFrame_SendBNetTell(arg.name)
-        else
-            ChatFrame_SendTell(arg.name)
+            return ''
         end
     end
-end
 
-function mnkGuild.GetStatus(statusid)
-    if statusid == 0 then
-        return ''
-    elseif statusid == 1 then
-        return mnkLibs.Color(COLOR_GREEN)..'<Away>'
-    elseif statusid == 2 then
-        return mnkLibs.Color(COLOR_RED)..'<Busy>'
-    else
-        return ''
-    end
-end
-
-function mnkGuild.UpdateText()
-    table.wipe(t)
+    t = {}
 
     if IsInGuild() then
         GuildRoster()
@@ -131,7 +145,7 @@ function mnkGuild.UpdateText()
                     local classIcon = string.format('|TInterface\\GLUES\\CHARACTERCREATE\\UI-CHARACTERCREATE-CLASSES:16:16:0:0:256:256:%s:%s:%s:%s|t', (c1 * 256)+4, (c2 * 256)-4, (c3 * 256)+4, (c4 * 256)-4)
 
                     t[x] = {}
-                    t[x].ClassNameStatus = classIcon..format(' |cff%s%s', colors[class:gsub(' ', ''):upper()] or 'ffffff', mnkLibs.formatPlayerName(name))..mnkGuild.GetStatus(status)
+                    t[x].ClassNameStatus = classIcon..format(' |cff%s%s', colors[class:gsub(' ', ''):upper()] or 'ffffff', mnkLibs.formatPlayerName(name))..Status(status)
                     t[x].name = name
                     t[x].level = level
                     t[x].rank = rank
@@ -159,10 +173,3 @@ function mnkGuild.UpdateText()
     end
 end
 
-
-mnkGuild:SetScript('OnEvent', mnkGuild.DoOnEvent)
-mnkGuild:RegisterEvent('PLAYER_LOGIN')
-mnkGuild:RegisterEvent('GUILD_ROSTER_UPDATE')
-mnkGuild:RegisterEvent('GUILD_MOTD')
---mnkGuild:RegisterEvent('PLAYER_FLAGS_CHANGED')
-mnkGuild:RegisterEvent('PLAYER_GUILD_UPDATE')
