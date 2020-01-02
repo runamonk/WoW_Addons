@@ -7,7 +7,6 @@ mnkGearSets:RegisterEvent('EQUIPMENT_SETS_CHANGED')
 local LibQTip = LibStub('LibQTip-1.0')
 
 function mnkGearSets:PLAYER_LOGIN()
-    print('boom')
     mnkGearSets.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkGearSets', {
         icon = 'Interface\\Icons\\Inv_misc_enggizmos_30.blp', 
         type = 'data source', 
