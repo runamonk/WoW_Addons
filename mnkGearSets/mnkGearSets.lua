@@ -60,6 +60,6 @@ function mnkGearSets:OnEnter(parent)
 end
 
 function mnkGearSets:UpdateText()
-    mnkGearSets.LDB.text = C_EquipmentSet.GetNumEquipmentSets()
+    mnkGearSets.LDB.text = ' '..C_EquipmentSet.GetNumEquipmentSets()
 end
 
