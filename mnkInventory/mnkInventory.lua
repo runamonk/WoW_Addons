@@ -51,7 +51,7 @@ function mnkInventory:PLAYER_DEAD()
 	self:UpdateAll()
 end
 
-function mnkInventory:PLAYER_ENTERING_WORLD(event, firstTime)
+function mnkInventory:PLAYER_ENTERING_WORLD(event, firstTime, reload)
 	if not firstTime then
 		self:UpdateAll()
 	end
@@ -247,6 +247,7 @@ function mnkInventory:UpdateSlotInfo(slotid)
 
 	if link then	
 		local itemName, _, itemRarity, _, _, _, _, _,itemEquipLoc, itemIcon, _, _, _, _, _, _, _ = GetItemInfo(link) 
+
 		-- item not cached yet, we'll wait and get it when it's ready.
 		if not itemName then
 	        local eventFrame = CreateFrame('Frame')
@@ -257,12 +258,21 @@ function mnkInventory:UpdateSlotInfo(slotid)
 			eventFrame:RegisterEvent('GET_ITEM_INFO_RECEIVED')
 		else
 			--print('UpdateSlotInfo() ', itemName, ' ', link, ' ', itemEquipLoc)
+            local id = GetInventoryItemID("player", slotid)
+            local isAzeritePowered = C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(link)
+
 			tInventoryItems[slotid].link = link
 			tInventoryItems[slotid].Name = itemName
 			tInventoryItems[slotid].Rarity = itemRarity
 			tInventoryItems[slotid].EquipLoc = self:TidyEquipLocName(itemEquipLoc) 
 			tInventoryItems[slotid].Icon = itemIcon
 			tInventoryItems[slotid].iLevel = self:GetItemLevel(slotid)
+            tInventoryItems[slotid].id = id
+            tInventoryItems[slotid].isAzeritePowered = isAzeritePowered
+            if isAzeritePowered then
+            
+            end
+
 			self:GetItemDurability(slotid)
 		end
 	end
