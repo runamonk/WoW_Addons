@@ -1,28 +1,21 @@
 -- Code based on Zorks rMinimap and rObjectiveTracker.
 mnkMinimap = CreateFrame('Frame')
+mnkMinimap:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
+mnkMinimap:RegisterEvent('PLAYER_ENTERING_WORLD')
+mnkMinimap:RegisterEvent('ZONE_CHANGED')
+mnkMinimap:RegisterEvent('QUEST_ACCEPTED')
+mnkMinimap:RegisterEvent('ZONE_CHANGED_NEW_AREA')
+
 local _, playerClass = UnitClass('player')
 local classColor = {}
+
 classColor.r, classColor.g, classColor.b, _ = GetClassColor(playerClass)
-local _
 
 local function MinimapZoom(self, direction)
     if (direction > 0) then 
         Minimap_ZoomIn()
     else 
         Minimap_ZoomOut() 
-    end
-end
-
-function mnkMinimap:DoOnEvent(event, ...)
-    if event == 'PLAYER_ENTERING_WORLD' then
-        local initialLogin, reloadingUI = ...
-        if initialLogin or reloadingUI then
-            mnkMinimap.SetQuestTrackerPosition()
-            mnkMinimap.SetMinimapPositionAndSize()
-            mnkMinimap.FilterQuestTracker()
-        end
-    else
-        mnkMinimap.FilterQuestTracker()
     end
 end
 
@@ -46,6 +39,16 @@ function mnkMinimap:FilterQuestTracker()
 
     EmptyTracker()
     FillTracker()
+end
+
+function mnkMinimap:PLAYER_ENTERING_WORLD()
+    mnkMinimap.SetQuestTrackerPosition()
+    mnkMinimap.SetMinimapPositionAndSize()
+    mnkMinimap.FilterQuestTracker()
+end
+
+function mnkMinimap:QUEST_ACCEPTED()
+    mnkMinimap.FilterQuestTracker()
 end
 
 function mnkMinimap:SetMinimapPositionAndSize()
@@ -139,8 +142,10 @@ function mnkMinimap:SetQuestTrackerPosition()
     ObjectiveTrackerFrame:SetUserPlaced(true)
 end
 
-mnkMinimap:SetScript('OnEvent', mnkMinimap.DoOnEvent)
-mnkMinimap:RegisterEvent('PLAYER_ENTERING_WORLD')
-mnkMinimap:RegisterEvent('ZONE_CHANGED')
-mnkMinimap:RegisterEvent('QUEST_ACCEPTED')
-mnkMinimap:RegisterEvent('ZONE_CHANGED_NEW_AREA')
+function mnkMinimap:ZONE_CHANGED()
+    mnkMinimap.FilterQuestTracker()
+end
+
+function mnkMinimap:ZONE_CHANGED_NEW_AREA()
+    mnkMinimap.FilterQuestTracker()
+end
