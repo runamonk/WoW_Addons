@@ -1,4 +1,4 @@
-## Interface: 82500
+## Interface: 80205
 ## Title: mnkLoots
 ## Notes: Display scrolling notifications for looted items.
 ## Author: runamonk

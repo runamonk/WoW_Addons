@@ -1,4 +1,4 @@
-## Interface: 80000
+## Interface: 80205
 ## Title: mnkXP
 ## Notes: Display XP in a broker display
 ## Author: runamonk
