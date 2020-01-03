@@ -1,4 +1,4 @@
-## Interface: 80000
+## Interface: 80205
 ## Title: mnkFriends
 ## Notes: Display friends in a broker display
 ## Author: runamonk
