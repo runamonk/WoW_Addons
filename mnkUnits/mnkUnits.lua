@@ -40,9 +40,8 @@ local function CreateCastBar(self)
     self.castbarbg:Hide()
   
     self.Castbar = CreateFrame('StatusBar', nil, self.castbarbg)
-    self.Castbar:SetSize(self.castbarbg:GetSize())
-    self.Castbar:SetPoint('TOPLEFT', self.castbarbg)
-    self.Castbar:SetPoint('BOTTOMRIGHT', self.castbarbg)
+    self.Castbar:SetPoint('TOPLEFT', self.castbarbg, 0, -1)
+    self.Castbar:SetPoint('BOTTOMRIGHT', self.castbarbg, 0, 1)
     self.Castbar:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
     self.Castbar:SetStatusBarColor(classColor.r/5, classColor.g/5, classColor.b/5, 1)
 
