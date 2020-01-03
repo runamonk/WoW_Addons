@@ -5,6 +5,7 @@ mnkFavoriteMounts:RegisterEvent('PLAYER_LOGIN')
 mnkFavoriteMounts:RegisterEvent('COMPANION_LEARNED')
 mnkFavoriteMounts:RegisterEvent('PLAYER_ENTERING_WORLD')
 mnkFavoriteMounts:RegisterEvent('MOUNT_JOURNAL_USABILITY_CHANGED')
+mnkFavoriteMounts:RegisterEvent('MOUNT_JOURNAL_SEARCH_UPDATED')
 
 local libQTip = LibStub('LibQTip-1.0')
 local libAG = LibStub('AceGUI-3.0')
@@ -40,7 +41,7 @@ function mnkFavoriteMounts:GetAllMounts()
         local sort_func = function(a, b) return a.mName < b.mName end
         table.sort(tFavorites, sort_func)
     end
-    mnkFavoriteMounts.LDB.text = mnkLibs.Color(COLOR_GOLD)..#tFavorites..mnkLibs.Color(COLOR_WHITE)..' of '..mnkLibs.Color(COLOR_GOLD)..intCollected 
+    mnkFavoriteMounts.LDB.text = ' '..mnkLibs.Color(COLOR_GOLD)..#tFavorites..mnkLibs.Color(COLOR_WHITE)..' of '..mnkLibs.Color(COLOR_GOLD)..intCollected 
 end
 
 function mnkFavoriteMounts:OnClick()
@@ -83,6 +84,10 @@ function mnkFavoriteMounts:OnEnter(parent)
 end
 
 function mnkFavoriteMounts:COMPANION_LEARNED()
+    self:GetAllMounts()
+end
+
+function mnkFavoriteMounts:MOUNT_JOURNAL_SEARCH_UPDATED(event)
     self:GetAllMounts()
 end
 

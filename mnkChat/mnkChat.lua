@@ -113,14 +113,10 @@ function mnkChat:CHAT_MSG_BN_WHISPER(event, ...)
     mnkChat:Message(event, ...)    
 end
 
-function mnkChat:OnClick(self, button)
-    if self.tooltip ~= nil then
-        self.tooltip:Hide()
-    end
-
+function mnkChat:OnClick(button)
     if button == 'RightButton' then
         mnkChat_db.Messages = {}
-        mnkChat.UpdateText()
+        mnkChat:UpdateText()
     end
 end
 
@@ -165,7 +161,7 @@ function mnkChat:PLAYER_LOGIN()
         icon = mnkLibs.Textures.icon_none, 
         type = 'data source', 
         OnEnter = function (parent) mnkChat:OnEnter(parent) end, 
-        OnClick = function (event, button) mnkChat.OnClick(event, button) end
+        OnClick = function (button) mnkChat.OnClick(button) end
     })
     QuickJoinToastButton:Hide() 
     QuickJoinToastButton:HookScript('OnShow', QuickJoinToastButton.Hide)
@@ -312,5 +308,5 @@ function mnkChat:UpdateText()
     else
         mnkChat.LDB.icon = mnkLibs.Textures.icon_none
     end
-    mnkChat.LDB.text = mnkChat_db.NEW_MESSAGES
+    mnkChat.LDB.text = ' '..mnkChat_db.NEW_MESSAGES
 end
