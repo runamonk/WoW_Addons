@@ -1,13 +1,13 @@
 mnkFavoriteMounts = CreateFrame('Frame', 'mnkFavoriteMounts')
 mnkFavoriteMounts.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
-
 mnkFavoriteMounts:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
 mnkFavoriteMounts:RegisterEvent('PLAYER_LOGIN')
 mnkFavoriteMounts:RegisterEvent('COMPANION_LEARNED')
+mnkFavoriteMounts:RegisterEvent('PLAYER_ENTERING_WORLD')
+mnkFavoriteMounts:RegisterEvent('MOUNT_JOURNAL_USABILITY_CHANGED')
 
 local libQTip = LibStub('LibQTip-1.0')
 local libAG = LibStub('AceGUI-3.0')
-
 local tblAll = {}
 local intCollected = 0
 local tFavorites = {}
@@ -22,14 +22,13 @@ function mnkFavoriteMounts:GetAllMounts()
     
     if #tblAll > 0 then
         for i = 1, #tblAll do
-            local mName, spellID, mIcon, active, isUsable, _, isFavorite, _, _, hideOnChar, isCollected, mountID = C_MountJournal.GetMountInfoByID(tblAll[i])
-            
+            local mName, _, mIcon, _, isUsable, _, isFavorite, _, _, hideOnChar, isCollected, mountID = C_MountJournal.GetMountInfoByID(tblAll[i])
+
             if isCollected then
                 intCollected = intCollected + 1         
             end
-
-            if isFavorite then
-                --print(mName, ' ', 'isCol:', isCollected, ' isFavorite:', isFavorite, ' hideOnChar:', hideOnChar)
+            
+            if isCollected and isFavorite and isUsable and not hideOnChar then
                 c = (c + 1)
                 tFavorites[c] = {}
                 tFavorites[c].mName = mName
@@ -87,6 +86,16 @@ function mnkFavoriteMounts:COMPANION_LEARNED()
     self:GetAllMounts()
 end
 
+function mnkFavoriteMounts:MOUNT_JOURNAL_USABILITY_CHANGED(event)
+    self:GetAllMounts()
+end
+
+function mnkFavoriteMounts:PLAYER_ENTERING_WORLD(event, firstTime, reload)
+    if firstTime or reload then
+        self:GetAllMounts()
+    end
+end
+
 function mnkFavoriteMounts:PLAYER_LOGIN()
     mnkFavoriteMounts.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkFavoriteMounts', {
         icon = 'Interface\\Icons\\Ability_mount_blackpanther.blp', 
@@ -95,5 +104,5 @@ function mnkFavoriteMounts:PLAYER_LOGIN()
         OnClick = function() self:OnClick() end  
     })
     mnkFavoriteMounts.LDB.label = 'Favorite Mounts'
-    self:GetAllMounts()
 end
+
