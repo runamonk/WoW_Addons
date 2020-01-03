@@ -2,8 +2,8 @@
 mnkMinimap = CreateFrame('Frame')
 mnkMinimap:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
 mnkMinimap:RegisterEvent('PLAYER_ENTERING_WORLD')
-mnkMinimap:RegisterEvent('ZONE_CHANGED')
 mnkMinimap:RegisterEvent('QUEST_ACCEPTED')
+mnkMinimap:RegisterEvent('ZONE_CHANGED')
 mnkMinimap:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 
 local _, playerClass = UnitClass('player')
@@ -20,9 +20,7 @@ local function MinimapZoom(self, direction)
 end
 
 function mnkMinimap:FilterQuestTracker()
-    local currentMap =  C_Map.GetBestMapForUnit("player")
-    local mapInfo = C_Map.GetMapInfo(currentMap)
-    local questsOnMap = C_QuestLog.GetQuestsOnMap(currentMap)
+    --local mapInfo = C_Map.GetMapInfo(currentMap)
 
     local function EmptyTracker()
         for i = GetNumQuestWatches(), 1, -1 do
@@ -31,6 +29,10 @@ function mnkMinimap:FilterQuestTracker()
     end
 
     local function FillTracker()
+        local currentMap =  C_Map.GetBestMapForUnit("player")
+        if not currentMap then return end
+        local questsOnMap = C_QuestLog.GetQuestsOnMap(currentMap)
+
         for i, info in ipairs(questsOnMap) do
             local x = GetQuestLogIndexByID(info.questID)
             AddQuestWatch(GetQuestLogIndexByID(info.questID))
