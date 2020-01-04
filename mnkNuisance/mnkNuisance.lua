@@ -15,7 +15,7 @@ function mnkNuisance:DUEL_REQUESTED()
         CancelDuel()
         StaticPopup_Hide('DUEL_REQUESTED')
         BlockThisSession = (BlockThisSession + 1)
-        mnkNuisance.SetIcon()
+        self:UpdateText()
         print('Duel declined automtically.')
     end    
 end
@@ -71,7 +71,7 @@ end
 
 function mnkNuisance:OnClick()
     mnkNuisance_bBlockEnabled = (mnkNuisance_bBlockEnabled == false)
-    self:SetIcon()
+    self:UpdateText()
 end
 
 function mnkNuisance:OnEnter(parent)
@@ -104,7 +104,7 @@ function mnkNuisance:PARTY_INVITE_REQUEST(event, arg1)
             --TODO AddIgnore() assholes.
             --SendChatMessage('Thanks for the invite. I auto-decline all group invites by default.', 'WHISPER', nil, arg1)
             BlockThisSession = (BlockThisSession + 1)
-            mnkNuisance.SetIcon()
+            self:UpdateText()
         end
     end
 end
@@ -125,10 +125,10 @@ function mnkNuisance:PLAYER_LOGIN()
         OnClick = function() mnkNuisance:OnClick() end, 
         OnEnter = function(parent) mnkNuisance:OnEnter(parent) end
     })
-    mnkNuisance:SetIcon()
+    self:UpdateText()
 end
 
-function mnkNuisance:SetIcon()
+function mnkNuisance:UpdateText()
     if mnkNuisance_bBlockEnabled == true then
         self.LDB.icon = 'Interface\\Icons\\Achievement_dungeon_naxxramas_10man'
         self.LDB.text = mnkLibs.Color(COLOR_RED)..'Blocked '..' ('..BlockThisSession..')'

@@ -101,9 +101,6 @@ function mnkReputation.DoOnConfigClose(frame)
     mnkReputation.UpdateTable(mnkReputation_db.Watched, sFactions)
     mnkReputation.GetAllFactions()
     mnkReputation.UpdateText()
-
-    --libAG:Release(fConfig);
-    --fConfig = nil;
 end
 
 function mnkReputation.DoOnEnter(self)
@@ -553,6 +550,5 @@ mnkReputation:RegisterEvent('ZONE_CHANGED')
 mnkReputation:RegisterEvent('CHAT_MSG_LOOT')
 mnkReputation:RegisterEvent('UPDATE_FACTION')
 mnkReputation:RegisterEvent('GROUP_ROSTER_UPDATE')
---mnkReputation:RegisterEvent('BAG_UPDATE')
 
 

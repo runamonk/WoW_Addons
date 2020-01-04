@@ -1,8 +1,10 @@
 mnkFriends = CreateFrame('Frame')
 mnkFriends.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 mnkFriends:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
-mnkLibs.setBackdrop(mnkFriends, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
-mnkFriends:SetBackdropColor(0, 0, 0, 1)
+mnkFriends:RegisterEvent('PLAYER_LOGIN')
+mnkFriends:RegisterEvent('FRIENDLIST_UPDATE')
+mnkFriends:RegisterEvent('BN_FRIEND_ACCOUNT_OFFLINE')
+mnkFriends:RegisterEvent('BN_FRIEND_ACCOUNT_ONLINE')
 
 local LibQTip = LibStub('LibQTip-1.0')
 local FRIENDS_TEXTURE_BROADCAST = 'Interface\\FriendsFrame\\BroadcastIcon'
@@ -12,15 +14,15 @@ local LastFriendsOnline = 0
 local colors = {}
 
 function mnkFriends:BN_FRIEND_ACCOUNT_OFFLINE()
-    self.LDB.text = mnkFriends.GetNumFriendsOnline()
+    self.LDB.text = mnkFriends:GetNumFriendsOnline()
 end
 
 function mnkFriends:BN_FRIEND_ACCOUNT_ONLINE()
-    self.LDB.text = mnkFriends.GetNumFriendsOnline()
+    self.LDB.text = mnkFriends:GetNumFriendsOnline()
 end
 
 function mnkFriends:FRIENDLIST_UPDATE()
-    self.LDB.text = mnkFriends.GetNumFriendsOnline()
+    self.LDB.text = mnkFriends:GetNumFriendsOnline()
 end
 
 function mnkFriends:GetNumFriendsOnline()
@@ -76,7 +78,7 @@ function mnkFriends:OnEnter(parent)
     tooltip:SetHeaderFont(mnkLibs.DefaultTooltipFont)
     tooltip:Clear()
 
-    local x = mnkFriends.GetNumFriendsOnline()
+    local x = mnkFriends:GetNumFriendsOnline()
     if x > 0 then
         tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Name', mnkLibs.Color(COLOR_GOLD)..'Level', mnkLibs.Color(COLOR_GOLD)..'Zone', mnkLibs.Color(COLOR_GOLD)..'Note')
 
@@ -170,7 +172,7 @@ function mnkFriends:OnEnter(parent)
 end
 
 function mnkFriends:PLAYER_LOGIN()
-    mnkFriends.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkFriends', {
+    self.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkFriends', {
         icon = 'Interface\\Icons\\Inv_drink_05.blp', 
         type = 'data source', 
         OnEnter = function (parent) mnkFriends:OnEnter(parent) end, 
@@ -179,10 +181,6 @@ function mnkFriends:PLAYER_LOGIN()
     for class, color in pairs(RAID_CLASS_COLORS) do colors[class] = string.format('%02x%02x%02x', color.r * 255, color.g * 255, color.b * 255) end
 
     self.LDB.label = 'Friends'
-    self.LDB.text = mnkFriends.GetNumFriendsOnline()
+    self.LDB.text = mnkFriends:GetNumFriendsOnline()
 end
 
-mnkFriends:RegisterEvent('PLAYER_LOGIN')
-mnkFriends:RegisterEvent('FRIENDLIST_UPDATE')
-mnkFriends:RegisterEvent('BN_FRIEND_ACCOUNT_OFFLINE')
-mnkFriends:RegisterEvent('BN_FRIEND_ACCOUNT_ONLINE')
