@@ -1,108 +1,59 @@
 mnkMoney = CreateFrame('Frame')
 mnkMoney.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
+mnkMoney:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
+
+mnkMoney:RegisterEvent('CHAT_MSG_CURRENCY')
+mnkMoney:RegisterEvent('CURRENCY_DISPLAY_UPDATE')
+mnkMoney:RegisterEvent('PLAYER_ENTERING_WORLD')
+mnkMoney:RegisterEvent('PLAYER_LOGIN')
+mnkMoney:RegisterEvent('PLAYER_MONEY')
+mnkMoney:RegisterEvent('PLAYER_TRADE_MONEY')
+mnkMoney:RegisterEvent('SEND_MAIL_COD_CHANGED')
+mnkMoney:RegisterEvent('SEND_MAIL_MONEY_CHANGED')
+mnkMoney:RegisterEvent('TRADE_MONEY_CHANGED')
+
+
 local libQTip = LibStub('LibQTip-1.0')
 local SPACER = '       '
 local currencyOnHand = 0
-local _
 
-function mnkMoney.DoOnClick(self)
+function  mnkMoney:CHAT_MSG_CURRENCY(event, arg1, arg2)
+    local CURRENCY_PATTERN = (CURRENCY_GAINED):gsub('%%s', '(.+)')
+    local CURRENCY_MULTIPLE_PATTERN = (CURRENCY_GAINED_MULTIPLE):gsub('%%s', '(.+)'):gsub('%%d', '(%%d+)')
+    
+    local l, c = arg1:match(CURRENCY_MULTIPLE_PATTERN)
+    if not l then
+        c, l = 1, arg1:match(CURRENCY_PATTERN)
+    end
+    if l then
+        local name, i, icon = _G.GetCurrencyInfo(tonumber(l:match('currency:(%d+)')))
+        local s = string.format('|T%s:12|t %s', icon, name..mnkLibs.Color(COLOR_WHITE)..' x '..c..' ['..i..']')
+        CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false)
+    end
+    self:UpdateText()
+end
+
+function mnkMoney:CURRENCY_DISPLAY_UPDATE()
+    self:UpdateText()
+end
+
+function mnkMoney:OnClick()
     ToggleCharacter('TokenFrame')
 end
 
-function mnkMoney:DoOnEvent(event, arg1, arg2)
-    if event == 'PLAYER_LOGIN' then
-        mnkMoney.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkMoney', {
-            type = 'data source', 
-            icon = nil, 
-            OnClick = mnkMoney.DoOnClick, 
-            OnEnter = mnkMoney.DoOnEnter
-        })
-        self.LDB.label = 'Money'
-    end
-    if event == 'PLAYER_ENTERING_WORLD' then
-        currencyOnHand = GetMoney()
-    elseif event == 'CHAT_MSG_CURRENCY' or event == 'PLAYER_MONEY' then
-      
-        if event == 'PLAYER_MONEY' then
-            local currency = GetMoney() or 0
-            local x = 0
-            local sign = nil
-
-            if (currency ~= currencyOnHand) and ((currency > 0) or (currencyOnHand > 0)) then
-                if currency > currencyOnHand then
-                    x = currency - currencyOnHand
-                    currencyOnHand = currency
-                    sign = '+'
-                elseif currencyOnHand > currency then
-                    x = currencyOnHand - currency
-                    currencyOnHand = currency
-                    sign = '-'
-                end
-                local s = sign..GetCoinTextureString(x) or nil
-                if s ~= nil then
-                    CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false)
-                    currencyOnHand = currency
-                end 
-            end
-        end -- PLAYER_MONEY
-
-        if event == 'CHAT_MSG_CURRENCY' then
-            local CURRENCY_PATTERN = (CURRENCY_GAINED):gsub('%%s', '(.+)')
-            local CURRENCY_MULTIPLE_PATTERN = (CURRENCY_GAINED_MULTIPLE):gsub('%%s', '(.+)'):gsub('%%d', '(%%d+)')
-            
-            local l, c = arg1:match(CURRENCY_MULTIPLE_PATTERN)
-            if not l then
-                c, l = 1, arg1:match(CURRENCY_PATTERN)
-            end
-            if l then
-                local name, i, icon = _G.GetCurrencyInfo(tonumber(l:match('currency:(%d+)')))
-                local s = string.format('|T%s:12|t %s', icon, name..mnkLibs.Color(COLOR_WHITE)..' x '..c..' ['..i..']')
-                CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false)
-            end
-        end --CHAT_MSG_CURRENCY
-    end    
-
-    local gold, silver, copper = mnkMoney.GetMoneyText()
-    local text = 0
-
-    if gold > 0 then
-        self.LDB.icon = 'Interface\\MoneyFrame\\UI-GoldIcon'
-        text = mnkLibs.formatNumber(gold, 2)
-    elseif silver > 0 then
-        self.LDB.icon = 'Interface\\MoneyFrame\\UI-SilverIcon'
-        text = silver
-    elseif copper > 0 then
-        self.LDB.icon = 'Interface\\MoneyFrame\\UI-CopperIcon'
-        text = copper
-    else
-        self.LDB.icon = 'Interface\\MoneyFrame\\UI-CopperIcon'
-        text = 0
-    end
-
-    self.LDB.text = text
-end
-
-function mnkMoney.DoOnEnter(self)
-    
+function mnkMoney:OnEnter(parent)   
     local tooltip = libQTip:Acquire('mnkMoneyTooltip', 3, 'LEFT', 'LEFT', 'RIGHT')
     self.tooltip = tooltip
     tooltip:SetFont(mnkLibs.DefaultTooltipFont)
     tooltip:SetHeaderFont(mnkLibs.DefaultTooltipFont)
     tooltip:Clear()
     tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Currency', SPACER, mnkLibs.Color(COLOR_GOLD)..'Amount')
-    local gold, silver, copper = mnkMoney.GetMoneyText()
-    
-    if gold > 0 then
-        tooltip:AddLine(format('|T%s:16|t %s', 'Interface\\MoneyFrame\\UI-GoldIcon', 'Gold'), SPACER, mnkLibs.formatNumber(gold, 2))
-    elseif silver > 0 then
-        tooltip:AddLine(format('|T%s:16|t %s', 'Interface\\MoneyFrame\\UI-SilverIcon', 'Silver'), SPACER, format('%d', silver))
-    elseif copper > 0 then
-        tooltip:AddLine(format('|T%s:16|t %s', 'Interface\\MoneyFrame\\UI-CopperIcon', 'Copper'), SPACER, format('%d', copper))
-    else
-        tooltip:AddLine('0.00')
-    end
+    local copper = GetMoney()
+    local formattedMoney = GetCoinTextureString(copper)
 
+    tooltip:AddLine('Coin', SPACER, formattedMoney)
     tooltip:AddLine(' ')
+
     local t = {}
     idx = 0
     for i = 1, GetCurrencyListSize() do
@@ -124,26 +75,73 @@ function mnkMoney.DoOnEnter(self)
         tooltip:AddLine(t[i].icon..t[i].name, SPACER, mnkLibs.formatNumber(t[i].count,2))
     end
 
-    tooltip:SetAutoHideDelay(.1, self)
-    tooltip:SmartAnchorTo(self)
+    tooltip:SetAutoHideDelay(.1, parent)
+    tooltip:SmartAnchorTo(parent)
     tooltip:SetBackdropBorderColor(0, 0, 0, 0)
     tooltip:Show()
 end
 
-function mnkMoney.GetMoneyText()
-    local copper = GetMoney()
-
-    return math.floor(copper / 100 / 100), math.floor(copper / 100 % 100), math.floor(copper % 100)
+function mnkMoney:PLAYER_LOGIN()
+    mnkMoney.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkMoney', {
+        type = 'data source', 
+        icon = nil, 
+        OnClick = function () mnkMoney:OnClick() end, 
+        OnEnter = function (parent) mnkMoney:OnEnter(parent) end
+    })
+    self.LDB.label = 'Money'
 end
 
-mnkMoney:SetScript('OnEvent', mnkMoney.DoOnEvent)
+function mnkMoney:PLAYER_ENTERING_WORLD(event, firstTime, reload)
+    if firstTime or reload then
+        currencyOnHand = GetMoney()
+        self:UpdateText()
+    end
+end
 
-mnkMoney:RegisterEvent('CHAT_MSG_CURRENCY')
-mnkMoney:RegisterEvent('CURRENCY_DISPLAY_UPDATE')
-mnkMoney:RegisterEvent('PLAYER_ENTERING_WORLD')
-mnkMoney:RegisterEvent('PLAYER_LOGIN')
-mnkMoney:RegisterEvent('PLAYER_MONEY')
-mnkMoney:RegisterEvent('PLAYER_TRADE_MONEY')
-mnkMoney:RegisterEvent('SEND_MAIL_COD_CHANGED')
-mnkMoney:RegisterEvent('SEND_MAIL_MONEY_CHANGED')
-mnkMoney:RegisterEvent('TRADE_MONEY_CHANGED')
+function mnkMoney:PLAYER_MONEY()
+    local currency = GetMoney() or 0
+    local x = 0
+    local sign = nil
+
+    if (currency ~= currencyOnHand) and ((currency > 0) or (currencyOnHand > 0)) then
+        if currency > currencyOnHand then
+            x = currency - currencyOnHand
+            currencyOnHand = currency
+            sign = '+'
+        elseif currencyOnHand > currency then
+            x = currencyOnHand - currency
+            currencyOnHand = currency
+            sign = '-'
+        end
+        local s = sign..GetCoinTextureString(x) or nil
+        if s ~= nil then
+            CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false)
+            currencyOnHand = currency
+        end 
+    end
+    self:UpdateText()
+end
+
+function mnkMoney:PLAYER_TRADE_MONEY()
+    self:UpdateText()
+end
+
+function mnkMoney:SEND_MAIL_COD_CHANGED()
+    self:UpdateText()
+end
+
+function mnkMoney:SEND_MAIL_MONEY_CHANGED()
+    self:UpdateText()
+end
+
+function mnkMoney:TRADE_MONEY_CHANGED()
+    self:UpdateText()
+end
+
+function mnkMoney:UpdateText()
+    local copper = GetMoney()
+    local formattedMoney = GetCoinTextureString(copper, 16)
+    self.LDB.text = formattedMoney
+end
+
+
