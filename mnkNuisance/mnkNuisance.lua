@@ -1,77 +1,26 @@
 mnkNuisance = CreateFrame('Frame')
 mnkNuisance.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 mnkNuisance_bBlockEnabled = true
+mnkNuisance:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
+mnkNuisance:RegisterEvent('PLAYER_LOGIN')
+mnkNuisance:RegisterEvent('PARTY_INVITE_REQUEST')
+mnkNuisance:RegisterEvent('DUEL_REQUESTED')
+mnkNuisance:RegisterEvent('PET_BATTLE_PVP_DUEL_REQUESTED')
 
 local LibQTip = LibStub('LibQTip-1.0')
 local BlockThisSession = 0
-local _
 
-function mnkNuisance:DoOnEvent(event, arg1)
-    if event == 'PLAYER_LOGIN' then
-        mnkNuisance.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkNuisance', {
-            icon = '', 
-            label = mnkLibs.Color(COLOR_GOLD)..'Nuisance', 
-            type = 'data source', 
-            OnClick = mnkNuisance.DoOnClick, 
-            OnEnter = mnkNuisance.DoOnEnter
-        })
+function mnkNuisance:DUEL_REQUESTED()
+    if mnkNuisance_bBlockEnabled == true then
+        CancelDuel()
+        StaticPopup_Hide('DUEL_REQUESTED')
+        BlockThisSession = (BlockThisSession + 1)
         mnkNuisance.SetIcon()
-    elseif event == 'PET_BATTLE_PVP_DUEL_REQUESTED' then
-        if mnkNuisance_bBlockEnabled == true then
-            CancelPetDuel()
-            StaticPopup_Hide('PET_BATTLE_PVP_DUEL_REQUESTED')
-            mnkLibs.PrintError('Pet duel declined automtically.')
-        end
-    elseif event == 'DUEL_REQUESTED' then
-        if mnkNuisance_bBlockEnabled == true then
-            CancelDuel()
-            StaticPopup_Hide('DUEL_REQUESTED')
-            BlockThisSession = (BlockThisSession + 1)
-            mnkNuisance.SetIcon()
-            mnkLibs.PrintError('Duel declined automtically.')
-        end
-    elseif (event == 'PARTY_INVITE_REQUEST') then
-        if mnkNuisance_bBlockEnabled == true then
-            if mnkNuisance.IsFriend(arg1) == false and mnkNuisance.InGuild(arg1) == false then
-                DeclineGroup()
-                StaticPopup_Hide('PARTY_INVITE')
-                mnkLibs.PrintError('Declined group invite from '..arg1)
-                --TODO AddIgnore() assholes.
-                --SendChatMessage('Thanks for the invite. I auto-decline all group invites by default.', 'WHISPER', nil, arg1)
-                BlockThisSession = (BlockThisSession + 1)
-                mnkNuisance.SetIcon()
-            end
-        end
-    end
+        print('Duel declined automtically.')
+    end    
 end
 
-function mnkNuisance.DoOnClick(self)
-    mnkNuisance_bBlockEnabled = (mnkNuisance_bBlockEnabled == false)
-    mnkNuisance.SetIcon()
-end
-
-function mnkNuisance.DoOnEnter(self)
-    local tooltip = LibQTip:Acquire('mnkNuisanceTooltip', 1, 'LEFT')
-    self.tooltip = tooltip
-    tooltip:SetFont(mnkLibs.DefaultTooltipFont)
-    tooltip:SetHeaderFont(mnkLibs.DefaultTooltipFont)
-    tooltip:Clear()
-    tooltip:AddLine('Click to enable or disable blocking of group and duel invites.')
-
-    tooltip:SetAutoHideDelay(.1, self)
-    tooltip:SmartAnchorTo(self)
-    tooltip:SetBackdropBorderColor(0, 0, 0, 0)
-    -- tooltip:SetBackdrop(GameTooltip:GetBackdrop())
-    -- tooltip:SetBackdropBorderColor(GameTooltip:GetBackdropBorderColor())
-    -- tooltip:SetBackdropColor(GameTooltip:GetBackdropColor())
-    -- tooltip:SetScale(GameTooltip:GetScale())
-    mnkLibs.setBackdrop(tooltip, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
-    tooltip:SetBackdropColor(0, 0, 0, 1)
-    tooltip:EnableMouse(true)    
-    tooltip:Show()
-end
-
-function mnkNuisance.IsFriend(chatUser)
+function mnkNuisance:IsFriend(chatUser)
     local _, i = GetNumFriends()
     
     if chatUser ~= nil then
@@ -102,7 +51,7 @@ function mnkNuisance.IsFriend(chatUser)
     return false
 end
 
-function mnkNuisance.InGuild(chatUser)
+function mnkNuisance:InGuild(chatUser)
     if IsInGuild() then
         GuildRoster()
         local _, _, iOnline = GetNumGuildMembers()
@@ -120,18 +69,73 @@ function mnkNuisance.InGuild(chatUser)
     return false
 end
 
-function mnkNuisance.SetIcon()
+function mnkNuisance:OnClick()
+    mnkNuisance_bBlockEnabled = (mnkNuisance_bBlockEnabled == false)
+    self:SetIcon()
+end
+
+function mnkNuisance:OnEnter(parent)
+    local tooltip = LibQTip:Acquire('mnkNuisanceTooltip', 1, 'LEFT')
+    self.tooltip = tooltip
+    tooltip:SetFont(mnkLibs.DefaultTooltipFont)
+    tooltip:SetHeaderFont(mnkLibs.DefaultTooltipFont)
+    tooltip:Clear()
+    tooltip:AddLine('Click to enable or disable blocking of group and duel invites.')
+
+    tooltip:SetAutoHideDelay(.1, parent)
+    tooltip:SmartAnchorTo(parent)
+    tooltip:SetBackdropBorderColor(0, 0, 0, 0)
+    -- tooltip:SetBackdrop(GameTooltip:GetBackdrop())
+    -- tooltip:SetBackdropBorderColor(GameTooltip:GetBackdropBorderColor())
+    -- tooltip:SetBackdropColor(GameTooltip:GetBackdropColor())
+    -- tooltip:SetScale(GameTooltip:GetScale())
+    mnkLibs.setBackdrop(tooltip, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
+    tooltip:SetBackdropColor(0, 0, 0, 1)
+    tooltip:EnableMouse(true)    
+    tooltip:Show()
+end
+
+function mnkNuisance:PARTY_INVITE_REQUEST(event, arg1)
     if mnkNuisance_bBlockEnabled == true then
-        mnkNuisance.LDB.icon = 'Interface\\Icons\\Achievement_dungeon_naxxramas_10man'
-        mnkNuisance.LDB.text = mnkLibs.Color(COLOR_RED)..'Blocked '..' ('..BlockThisSession..')'
-    else
-        mnkNuisance.LDB.icon = 'Interface\\Icons\\Achievement_dungeon_naxxramas'
-        mnkNuisance.LDB.text = mnkLibs.Color(COLOR_GREEN)..'Blocking off'
+        if self:IsFriend(arg1) == false and self:InGuild(arg1) == false then
+            DeclineGroup()
+            StaticPopup_Hide('PARTY_INVITE')
+            print('Declined group invite from '..arg1)
+            --TODO AddIgnore() assholes.
+            --SendChatMessage('Thanks for the invite. I auto-decline all group invites by default.', 'WHISPER', nil, arg1)
+            BlockThisSession = (BlockThisSession + 1)
+            mnkNuisance.SetIcon()
+        end
     end
 end
 
-mnkNuisance:SetScript('OnEvent', mnkNuisance.DoOnEvent)
-mnkNuisance:RegisterEvent('PLAYER_LOGIN')
-mnkNuisance:RegisterEvent('PARTY_INVITE_REQUEST')
-mnkNuisance:RegisterEvent('DUEL_REQUESTED')
-mnkNuisance:RegisterEvent('PET_BATTLE_PVP_DUEL_REQUESTED')
+function mnkNuisance:PET_BATTLE_PVP_DUEL_REQUESTED()
+    if mnkNuisance_bBlockEnabled == true then
+        CancelPetDuel()
+        StaticPopup_Hide('PET_BATTLE_PVP_DUEL_REQUESTED')
+        print('Pet duel declined automtically.')
+    end
+end
+
+function mnkNuisance:PLAYER_LOGIN()
+    mnkNuisance.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkNuisance', {
+        icon = '', 
+        label = mnkLibs.Color(COLOR_GOLD)..'Nuisance', 
+        type = 'data source', 
+        OnClick = function() mnkNuisance:OnClick() end, 
+        OnEnter = function(parent) mnkNuisance:OnEnter(parent) end
+    })
+    mnkNuisance:SetIcon()
+end
+
+function mnkNuisance:SetIcon()
+    if mnkNuisance_bBlockEnabled == true then
+        self.LDB.icon = 'Interface\\Icons\\Achievement_dungeon_naxxramas_10man'
+        self.LDB.text = mnkLibs.Color(COLOR_RED)..'Blocked '..' ('..BlockThisSession..')'
+    else
+        self.LDB.icon = 'Interface\\Icons\\Achievement_dungeon_naxxramas'
+        self.LDB.text = mnkLibs.Color(COLOR_GREEN)..'Blocking off'
+    end
+end
+
+
