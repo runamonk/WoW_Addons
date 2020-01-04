@@ -1,8 +1,0 @@
-## Interface: 80000
-## Author: runamonk
-## Version: 1
-## Title: mnkBackpack
-## Notes: Basic layout for the Backpack addon
-## RequiredDeps: Backpack, mnkLibs
-
-mnkBackpack.lua
