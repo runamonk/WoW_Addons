@@ -104,6 +104,13 @@ function mnkGuild:OnEnter(parent)
     tooltip:SmartAnchorTo(parent)
     tooltip:UpdateScrolling(500)
     tooltip:SetBackdropBorderColor(0, 0, 0, 0)
+    -- tooltip:SetBackdrop(GameTooltip:GetBackdrop())
+    -- tooltip:SetBackdropBorderColor(GameTooltip:GetBackdropBorderColor())
+    -- tooltip:SetBackdropColor(GameTooltip:GetBackdropColor())
+    -- tooltip:SetScale(GameTooltip:GetScale())
+    mnkLibs.setBackdrop(tooltip, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
+    tooltip:SetBackdropColor(0, 0, 0, 1) 
+    tooltip:EnableMouse(true)   
     tooltip:Show()
 end
 

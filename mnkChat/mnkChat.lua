@@ -153,16 +153,25 @@ function mnkChat:OnEnter(parent)
     tooltip:UpdateScrolling(500)
     tooltip.step = 50
     tooltip:SetBackdropBorderColor(0, 0, 0, 0)
+    -- tooltip:SetBackdrop(GameTooltip:GetBackdrop())
+    -- tooltip:SetBackdropBorderColor(GameTooltip:GetBackdropBorderColor())
+    -- tooltip:SetBackdropColor(GameTooltip:GetBackdropColor())
+    -- tooltip:SetScale(GameTooltip:GetScale())
+    mnkLibs.setBackdrop(tooltip, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
+    tooltip:SetBackdropColor(0, 0, 0, 1)    
     tooltip:Show()
 end
 
 function mnkChat:PLAYER_LOGIN()
-    mnkChat.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkChat', {
+    self.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkChat', {
         icon = mnkLibs.Textures.icon_none, 
         type = 'data source', 
         OnEnter = function (parent) mnkChat:OnEnter(parent) end, 
         OnClick = function (button) mnkChat.OnClick(button) end
     })
+    mnkLibs.setBackdrop(self, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
+    self:SetBackdropColor(0, 0, 0, 1)
+
     QuickJoinToastButton:Hide() 
     QuickJoinToastButton:HookScript('OnShow', QuickJoinToastButton.Hide)
     ChatFrameMenuButton:Hide()
@@ -208,13 +217,13 @@ function mnkChat:PLAYER_LOGIN()
         mnkChat:SetupFrame(_G['ChatFrame' .. i])
     end
 
-    mnkChat.hooks.FCF_OpenTemporaryWindow = FCF_OpenTemporaryWindow
+    self.hooks.FCF_OpenTemporaryWindow = FCF_OpenTemporaryWindow
     FCF_OpenTemporaryWindow = function(chatType, ...)
         local frame = mnkChat.hooks.FCF_OpenTemporaryWindow(chatType, ...)
-        mnkChat:SetupFrame(frame)
+        self:SetupFrame(frame)
         return frame
     end
-    mnkChat:UpdateText()   
+    self:UpdateText()   
 end
 
 function mnkChat:SetupFrame(frame)

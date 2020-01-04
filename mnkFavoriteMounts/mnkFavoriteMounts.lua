@@ -79,7 +79,16 @@ function mnkFavoriteMounts:OnEnter(parent)
     tooltip:SetAutoHideDelay(.1, parent)
     tooltip:SmartAnchorTo(parent)
     tooltip:UpdateScrolling(500)
+
     tooltip:SetBackdropBorderColor(0, 0, 0, 0)
+
+    -- tooltip:SetBackdrop(GameTooltip:GetBackdrop())
+    -- tooltip:SetBackdropBorderColor(GameTooltip:GetBackdropBorderColor())
+    -- tooltip:SetBackdropColor(GameTooltip:GetBackdropColor())
+    -- tooltip:SetScale(GameTooltip:GetScale())
+    mnkLibs.setBackdrop(tooltip, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
+    tooltip:SetBackdropColor(0, 0, 0, 1)
+    tooltip:EnableMouse(true)
     tooltip:Show()
 end
 
@@ -102,12 +111,12 @@ function mnkFavoriteMounts:PLAYER_ENTERING_WORLD(event, firstTime, reload)
 end
 
 function mnkFavoriteMounts:PLAYER_LOGIN()
-    mnkFavoriteMounts.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkFavoriteMounts', {
+    self.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkFavoriteMounts', {
         icon = 'Interface\\Icons\\Ability_mount_blackpanther.blp', 
         type = 'data source', 
         OnEnter = function(parent) self:OnEnter(parent) end, 
         OnClick = function() self:OnClick() end  
     })
-    mnkFavoriteMounts.LDB.label = 'Favorite Mounts'
+    self.LDB.label = 'Favorite Mounts'
 end
 

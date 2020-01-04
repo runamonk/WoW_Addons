@@ -1,6 +1,8 @@
 mnkFriends = CreateFrame('Frame')
 mnkFriends.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 mnkFriends:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
+mnkLibs.setBackdrop(mnkFriends, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
+mnkFriends:SetBackdropColor(0, 0, 0, 1)
 
 local LibQTip = LibStub('LibQTip-1.0')
 local FRIENDS_TEXTURE_BROADCAST = 'Interface\\FriendsFrame\\BroadcastIcon'
@@ -157,6 +159,13 @@ function mnkFriends:OnEnter(parent)
     tooltip:UpdateScrolling(500)
     tooltip.step = 50
     tooltip:SetBackdropBorderColor(0, 0, 0, 0)
+    -- tooltip:SetBackdrop(GameTooltip:GetBackdrop())
+    -- tooltip:SetBackdropBorderColor(GameTooltip:GetBackdropBorderColor())
+    -- tooltip:SetBackdropColor(GameTooltip:GetBackdropColor())
+    -- tooltip:SetScale(GameTooltip:GetScale())
+    mnkLibs.setBackdrop(tooltip, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
+    tooltip:SetBackdropColor(0, 0, 0, 1)   
+    tooltip:EnableMouse(true) 
     tooltip:Show()
 end
 

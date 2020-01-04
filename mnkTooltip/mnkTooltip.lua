@@ -28,6 +28,8 @@ local function SetBackdrop()
         local frame = _G[tooltips[i]]
 		if frame ~= nil then
 			frame:SetBackdropBorderColor(0, 0, 0, 0); -- hide the border. 
+            mnkLibs.setBackdrop(frame, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
+            frame:SetBackdropColor(0, 0, 0, 1)
 		end
     end
 end
