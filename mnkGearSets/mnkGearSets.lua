@@ -7,14 +7,14 @@ mnkGearSets:RegisterEvent('EQUIPMENT_SETS_CHANGED')
 local LibQTip = LibStub('LibQTip-1.0')
 
 function mnkGearSets:PLAYER_LOGIN()
-    mnkGearSets.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkGearSets', {
+    self.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkGearSets', {
         icon = 'Interface\\Icons\\Inv_misc_enggizmos_30.blp', 
         type = 'data source', 
-        OnEnter = function (parent) mnkGearSets:OnEnter(parent) end, 
-        OnClick = function () mnkGearSets:OnClick() end
+        OnEnter = function (parent) self:OnEnter(parent) end, 
+        OnClick = function () self:OnClick() end
     })
-    mnkGearSets.LDB.label = 'Gear Sets'
-    mnkGearSets:UpdateText()
+    self.LDB.label = 'Gear Sets'
+    self:UpdateText()
 end
 
 function mnkGearSets:EQUIPMENT_SETS_CHANGED()

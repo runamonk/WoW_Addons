@@ -215,37 +215,27 @@ function mnkInventory:OnEnter(parent)
     tooltip:Show()
 end
 
-function mnkInventory:SetText()
-	local Percent, Current, Total = 0, 0, 0
-    for i=1, #tInventoryItems do
-        if tInventoryItems[i] and tInventoryItems[i].MaxDur and tInventoryItems[i].CurDur then
-            Current = (Current + tInventoryItems[i].CurDur)
-            Total = (Total + tInventoryItems[i].MaxDur)
-        end 
+function mnkInventory:TidyEquipLocName(itemEquipLoc)
+    --print(itemEquipLoc)
+    if itemEquipLoc and itemEquipLoc:sub(1, 8) == 'INVTYPE_' then 
+        return itemEquipLoc:sub(9, string.len(itemEquipLoc)) 
+    else 
+        return itemEquipLoc 
     end
-
-    if Current > 0 and Total > 0 then
-        Percent = math.floor((Current / Total) * 100)
-    else
-        Percent = '0'
-    end
-    
-    self:CalculateAverageiLevel()
-	self.LDB.text =  Percent..'%'..mnkLibs.Color(COLOR_WHITE)..' i'..mnkLibs.Color(COLOR_GOLD)..AverageItemLevel
 end
 
 function mnkInventory:UpdateAll()
 	for i=1, #tInventoryItems do
 		self:GetItemDurability(i)
 	end
-	self:SetText()
+	self:UpdateText()
 end
 
 function mnkInventory:UpdateAlliLevels()
 	for i=1, #tInventoryItems do
 		tInventoryItems[i].iLevel = self:GetItemLevel(i)
 	end
-	self:SetText()
+	self:UpdateText()
 end
 
 function mnkInventory:UpdateSlotInfo(slotid)
@@ -283,16 +273,26 @@ function mnkInventory:UpdateSlotInfo(slotid)
 			self:GetItemDurability(slotid)
 		end
 	end
-	self:SetText()
+	self:UpdateText()
 end
 
-function mnkInventory:TidyEquipLocName(itemEquipLoc)
- 	--print(itemEquipLoc)
-	if itemEquipLoc and itemEquipLoc:sub(1, 8) == 'INVTYPE_' then 
-		return itemEquipLoc:sub(9, string.len(itemEquipLoc)) 
-	else 
-		return itemEquipLoc 
-	end
+function mnkInventory:UpdateText()
+    local Percent, Current, Total = 0, 0, 0
+    for i=1, #tInventoryItems do
+        if tInventoryItems[i] and tInventoryItems[i].MaxDur and tInventoryItems[i].CurDur then
+            Current = (Current + tInventoryItems[i].CurDur)
+            Total = (Total + tInventoryItems[i].MaxDur)
+        end 
+    end
+
+    if Current > 0 and Total > 0 then
+        Percent = math.floor((Current / Total) * 100)
+    else
+        Percent = '0'
+    end
+    
+    self:CalculateAverageiLevel()
+    self.LDB.text =  Percent..'%'..mnkLibs.Color(COLOR_WHITE)..' i'..mnkLibs.Color(COLOR_GOLD)..AverageItemLevel
 end
 
 function StatusBarCell:getContentHeight()
@@ -387,3 +387,4 @@ end
 function StatusBarCell:ReleaseCell()
 
 end
+

@@ -113,7 +113,7 @@ function mnkChat:CHAT_MSG_BN_WHISPER(event, ...)
     mnkChat:Message(event, ...)    
 end
 
-function mnkChat:OnClick(button)
+function mnkChat:OnClick(parent, button)
     if button == 'RightButton' then
         mnkChat_db.Messages = {}
         mnkChat:UpdateText()
@@ -121,7 +121,6 @@ function mnkChat:OnClick(button)
 end
 
 function mnkChat:OnEnter(parent)
-
     function OnClick(self, arg, button) 
         SetItemRef('player:'..arg, '|Hplayer:'..arg..'|h['..arg..'|h', 'LeftButton')
     end
@@ -166,8 +165,8 @@ function mnkChat:PLAYER_LOGIN()
     self.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkChat', {
         icon = mnkLibs.Textures.icon_none, 
         type = 'data source', 
-        OnEnter = function (parent) mnkChat:OnEnter(parent) end, 
-        OnClick = function (button) mnkChat.OnClick(button) end
+        OnEnter = function (parent) self:OnEnter(parent) end, 
+        OnClick = function (parent, button) self:OnClick(parent, button) end
     })
     mnkLibs.setBackdrop(self, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
     self:SetBackdropColor(0, 0, 0, 1)
