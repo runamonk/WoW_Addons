@@ -78,6 +78,13 @@ function mnkMoney:OnEnter(parent)
     tooltip:SetAutoHideDelay(.1, parent)
     tooltip:SmartAnchorTo(parent)
     tooltip:SetBackdropBorderColor(0, 0, 0, 0)
+    -- tooltip:SetBackdrop(GameTooltip:GetBackdrop())
+    -- tooltip:SetBackdropBorderColor(GameTooltip:GetBackdropBorderColor())
+    -- tooltip:SetBackdropColor(GameTooltip:GetBackdropColor())
+    -- tooltip:SetScale(GameTooltip:GetScale())
+    mnkLibs.setBackdrop(tooltip, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
+    tooltip:SetBackdropColor(0, 0, 0, 1)
+    tooltip:EnableMouse(true)
     tooltip:Show()
 end
 
@@ -139,9 +146,26 @@ function mnkMoney:TRADE_MONEY_CHANGED()
 end
 
 function mnkMoney:UpdateText()
-    local copper = GetMoney()
-    local formattedMoney = GetCoinTextureString(copper, 16)
-    self.LDB.text = formattedMoney
+    local m = GetMoney()
+
+    local gold, silver, copper = math.floor(m / 100 / 100), math.floor(m / 100 % 100), math.floor(m % 100)
+    local text = 0
+
+    if gold > 0 then
+        self.LDB.icon = 'Interface\\MoneyFrame\\UI-GoldIcon'
+        text = mnkLibs.formatNumber(gold, 2)
+    elseif silver > 0 then
+        self.LDB.icon = 'Interface\\MoneyFrame\\UI-SilverIcon'
+        text = silver
+    elseif copper > 0 then
+        self.LDB.icon = 'Interface\\MoneyFrame\\UI-CopperIcon'
+        text = copper
+    else
+        self.LDB.icon = 'Interface\\MoneyFrame\\UI-CopperIcon'
+        text = 0
+    end
+
+    self.LDB.text = text
 end
 
 

@@ -61,6 +61,13 @@ function mnkNuisance.DoOnEnter(self)
     tooltip:SetAutoHideDelay(.1, self)
     tooltip:SmartAnchorTo(self)
     tooltip:SetBackdropBorderColor(0, 0, 0, 0)
+    -- tooltip:SetBackdrop(GameTooltip:GetBackdrop())
+    -- tooltip:SetBackdropBorderColor(GameTooltip:GetBackdropBorderColor())
+    -- tooltip:SetBackdropColor(GameTooltip:GetBackdropColor())
+    -- tooltip:SetScale(GameTooltip:GetScale())
+    mnkLibs.setBackdrop(tooltip, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
+    tooltip:SetBackdropColor(0, 0, 0, 1)
+    tooltip:EnableMouse(true)    
     tooltip:Show()
 end
 
