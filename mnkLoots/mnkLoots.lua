@@ -74,7 +74,7 @@ function mnkLoots:LOOT_OPENED()
 	                lootedItems[c].rarity = itemrarity
 	                lootedItems[c].icon = itemicon
 	            else
-	           		lootedItems[c].count = (lootedItems[c].count or 1) + (itemcount or 1)
+	           		lootedItems[idx].count = (lootedItems[idx].count or 1) + (itemcount or 1)
             	end
             else
             	print(link, 'NO ID')
