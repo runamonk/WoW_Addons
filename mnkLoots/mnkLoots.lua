@@ -76,8 +76,6 @@ function mnkLoots:LOOT_OPENED()
 	            else
 	           		lootedItems[idx].count = (lootedItems[idx].count or 1) + (itemcount or 1)
             	end
-            else
-            	print(link, 'NO ID')
 	        end   
         end
         LootSlot(i)
