@@ -153,7 +153,7 @@ function mnkMoney:UpdateText()
 
     if gold > 0 then
         self.LDB.icon = 'Interface\\MoneyFrame\\UI-GoldIcon'
-        text = mnkLibs.formatNumber(gold, 2)
+        text = mnkLibs.formatNumber(gold, 0)
     elseif silver > 0 then
         self.LDB.icon = 'Interface\\MoneyFrame\\UI-SilverIcon'
         text = silver
