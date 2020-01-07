@@ -1,9 +1,15 @@
 mnkLoots = CreateFrame('frame')
+mnkLoots.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
+
 mnkLoots:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
+mnkLoots:RegisterEvent('PLAYER_LOGIN')
 mnkLoots:RegisterEvent('LOOT_OPENED')
 mnkLoots:RegisterEvent('LOOT_CLOSED')
+mnkLoots:RegisterEvent('CHAT_MSG_LOOT')
 
+local LibQTip = LibStub('LibQTip-1.0')
 local lootedItems = {}
+
 SetCVar('autoLootDefault', 0)
 
 LootFrame:Hide()
@@ -17,6 +23,37 @@ local function AlreadyLooted(table, id)
         end
     end
     return false
+end
+
+function mnkLoots:CHAT_MSG_LOOT(event, arg1)
+    if arg1 ~= nil then
+        local LOOT_ITEM_PUSH_PATTERN = (LOOT_ITEM_PUSHED_SELF):gsub('%%s', '(.+)')
+        local LOOT_ITEM_CREATED_SELF_PATTERN = LOOT_ITEM_CREATED_SELF:gsub('%%s', '(.+)')
+
+        _, l = 1, arg1:match(LOOT_ITEM_PUSH_PATTERN)
+        if not l then
+            _, l = 1, arg1:match(LOOT_ITEM_CREATED_SELF_PATTERN)
+        end
+
+        if not l then return end
+        local itemName, _, rarity, _, _, itemType, subType, _, _, itemIcon, _ = GetItemInfo(l)
+        if rarity > 0 then
+            -- delay the itemcount until the bags catch up with the server. really stupid.
+            C_Timer.After(.5, function ()             
+                local itemCount = GetItemCount(l)
+                local _,_,_,color = GetItemQualityColor(rarity)
+                           
+                if itemCount > 1 then
+                    itemCount = ' ['..itemCount..']'
+                else
+                    itemCount = ' '
+                end
+
+                local s = string.format('|T%s|t %s', itemIcon..':16:16:0:0:64:64:4:60:4:60', ' |c'..color..itemName..mnkLibs.Color(COLOR_WHITE)..itemCount)
+                CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false) 
+            end)
+        end        
+    end
 end
 
 function mnkLoots:LOOT_CLOSED()
@@ -81,6 +118,47 @@ function mnkLoots:LOOT_OPENED()
         LootSlot(i)
         ConfirmLootSlot(i)
     end
+end
+
+function mnkLoots:PLAYER_LOGIN()
+    self.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkLoots', {
+        icon = 'Interface\\Icons\\ability_hunter_beastcall02.blp', 
+        type = 'data source', 
+        OnEnter = function (parent) self:OnEnter(parent) end, 
+        OnClick = nil
+        })
+    self.LDB.label = 'Loots'
+    self.LDB.text = ' Loots'
+end
+
+function mnkLoots:OnEnter(parent)
+    local tooltip = LibQTip:Acquire('mnkLootsTooltip', 1, 'LEFT')
+    self.tooltip = tooltip
+    tooltip:SetFont(mnkLibs.DefaultTooltipFont)
+    tooltip:SetHeaderFont(mnkLibs.DefaultTooltipFont)
+    tooltip:Clear()
+
+    tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Name')
+ 
+    -- local sort_func = function(a, b) return a.name < b.name end
+    -- table.sort(t, sort_func)
+
+    -- for i=1, #t do
+    --     tooltip:AddLine(t[i].name..' ('..t[i].difficulty..')', t[i].progress, SecondsToTime(t[i].reset))
+    -- end    
+
+    tooltip:SetAutoHideDelay(.1, parent)
+    tooltip:SmartAnchorTo(parent)
+    tooltip:SetFrameStrata('HIGH')
+    tooltip:SetBackdropBorderColor(0, 0, 0, 0)
+    -- tooltip:SetBackdrop(GameTooltip:GetBackdrop())
+    -- tooltip:SetBackdropBorderColor(GameTooltip:GetBackdropBorderColor())
+    -- tooltip:SetBackdropColor(GameTooltip:GetBackdropColor())
+    -- tooltip:SetScale(GameTooltip:GetScale())
+    mnkLibs.setBackdrop(tooltip, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
+    tooltip:SetBackdropColor(0, 0, 0, 1)    
+    tooltip:EnableMouse(true)
+    tooltip:Show()
 end
 
 
