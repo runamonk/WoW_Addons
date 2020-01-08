@@ -1,5 +1,6 @@
 mnkLoots = CreateFrame('frame')
 mnkLoots.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
+mnkLoots_LootHistory = {}
 
 mnkLoots:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
 mnkLoots:RegisterEvent('PLAYER_LOGIN')
@@ -23,6 +24,38 @@ local function AlreadyLooted(table, id)
         end
     end
     return false
+end
+
+function mnkLoots:AddItemToHistory(item)
+    local function AlreadyLooted(item)
+        for i=1, #mnkLoots_LootHistory do
+            if mnkLoots_LootHistory[i].link == item.link then
+                --print('found:', item.link)
+                return i
+            end
+        end
+        return 0        
+    end
+
+    if item.rarity < 2 then return end
+    if #mnkLoots_LootHistory >= 25 then
+        local c = #mnkLoots_LootHistory-25
+        for i = 1, c do
+           table.remove(mnkLoots_LootHistory, i) 
+        end
+    end
+
+    local r = AlreadyLooted(item)
+    if r == 0 then
+        r = #mnkLoots_LootHistory+1
+        mnkLoots_LootHistory[r] = item
+        mnkLoots_LootHistory[r].lootcount = 1
+        mnkLoots_LootHistory[r].zone = GetZoneText()
+        mnkLoots_LootHistory[r].timestamp = date("%m/%d/%y %H:%M:%S")
+    else
+        mnkLoots_LootHistory[r].lootcount = mnkLoots_LootHistory[r].lootcount + 1
+        mnkLoots_LootHistory[r].timestamp = date("%m/%d/%y %H:%M:%S")
+    end
 end
 
 function mnkLoots:CHAT_MSG_LOOT(event, arg1)
@@ -110,8 +143,10 @@ function mnkLoots:LOOT_OPENED()
 	                lootedItems[c].count = (itemcount or 1) + (GetItemCount(link) or 1)
 	                lootedItems[c].rarity = itemrarity
 	                lootedItems[c].icon = itemicon
+                    self:AddItemToHistory(lootedItems[c])
 	            else
 	           		lootedItems[idx].count = (lootedItems[idx].count or 1) + (itemcount or 1)
+                    self:AddItemToHistory(lootedItems[idx])
             	end
 	        end   
         end
@@ -120,35 +155,58 @@ function mnkLoots:LOOT_OPENED()
     end
 end
 
-function mnkLoots:PLAYER_LOGIN()
-    self.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkLoots', {
-        icon = 'Interface\\Icons\\ability_hunter_beastcall02.blp', 
-        type = 'data source', 
-        OnEnter = function (parent) self:OnEnter(parent) end, 
-        OnClick = nil
-        })
-    self.LDB.label = 'Loots'
-    self.LDB.text = ' Loots'
+function mnkLoots:OnClick(parent, button)
+    print(parent, ' ', button)
+    if button == 'RightButton' and IsAltKeyDown() then
+        print('Loot history cleared')
+        mnkLoots_LootHistory = {}
+    end
 end
 
 function mnkLoots:OnEnter(parent)
-    local tooltip = LibQTip:Acquire('mnkLootsTooltip', 1, 'LEFT')
+    local function OnMouseEnter(self, arg, button)
+        if arg ~= nil then
+            GameTooltip_SetDefaultAnchor(GameTooltip, self)
+            GameTooltip:SetHyperlink(arg)
+            GameTooltip:Show()
+        end
+    end
+
+    local function OnMouseLeave(self, arg, button)
+        GameTooltip:Hide()
+    end
+
+    local tooltip = LibQTip:Acquire('mnkLootsTooltip', 3, 'LEFT','LEFT','RIGHT')
     self.tooltip = tooltip
     tooltip:SetFont(mnkLibs.DefaultTooltipFont)
     tooltip:SetHeaderFont(mnkLibs.DefaultTooltipFont)
+    tooltip.step = 50 
+    
     tooltip:Clear()
+    
+    if #mnkLoots_LootHistory == 0 then
+        tooltip:AddLine('No loot history.')
+    else
+        tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Name', mnkLibs.Color(COLOR_GOLD)..'Zone', mnkLibs.Color(COLOR_GOLD)..'Date/Time')
+        for i=1, #mnkLoots_LootHistory do
+            if  mnkLoots_LootHistory[i] then
 
-    tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Name')
- 
-    -- local sort_func = function(a, b) return a.name < b.name end
-    -- table.sort(t, sort_func)
+                if mnkLoots_LootHistory[i].lootcount > 1 then
+                    s = i..'. '..string.format('|T%s|t %s', mnkLoots_LootHistory[i].icon..':16:16:0:0:64:64:4:60:4:60', mnkLoots_LootHistory[i].link)..' x '..mnkLoots_LootHistory[i].lootcount
+                else
+                    s = i..'. '..string.format('|T%s|t %s', mnkLoots_LootHistory[i].icon..':16:16:0:0:64:64:4:60:4:60', mnkLoots_LootHistory[i].link)
+                end
 
-    -- for i=1, #t do
-    --     tooltip:AddLine(t[i].name..' ('..t[i].difficulty..')', t[i].progress, SecondsToTime(t[i].reset))
-    -- end    
+                local y, _ = tooltip:AddLine(s, mnkLoots_LootHistory[i].zone, mnkLoots_LootHistory[i].timestamp)
+                tooltip:SetLineScript(y, 'OnEnter', OnMouseEnter, mnkLoots_LootHistory[i].link)
+                tooltip:SetLineScript(y, 'OnLeave', OnMouseLeave, nil)
+            end
+        end
+    end    
 
     tooltip:SetAutoHideDelay(.1, parent)
     tooltip:SmartAnchorTo(parent)
+    tooltip:UpdateScrolling(500)
     tooltip:SetFrameStrata('HIGH')
     tooltip:SetBackdropBorderColor(0, 0, 0, 0)
     -- tooltip:SetBackdrop(GameTooltip:GetBackdrop())
@@ -161,4 +219,13 @@ function mnkLoots:OnEnter(parent)
     tooltip:Show()
 end
 
-
+function mnkLoots:PLAYER_LOGIN()
+    self.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkLoots', {
+        icon = 'Interface\\Icons\\Inv_box_04.blp', 
+        type = 'data source', 
+        OnEnter = function (parent) self:OnEnter(parent) end, 
+        OnClick = function (parent, button) self:OnClick(parent, button) end
+        })
+    self.LDB.label = 'Loots'
+    self.LDB.text = ' Loots'
+end
