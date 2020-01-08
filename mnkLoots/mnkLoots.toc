@@ -3,5 +3,6 @@
 ## Notes: Display scrolling notifications for looted items.
 ## Author: runamonk
 ## Version: 1
+## SavedVariablesPerCharacter: mnkLoots_LootHistory
 
 mnkLoots.lua
