@@ -147,8 +147,11 @@ end
 	@callback OnUpdateQuest(item)
 ]]
 local function ItemButton_UpdateQuest(self, item)
+	--print(item.link, ' ', item.isCompOrMount, item.type, ' ', item.subType)
 	if item.questID or item.isQuestItem then
 		self.Border:SetBackdropBorderColor(1, 1, 0, 0.8)
+	elseif item.isCompOrMount then
+		self.Border:SetBackdropBorderColor(1, 0, 0, 1)
 	elseif item.rarity and item.rarity > 1 then
 		local r, g, b = GetItemQualityColor(item.rarity)
 		self.Border:SetBackdropBorderColor(r, g, b, 0.8)

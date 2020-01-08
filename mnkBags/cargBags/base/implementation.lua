@@ -379,6 +379,7 @@ function Implementation:GetItemInfo(bagID, slotID, i)
 	i.bagID = bagID
 	i.slotID = slotID
 	i.boe = false
+	i.isCompOrMount = false
 
 	local clink = GetContainerItemLink(bagID, slotID)
 	if (clink) then
@@ -396,10 +397,12 @@ function Implementation:GetItemInfo(bagID, slotID, i)
 			-- last return value here, "texture", doesn't show for battle pets
 			local texture
 
-			i.name, i.link, i.rarity, i.level, i.minLevel, i.type, i.subType, i.stackCount, i.equipLoc, texture, i.sellPrice  = GetItemInfo(clink)
-			-- get the first link return because otherwise ilvl for artifacts will bug
+			i.name, i.link, i.rarity, i.level, i.minLevel, i.type, i.subType, i.stackCount, i.equipLoc, texture, i.sellPrice, i.classid, i.subclassid  = GetItemInfo(clink)
 			i.link = clink
-			-- get the actual item level for items we want it to be shown
+
+			if i.classid == LE_ITEM_CLASS_MISCELLANEOUS and (i.subclassid == LE_ITEM_MISCELLANEOUS_COMPANION_PET or i.subclassid == LE_ITEM_MISCELLANEOUS_MOUNT) then
+				i.isCompOrMount = true
+			end
 			if (i.type and (ilvlTypes[i.type] or i.subType and ilvlSubTypes[i.subType])) and i.level > 0 then
 				--print(i.link, ' ', i.type)
 				if IsItemBOE(i) then
