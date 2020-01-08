@@ -78,8 +78,7 @@ function mnkFavoriteMounts:OnEnter(parent)
 
     tooltip:SetAutoHideDelay(.1, parent)
     tooltip:SmartAnchorTo(parent)
-    tooltip:UpdateScrolling(500)
-
+    tooltip:UpdateScrolling(400)
     tooltip:SetBackdropBorderColor(0, 0, 0, 0)
 
     -- tooltip:SetBackdrop(GameTooltip:GetBackdrop())
