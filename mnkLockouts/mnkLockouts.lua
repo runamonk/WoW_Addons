@@ -24,7 +24,8 @@ function mnkLockouts:OnEnter(parent)
     tooltip:SetHeaderFont(mnkLibs.DefaultTooltipFont)
     tooltip:Clear()
 
-    tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Name', mnkLibs.Color(COLOR_GOLD)..'Progress', mnkLibs.Color(COLOR_GOLD)..'Expiration')
+
+    
     
 	t = {}
 	local r = 0
@@ -45,8 +46,14 @@ function mnkLockouts:OnEnter(parent)
     local sort_func = function(a, b) return a.name < b.name end
     table.sort(t, sort_func)
 
-    for i=1, #t do
-    	tooltip:AddLine(t[i].name..' ('..t[i].difficulty..')', t[i].progress, SecondsToTime(t[i].reset))
+    if #t == 0 then
+        tooltip:AddLine('No lockouts')
+    else
+        tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Name', mnkLibs.Color(COLOR_GOLD)..'Progress', mnkLibs.Color(COLOR_GOLD)..'Expiration')
+
+        for i=1, #t do
+        	tooltip:AddLine(t[i].name..' ('..t[i].difficulty..')', t[i].progress, SecondsToTime(t[i].reset))
+        end
     end    
 
     tooltip:SetAutoHideDelay(.1, parent)
