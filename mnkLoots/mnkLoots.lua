@@ -10,6 +10,7 @@ mnkLoots:RegisterEvent('CHAT_MSG_LOOT')
 
 local LibQTip = LibStub('LibQTip-1.0')
 local lootedItems = {}
+local MAX_HISTORY_ITEMS = 30
 
 SetCVar('autoLootDefault', 0)
 
@@ -26,10 +27,18 @@ local function AlreadyLooted(table, id)
     return false
 end
 
+local function GetNumFreeSlots()
+    local free = 0
+    for i = 0, 4 do
+        free = free + GetContainerNumFreeSlots(i)
+    end
+    return free
+end
+
 function mnkLoots:AddItemToHistory(item)
     local function AlreadyLooted(item)
         for i=1, #mnkLoots_LootHistory do
-            if mnkLoots_LootHistory[i].link == item.link then
+            if mnkLoots_LootHistory[i] and mnkLoots_LootHistory[i].link == item.link then
                 --print('found:', item.link)
                 return i
             end
@@ -38,12 +47,6 @@ function mnkLoots:AddItemToHistory(item)
     end
 
     if item.rarity < 2 then return end
-    if #mnkLoots_LootHistory >= 25 then
-        local c = #mnkLoots_LootHistory-25
-        for i = 1, c do
-           table.remove(mnkLoots_LootHistory, i) 
-        end
-    end
 
     local r = AlreadyLooted(item)
     if r == 0 then
@@ -115,6 +118,23 @@ function mnkLoots:LOOT_CLOSED()
      
     end
     lootedItems = {}
+
+    if #mnkLoots_LootHistory > MAX_HISTORY_ITEMS then
+        local c = #mnkLoots_LootHistory-MAX_HISTORY_ITEMS
+        --print('HistoryCount: ', #mnkLoots_LootHistory, ' to remove: ', c)
+        for i = 1, #mnkLoots_LootHistory do
+            if i > c then break end
+            mnkLoots_LootHistory[i] = nil
+        end
+
+        -- compress the table back down.
+        for i = #mnkLoots_LootHistory, 1, -1 do
+            if not mnkLoots_LootHistory[i] then
+                table.remove(mnkLoots_LootHistory, i)
+            end
+        end         
+        --print('Count:', #mnkLoots_LootHistory)
+    end  
 end
 
 function mnkLoots:LOOT_OPENED()
@@ -124,9 +144,17 @@ function mnkLoots:LOOT_OPENED()
     lootedItems = {}
 
     for i = GetNumLootItems(), 1, -1 do
+        local f = GetNumFreeSlots()
+        if f == 0 then
+            CombatText_AddMessage(mnkLibs.Color(COLOR_RED)..'INVENTORY IS FULL!', CombatText_StandardScroll, 255, 255, 255, nil, false) 
+            print('INVENTORY IS FULL.')
+            CloseLoot()
+            break
+        end
+
         local link = GetLootSlotLink(i)
         local itemicon, itemname, itemcount, _, itemrarity, _, _, _, _ = GetLootSlotInfo(i)
-        
+
         if link then  	
            	if not itemcount then itemcount = 0 end
             local id = select(1, GetItemInfoInstant(link))
@@ -156,7 +184,6 @@ function mnkLoots:LOOT_OPENED()
 end
 
 function mnkLoots:OnClick(parent, button)
-    print(parent, ' ', button)
     if button == 'RightButton' and IsAltKeyDown() then
         print('Loot history cleared')
         mnkLoots_LootHistory = {}
@@ -187,17 +214,18 @@ function mnkLoots:OnEnter(parent)
     if #mnkLoots_LootHistory == 0 then
         tooltip:AddLine('No loot history.')
     else
-        tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Name', mnkLibs.Color(COLOR_GOLD)..'Zone', mnkLibs.Color(COLOR_GOLD)..'Date/Time')
+        tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Name', mnkLibs.Color(COLOR_GOLD)..'Zone')
+        local c = 0
         for i=1, #mnkLoots_LootHistory do
             if  mnkLoots_LootHistory[i] then
-
+                c = c + 1
                 if mnkLoots_LootHistory[i].lootcount > 1 then
-                    s = i..'. '..string.format('|T%s|t %s', mnkLoots_LootHistory[i].icon..':16:16:0:0:64:64:4:60:4:60', mnkLoots_LootHistory[i].link)..' x '..mnkLoots_LootHistory[i].lootcount
+                    s = c..'. '..string.format('|T%s|t %s', mnkLoots_LootHistory[i].icon..':16:16:0:0:64:64:4:60:4:60', mnkLoots_LootHistory[i].link)..' x '..mnkLoots_LootHistory[i].lootcount
                 else
-                    s = i..'. '..string.format('|T%s|t %s', mnkLoots_LootHistory[i].icon..':16:16:0:0:64:64:4:60:4:60', mnkLoots_LootHistory[i].link)
+                    s = c..'. '..string.format('|T%s|t %s', mnkLoots_LootHistory[i].icon..':16:16:0:0:64:64:4:60:4:60', mnkLoots_LootHistory[i].link)
                 end
 
-                local y, _ = tooltip:AddLine(s, mnkLoots_LootHistory[i].zone, mnkLoots_LootHistory[i].timestamp)
+                local y, _ = tooltip:AddLine(s, mnkLoots_LootHistory[i].zone)
                 tooltip:SetLineScript(y, 'OnEnter', OnMouseEnter, mnkLoots_LootHistory[i].link)
                 tooltip:SetLineScript(y, 'OnLeave', OnMouseLeave, nil)
             end
@@ -206,7 +234,7 @@ function mnkLoots:OnEnter(parent)
 
     tooltip:SetAutoHideDelay(.1, parent)
     tooltip:SmartAnchorTo(parent)
-    tooltip:UpdateScrolling(500)
+    tooltip:UpdateScrolling(400)
     tooltip:SetFrameStrata('HIGH')
     tooltip:SetBackdropBorderColor(0, 0, 0, 0)
     -- tooltip:SetBackdrop(GameTooltip:GetBackdrop())
