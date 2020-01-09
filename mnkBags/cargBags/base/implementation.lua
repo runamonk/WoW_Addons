@@ -521,8 +521,8 @@ end
 function Implementation:BAG_UPDATE(event, bagID, slotID)
 	--print(event, ' ', bagID, ' : ', slotID)
 	if(bagID and slotID) then
-		--local item = self:GetItemInfo(bagID, slotID)
-		--self:doDeleteCacheItem(item.link, bagID, slotID)
+		local item = self:GetItemInfo(bagID, slotID)
+		self:doDeleteCacheItem(item.link, bagID, slotID)
 		self:UpdateSlot(bagID, slotID)
 	elseif(bagID) then
 		self:UpdateBag(bagID)

@@ -158,11 +158,14 @@ function mnkLoots:LOOT_OPENED()
         if link then  	
            	if not itemcount then itemcount = 0 end
             local id = select(1, GetItemInfoInstant(link))
+            id , _, _, _, _, classid, subclassid = GetItemInfoInstant(link)
+
             --print(id, ' ', link, ' ', itemicon, ' ', itemname, ' ', itemcount, ' ', itemrarity)
 
             if id then
 	            local idx = AlreadyLooted(lootedItems, id) 
 	            if not idx then
+
 	                local c = #lootedItems+1
 	                lootedItems[c] = {}
 	                lootedItems[c].name = itemname
@@ -171,6 +174,11 @@ function mnkLoots:LOOT_OPENED()
 	                lootedItems[c].count = (itemcount or 1) + (GetItemCount(link) or 1)
 	                lootedItems[c].rarity = itemrarity
 	                lootedItems[c].icon = itemicon
+                    if classid == LE_ITEM_CLASS_MISCELLANEOUS and (subclassid == LE_ITEM_MISCELLANEOUS_COMPANION_PET or subclassid == LE_ITEM_MISCELLANEOUS_MOUNT) then
+                        lootedItems[c].highlight = true
+                    else
+                        lootedItems[c].highlight = false
+                    end
                     self:AddItemToHistory(lootedItems[c])
 	            else
 	           		lootedItems[idx].count = (lootedItems[idx].count or 1) + (itemcount or 1)
@@ -223,6 +231,10 @@ function mnkLoots:OnEnter(parent)
                     s = c..'. '..string.format('|T%s|t %s', mnkLoots_LootHistory[i].icon..':16:16:0:0:64:64:4:60:4:60', mnkLoots_LootHistory[i].link)..' x '..mnkLoots_LootHistory[i].lootcount
                 else
                     s = c..'. '..string.format('|T%s|t %s', mnkLoots_LootHistory[i].icon..':16:16:0:0:64:64:4:60:4:60', mnkLoots_LootHistory[i].link)
+                end
+
+                if mnkLoots_LootHistory[i].highlight then
+                    s = '*'..mnkLibs.Color(COLOR_RED)..s..'*'
                 end
 
                 local y, _ = tooltip:AddLine(s, mnkLoots_LootHistory[i].zone)
