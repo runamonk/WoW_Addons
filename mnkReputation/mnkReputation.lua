@@ -5,10 +5,8 @@ mnkReputation:SetScript('OnEvent', function(self, event, ...) self[event](self, 
 mnkReputation:RegisterEvent('PLAYER_LOGIN')
 mnkReputation:RegisterEvent('PLAYER_ENTERING_WORLD')
 mnkReputation:RegisterEvent('CHAT_MSG_COMBAT_FACTION_CHANGE')
-mnkReputation:RegisterEvent('PLAYER_ENTERING_WORLD')
 mnkReputation:RegisterEvent('PLAYER_GUILD_UPDATE')
 mnkReputation:RegisterEvent('UPDATE_FACTION')
-mnkReputation:RegisterEvent('GROUP_ROSTER_UPDATE')
 
 local libQTip = LibStub('LibQTip-1.0')
 local libAG = LibStub('AceGUI-3.0')
