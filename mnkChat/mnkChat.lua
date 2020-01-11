@@ -113,9 +113,11 @@ function mnkChat:CHAT_MSG_BN_WHISPER(event, ...)
     mnkChat:Message(event, ...)    
 end
 
-function mnkChat:OnClick(parent, button)
+function mnkChat:OnClick(self, button)
     if button == 'RightButton' then
+        mnkChat.tooltip:Hide()
         mnkChat_db.Messages = {}
+        print('Chat history cleared.')
         mnkChat:UpdateText()
     end
 end
@@ -135,6 +137,8 @@ function mnkChat:OnEnter(parent)
     tooltip:SetFont(font)
 
     self.tooltip = tooltip 
+    mnkChat.tooltip = tooltip
+
     tooltip:Clear()
 
     tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Name', mnkLibs.Color(COLOR_GOLD)..'Message')
