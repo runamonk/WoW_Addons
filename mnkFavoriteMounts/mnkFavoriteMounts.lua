@@ -51,6 +51,7 @@ end
 function mnkFavoriteMounts:OnEnter(parent)
 
     local function OnMouseDown(button, arg)
+        mnkFavoriteMounts.tooltip:Hide()
         C_MountJournal.SummonByID(arg)
     end
 
@@ -58,6 +59,8 @@ function mnkFavoriteMounts:OnEnter(parent)
 
     local tooltip = libQTip:Acquire('mnkFavoriteMountsToolTip', 1, 'LEFT')
     self.tooltip = tooltip
+    mnkFavoriteMounts.tooltip = tooltip
+
     tooltip.step = 50 
     tooltip:SetFont(mnkLibs.DefaultTooltipFont)
     tooltip:SetHeaderFont(mnkLibs.DefaultTooltipFont)
