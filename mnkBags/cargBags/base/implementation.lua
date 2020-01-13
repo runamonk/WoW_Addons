@@ -302,17 +302,6 @@ local ilvlSubTypes = {
 	[GetItemSubClassInfo(3,11)] = true	--Artifact Relic
 }
 
-local function copyTable(src, dest)
-	for index, value in pairs(src) do
-		if type(value) == "table" then
-			dest[index] = {}
-			copyTable(value, dest[index])
-		else
-			dest[index] = value
-		end
-	end
-end
-
 local function IsItemBOE(item)
 	if item.link and (item.type and (ilvlTypes[item.type] or item.subType and ilvlSubTypes[item.subType])) and item.level > 0 then	
 		local scanTip = CreateFrame("GameTooltip", "scanTip", UIParent, "GameTooltipTemplate")
@@ -338,7 +327,7 @@ function Implementation:IsCached(clink, item, bagID, slotID)
 	for i, _ in pairs(self.itemCache) do 
 		if self.itemCache[i].link == clink and self.itemCache[i].bagID == bagID and self.itemCache[i].slotID == slotID then
 			--print('IsCached: ', clink)
-			copyTable(self.itemCache[i].item, item)
+			mnkLibs.copyTable(self.itemCache[i].item, item)
 			-- item is cached and stackable, we need to update the count.
 			item.count = select(2, GetContainerItemInfo(bagID, slotID))
 			return true
@@ -356,7 +345,7 @@ function Implementation:doCacheItem(item, bagID, slotID)
 	self.itemCache[i].slotID = slotID
 	self.itemCache[i].item = {}
 
-	copyTable(item, self.itemCache[i].item)
+	mnkLibs.copyTable(item, self.itemCache[i].item)
 end
 
 function Implementation:doDeleteCacheItem(link, bagID, slotID)
