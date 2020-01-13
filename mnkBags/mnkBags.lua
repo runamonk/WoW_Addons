@@ -373,7 +373,7 @@ function mnkBagsContainer:OnCreate(name)
 
 	self.Columns = 12
 	self:EnableMouse(true)
-	self:SetFrameStrata("HIGH")
+	self:SetFrameStrata("MEDIUM")
 	self.Caption = mnkLibs.createFontString(self, mnkLibs.Fonts.ap, 16, nil, nil, true)
 	self.Caption:SetText(mbLocals.bagCaptions[self.name])
 	self.Caption:SetPoint("TOPLEFT", 0, 2)

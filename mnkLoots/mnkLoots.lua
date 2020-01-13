@@ -193,8 +193,9 @@ end
 
 function mnkLoots:OnClick(parent, button)
     if button == 'RightButton' and IsAltKeyDown() then
-        print('Loot history cleared')
+        mnkLoots.tooltip:Hide()
         mnkLoots_LootHistory = {}
+        print('Loot history cleared')
     end
 end
 
@@ -210,35 +211,41 @@ function mnkLoots:OnEnter(parent)
     local function OnMouseLeave(self, arg, button)
         GameTooltip:Hide()
     end
-
+    local t = {}
     local tooltip = LibQTip:Acquire('mnkLootsTooltip', 3, 'LEFT','LEFT','RIGHT')
     self.tooltip = tooltip
+    mnkLoots.tooltip = tooltip
     tooltip:SetFont(mnkLibs.DefaultTooltipFont)
     tooltip:SetHeaderFont(mnkLibs.DefaultTooltipFont)
     tooltip.step = 50 
     
     tooltip:Clear()
     
-    if #mnkLoots_LootHistory == 0 then
+    mnkLibs.copyTable(mnkLoots_LootHistory, t)
+    --add index and then sort descending so newest at top.
+    for i=1, #t do t[i].index = i end
+    table.sort(t, function(a, b) return a.index > b.index end)
+
+    if #t == 0 then
         tooltip:AddLine('No loot history.')
     else
         tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Name', mnkLibs.Color(COLOR_GOLD)..'Zone')
         local c = 0
-        for i=1, #mnkLoots_LootHistory do
-            if  mnkLoots_LootHistory[i] then
-                c = c + 1
-                if mnkLoots_LootHistory[i].lootcount > 1 then
-                    s = c..'. '..string.format('|T%s|t %s', mnkLoots_LootHistory[i].icon..':16:16:0:0:64:64:4:60:4:60', mnkLoots_LootHistory[i].link)..' x '..mnkLoots_LootHistory[i].lootcount
+        for i=1, #t do
+            if  t[i] then
+ 
+                if t[i].lootcount > 1 then
+                    s = string.format('|T%s|t %s', t[i].icon..':16:16:0:0:64:64:4:60:4:60', t[i].link)..' x '..t[i].lootcount
                 else
-                    s = c..'. '..string.format('|T%s|t %s', mnkLoots_LootHistory[i].icon..':16:16:0:0:64:64:4:60:4:60', mnkLoots_LootHistory[i].link)
+                    s = string.format('|T%s|t %s', t[i].icon..':16:16:0:0:64:64:4:60:4:60', t[i].link)
                 end
 
-                if mnkLoots_LootHistory[i].highlight then
+                if t[i].highlight then
                     s = '*'..mnkLibs.Color(COLOR_RED)..s..'*'
                 end
 
-                local y, _ = tooltip:AddLine(s, mnkLoots_LootHistory[i].zone)
-                tooltip:SetLineScript(y, 'OnEnter', OnMouseEnter, mnkLoots_LootHistory[i].link)
+                local y, _ = tooltip:AddLine(s, t[i].zone)
+                tooltip:SetLineScript(y, 'OnEnter', OnMouseEnter, t[i].link)
                 tooltip:SetLineScript(y, 'OnLeave', OnMouseLeave, nil)
             end
         end

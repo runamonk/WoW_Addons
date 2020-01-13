@@ -56,7 +56,16 @@ function mnkLibs.convertRGBtoHex(r, g, b)
     return string.format('|cff%02x%02x%02x', r, g, b)
 end
 
-
+function mnkLibs.copyTable(src, dest)
+    for index, value in pairs(src) do
+        if type(value) == "table" then
+            dest[index] = {}
+            mnkLibs.copyTable(value, dest[index])
+        else
+            dest[index] = value
+        end
+    end
+end
 
 function mnkLibs.createBorder(parent, top, bottom, left, right, color)
     parent.border = CreateFrame("Frame", nil, parent)
