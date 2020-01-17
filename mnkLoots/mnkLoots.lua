@@ -111,7 +111,14 @@ function mnkLoots:LOOT_CLOSED()
                 else
                     itemCount = ' '
                 end
-                local s = string.format('|T%s|t %s', lootedItems[i].icon..':16:16:0:0:64:64:4:60:4:60', ' |c'..color..lootedItems[i].name..mnkLibs.Color(COLOR_WHITE)..itemCount)
+
+                if lootedItems[i].highlight then
+                    color = mnkLibs.Color(COLOR_RED)
+                else
+                    color = ' |c'..color
+                end
+
+                local s = string.format('|T%s|t %s', lootedItems[i].icon..':16:16:0:0:64:64:4:60:4:60', color..lootedItems[i].name..mnkLibs.Color(COLOR_WHITE)..itemCount)
                 CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false)
             end
         end
