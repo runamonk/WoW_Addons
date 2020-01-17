@@ -248,7 +248,7 @@ function mnkLoots:OnEnter(parent)
                 end
 
                 if t[i].highlight then
-                    s = '*'..mnkLibs.Color(COLOR_RED)..s..'*'
+                    s = mnkLibs.Color(COLOR_RED)..'>'..s..mnkLibs.Color(COLOR_RED)..'<'
                 end
 
                 local y, _ = tooltip:AddLine(s, t[i].zone)
