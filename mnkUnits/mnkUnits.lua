@@ -296,6 +296,13 @@ local function PlayerUnit(self)
 		self.AlternativePower:SetBackdropColor(1/8, 1/8, 1/8, 1)
         self.AlternativePower:SetFrameStrata('HIGH')
         self.AlternativePower:EnableMouse(true)
+        self.AlternativePower.PowerNameText = mnkLibs.createFontString(self.AlternativePower, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
+        self.AlternativePower.PowerNameText:SetPoint('LEFT', self.AlternativePower, 2, 0)
+        self.AlternativePower.PowerNameText:SetText('TEST TEST TEST')
+        self.AlternativePower.PostUpdate = function(self, unit, cur, min, max) 
+            self.PowerNameText:SetText(self.powerName)
+        end
+
         mnkLibs.createBorder(self.AlternativePower,0.8, -0.8, -0.8, 0.8, {0, 0, 0, 1})
         self.Buffs = CreateFrame('Frame', nil, self)
         self.Buffs.initialAnchor = 'BOTTOMRIGHT'
