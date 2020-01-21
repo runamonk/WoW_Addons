@@ -1,4 +1,4 @@
-## Interface: 80205
+## Interface: 80300
 ## Title: mnkGearSets
 ## Notes: Allows switching between gear equipment sets
 ## Author: runamonk

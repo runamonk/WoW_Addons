@@ -67,7 +67,7 @@ function mnkReputation:AddLabel(scrollbox, name, standing)
 end
 
 function mnkReputation:CHAT_MSG_COMBAT_FACTION_CHANGE(event, arg1)
-    CombatText_AddMessage(arg1, CombatText_StandardScroll, 255, 255, 255, nil, false)
+    CombatText_AddMessage(mnkLibs.Color(COLOR_BLUE)..arg1, CombatText_StandardScroll, 255, 255, 255, nil, false)
     mnkReputation:GetAllFactions()
     mnkReputation:UpdateText()    
 end
