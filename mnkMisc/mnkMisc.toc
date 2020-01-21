@@ -1,4 +1,4 @@
-## Interface: 80205
+## Interface: 80300
 ## Title: mnkMisc
 ## Notes: Loot/Rep/Tradeskill noticess and misc configs
 ## Author: runamonk

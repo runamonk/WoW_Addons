@@ -1,4 +1,4 @@
-## Interface: 80205
+## Interface: 80300
 ## Title: mnkFavoriteMounts
 ## Notes: Access favorite mounts from a broker display.
 ## Author: runamonk

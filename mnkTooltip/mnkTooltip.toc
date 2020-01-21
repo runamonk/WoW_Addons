@@ -1,4 +1,4 @@
-## Interface: 80205
+## Interface: 80300
 ## Title: mnkTooltip
 ## Notes: Minor mods to the standard tooltip
 ## Author: runamonk
