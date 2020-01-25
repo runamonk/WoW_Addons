@@ -1,6 +1,8 @@
 -- Code based on Zorks rMinimap and rObjectiveTracker.
 mnkMinimap = CreateFrame('Frame')
+mnkMinimap.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 mnkMinimap:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
+mnkMinimap:RegisterEvent('PLAYER_LOGIN')
 mnkMinimap:RegisterEvent('PLAYER_ENTERING_WORLD')
 mnkMinimap:RegisterEvent('QUEST_ACCEPTED')
 mnkMinimap:RegisterEvent('ZONE_CHANGED')
@@ -20,7 +22,10 @@ local function MinimapZoom(self, direction)
 end
 
 function mnkMinimap:FilterQuestTracker()
-    --local mapInfo = C_Map.GetMapInfo(currentMap)
+    local currentMap =  C_Map.GetBestMapForUnit("player")
+    if not currentMap then return end
+    local mapInfo = C_Map.GetMapInfo(currentMap)
+    mnkMinimap.LDB.text = ' '..mapInfo.name
 
     local function EmptyTracker()
         for i = GetNumQuestWatches(), 1, -1 do
@@ -28,9 +33,7 @@ function mnkMinimap:FilterQuestTracker()
         end
     end
 
-    local function FillTracker()
-        local currentMap =  C_Map.GetBestMapForUnit("player")
-        if not currentMap then return end
+    local function FillTracker()      
         local questsOnMap = C_QuestLog.GetQuestsOnMap(currentMap)
 
         for i, info in ipairs(questsOnMap) do
@@ -47,6 +50,18 @@ function mnkMinimap:PLAYER_ENTERING_WORLD()
     mnkMinimap.SetQuestTrackerPosition()
     mnkMinimap.SetMinimapPositionAndSize()
     mnkMinimap.FilterQuestTracker()
+end
+
+function mnkMinimap:PLAYER_LOGIN()
+    self.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkMinimap', {
+        icon = 'Interface\\Icons\\ability_spy.blp', 
+        type = 'data source', 
+        OnClick = function (parent, button) 
+                    MiniMapWorldMapButton:Click()
+                    --ToggleFrame(WorldMapFrame) 
+        end
+        })
+    self.LDB.label = 'Zone:'   
 end
 
 function mnkMinimap:QUEST_ACCEPTED()
