@@ -408,6 +408,7 @@ function mnkBagsContainer:OnCreate(name)
 		self.CloseButton:ClearAllPoints()
 		self.CloseButton:SetPoint("TOPRIGHT", 2, 0)
 		self.CloseButton:SetSize(12,12)
+		mnkLibs.setTooltip(self.CloseButton, 'Close')
 		self.CloseButton:SetScript("OnClick", function(self) if cbmb:AtBank() then CloseBankFrame() else CloseAllBags() end end)
 
 		if isMain then
@@ -490,7 +491,37 @@ function mnkBagsContainer:OnCreate(name)
 		self.Drop:SetScript("OnMouseUp", GetFirstFreeSlot)
 		self.Drop:SetScript("OnReceiveDrag", GetFirstFreeSlot)
 	end
-	
+	if self.name == 'mb_Junk' then
+		self.buttonDeleteJunk = CreateFrame("Button", nil, self, "UIPanelCloseButton")
+		self.buttonDeleteJunk:SetDisabledTexture("Interface\\AddOns\\mnkBags\\media\\Close")
+		self.buttonDeleteJunk:SetNormalTexture("Interface\\AddOns\\mnkBags\\media\\Close")
+		self.buttonDeleteJunk:SetPushedTexture("Interface\\AddOns\\mnkBags\\media\\Close")
+		self.buttonDeleteJunk:SetHighlightTexture("Interface\\AddOns\\mnkBags\\media\\Close")		
+		self.buttonDeleteJunk:ClearAllPoints()
+		self.buttonDeleteJunk:SetPoint("TOPRIGHT", 2, 0)
+		self.buttonDeleteJunk:SetSize(12,12)
+		mnkLibs.setTooltip(self.buttonDeleteJunk, 'Destroy all junk with a sell price of less than 1g. ALT + Click to destory all junk.')
+		self.buttonDeleteJunk:SetScript("OnClick", 
+			function(self, button)
+				local deleteAll = false
+				if button == 'LeftButton' and IsAltKeyDown() then
+					deleteAll = true
+				end
+
+				for k,_ in pairs(_Bags.bagJunk.buttons) do
+					local b = _Bags.bagJunk.buttons[k]
+					local clink = GetContainerItemLink(b.bagID, b.slotID)
+					local sellPrice = select(11, GetItemInfo(clink))
+					--print(clink, ' ', deleteAll, ' ', sellPrice)
+					if deleteAll or (sellPrice and (sellPrice < 10000)) then
+						PickupContainerItem(b.bagID,b.slotID) 
+						DeleteCursorItem()
+					end
+				end
+				cbmb:UpdateBags()
+			end)
+	end
+
 	self:UpdateDimensions(self)
 	return self
 end
