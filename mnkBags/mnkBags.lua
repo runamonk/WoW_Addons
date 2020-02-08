@@ -45,6 +45,7 @@ end
 function mnkBags:MERCHANT_SHOW(event, addon)
 	if (not MerchantFrame:IsShown()) then return end
 	local p = 0
+	local i = 0
 	for k,_ in pairs(_Bags.bagJunk.buttons) do
 		-- just in case they close the form while selling.
 		if (MerchantFrame:IsShown()) then 
@@ -54,7 +55,8 @@ function mnkBags:MERCHANT_SHOW(event, addon)
 				-- doing it this way so it's less of a hit, parsing for boe causes lots of overhead.
 				local _, _, rarity, _, _, _, _, _, _, _, sellPrice, _, _, _, _, _, _ = GetItemInfo(clink)
 				local stackCount = GetItemCount(clink)
-				if rarity == 0 and sellPrice ~= 0 then
+				if rarity == 0 and sellPrice ~= 0 and i < 12 then
+					i = i + 1
 					p = p + (sellPrice * stackCount)
 					UseContainerItem(b.bagID, b.slotID)
 				end
@@ -457,6 +459,38 @@ function mnkBagsContainer:OnCreate(name)
 		self.resetBtn = createIconButton("ResetNew", self, Textures.ResetNew, "TOPRIGHT", "Reset New")
 		self.resetBtn:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, 0)
 		self.resetBtn:SetScript("OnClick", function() self:ResetNewItems() end)
+
+		self.buttonSellItems = CreateFrame("Button", nil, self, "UIPanelCloseButton")
+		self.buttonSellItems:SetDisabledTexture("Interface\\AddOns\\mnkBags\\media\\Sell")
+		self.buttonSellItems:SetNormalTexture("Interface\\AddOns\\mnkBags\\media\\Sell")
+		self.buttonSellItems:SetPushedTexture("Interface\\AddOns\\mnkBags\\media\\Sell")
+		self.buttonSellItems:SetHighlightTexture("Interface\\AddOns\\mnkBags\\media\\Sell")		
+		self.buttonSellItems:ClearAllPoints()
+		self.buttonSellItems:SetPoint("TOPRIGHT", self.resetBtn, "TOPLEFT", -2, -1)
+		self.buttonSellItems:SetSize(12,12)
+		mnkLibs.setTooltip(self.buttonSellItems, 'Sell all items in New bag.')
+		self.buttonSellItems:SetScript("OnClick", 
+			function(self, button)
+				if (not MerchantFrame:IsShown()) then return end
+				local p = 0
+				local i = 0
+				for k,_ in pairs(_Bags.bagNew.buttons) do
+					local b = _Bags.bagNew.buttons[k]
+					local clink = GetContainerItemLink(b.bagID, b.slotID)
+					local sellPrice = select(11, GetItemInfo(clink))
+					local stackCount = GetItemCount(clink)
+					--print(clink, ' ', deleteAll, ' ', sellPrice)
+					if sellPrice and sellPrice ~= 0 and i < 16 then
+						i = i + 1
+						p = p + (sellPrice * stackCount)
+						UseContainerItem(b.bagID,b.slotID)
+					end 
+				end
+				cbmb:UpdateBags()
+				if p > 0 then
+					print('New items sold for: ', GetCoinTextureString(p))
+				end				
+			end)
 	end
 	
 	if isReagent then
@@ -493,10 +527,10 @@ function mnkBagsContainer:OnCreate(name)
 	end
 	if self.name == 'mb_Junk' then
 		self.buttonDeleteJunk = CreateFrame("Button", nil, self, "UIPanelCloseButton")
-		self.buttonDeleteJunk:SetDisabledTexture("Interface\\AddOns\\mnkBags\\media\\Close")
-		self.buttonDeleteJunk:SetNormalTexture("Interface\\AddOns\\mnkBags\\media\\Close")
-		self.buttonDeleteJunk:SetPushedTexture("Interface\\AddOns\\mnkBags\\media\\Close")
-		self.buttonDeleteJunk:SetHighlightTexture("Interface\\AddOns\\mnkBags\\media\\Close")		
+		self.buttonDeleteJunk:SetDisabledTexture("Interface\\AddOns\\mnkBags\\media\\JunkDelete")
+		self.buttonDeleteJunk:SetNormalTexture("Interface\\AddOns\\mnkBags\\media\\JunkDelete")
+		self.buttonDeleteJunk:SetPushedTexture("Interface\\AddOns\\mnkBags\\media\\JunkDelete")
+		self.buttonDeleteJunk:SetHighlightTexture("Interface\\AddOns\\mnkBags\\media\\JunkDelete")		
 		self.buttonDeleteJunk:ClearAllPoints()
 		self.buttonDeleteJunk:SetPoint("TOPRIGHT", 2, 0)
 		self.buttonDeleteJunk:SetSize(12,12)
