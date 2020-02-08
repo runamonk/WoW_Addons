@@ -89,8 +89,9 @@ function mnkInventory:CalculateAverageiLevel()
 
     for i=0, #tInventoryItems do
     	if tInventoryItems[i] and tInventoryItems[i].link then
+            local e = tInventoryItems[i].EquipLoc
+            --print(e, ' ', t)
     		if e ~= 'BODY' and e ~= 'TABARD' then
-	    		local e = tInventoryItems[i].EquipLoc
 	    		t = t + tInventoryItems[i].iLevel
 	    		-- 2H and Ranged weapons are counted twice because they count as two slots.
 	    		if e == '2HWEAPON' or e == 'RANGED' then
