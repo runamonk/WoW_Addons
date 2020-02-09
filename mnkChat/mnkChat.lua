@@ -123,8 +123,8 @@ function mnkChat:OnClick(self, button)
 end
 
 function mnkChat:OnEnter(parent)
-    function OnClick(self, arg, button) 
-        SetItemRef('player:'..arg, '|Hplayer:'..arg..'|h['..arg..'|h', 'LeftButton')
+    function OnClick(self, arg, button)
+        ChatFrame_SendTell(arg)
     end
 
     mnkChat_db.NEW_MESSAGES = 0
