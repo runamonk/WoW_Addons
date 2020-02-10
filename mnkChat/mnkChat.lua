@@ -81,8 +81,12 @@ local function unescape(str)
     return gsub(str, "%%([%%%+%-%.%[%]%*%?])", "%1")
 end
 
-function mnkChat:Message(event, message, playername, _, _, _, playerstatus, _, _, _, lineid, _, guid, pid)
+function mnkChat:Message(event, message, playername, _, _, _, _, _, _, _, _, _, _, bnSenderID)
+    --"text", "playerName", "languageName", "channelName", "playerName2", "specialFlags", zoneChannelID, channelIndex, "channelBaseName", unused, 
+    -- lineID, "guid", bnSenderID, isMobile, isSubtitle, hideSenderInLetterbox, supressRaidIcons
+
     if message ~= nil then
+        --print(event, ' ', playername, bnSenderID)
         PlaySoundFile(mnkLibs.Sounds.incoming_message, 'Master')
         CombatText_AddMessage(mnkLibs.formatPlayerName(playername)..': '..message, CombatText_StandardScroll, 255, 0, 0, nil, false)
         table.insert(mnkChat_db.Messages, 1, {time, name, message})
@@ -94,7 +98,7 @@ function mnkChat:Message(event, message, playername, _, _, _, playerstatus, _, _
         end
         mnkChat_db.Messages[1].fullname = playername
         mnkChat_db.Messages[1].message = message
-
+        mnkChat_db.Messages[1].isbn = bnSenderID 
         mnkChat_db.NEW_MESSAGES = mnkChat_db.NEW_MESSAGES + 1
         if #mnkChat > MAX_MESSAGES then
             for i = #mnkChat_db.Messages, MAX_MESSAGES + 1, -1 do
@@ -124,7 +128,11 @@ end
 
 function mnkChat:OnEnter(parent)
     function OnClick(self, arg, button)
-        ChatFrame_SendTell(arg)
+        if arg.isbn and arg.isbn > 0 then
+            ChatFrame_SendBNetTell(arg.fullname)
+        else
+            ChatFrame_SendTell(arg.fullname)
+        end
     end
 
     mnkChat_db.NEW_MESSAGES = 0
@@ -133,7 +141,7 @@ function mnkChat:OnEnter(parent)
     end
 
     mnkChat.UpdateText()
-    local tooltip = libQTip:Acquire('mnkChatTooltip', 2, 'LEFT', 'LEFT')
+    local tooltip = libQTip:Acquire('mnkChatTooltip', 3, 'LEFT', 'LEFT', 'RIGHT')
     tooltip:SetFont(font)
 
     self.tooltip = tooltip 
@@ -141,13 +149,14 @@ function mnkChat:OnEnter(parent)
 
     tooltip:Clear()
 
-    tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Name', mnkLibs.Color(COLOR_GOLD)..'Message')
+    tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Name', mnkLibs.Color(COLOR_GOLD)..'Message', mnkLibs.Color(COLOR_GOLD)..'Timestamp')
 
     for i = 1, #mnkChat_db.Messages do
         if mnkChat_db.Messages[i].message ~= nil then
             local y, x = tooltip:AddLine(mnkChat_db.Messages[i].name, '')
-            tooltip:SetCell(y, 2, mnkChat_db.Messages[i].time..' '..mnkChat_db.Messages[i].message, nil, 'LEFT', nil, nil, nil, nil, GetScreenWidth() / 4, nil)
-            tooltip:SetLineScript(y, 'OnMouseDown', OnClick, mnkChat_db.Messages[i].fullname)
+            tooltip:SetCell(y, 2, mnkChat_db.Messages[i].message, nil, 'LEFT', nil, nil, nil, nil, GetScreenWidth() / 4, nil)
+            tooltip:SetCell(y, 3, mnkChat_db.Messages[i].time, nil, 'RIGHT', nil, nil, nil, nil, nil, nil)
+            tooltip:SetLineScript(y, 'OnMouseDown', OnClick, mnkChat_db.Messages[i])
         end
     end
 
