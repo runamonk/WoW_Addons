@@ -160,7 +160,7 @@ function mnkInventory:OnEnter(parent)
 	local function OnMouseEnter(self, arg, button)
 	    if arg ~= nil then
 	        GameTooltip_SetDefaultAnchor(GameTooltip, self)
-	        GameTooltip:SetHyperlink(arg)
+            GameTooltip:SetInventoryItem("player", arg)
 	        GameTooltip:Show()
 	    end
 	end
@@ -198,8 +198,8 @@ function mnkInventory:OnEnter(parent)
 	        local y, x = tooltip:AddLine(v.EquipLoc, v.link, pct, v.iLevel)
 	        tooltip:SetCell(y, 2, i, 1 , StatusBarCellProvider, 0)
 	        tooltip:SetLineScript(y, 'OnMouseDown', OnMouseDown, v.link)
-	        tooltip:SetLineScript(y, 'OnEnter', OnMouseEnter, v.link)
-	        tooltip:SetLineScript(y, 'OnLeave', OnMouseLeave, v.link)
+	        tooltip:SetLineScript(y, 'OnEnter', OnMouseEnter, i)
+	        tooltip:SetLineScript(y, 'OnLeave', OnMouseLeave, i)
 	    end  
     end   
     tooltip:SetAutoHideDelay(.1, parent)
@@ -267,10 +267,6 @@ function mnkInventory:UpdateSlotInfo(slotid)
 			tInventoryItems[slotid].iLevel = self:GetItemLevel(slotid)
             tInventoryItems[slotid].id = id
             tInventoryItems[slotid].isAzeritePowered = isAzeritePowered
-            if isAzeritePowered then
-            
-            end
-
 			self:GetItemDurability(slotid)
 		end
 	end
