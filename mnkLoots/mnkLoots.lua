@@ -92,9 +92,10 @@ function mnkLoots:CHAT_MSG_LOOT(event, arg1)
     end
 end
 
-function mnkLoots:LOOT_CLOSED()
+local function ShowPhatLoots()
     for i = 1, #lootedItems do
-        --print('id: ', lootedItems[i].id, ' ', lootedItems[i].link)
+        if i > #lootedItems then return end
+
         if lootedItems[i].link:find('battlepet') then
             local _, speciesID, _, rarity = (':'):split(lootedItems[i].link)
             local color = GetItemQualityColor(rarity)
@@ -122,8 +123,14 @@ function mnkLoots:LOOT_CLOSED()
                 CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false)
             end
         end
-     
-    end
+        table.remove(lootedItems, i)
+        C_Timer.After(0.2, ShowPhatLoots) 
+    end        
+end
+
+
+function mnkLoots:LOOT_CLOSED()
+    ShowPhatLoots()
     lootedItems = {}
 
     if #mnkLoots_LootHistory > MAX_HISTORY_ITEMS then
