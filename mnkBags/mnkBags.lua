@@ -22,8 +22,11 @@ local Textures = {
 	BagToggle =		mediaPath .. "BagToggle",
 	ResetNew =		mediaPath .. "ResetNew",
 	Restack =		mediaPath .. "Restack",
-	Deposit =		mediaPath .. "Deposit"
-}
+	Deposit =		mediaPath .. "Deposit"}
+local NewItemsSold = 0
+local JunkItemsSold = 0
+
+--StaticPopup_Show("ConfirmSellNewItems")
 
 local function createIconButton(name, parent, texture, point, hint)
 	local button = CreateFrame("Button", nil, parent)
@@ -42,30 +45,63 @@ local function createIconButton(name, parent, texture, point, hint)
 	return button
 end
 
-function mnkBags:MERCHANT_SHOW(event, addon)
-	if (not MerchantFrame:IsShown()) then return end
+local function SellItemsInContainer(container)
+	--print(container:GetName(), ' ', #container.buttons)
 	local p = 0
-	local i = 0
-	for k,_ in pairs(_Bags.bagJunk.buttons) do
+	for k,_ in pairs(container.buttons) do
 		-- just in case they close the form while selling.
 		if (MerchantFrame:IsShown()) then 
-			local b = _Bags.bagJunk.buttons[k]
+			local b = container.buttons[k]
 			local clink = GetContainerItemLink(b.bagID, b.slotID)
 			if clink then
 				-- doing it this way so it's less of a hit, parsing for boe causes lots of overhead.
 				local _, _, rarity, _, _, _, _, _, _, _, sellPrice, _, _, _, _, _, _ = GetItemInfo(clink)
 				local stackCount = GetItemCount(clink)
-				if rarity == 0 and sellPrice ~= 0 and i < 12 then
-					i = i + 1
+				if sellPrice ~= 0 then
 					p = p + (sellPrice * stackCount)
 					UseContainerItem(b.bagID, b.slotID)
 				end
 			end
 		end
 	end
-	if p > 0 then
-		print('Junk sold for: ', GetCoinTextureString(p))
-	end
+	return p
+end
+
+local function SellJunk()
+	if (not MerchantFrame:IsShown()) or (#_Bags.bagJunk.buttons == 0) then return end
+	local p = 0
+	p = SellItemsInContainer(_Bags.bagJunk)
+	JunkItemsSold = JunkItemsSold + p
+	C_Timer.After(0.2, SellJunk) 
+end
+
+local function SellNewItems()
+	if (not MerchantFrame:IsShown()) or (#_Bags.bagNew.buttons == 0) then return end
+	local p = 0
+	p = SellItemsInContainer(_Bags.bagNew)
+	NewItemsSold = NewItemsSold + p
+	C_Timer.After(0.2, SellNewItems) 		
+end
+
+StaticPopupDialogs["ConfirmSellNewItems"] = {
+  text = "Are you sure?",
+  button1 = "Yes",
+  button2 = "No",
+  OnAccept = function()
+      SellNewItems()
+  end,
+  timeout = 0,
+  whileDead = false,
+  hideOnEscape = true,
+  preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
+}
+
+function mnkBags:MERCHANT_SHOW(event, addon)
+	SellJunk()
+	if JunkItemsSold > 0 then
+		print('Junk sold for: ', GetCoinTextureString(JunkItemsSold))
+		JunkItemsSold = 0
+	end	
 end
 
 function mnkBags:PLAYER_ENTERING_WORLD(event, addon)
@@ -470,26 +506,13 @@ function mnkBagsContainer:OnCreate(name)
 		self.buttonSellItems:SetSize(12,12)
 		mnkLibs.setTooltip(self.buttonSellItems, 'Sell all items in New bag.')
 		self.buttonSellItems:SetScript("OnClick", 
-			function(self, button)
-				if (not MerchantFrame:IsShown()) then return end
-				local p = 0
-				local i = 0
-				for k,_ in pairs(_Bags.bagNew.buttons) do
-					local b = _Bags.bagNew.buttons[k]
-					local clink = GetContainerItemLink(b.bagID, b.slotID)
-					local sellPrice = select(11, GetItemInfo(clink))
-					local stackCount = GetItemCount(clink)
-					--print(clink, ' ', deleteAll, ' ', sellPrice)
-					if sellPrice and sellPrice ~= 0 and i < 16 then
-						i = i + 1
-						p = p + (sellPrice * stackCount)
-						UseContainerItem(b.bagID,b.slotID)
-					end 
-				end
-				cbmb:UpdateBags()
-				if p > 0 then
-					print('New items sold for: ', GetCoinTextureString(p))
-				end				
+			function ()
+			 	if (not MerchantFrame:IsShown()) then return end
+				StaticPopup_Show("ConfirmSellNewItems")
+				if NewItemsSold > 0 then
+					print('New items sold for: ', GetCoinTextureString(NewItemsSold))
+					NewItemsSold = 0
+				end	
 			end)
 	end
 	
