@@ -26,8 +26,6 @@ local Textures = {
 local NewItemsSold = 0
 local JunkItemsSold = 0
 
---StaticPopup_Show("ConfirmSellNewItems")
-
 local function createIconButton(name, parent, texture, point, hint)
 	local button = CreateFrame("Button", nil, parent)
 	button:SetWidth(17)
@@ -93,7 +91,7 @@ StaticPopupDialogs["ConfirmSellNewItems"] = {
   timeout = 0,
   whileDead = false,
   hideOnEscape = true,
-  preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
+  preferredIndex = 3,  
 }
 
 function mnkBags:MERCHANT_SHOW(event, addon)
