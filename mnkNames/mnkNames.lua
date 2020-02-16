@@ -31,6 +31,29 @@ local cfg_debuffs_size = 24
 local cfg_debuffs_spacing = 5
 local lastNameplate = nil
 
+local function UpdateThreat(self, event, unit)
+    --if (self.unit ~= unit) then return end
+    local _, _, threatpct, _, _ = UnitDetailedThreatSituation("player", unit)
+    local s
+    --print(unit, ' ',  isTanking,  ' ', status,  ' ', threatpct,  ' ', rawthreatpct,  ' ', threatvalue)
+    if threatpct and threatpct >= 1 then
+        if threatpct <= 20 then
+            s = "."
+        elseif threatpct <= 40 then
+            s = ".."
+        elseif threatpct <= 60 then
+            s = "..."
+        elseif threatpct <= 80 then
+            s = "...."
+        else
+            s = "....."
+        end
+    else
+        s = ""
+    end
+    self.Threat:SetText(mnkLibs.Color(COLOR_RED)..s)
+end
+
 function mnkNames.CreateStyle(self, unit)
     self.disableMovement = true
     self.frameValues = CreateFrame('Frame', nil, self)
@@ -62,6 +85,13 @@ function mnkNames.CreateStyle(self, unit)
     self.Name:SetJustifyH("LEFT")
     self.Name:SetWidth(cfg_name_width-(self.HealthValue:GetWidth()+8))
     self:Tag(self.Name, '[mnku:name]')
+    
+    self.Threat = mnkLibs.createFontString(self.Health, mnkLibs.Fonts.oswald, cfg_font_height, nil, nil, true)
+    self.Threat:SetPoint("TOPLEFT", self.Health, "TOPLEFT", 0, 8)
+    self.Threat:SetJustifyH("LEFT")
+    self.Threat:SetWidth(self.Name:GetWidth())
+    self.Threat:SetHeight(10)
+
     self.Level = mnkLibs.createFontString(self.Health, mnkLibs.Fonts.oswald, cfg_font_height, nil, nil, true)
     self.Level:SetPoint("LEFT", self.Health, -20, 0)
     self.Level:SetJustifyH("LEFT")
@@ -111,6 +141,8 @@ function mnkNames.CreateStyle(self, unit)
     self:SetPoint("CENTER", 0, 0)
     self:SetScale(1)
     mnkLibs.setBackdrop(self, nil, nil, .8, .8, .8, .8)
+    self:RegisterEvent("UNIT_THREAT_LIST_UPDATE", UpdateThreat)
+    self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE", UpdateThreat)    
 end
 
 function mnkNames.CastbarSpellUpdate(element, unit)
@@ -168,6 +200,7 @@ function mnkNames.OnNameplatesCallback(self)
 		end
 	else
         local s = UnitClassification(self.unit)
+        UpdateThreat(self, nil, self.unit)
        
         if s == 'rare' or s == 'rareelite' or s == 'worldboss' then
             self.Health:SetStatusBarColor(0.5, 0.3, 1, 1)
@@ -195,7 +228,10 @@ function mnkNames.OnNameplatesCallback(self)
 	end
 end
 
+
+
 mnkNames.oUF:RegisterStyle("mnkNames", mnkNames.CreateStyle)
 mnkNames.oUF:SetActiveStyle("mnkNames")
 mnkNames.oUF:SpawnNamePlates("mnkNames", mnkNames.OnNameplatesCallback, cvars)
+
 
