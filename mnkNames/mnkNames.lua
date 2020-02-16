@@ -32,11 +32,11 @@ local cfg_debuffs_spacing = 5
 local lastNameplate = nil
 
 local function UpdateThreat(self, event, unit)
-    --if (self.unit ~= unit) then return end
     local _, _, threatpct, _, _ = UnitDetailedThreatSituation("player", unit)
     local s
-    --print(unit, ' ',  isTanking,  ' ', status,  ' ', threatpct,  ' ', rawthreatpct,  ' ', threatvalue)
     if threatpct and threatpct >= 1 then
+        --print(self.unit, ' ', unit, ' ', threatpct,  ' ', rawthreatpct,  ' ', threatvalue)
+
         if threatpct <= 20 then
             s = "."
         elseif threatpct <= 40 then
@@ -51,7 +51,7 @@ local function UpdateThreat(self, event, unit)
     else
         s = ""
     end
-    self.Threat:SetText(mnkLibs.Color(COLOR_RED)..s)
+    self.Threat:SetText(mnkLibs.Color(COLOR_WHITE)..s)
 end
 
 function mnkNames.CreateStyle(self, unit)
@@ -87,10 +87,10 @@ function mnkNames.CreateStyle(self, unit)
     self:Tag(self.Name, '[mnku:name]')
     
     self.Threat = mnkLibs.createFontString(self.Health, mnkLibs.Fonts.oswald, cfg_font_height, nil, nil, true)
-    self.Threat:SetPoint("TOPLEFT", self.Health, "TOPLEFT", 0, 8)
+    self.Threat:SetPoint("TOPLEFT", self.Health, "TOPLEFT", 1, 4)
     self.Threat:SetJustifyH("LEFT")
     self.Threat:SetWidth(self.Name:GetWidth())
-    self.Threat:SetHeight(10)
+    self.Threat:SetHeight(3)
 
     self.Level = mnkLibs.createFontString(self.Health, mnkLibs.Fonts.oswald, cfg_font_height, nil, nil, true)
     self.Level:SetPoint("LEFT", self.Health, -20, 0)
