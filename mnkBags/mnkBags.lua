@@ -86,7 +86,11 @@ StaticPopupDialogs["ConfirmSellNewItems"] = {
   button1 = "Yes",
   button2 = "No",
   OnAccept = function()
-      SellNewItems()
+    SellNewItems()
+	if NewItemsSold > 0 then
+		print('New items sold for: ', GetCoinTextureString(NewItemsSold))
+		NewItemsSold = 0
+	end	      
   end,
   timeout = 0,
   whileDead = false,
@@ -507,10 +511,6 @@ function mnkBagsContainer:OnCreate(name)
 			function ()
 			 	if (not MerchantFrame:IsShown()) then return end
 				StaticPopup_Show("ConfirmSellNewItems")
-				if NewItemsSold > 0 then
-					print('New items sold for: ', GetCoinTextureString(NewItemsSold))
-					NewItemsSold = 0
-				end	
 			end)
 	end
 	
