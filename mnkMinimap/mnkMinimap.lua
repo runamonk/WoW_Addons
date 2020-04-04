@@ -8,6 +8,8 @@ mnkMinimap:RegisterEvent('QUEST_ACCEPTED')
 mnkMinimap:RegisterEvent('ZONE_CHANGED')
 mnkMinimap:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 
+db = {}
+
 local _, playerClass = UnitClass('player')
 local classColor = {}
 
@@ -71,14 +73,26 @@ end
 function mnkMinimap:SetMinimapPositionAndSize()
     Minimap:SetMaskTexture(mnkLibs.Textures.minimap_mask)
     Minimap:ClearAllPoints()
-    Minimap:SetPoint('CENTER', UIParent, 'BOTTOM', 0, 66)
+
+    if db.mapPosition then
+        Minimap:SetPoint("CENTER", UIParent, "BOTTOMLEFT", db.mapPosition.x, db.mapPosition.y)
+    else
+        Minimap:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+    end
+    
     Minimap:SetSize(135,135) 
     Minimap:EnableMouseWheel()
+    Minimap:SetMovable(true)
+    Minimap:SetUserPlaced(true)
+    Minimap:RegisterForDrag('LeftButton')
+    Minimap:SetScript('OnDragStart', function() mnkMinimap:MapDrag(true) end)
+    Minimap:SetScript('OnDragStop', function() mnkMinimap:MapDrag(false) end)
 
     MinimapCluster:SetScale(1)
     MinimapCluster:ClearAllPoints()
     MinimapCluster:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', 0, 0)
     MinimapCluster:EnableMouse(false)
+    MinimapCluster:SetMovable(true)
 
     mnkLibs.createBorder(Minimap, 0, 0, 0, 0, {classColor.r, classColor.g, classColor.b, .5}) 
     MinimapBackdrop:Hide()
@@ -147,6 +161,22 @@ function mnkMinimap:SetMinimapPositionAndSize()
     fs:SetTextColor(0.2,0.2,0.1,0.9)
 
     Minimap:SetScript('OnMouseWheel', MinimapZoom)
+end
+
+function mnkMinimap:MapDrag(startDrag)
+    if not IsAltKeyDown() then return end
+
+    if (startDrag) then
+        Minimap.isMoving = true
+        Minimap:StartMoving()
+    elseif(Minimap.isMoving) then
+        Minimap.isMoving = false
+        Minimap:StopMovingOrSizing()
+        db.mapPosition = {}
+        db.mapPosition.x, db.mapPosition.y = Minimap:GetCenter()
+        Minimap:ClearAllPoints()
+        Minimap:SetPoint("CENTER", UIParent, "BOTTOMLEFT", db.mapPosition.x, db.mapPosition.y)
+    end
 end
 
 function mnkMinimap:SetQuestTrackerPosition()
