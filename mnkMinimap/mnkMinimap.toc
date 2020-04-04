@@ -4,5 +4,5 @@
 ## Title: mnkMinimap
 ## Notes: Minimalistic Minimap
 ## RequiredDeps: mnkLibs
-
+## SavedVariables: db
 mnkMinimap.lua
