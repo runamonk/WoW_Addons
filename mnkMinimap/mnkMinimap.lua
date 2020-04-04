@@ -1,5 +1,5 @@
 -- Code based on Zorks rMinimap and rObjectiveTracker.
-mnkMinimap = CreateFrame('Frame')
+mnkMinimap = CreateFrame('Frame','mnkMinimap')
 mnkMinimap.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 mnkMinimap:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
 mnkMinimap:RegisterEvent('PLAYER_LOGIN')
@@ -78,6 +78,8 @@ function mnkMinimap:SetMinimapPositionAndSize()
         Minimap:SetPoint("CENTER", UIParent, "BOTTOMLEFT", db.mapPosition.x, db.mapPosition.y)
     else
         Minimap:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+        db.mapPosition = {}
+        db.mapPosition.x, db.mapPosition.y = Minimap:GetCenter()
     end
     
     Minimap:SetSize(135,135) 
@@ -184,6 +186,8 @@ function mnkMinimap:SetQuestTrackerPosition()
         ObjectiveTrackerFrame:SetPoint("CENTER", UIParent, "BOTTOMLEFT", db.qtPosition.x, db.qtPosition.y)
     else
         ObjectiveTrackerFrame:SetPoint('TOPRIGHT', UIParent, -5, -30);
+        db.qtPosition = {}
+        db.qtPosition.x, db.qtPosition.y = ObjectiveTrackerFrame:GetCenter()        
     end
 
     ObjectiveTrackerFrame.SetPointB = ObjectiveTrackerFrame.SetPoint    
