@@ -164,12 +164,10 @@ function mnkMinimap:SetMinimapPositionAndSize()
 end
 
 function mnkMinimap:MapDrag(startDrag)
-    if not IsAltKeyDown() then return end
-
-    if (startDrag) then
+    if (IsAltKeyDown()) and (startDrag) then
         Minimap.isMoving = true
         Minimap:StartMoving()
-    elseif(Minimap.isMoving) then
+    elseif (Minimap.isMoving) or (not IsAltKeyDown()) then
         Minimap.isMoving = false
         Minimap:StopMovingOrSizing()
         db.mapPosition = {}
@@ -181,12 +179,37 @@ end
 
 function mnkMinimap:SetQuestTrackerPosition()
     ObjectiveTrackerFrame:ClearAllPoints(); 
-    ObjectiveTrackerFrame:SetPoint('TOPRIGHT', UIParent, -5, -30);    
+
+    if db.qtPosition then
+        ObjectiveTrackerFrame:SetPoint("CENTER", UIParent, "BOTTOMLEFT", db.qtPosition.x, db.qtPosition.y)
+    else
+        ObjectiveTrackerFrame:SetPoint('TOPRIGHT', UIParent, -5, -30);
+    end
+
+    ObjectiveTrackerFrame.SetPointB = ObjectiveTrackerFrame.SetPoint    
     ObjectiveTrackerFrame.SetPoint = mnkLibs.donothing()
     ObjectiveTrackerFrame:SetHeight(GetScreenHeight()-(GetScreenHeight()*.25))
     ObjectiveTrackerFrame:SetClampedToScreen(true)
     ObjectiveTrackerFrame:SetMovable(true)
     ObjectiveTrackerFrame:SetUserPlaced(true)
+    ObjectiveTrackerFrame:EnableMouse(true)
+    ObjectiveTrackerFrame:RegisterForDrag('LeftButton')
+    ObjectiveTrackerFrame:SetScript('OnDragStart', function() mnkMinimap:QuestTrackerDrag(true) end)
+    ObjectiveTrackerFrame:SetScript('OnDragStop', function() mnkMinimap:QuestTrackerDrag(false) end)
+end
+
+function mnkMinimap:QuestTrackerDrag(startDrag)
+    if (IsAltKeyDown()) and (startDrag) then
+        ObjectiveTrackerFrame.isMoving = true
+        ObjectiveTrackerFrame:StartMoving()
+    elseif (ObjectiveTrackerFrame.isMoving) or (not IsAltKeyDown()) then
+        ObjectiveTrackerFrame.isMoving = false
+        ObjectiveTrackerFrame:StopMovingOrSizing()
+        db.qtPosition = {}
+        db.qtPosition.x, db.qtPosition.y = ObjectiveTrackerFrame:GetCenter()
+        ObjectiveTrackerFrame:ClearAllPoints()
+        ObjectiveTrackerFrame:SetPointB("CENTER", UIParent, "BOTTOMLEFT", db.qtPosition.x, db.qtPosition.y)
+    end
 end
 
 function mnkMinimap:ZONE_CHANGED()
