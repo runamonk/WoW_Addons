@@ -181,38 +181,110 @@ end
 
 function mnkMinimap:SetQuestTrackerPosition()
     ObjectiveTrackerFrame:ClearAllPoints(); 
-
-    if db.qtPosition then
-        ObjectiveTrackerFrame:SetPoint("CENTER", UIParent, "BOTTOMLEFT", db.qtPosition.x, db.qtPosition.y)
-    else
-        ObjectiveTrackerFrame:SetPoint('TOPRIGHT', UIParent, -5, -30);
-        db.qtPosition = {}
-        db.qtPosition.x, db.qtPosition.y = ObjectiveTrackerFrame:GetCenter()        
-    end
-
-    ObjectiveTrackerFrame.SetPointB = ObjectiveTrackerFrame.SetPoint    
-    ObjectiveTrackerFrame.SetPoint = mnkLibs.donothing()
     ObjectiveTrackerFrame:SetHeight(GetScreenHeight()-(GetScreenHeight()*.25))
     ObjectiveTrackerFrame:SetClampedToScreen(true)
     ObjectiveTrackerFrame:SetMovable(true)
     ObjectiveTrackerFrame:SetUserPlaced(true)
     ObjectiveTrackerFrame:EnableMouse(true)
+    ObjectiveTrackerFrame:SetResizable(true)
     ObjectiveTrackerFrame:RegisterForDrag('LeftButton')
+    ObjectiveTrackerFrame:ClearAllPoints()
+
+    if db.qtPosition then
+        ObjectiveTrackerFrame:SetSize(db.qtSize.width, db.qtSize.height)
+        ObjectiveTrackerFrame:SetPoint(db.qtPosition.point.p, db.qtPosition.point.rt, db.qtPosition.point.rp, db.qtPosition.point.x, db.qtPosition.point.y)  
+    else
+        ObjectiveTrackerFrame:SetPoint('TOPRIGHT', UIParent, -5, -30)
+        db.qtPosition = {}
+        db.qtPosition.point = {}
+        db.qtPosition.point.p, db.qtPosition.point.rt, db.qtPosition.point.rp, db.qtPosition.point.x, db.qtPosition.point.y = ObjectiveTrackerFrame:GetPoint()
+        db.qtSize = {}
+        db.qtSize.width, db.qtSize.height = ObjectiveTrackerFrame:GetSize()        
+    end
+
+    ObjectiveTrackerFrame.ResizeButton = CreateFrame("Button", nil, ObjectiveTrackerFrame, "UIPanelCloseButton")
+    ObjectiveTrackerFrame.ResizeButton:SetDisabledTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
+    ObjectiveTrackerFrame.ResizeButton:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
+    ObjectiveTrackerFrame.ResizeButton:SetPushedTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
+    ObjectiveTrackerFrame.ResizeButton:SetHighlightTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")        
+    ObjectiveTrackerFrame.ResizeButton:ClearAllPoints()
+    ObjectiveTrackerFrame.ResizeButton:SetPoint("BOTTOMRIGHT", 2, 0)
+    ObjectiveTrackerFrame.ResizeButton:SetSize(12,12)
+    ObjectiveTrackerFrame.ResizeButton:Show()
+    mnkLibs.setTooltip(ObjectiveTrackerFrame.ResizeButton, 'Resize')
+    ObjectiveTrackerFrame.ResizeButton:SetScript('OnMouseDown', function() mnkMinimap:QuestTrackerResize(true) end)
+    ObjectiveTrackerFrame.ResizeButton:SetScript('OnMouseUp', function() mnkMinimap:QuestTrackerResize(false) end)
     ObjectiveTrackerFrame:SetScript('OnDragStart', function() mnkMinimap:QuestTrackerDrag(true) end)
     ObjectiveTrackerFrame:SetScript('OnDragStop', function() mnkMinimap:QuestTrackerDrag(false) end)
+end
+
+-- local function getPoint(obj)
+--     local UIx, UIy = UIParent:GetCenter()
+--     local Ox, Oy = obj:GetCenter()
+
+--     -- Frame doesn't really have a positon yet.
+--     if(not Ox) then return end
+
+--     local OS = obj:GetScale()
+--     Ox, Oy = Ox * OS, Oy * OS
+
+--     local UIWidth, UIHeight = UIParent:GetRight(), UIParent:GetTop()
+
+--     local LEFT = UIWidth / 3
+--     local RIGHT = UIWidth * 2 / 3
+
+--     local point, x, y
+--     if(Ox >= RIGHT) then
+--         point = 'RIGHT'
+--         x = obj:GetRight() - UIWidth
+--     elseif(Ox <= LEFT) then
+--         point = 'LEFT'
+--         x = obj:GetLeft()
+--     else
+--         x = Ox - UIx
+--     end
+
+--     local BOTTOM = UIHeight / 3
+--     local TOP = UIHeight * 2 / 3
+
+--     if(Oy >= TOP) then
+--         point = 'TOP'..(point or '')
+--         y = obj:GetTop() - UIHeight
+--     elseif(Oy <= BOTTOM) then
+--         point = 'BOTTOM'..(point or '')
+--         y = obj:GetBottom()
+--     else
+--         if(not point) then point = 'CENTER' end
+--         y = Oy - UIy
+--     end
+--     return point, 'UIParent', x,  y, OS
+-- end
+
+function mnkMinimap:QuestTrackerResize(startResize)
+    if startResize then
+        ObjectiveTrackerFrame.isResizing = true
+        ObjectiveTrackerFrame:StartSizing("BOTTOMRIGHT")
+    elseif (ObjectiveTrackerFrame.isResizing) then
+        ObjectiveTrackerFrame.isResizing = false
+        ObjectiveTrackerFrame:StopMovingOrSizing()
+        db.qtSize = {}
+        db.qtSize.width, db.qtSize.height = ObjectiveTrackerFrame:GetSize()
+        --ObjectiveTrackerFrame:ClearAllPoints()
+        ObjectiveTrackerFrame:SetSize(db.qtSize.width, db.qtSize.height)
+        ObjectiveTrackerFrame:SetPoint(db.qtPosition.point.p, db.qtPosition.point.rt, db.qtPosition.point.rp, db.qtPosition.point.x, db.qtPosition.point.y)
+    end
 end
 
 function mnkMinimap:QuestTrackerDrag(startDrag)
     if (IsAltKeyDown()) and (startDrag) then
         ObjectiveTrackerFrame.isMoving = true
         ObjectiveTrackerFrame:StartMoving()
-    elseif (ObjectiveTrackerFrame.isMoving) or (not IsAltKeyDown()) then
+    elseif (ObjectiveTrackerFrame.isMoving) then
         ObjectiveTrackerFrame.isMoving = false
         ObjectiveTrackerFrame:StopMovingOrSizing()
         db.qtPosition = {}
-        db.qtPosition.x, db.qtPosition.y = ObjectiveTrackerFrame:GetCenter()
-        ObjectiveTrackerFrame:ClearAllPoints()
-        ObjectiveTrackerFrame:SetPointB("CENTER", UIParent, "BOTTOMLEFT", db.qtPosition.x, db.qtPosition.y)
+        db.qtPosition.point = {}
+        db.qtPosition.point.p, db.qtPosition.point.rt, db.qtPosition.point.rp, db.qtPosition.point.x, db.qtPosition.point.y = ObjectiveTrackerFrame:GetPoint()
     end
 end
 
