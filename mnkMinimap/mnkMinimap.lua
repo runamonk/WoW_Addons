@@ -29,6 +29,11 @@ function mnkMinimap:FilterQuestTracker()
     local mapInfo = C_Map.GetMapInfo(currentMap)
     mnkMinimap.LDB.text = ' '..mapInfo.name
 
+    local function GetQuestIndex(questID)
+        
+    end
+
+
     local function EmptyTracker()
         for i = GetNumQuestWatches(), 1, -1 do
             -- check to see if it's in our list of quests that were auto tracked.
@@ -36,8 +41,10 @@ function mnkMinimap:FilterQuestTracker()
             local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory = GetQuestLogTitle(x)
 
             -- only remove auto-tracked quests.
-            if mnkLibs.GetIndexInTable(db.autoquests, questID) > 0 then
+            local l = mnkLibs.GetIndexInTable(db.autoquests, questID)
+            if l > 0 then
                 RemoveQuestWatch(GetQuestIndexForWatch(i))
+                table.remove(db.autoquests, l)
             end
         end
     end
@@ -46,17 +53,24 @@ function mnkMinimap:FilterQuestTracker()
         local questsOnMap = C_QuestLog.GetQuestsOnMap(currentMap)
 
         for i, info in ipairs(questsOnMap) do
-            local x GetNumQuestWatches()
-            if x < 25 then
-                AddQuestWatch(GetQuestLogIndexByID(info.questID))
+            local x = GetNumQuestWatches()
+
+            if x < MAX_WATCHABLE_QUESTS then
+                local idx = GetQuestLogIndexByID(info.questID)
+                -- make sure they aren't already tracking it, if they are we don't want to auto remove it.
+                if IsQuestWatched(idx) then
+                    -- 
+                else
+                    AddQuestWatch(GetQuestLogIndexByID(info.questID))
                
-                if db.autoquests == nil then
-                    db.autoquests = {}
-                end
-                
-                --add quest to list of auto-tracked.
-                if mnkLibs.GetIndexInTable(db.autoquests, info.questID) == 0 then
-                    db.autoquests[#db.autoquests+1] = info.questID
+                    if db.autoquests == nil then
+                        db.autoquests = {}
+                    end
+
+                    --add quest to list of auto-tracked.
+                    if mnkLibs.GetIndexInTable(db.autoquests, info.questID) == 0 then
+                        db.autoquests[#db.autoquests+1] = info.questID
+                    end                   
                 end
             end
         end
