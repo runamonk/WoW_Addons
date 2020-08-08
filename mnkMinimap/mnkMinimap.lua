@@ -34,8 +34,8 @@ function mnkMinimap:FilterQuestTracker()
             -- check to see if it's in our list of quests that were auto tracked.
             local x = GetQuestIndexForWatch(i)
             local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory = GetQuestLogTitle(x)
-            
-            --print(x, ' ', questID)
+
+            -- only remove auto-tracked quests.
             if mnkLibs.GetIndexInTable(db.autoquests, questID) > 0 then
                 RemoveQuestWatch(GetQuestIndexForWatch(i))
             end
@@ -46,14 +46,18 @@ function mnkMinimap:FilterQuestTracker()
         local questsOnMap = C_QuestLog.GetQuestsOnMap(currentMap)
 
         for i, info in ipairs(questsOnMap) do
-            --local x = GetQuestLogIndexByID(info.questID)
-            AddQuestWatch(GetQuestLogIndexByID(info.questID))
-            --add quest to list of auto-tracked.
-            if db.autoquests == nil then
-                db.autoquests = {}
-            end
-            if mnkLibs.GetIndexInTable(db.autoquests, info.questID) == 0 then
-                db.autoquests[#db.autoquests+1] = info.questID
+            local x GetNumQuestWatches()
+            if x < 25 then
+                AddQuestWatch(GetQuestLogIndexByID(info.questID))
+               
+                if db.autoquests == nil then
+                    db.autoquests = {}
+                end
+                
+                --add quest to list of auto-tracked.
+                if mnkLibs.GetIndexInTable(db.autoquests, info.questID) == 0 then
+                    db.autoquests[#db.autoquests+1] = info.questID
+                end
             end
         end
     end
