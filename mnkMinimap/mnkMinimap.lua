@@ -31,7 +31,14 @@ function mnkMinimap:FilterQuestTracker()
 
     local function EmptyTracker()
         for i = GetNumQuestWatches(), 1, -1 do
-            RemoveQuestWatch(GetQuestIndexForWatch(i))
+            -- check to see if it's in our list of quests that were auto tracked.
+            local x = GetQuestIndexForWatch(i)
+            local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory = GetQuestLogTitle(x)
+            
+            --print(x, ' ', questID)
+            if mnkLibs.GetIndexInTable(db.autoquests, questID) > 0 then
+                RemoveQuestWatch(GetQuestIndexForWatch(i))
+            end
         end
     end
 
@@ -39,8 +46,15 @@ function mnkMinimap:FilterQuestTracker()
         local questsOnMap = C_QuestLog.GetQuestsOnMap(currentMap)
 
         for i, info in ipairs(questsOnMap) do
-            local x = GetQuestLogIndexByID(info.questID)
+            --local x = GetQuestLogIndexByID(info.questID)
             AddQuestWatch(GetQuestLogIndexByID(info.questID))
+            --add quest to list of auto-tracked.
+            if db.autoquests == nil then
+                db.autoquests = {}
+            end
+            if mnkLibs.GetIndexInTable(db.autoquests, info.questID) == 0 then
+                db.autoquests[#db.autoquests+1] = info.questID
+            end
         end
     end
 
@@ -217,48 +231,6 @@ function mnkMinimap:SetQuestTrackerPosition()
     ObjectiveTrackerFrame:SetScript('OnDragStart', function() mnkMinimap:QuestTrackerDrag(true) end)
     ObjectiveTrackerFrame:SetScript('OnDragStop', function() mnkMinimap:QuestTrackerDrag(false) end)
 end
-
--- local function getPoint(obj)
---     local UIx, UIy = UIParent:GetCenter()
---     local Ox, Oy = obj:GetCenter()
-
---     -- Frame doesn't really have a positon yet.
---     if(not Ox) then return end
-
---     local OS = obj:GetScale()
---     Ox, Oy = Ox * OS, Oy * OS
-
---     local UIWidth, UIHeight = UIParent:GetRight(), UIParent:GetTop()
-
---     local LEFT = UIWidth / 3
---     local RIGHT = UIWidth * 2 / 3
-
---     local point, x, y
---     if(Ox >= RIGHT) then
---         point = 'RIGHT'
---         x = obj:GetRight() - UIWidth
---     elseif(Ox <= LEFT) then
---         point = 'LEFT'
---         x = obj:GetLeft()
---     else
---         x = Ox - UIx
---     end
-
---     local BOTTOM = UIHeight / 3
---     local TOP = UIHeight * 2 / 3
-
---     if(Oy >= TOP) then
---         point = 'TOP'..(point or '')
---         y = obj:GetTop() - UIHeight
---     elseif(Oy <= BOTTOM) then
---         point = 'BOTTOM'..(point or '')
---         y = obj:GetBottom()
---     else
---         if(not point) then point = 'CENTER' end
---         y = Oy - UIy
---     end
---     return point, 'UIParent', x,  y, OS
--- end
 
 function mnkMinimap:QuestTrackerResize(startResize)
     if startResize then
