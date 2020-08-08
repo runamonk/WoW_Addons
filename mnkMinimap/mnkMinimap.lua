@@ -29,11 +29,6 @@ function mnkMinimap:FilterQuestTracker()
     local mapInfo = C_Map.GetMapInfo(currentMap)
     mnkMinimap.LDB.text = ' '..mapInfo.name
 
-    local function GetQuestIndex(questID)
-        
-    end
-
-
     local function EmptyTracker()
         for i = GetNumQuestWatches(), 1, -1 do
             -- check to see if it's in our list of quests that were auto tracked.
