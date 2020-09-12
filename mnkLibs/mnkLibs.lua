@@ -188,6 +188,10 @@ function mnkLibs.formatTime(s)
   end
 
  function mnkLibs.GetIndexInTable(table, val)
+    if table == nil then
+        return 0
+    end
+    
     for i=1,#table do
         if table[i] == val then
             return i
