@@ -21,7 +21,7 @@ function mnkNuisance:DUEL_REQUESTED()
 end
 
 function mnkNuisance:IsFriend(chatUser)
-    local _, i = GetNumFriends()
+    local _, i = C_FriendList.GetNumFriends()
     
     if chatUser ~= nil then
         for x = 1, i do
