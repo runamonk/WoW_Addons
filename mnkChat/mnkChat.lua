@@ -1,4 +1,4 @@
-mnkChat = CreateFrame('Frame')
+mnkChat = CreateFrame('Frame', nil, UIParent, BackdropTemplateMixin and "BackdropTemplate")
 mnkChat.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 mnkChat.hooks = {}
 mnkChat:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)

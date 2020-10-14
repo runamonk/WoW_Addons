@@ -1,4 +1,4 @@
-mnkInventory = CreateFrame('Frame', 'mnkInventory')
+mnkInventory = CreateFrame('Frame', 'mnkInventory', UIParent, BackdropTemplateMixin and "BackdropTemplate")
 mnkInventory.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 
 local tInventoryItems = {}
@@ -169,7 +169,7 @@ function mnkInventory:OnEnter(parent)
 	    GameTooltip:Hide()
 	end
 
-    local tooltip = LibQTip:Acquire('mnkInventoryTooltip', 5, 'LEFT', 'LEFT', 'RIGHT', 'RIGHT', 'RIGHT')
+    local tooltip = LibQTip:Acquire('mnkInventoryTooltip', 4, 'LEFT', 'LEFT', 'RIGHT', 'RIGHT')
     self.tooltip = tooltip
     tooltip:SetFont(mnkLibs.DefaultTooltipFont)
     tooltip:SetHeaderFont(mnkLibs.DefaultTooltipFont)
@@ -307,7 +307,7 @@ function StatusBarCell:InitializeCell()
 
     self.fsName = self.bar:CreateFontString(nil, 'OVERLAY')
     self.fsName:SetPoint('LEFT', self.bar, 'LEFT', 5, 0)
-    self.fsName:SetWidth(250)
+    self.fsName:SetWidth(350)
 	self.fsName:SetFontObject(_G.GameTooltipText)
     self.fsName:SetShadowColor(0, 0, 0)
     self.fsName:SetShadowOffset(1, -1)

@@ -68,7 +68,7 @@ function mnkLibs.copyTable(src, dest)
 end
 
 function mnkLibs.createBorder(parent, top, bottom, left, right, color)
-    parent.border = CreateFrame("Frame", nil, parent)
+    parent.border = CreateFrame("Frame", nil, parent, BackdropTemplateMixin and "BackdropTemplate")
     parent.border:SetPoint('TOP', top, top)
     parent.border:SetPoint('BOTTOM', bottom, bottom)
     parent.border:SetPoint('LEFT', left, left)
@@ -210,6 +210,11 @@ function mnkLibs.Round(n, mult)
 end
 
 function mnkLibs.setBackdrop(self, bgfile, edgefile, inset_l, inset_r, inset_t, inset_b)
+
+    if not self.SetBackdrop then
+        Mixin(self, BackdropTemplateMixin)
+    end
+
     if not bgFile then
         bgfile = 'Interface\\ChatFrame\\ChatFrameBackground'
     end

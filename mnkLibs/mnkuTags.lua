@@ -3,12 +3,12 @@ local events = oUF.TagEvents or oUF.Tags.Events
 local DEAD_TEXTURE = '|TInterface\\RaidFrame\\Raid-Icon-DebuffDisease:18|t'
 
 events['mnku:cast']     = 'UNIT_SPELLCAST_START UNIT_SPELLCAST_STOP UNIT_SPELLCAST_CHANNEL_START UNIT_SPELLCAST_CHANNEL_STOP'
-events['mnku:curhp']    = 'UNIT_HEALTH_FREQUENT UNIT_MAXHEALTH'
+events['mnku:curhp']    = 'UNIT_HEALTH UNIT_MAXHEALTH'
 events['mnku:leader']   = 'PARTY_LEADER_CHANGED'
 events['mnku:level']    = 'UNIT_LEVEL PLAYER_LEVEL_UP UNIT_CLASSIFICATION_CHANGED'
 events['mnku:name']     = 'UNIT_SPELLCAST_START UNIT_SPELLCAST_STOP UNIT_SPELLCAST_CHANNEL_START UNIT_SPELLCAST_CHANNEL_STOP UNIT_NAME_UPDATE UNIT_FACTION UNIT_CLASSIFICATION_CHANGED'
-events['mnku:perhp']    = 'UNIT_HEALTH_FREQUENT UNIT_MAXHEALTH'
-events['mnku:pethp']    = 'UNIT_HEALTH_FREQUENT UNIT_MAXHEALTH UNIT_PET'
+events['mnku:perhp']    = 'UNIT_HEALTH UNIT_MAXHEALTH'
+events['mnku:pethp']    = 'UNIT_HEALTH UNIT_MAXHEALTH UNIT_PET'
 events['mnku:status']   = 'UNIT_CONNECTION UNIT_HEALTH'
 
 tags['mnku:cast'] = function(unit)

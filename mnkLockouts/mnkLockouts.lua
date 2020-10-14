@@ -1,4 +1,4 @@
-mnkLockouts = CreateFrame('frame', 'mnkLockouts')
+mnkLockouts = CreateFrame('frame', 'mnkLockouts', UIParent, BackdropTemplateMixin and "BackdropTemplate")
 mnkLockouts.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 mnkLockouts:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
 mnkLockouts:RegisterEvent('PLAYER_LOGIN')

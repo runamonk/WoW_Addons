@@ -1,4 +1,4 @@
-mnkFavoriteMounts = CreateFrame('Frame', 'mnkFavoriteMounts')
+mnkFavoriteMounts = CreateFrame('Frame', 'mnkFavoriteMounts', UIParent, BackdropTemplateMixin and "BackdropTemplate")
 mnkFavoriteMounts.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 mnkFavoriteMounts:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
 mnkFavoriteMounts:RegisterEvent('PLAYER_LOGIN')

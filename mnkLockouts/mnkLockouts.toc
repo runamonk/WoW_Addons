@@ -1,4 +1,4 @@
-## Interface: 80300
+## Interface: 90001
 ## Title: mnkLockouts
 ## Notes: Display raid and dungeon lockouts
 ## Author: runamonk

@@ -1,6 +1,6 @@
 local parent, ns = ...
 local global = GetAddOnMetadata(parent, 'X-oUF')
-local _VERSION = '9.3.1'
+local _VERSION = '10.0.0'
 if(_VERSION:find('project%-version')) then
 	_VERSION = 'devel'
 end
@@ -20,9 +20,9 @@ local elements = {}
 local activeElements = {}
 
 local PetBattleFrameHider = CreateFrame('Frame', (global or parent) .. '_PetBattleFrameHider', UIParent, 'SecureHandlerStateTemplate')
--- PetBattleFrameHider:SetAllPoints()
--- PetBattleFrameHider:SetFrameStrata('LOW')
--- RegisterStateDriver(PetBattleFrameHider, 'visibility', '[petbattle] hide; show')
+PetBattleFrameHider:SetAllPoints()
+PetBattleFrameHider:SetFrameStrata('LOW')
+RegisterStateDriver(PetBattleFrameHider, 'visibility', '[petbattle] hide; show')
 
 -- updating of "invalid" units.
 local function enableTargetUpdate(object)
@@ -428,6 +428,15 @@ function oUF:SetActiveStyle(name)
 	if(not styles[name]) then return error('Style [%s] does not exist.', name) end
 
 	style = name
+end
+
+--[[ oUF:GetActiveStyle()
+Used to get the active style.
+
+* self - the global oUF object
+--]]
+function oUF:GetActiveStyle()
+	return style
 end
 
 do

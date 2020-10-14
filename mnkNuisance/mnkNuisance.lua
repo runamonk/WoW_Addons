@@ -1,4 +1,4 @@
-mnkNuisance = CreateFrame('Frame')
+mnkNuisance = CreateFrame('Frame', nil, UIParent, BackdropTemplateMixin and "BackdropTemplate")
 mnkNuisance.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 mnkNuisance_bBlockEnabled = true
 mnkNuisance:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)

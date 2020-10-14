@@ -1,4 +1,4 @@
-mnkLoots = CreateFrame('frame')
+mnkLoots = CreateFrame('Frame', nil, UIParent, BackdropTemplateMixin and "BackdropTemplate")
 mnkLoots.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 mnkLoots_LootHistory = {}
 

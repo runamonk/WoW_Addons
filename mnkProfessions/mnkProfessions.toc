@@ -1,4 +1,4 @@
-## Interface: 80300
+## Interface: 90001
 ## Title: mnkProfessions
 ## Notes: Display professions in a broker display
 ## Author: runamonk
