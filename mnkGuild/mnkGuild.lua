@@ -1,4 +1,4 @@
-mnkGuild = CreateFrame('Frame')
+mnkGuild = CreateFrame('Frame', nil, UIParent, BackdropTemplateMixin and "BackdropTemplate")
 mnkGuild.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 mnkGuild:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
 mnkGuild:RegisterEvent('GUILD_ROSTER_UPDATE')

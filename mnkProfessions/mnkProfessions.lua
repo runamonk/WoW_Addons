@@ -1,4 +1,4 @@
-mnkProfessions = CreateFrame('Frame')
+mnkProfessions = CreateFrame('Frame', nil, UIParent, BackdropTemplateMixin and "BackdropTemplate")
 mnkProfessions.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 mnkProfessions:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
 

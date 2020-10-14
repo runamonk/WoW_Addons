@@ -1,4 +1,4 @@
-mnkMoney = CreateFrame('Frame')
+mnkMoney = CreateFrame('Frame', nil, UIParent, BackdropTemplateMixin and "BackdropTemplate")
 mnkMoney.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 mnkMoney:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
 
@@ -56,8 +56,8 @@ function mnkMoney:OnEnter(parent)
 
     local t = {}
     idx = 0
-    for i = 1, GetCurrencyListSize() do
-        name, isHeader, _, isUnused, _, count, icon, _ = GetCurrencyListInfo(i)
+    for i = 1, C_CurrencyInfo.GetCurrencyListSize() do
+        name, isHeader, _, isUnused, _, count, icon, _ = C_CurrencyInfo.GetCurrencyListInfo(i)
 
         if (isHeader == false) and (isUnused == false) then
             idx = idx + 1

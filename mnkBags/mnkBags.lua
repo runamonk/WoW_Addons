@@ -3,7 +3,7 @@ local cargBags = ns.cargBags
 local cbmb = cargBags:NewImplementation("mnkBags")
 local mnkBagsContainer = cbmb:GetContainerClass()
 local mnkBagsButton = cbmb:GetItemButtonClass()
-local mnkBags = CreateFrame('Frame', 'mnkBags')
+local mnkBags = CreateFrame('Frame', 'mnkBags', UIParent, BackdropTemplateMixin and "BackdropTemplate")
 
 mnkBags:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
 mnkBags:RegisterEvent('PLAYER_ENTERING_WORLD')

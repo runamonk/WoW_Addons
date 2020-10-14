@@ -1,6 +1,6 @@
 --thanks to an old post by Phanx.
 
-mnkTooltip = CreateFrame('Frame')
+mnkTooltip = CreateFrame('Frame', nil, UIParent, BackdropTemplateMixin and "BackdropTemplate")
 
 local colors = {}
 local cls = ''

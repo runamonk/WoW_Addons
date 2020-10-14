@@ -1,4 +1,4 @@
-mnkUnits = CreateFrame('frame')
+mnkUnits = CreateFrame('Frame', nil, UIParent, BackdropTemplateMixin and "BackdropTemplate")
 mnkUnits.oUF = oUF or ns.oUF
 local _, playerClass = UnitClass('player')
 local classColor = {}
@@ -159,7 +159,7 @@ local function PostUpdateIcon(element, unit, button, index)
 end
 
 local function SetPlayerStatusFlag(self, combatFlag)
-	if not combatFlag or combatFlag == nil then
+	if combatFlag == nil or not combatFlag then
         self.flagCombat:Hide()
     else
         self.flagCombat:Show()   
@@ -232,10 +232,10 @@ local function PlayerUnit(self)
         self:Tag(self.HealthValue, '[mnku:status][mnku:perhp] [mnku:curhp]') 
         self.isResting = mnkLibs.createFontString(self.frameValues, mnkLibs.Fonts.oswald, 18, nil, nil, true)
         self.isResting:SetPoint('RIGHT', self.Health, 'RIGHT', -2, 0)
-        self:Tag(self.isResting, '[|cFFFFFF00>resting<|r]')
+        self:Tag(self.isResting, '[resting]')
         self.flagPVP = mnkLibs.createFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
         self.flagPVP:SetPoint('RIGHT', self.isResting, 'LEFT', 0, 0)
-        self:Tag(self.flagPVP, '[|cffff0000>pvp<|r]') 
+        self:Tag(self.flagPVP, '[pvp]')
         self.flagAFK = mnkLibs.createFontString(self.frameValues, mnkLibs.Fonts.oswald, 18,  nil, nil, true)
         self.flagAFK:SetPoint('RIGHT', self.flagPVP, 'LEFT', 0, 0)
         self.flagAFK:SetText(mnkLibs.Color(COLOR_BLUE)..'AFK')

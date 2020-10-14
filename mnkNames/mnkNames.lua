@@ -1,4 +1,4 @@
-mnkNames = CreateFrame("Frame")
+mnkNames = CreateFrame('Frame', nil, UIParent, BackdropTemplateMixin and "BackdropTemplate")
 mnkNames.oUF = oUF or ns.oUF
 --Tags are in mnkLibs\mnkuTags
 
@@ -51,7 +51,7 @@ local function UpdateThreat(self, event, unit)
     else
         s = ""
     end
-    self.Threat:SetText(mnkLibs.Color(COLOR_WHITE)..s)
+    --self.Threat:SetText(mnkLibs.Color(COLOR_WHITE)..s)
 end
 
 function mnkNames.CreateStyle(self, unit)

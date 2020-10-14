@@ -1,4 +1,4 @@
-mnkReputation = CreateFrame('Frame')
+mnkReputation = CreateFrame('Frame', nil, UIParent, BackdropTemplateMixin and "BackdropTemplate")
 mnkReputation.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 mnkReputation:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
 

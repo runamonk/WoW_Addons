@@ -1,4 +1,4 @@
-mnkXP = CreateFrame('Frame')
+mnkXP = CreateFrame('Frame', nil, UIParent, BackdropTemplateMixin and "BackdropTemplate")
 mnkXP.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 mnkXP:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
 mnkXP:RegisterEvent('PLAYER_LOGIN')

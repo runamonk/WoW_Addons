@@ -1,4 +1,4 @@
-## Interface: 80300
+## Interface: 90001
 ## Title: mnkMoney
 ## Notes: Display money in a broker display
 ## Author: runamonk

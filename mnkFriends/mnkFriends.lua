@@ -1,4 +1,4 @@
-mnkFriends = CreateFrame('Frame')
+mnkFriends = CreateFrame('Frame', nil, UIParent, BackdropTemplateMixin and "BackdropTemplate")
 mnkFriends.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 mnkFriends:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
 mnkFriends:RegisterEvent('PLAYER_LOGIN')

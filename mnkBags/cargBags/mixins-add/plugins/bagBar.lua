@@ -52,7 +52,7 @@ function BagButton:Create(bagID)
     buttonNum = buttonNum+1
     local name = addon.."BagButton"..buttonNum
 
-    local button = setmetatable(CreateFrame("ItemButton", name, nil), self.__index)
+    local button = setmetatable(CreateFrame("ItemButton", name, nil, BackdropTemplateMixin and "BackdropTemplate"), self.__index)
 
     local invID = ContainerIDToInventoryID(bagID)
     button.invID = invID
@@ -86,7 +86,7 @@ function BagButton:Create(bagID)
     button.Quest =      _G[name.."IconQuestTexture"]
     button.Border =     _G[name.."NormalTexture"]
     
-    button.bg = CreateFrame("Frame", nil, button)
+    button.bg = CreateFrame("Frame", nil, button, BackdropTemplateMixin and "BackdropTemplate")
     button.bg:SetAllPoints(button)
     button.bg:SetBackdrop({
         bgFile = "Interface\\ChatFrame\\ChatFrameBackground",

@@ -1,4 +1,4 @@
-## Interface: 80300
+## Interface: 90001
 ## Title: mnkNuisance
 ## Notes: Block nuisance group invites.
 ## Author: runamonk

@@ -1,4 +1,4 @@
-mnkGearSets = CreateFrame('Frame')
+mnkGearSets = CreateFrame('Frame', nil, UIParent, BackdropTemplateMixin and "BackdropTemplate")
 mnkGearSets.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 mnkGearSets:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
 mnkGearSets:RegisterEvent('PLAYER_LOGIN')
