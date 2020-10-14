@@ -23,11 +23,11 @@ local function MinimapZoom(self, direction)
     end
 end
 
--- function mnkMinimap:FilterQuestTracker()
---     local currentMap =  C_Map.GetBestMapForUnit("player")
---     if not currentMap then return end
---     local mapInfo = C_Map.GetMapInfo(currentMap)
---     mnkMinimap.LDB.text = ' '..mapInfo.name
+ function mnkMinimap:FilterQuestTracker()
+     local currentMap =  C_Map.GetBestMapForUnit("player")
+     if not currentMap then return end
+     local mapInfo = C_Map.GetMapInfo(currentMap)
+     mnkMinimap.LDB.text = ' '..mapInfo.name
 
 --     local function EmptyTracker()
 
@@ -75,12 +75,12 @@ end
 
 --     EmptyTracker()
 --     FillTracker()
--- end
+end
 
 function mnkMinimap:PLAYER_ENTERING_WORLD()
     mnkMinimap.SetQuestTrackerPosition()
     mnkMinimap.SetMinimapPositionAndSize()
-    --mnkMinimap.FilterQuestTracker()
+    mnkMinimap.FilterQuestTracker()
 end
 
 function mnkMinimap:PLAYER_LOGIN()
@@ -96,7 +96,7 @@ function mnkMinimap:PLAYER_LOGIN()
 end
 
 function mnkMinimap:QUEST_ACCEPTED()
-    --mnkMinimap.FilterQuestTracker()
+    mnkMinimap.FilterQuestTracker()
 end
 
 function mnkMinimap:SetMinimapPositionAndSize()
@@ -276,9 +276,9 @@ function mnkMinimap:QuestTrackerDrag(startDrag)
 end
 
 function mnkMinimap:ZONE_CHANGED()
-    --mnkMinimap.FilterQuestTracker()
+    mnkMinimap.FilterQuestTracker()
 end
 
 function mnkMinimap:ZONE_CHANGED_NEW_AREA()
-    --mnkMinimap.FilterQuestTracker()
+    mnkMinimap.FilterQuestTracker()
 end
