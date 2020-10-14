@@ -341,7 +341,7 @@ do
 end
 
 do
-	local frame = CreateFrame"Frame"
+	local frame = CreateFrame("Frame")
 	frame:SetScript("OnEvent", function(self, event)
 		return self[event](self)
 	end)
@@ -463,10 +463,10 @@ do
 		if(not target:GetCenter()) then return end
 		if(backdropPool[target]) then return backdropPool[target] end
 
-		local backdrop = CreateFrame"Frame"
+		local backdrop = CreateFrame("Frame", nil, UIParent, BackdropTemplateMixin and "BackdropTemplate")
+
 		backdrop:SetParent(UIParent)
 		backdrop:Hide()
-
 		backdrop:SetBackdrop(_BACKDROP)
 		backdrop:SetFrameStrata"TOOLTIP"
 		backdrop:SetAllPoints(target)
