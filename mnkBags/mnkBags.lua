@@ -70,7 +70,7 @@ local function SellJunk()
 	local p = 0
 	p = SellItemsInContainer(_Bags.bagJunk)
 	JunkItemsSold = JunkItemsSold + p
-	C_Timer.After(0.2, SellJunk) 
+	C_Timer.After(0.5, SellJunk) 
 end
 
 local function SellNewItems()
@@ -78,7 +78,7 @@ local function SellNewItems()
 	local p = 0
 	p = SellItemsInContainer(_Bags.bagNew)
 	NewItemsSold = NewItemsSold + p
-	C_Timer.After(0.2, SellNewItems) 		
+	C_Timer.After(0.5, SellNewItems) 		
 end
 
 StaticPopupDialogs["ConfirmSellNewItems"] = {
@@ -86,6 +86,7 @@ StaticPopupDialogs["ConfirmSellNewItems"] = {
   button1 = "Yes",
   button2 = "No",
   OnAccept = function()
+  	NewItemsSold = 0
     SellNewItems()
 	if NewItemsSold > 0 then
 		print('New items sold for: ', GetCoinTextureString(NewItemsSold))
@@ -99,6 +100,7 @@ StaticPopupDialogs["ConfirmSellNewItems"] = {
 }
 
 function mnkBags:MERCHANT_SHOW(event, addon)
+	JunkItemsSold = 0
 	SellJunk()
 	if JunkItemsSold > 0 then
 		print('Junk sold for: ', GetCoinTextureString(JunkItemsSold))
