@@ -20,16 +20,34 @@ local currencyOnHand = 0
 function  mnkMoney:CHAT_MSG_CURRENCY(event, arg1, arg2)
     local CURRENCY_PATTERN = (CURRENCY_GAINED):gsub('%%s', '(.+)')
     local CURRENCY_MULTIPLE_PATTERN = (CURRENCY_GAINED_MULTIPLE):gsub('%%s', '(.+)'):gsub('%%d', '(%%d+)')
+    local s
     
     local l, c = arg1:match(CURRENCY_MULTIPLE_PATTERN)
     if not l then
         c, l = 1, arg1:match(CURRENCY_PATTERN)
     end
+
     if l then
-        local name, i, icon = _G.GetCurrencyInfo(tonumber(l:match('currency:(%d+)')))
-        local s = string.format('|T%s:12|t %s', icon, name..mnkLibs.Color(COLOR_WHITE)..' x '..c..' ['..i..']')
+        if l:match('currency:(%d+)') then
+            local n = tonumber(l:match('currency:(%d+)'))
+            
+            if n then
+                local info = C_CurrencyInfo.GetCurrencyInfo(n)
+                s = string.format('|T%s:12|t %s', info.iconFileID, info.name..mnkLibs.Color(COLOR_WHITE)..' x '..c..' ['..info.quantity..']')
+            end
+        end
+
+        if not s then
+            print("mnkMoneyTest#1")
+            local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo(l)
+            print(itemName)
+            print(string.format('|T%s:12|t %s', itemTexture, itemName..mnkLibs.Color(COLOR_WHITE)..' x '..c..' ['..GetItemCount(l)..']'))
+            s = string.format('%s', l..mnkLibs.Color(COLOR_WHITE)..' x '..c..' ['..GetItemCount(l)..']')
+        end            
+
         CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false)
     end
+
     self:UpdateText()
 end
 
@@ -57,14 +75,13 @@ function mnkMoney:OnEnter(parent)
     local t = {}
     idx = 0
     for i = 1, C_CurrencyInfo.GetCurrencyListSize() do
-        name, isHeader, _, isUnused, _, count, icon, _ = C_CurrencyInfo.GetCurrencyListInfo(i)
-
-        if (isHeader == false) and (isUnused == false) then
+        local info = C_CurrencyInfo.GetCurrencyListInfo(i)
+        if (info.isHeader == false) and (info.isTypeUnused == false) then
             idx = idx + 1
             t[idx] = {}
-            t[idx].name = name
-            t[idx].icon = format('|T%s:16|t ', icon)
-            t[idx].count = count
+            t[idx].name = info.name
+            t[idx].icon = format('|T%s:16|t ', info.iconFileID)
+            t[idx].count = info.quantity
         end
     end
 
@@ -78,10 +95,6 @@ function mnkMoney:OnEnter(parent)
     tooltip:SetAutoHideDelay(.1, parent)
     tooltip:SmartAnchorTo(parent)
     tooltip:SetBackdropBorderColor(0, 0, 0, 0)
-    -- tooltip:SetBackdrop(GameTooltip:GetBackdrop())
-    -- tooltip:SetBackdropBorderColor(GameTooltip:GetBackdropBorderColor())
-    -- tooltip:SetBackdropColor(GameTooltip:GetBackdropColor())
-    -- tooltip:SetScale(GameTooltip:GetScale())
     mnkLibs.setBackdrop(tooltip, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
     tooltip:SetBackdropColor(0, 0, 0, 1)
     tooltip:EnableMouse(true)
