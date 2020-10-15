@@ -51,7 +51,7 @@ local function UpdateThreat(self, event, unit)
     else
         s = ""
     end
-    --self.Threat:SetText(mnkLibs.Color(COLOR_WHITE)..s)
+    self.ThreatText:SetText(mnkLibs.Color(COLOR_WHITE)..s)
 end
 
 function mnkNames.CreateStyle(self, unit)
@@ -86,11 +86,11 @@ function mnkNames.CreateStyle(self, unit)
     self.Name:SetWidth(cfg_name_width-(self.HealthValue:GetWidth()+8))
     self:Tag(self.Name, '[mnku:name]')
     
-    self.Threat = mnkLibs.createFontString(self.Health, mnkLibs.Fonts.oswald, cfg_font_height, nil, nil, true)
-    self.Threat:SetPoint("TOPLEFT", self.Health, "TOPLEFT", 1, 4)
-    self.Threat:SetJustifyH("LEFT")
-    self.Threat:SetWidth(self.Name:GetWidth())
-    self.Threat:SetHeight(3)
+    self.ThreatText = mnkLibs.createFontString(self.Health, mnkLibs.Fonts.oswald, cfg_font_height, nil, nil, true)
+    self.ThreatText:SetPoint("TOPLEFT", self.Health, "TOPLEFT", 1, 4)
+    self.ThreatText:SetJustifyH("LEFT")
+    self.ThreatText:SetWidth(self.Name:GetWidth())
+    self.ThreatText:SetHeight(3)
 
     self.Level = mnkLibs.createFontString(self.Health, mnkLibs.Fonts.oswald, cfg_font_height, nil, nil, true)
     self.Level:SetPoint("LEFT", self.Health, -20, 0)
