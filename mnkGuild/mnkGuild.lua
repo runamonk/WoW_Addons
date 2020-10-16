@@ -71,7 +71,7 @@ function mnkGuild:OnEnter(parent)
     tooltip:Clear()
 
     if IsInGuild() then
-        GuildRoster()
+        C_GuildInfo.GuildRoster()
         
         local GuildName = GetGuildInfo('player')
         tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..GuildName)
@@ -104,10 +104,6 @@ function mnkGuild:OnEnter(parent)
     tooltip:SmartAnchorTo(parent)
     tooltip:UpdateScrolling(500)
     tooltip:SetBackdropBorderColor(0, 0, 0, 0)
-    -- tooltip:SetBackdrop(GameTooltip:GetBackdrop())
-    -- tooltip:SetBackdropBorderColor(GameTooltip:GetBackdropBorderColor())
-    -- tooltip:SetBackdropColor(GameTooltip:GetBackdropColor())
-    -- tooltip:SetScale(GameTooltip:GetScale())
     mnkLibs.setBackdrop(tooltip, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
     tooltip:SetBackdropColor(0, 0, 0, 1) 
     tooltip:EnableMouse(true)   
@@ -130,7 +126,7 @@ function mnkGuild:UpdateText()
     t = {}
 
     if IsInGuild() then
-        GuildRoster()
+        C_GuildInfo.GuildRoster()
         
         local guildName = GetGuildInfo('player')
         local iTotal, _, iOnline = GetNumGuildMembers()
