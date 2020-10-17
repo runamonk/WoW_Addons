@@ -54,6 +54,7 @@ local function CreateCastBar(self)
     self.Castbar.PostCastStop = function(element, unit) element:GetParent():Hide() end
     self.Castbar.PostChannelStart = function(element, unit) element:GetParent():Show() end
     self.Castbar.PostChannelStop = function(element, unit) element:GetParent():Hide() end
+    self.Castbar.PostCastFail = function(element, unit) element:GetParent():Hide() end
 end
 
 local function CreateHealthBar(self)
