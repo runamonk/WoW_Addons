@@ -107,7 +107,11 @@ local function OnTooltipSetItem()
 end
 
 local function OnShow()
-    SetBackdrop()
+    if not IsControlKeyDown() then
+        SetBackdrop()
+    else
+        GameTooltip:Hide()
+    end
 end
 
 hooksecurefunc('GameTooltip_SetDefaultAnchor', function(tooltip, parent)
