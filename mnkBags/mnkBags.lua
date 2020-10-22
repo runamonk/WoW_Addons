@@ -10,6 +10,7 @@ mnkBags:RegisterEvent('PLAYER_ENTERING_WORLD')
 mnkBags:RegisterEvent('MERCHANT_SHOW')
 
 mnkBagsKnownItems = {}
+skipOnButtonRemove = false
 
 local _
 local itemSlotSize = 32
@@ -42,7 +43,7 @@ local function createIconButton(name, parent, texture, point, hint)
 	button.tag = name	
 	return button
 end
-
+ 
 local function SellItemsInContainer(container)
 	--print(container:GetName(), ' ', #container.buttons)
 	local p = 0
@@ -57,6 +58,12 @@ local function SellItemsInContainer(container)
 				local stackCount = GetItemCount(clink)
 				if sellPrice ~= 0 then
 					p = p + (sellPrice * stackCount)
+
+					local itemid = select(1, GetItemInfoInstant(clink))
+					if mnkLibs.GetIndexInTable(mnkBagsKnownItems, itemid) == 0 then			
+						mnkBagsKnownItems[#mnkBagsKnownItems+1] = itemid
+					end
+
 					UseContainerItem(b.bagID, b.slotID)
 				end
 			end
@@ -397,6 +404,19 @@ function mnkBagsContainer:OnContentsChanged(skipUpdateAnchors)
 	end
 end
 
+function mnkBagsContainer:OnButtonRemove(button)
+	if skipOnButtonRemove then return end 
+	-- remove item from known items
+	if button.clink then
+		--print("OnButtonRemove:"..button.clink)
+		local itemid = select(1, GetItemInfoInstant(button.clink))
+		local i = mnkLibs.GetIndexInTable(mnkBagsKnownItems, itemid) 
+		if i > 0 then			
+			table.remove(mnkBagsKnownItems, i)
+		end		
+	end
+end
+
 function mnkBagsContainer:OnCreate(name)
 	if not name then return end
 	self.name = name
@@ -609,6 +629,7 @@ function mnkBagsContainer:OnShow()
 end
 
 function mnkBagsContainer:ResetNewItems()
+	skipOnButtonRemove = true
 	for k,_ in pairs(_Bags.bagNew.buttons) do
 		local b = _Bags.bagNew.buttons[k]
 		local clink = GetContainerItemLink(b.bagID, b.slotID)
@@ -617,7 +638,9 @@ function mnkBagsContainer:ResetNewItems()
 			mnkBagsKnownItems[#mnkBagsKnownItems+1] = itemid
 		end
 	end
+
 	cbmb:UpdateBags()
+	skipOnButtonRemove = false
 end
 
 function mnkBagsContainer:RestackItems(self)
