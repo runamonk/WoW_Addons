@@ -327,6 +327,19 @@ function mnkBagsContainer:DepositReagentBank()
 	DepositReagentBank()
 end
 
+function mnkBagsContainer:OnButtonRemove(button)
+	if skipOnButtonRemove then return end 
+	-- remove item from known items
+	if button.clink then
+		--print("OnButtonRemove:"..button.clink)
+		local itemid = select(1, GetItemInfoInstant(button.clink))
+		local i = mnkLibs.GetIndexInTable(mnkBagsKnownItems, itemid) 
+		if i > 0 then			
+			table.remove(mnkBagsKnownItems, i)
+		end		
+	end
+end
+
 function mnkBagsContainer:OnContentsChanged(skipUpdateAnchors)
 	if cbmb.SkipOnChange then return end
 
@@ -401,19 +414,6 @@ function mnkBagsContainer:OnContentsChanged(skipUpdateAnchors)
 
 	if not skipUpdateAnchors then
 		cbmb:UpdateAnchors()
-	end
-end
-
-function mnkBagsContainer:OnButtonRemove(button)
-	if skipOnButtonRemove then return end 
-	-- remove item from known items
-	if button.clink then
-		--print("OnButtonRemove:"..button.clink)
-		local itemid = select(1, GetItemInfoInstant(button.clink))
-		local i = mnkLibs.GetIndexInTable(mnkBagsKnownItems, itemid) 
-		if i > 0 then			
-			table.remove(mnkBagsKnownItems, i)
-		end		
 	end
 end
 
