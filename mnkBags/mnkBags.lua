@@ -58,12 +58,6 @@ local function SellItemsInContainer(container)
 				local stackCount = GetItemCount(clink)
 				if sellPrice ~= 0 then
 					p = p + (sellPrice * stackCount)
-
-					local itemid = select(1, GetItemInfoInstant(clink))
-					if mnkLibs.GetIndexInTable(mnkBagsKnownItems, itemid) == 0 then			
-						mnkBagsKnownItems[#mnkBagsKnownItems+1] = itemid
-					end
-
 					UseContainerItem(b.bagID, b.slotID)
 				end
 			end
