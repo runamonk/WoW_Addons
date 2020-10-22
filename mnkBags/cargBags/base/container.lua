@@ -62,6 +62,14 @@ end
 function Container:AddButton(button)
 	button.container = self
 	button:SetParent(self.bags[button.bagID])
+	
+	local clink = GetContainerItemLink(button.bagID, button.slotID)
+	if clink then
+		button.clink = clink
+	else
+		button.clink = nil
+	end
+
 	table.insert(self.buttons, button)
 	if(button.OnAdd) then button:OnAdd(self) end
 	if(self.OnButtonAdd) then self:OnButtonAdd(button) end
