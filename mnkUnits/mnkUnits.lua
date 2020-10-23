@@ -137,12 +137,12 @@ local function timer_OnUpdate(button, elapsed)
 end
 
 local function PostCreateIcon(Auras, button)
-    button.count = mnkLibs.createFontString(button, mnkLibs.Fonts.ap, 10,  nil, nil, true)
+    button.count = mnkLibs.createFontString(button, mnkLibs.Fonts.ap, 8,  nil, nil, true)
     button.count:ClearAllPoints()
     button.count:SetPoint('TOPRIGHT', button, 0, 1)
-    button.timer = mnkLibs.createFontString(button, mnkLibs.Fonts.ap, 10,  nil, nil, true)
+    button.timer = mnkLibs.createFontString(button, mnkLibs.Fonts.ap, 8,  nil, nil, true)
     button.timer:ClearAllPoints()
-    button.timer:SetPoint('BOTTOMLEFT', button, 1, 1)
+    button.timer:SetPoint('BOTTOMLEFT', button, 2, 1)
     button.icon:SetTexCoord(.07, .93, .07, .93)
     button:SetScript('OnClick', function(self, button) CancelUnitBuff('player', self:GetName():match('%d')) end)
     mnkLibs.createBorder(button, 0,0,0,0, {0,0,0,1})
@@ -307,7 +307,7 @@ local function PlayerUnit(self)
         mnkLibs.createBorder(self.AlternativePower,0.8, -0.8, -0.8, 0.8, {0, 0, 0, 1})
         self.Buffs = CreateFrame('Frame', nil, self)
         self.Buffs.initialAnchor = 'BOTTOMRIGHT'
-        self.Buffs.onlyShowPlayer = true
+        self.Buffs.onlyShowPlayer = false
         self.Buffs.disableCooldown = true
         self.Buffs['growth-x'] = 'LEFT'
         self.Buffs['growth-y'] = 'UP'
