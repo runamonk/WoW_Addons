@@ -651,9 +651,10 @@ function mnkBagsContainer:ShowOrHide()
 	local result = (#self.buttons > 0) or false
 	local isBankBag = (self.name:sub(1, string.len('mb_Bank')) == 'mb_Bank') 
 
-	if ((isBankBag == true) and cbmb:AtBank() and ((#self.buttons > 0) or  -- Bank bag? Has items in it?
+	-- at the bank?
+	if ((isBankBag == true) and cbmb:AtBank() and ((#self.buttons > 0) or  									-- Bank bag? Has items in it?
 		                                           (self == _Bags.bankReagent) or (self == _Bags.bank))) or -- always show main and reagent bags
-	                                               (self == _Bags.main) then -- main bag		
+	                                               (self == _Bags.main) then 								-- main bag		
 		result = true
 	-- bank bag, but not at bank? 
 	elseif (isBankBag == true) and (not cbmb:AtBank()) then     
