@@ -2,6 +2,12 @@ mnkNames = CreateFrame('Frame', nil, UIParent, BackdropTemplateMixin and "Backdr
 mnkNames.oUF = oUF or ns.oUF
 --Tags are in mnkLibs\mnkuTags
 
+local _, playerClass = UnitClass('player')
+local classColor = {}
+local _
+classColor.r, classColor.g, classColor.b, _ = GetClassColor(playerClass)
+
+
 local cvars = {
     nameplateGlobalScale = .8, 
     --NamePlateHorizontalScale = .6, 
@@ -60,6 +66,7 @@ function mnkNames.CreateStyle(self, unit)
     self.frameValues:SetFrameLevel(self:GetFrameLevel()+50)
     self.frameValues:SetSize(self:GetSize())
     self.frameValues:SetAllPoints()
+
     self.Health = CreateFrame("StatusBar", nil, self)
     self.Health:SetAllPoints()
     self.Health:SetStatusBarTexture(mnkLibs.Textures.background)
@@ -74,7 +81,6 @@ function mnkNames.CreateStyle(self, unit)
     self.Health.bg:SetAllPoints(self.Health)
     self.Health.bg:SetAlpha(0.20)
     self.Health.bg:SetTexture(mnkLibs.Textures.bar)
-
     self.HealthValue = mnkLibs.createFontString(self.Health, mnkLibs.Fonts.oswald, cfg_font_height, nil, nil, true)
     self.HealthValue:SetPoint('RIGHT', self.Health, -2, 0)
     self.HealthValue:SetWordWrap(false)
@@ -124,6 +130,19 @@ function mnkNames.CreateStyle(self, unit)
     self.Castbar.PostCastNotInterruptible = mnkNames.CastbarSpellUpdate
     self.Castbar.PostCastStart = mnkNames.CastbarSpellUpdate
     self.Castbar.PostChannelStart = mnkNames.CastbarSpellUpdate
+
+    self.PlayerHealth = CreateFrame('StatusBar', nil, self.Health)
+    self.PlayerHealth:SetSize(cfg_frame_width-2, 1.5)
+    self.PlayerHealth:SetPoint("LEFT", self.Health, "LEFT", 1, 0)
+    self.PlayerHealth:SetPoint("BOTTOM", self.Health, "BOTTOM", 0, 1)
+    self.PlayerHealth:SetStatusBarTexture(mnkLibs.Textures.bar)
+    self.PlayerHealth:GetStatusBarTexture():SetHorizTile(false)
+    self.PlayerHealth:SetFrameLevel(self:GetFrameLevel()+51)
+    self.PlayerHealth:SetStatusBarColor(.1, 1, .1, 1) 
+    self.PlayerHealth:SetMinMaxValues(0, UnitHealthMax("player"))
+    mnkLibs.setBackdrop(self.PlayerHealth, nil, nil, .8, .8, .8, .8)
+    self:RegisterEvent("UNIT_HEALTH", function (self) self.PlayerHealth:SetValue(UnitHealth("player")) end)
+
     self.Debuffs = CreateFrame("Frame", nil, self)
     self.Debuffs:SetSize((cfg_debuffs_num * (cfg_debuffs_size + 9)) / cfg_debuffs_rows, (cfg_debuffs_size + 9) * cfg_debuffs_rows)
     self.Debuffs.num = cfg_debuffs_num
@@ -197,6 +216,7 @@ function mnkNames.OnNameplatesCallback(self)
 	if not self then
 		if lastNameplate then
 			lastNameplate:SetBackdropColor(0, 0, 0, 1)
+            lastNameplate.PlayerHealth:Hide()
 		end
 	else
         local s = UnitClassification(self.unit)
@@ -217,13 +237,16 @@ function mnkNames.OnNameplatesCallback(self)
         end
 
 		if (UnitExists('target') and UnitIsUnit('target', self.unit)) then
+            self.PlayerHealth:Show()
 			if (lastNameplate ~= nil and lastNameplate ~= self) then
-				lastNameplate:SetBackdropColor(0, 0, 0, 1)
+				lastNameplate.PlayerHealth:Hide()
+                lastNameplate:SetBackdropColor(0, 0, 0, 1)
 			end
 			self:SetBackdropColor(1, 1, 1, 1)
 			lastNameplate = self
 		else
 			self:SetBackdropColor(0, 0, 0, 1)
+            self.PlayerHealth:Hide()
 		end  		
 	end
 end
