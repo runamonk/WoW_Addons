@@ -239,6 +239,7 @@ function mnkNames.OnNameplatesCallback(self)
 
 		if (UnitExists('target') and UnitIsUnit('target', self.unit)) then
             self.PlayerHealth:Show()
+            self.PlayerHealth:SetValue(UnitHealth("player"))
 			if (lastNameplate ~= nil and lastNameplate ~= self) then
 				lastNameplate.PlayerHealth:Hide()
                 lastNameplate:SetBackdropColor(0, 0, 0, 1)
