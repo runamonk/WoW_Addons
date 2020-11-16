@@ -140,6 +140,7 @@ function mnkNames.CreateStyle(self, unit)
     self.PlayerHealth:SetFrameLevel(self:GetFrameLevel()+51)
     self.PlayerHealth:SetStatusBarColor(.1, 1, .1, 1) 
     self.PlayerHealth:SetMinMaxValues(0, UnitHealthMax("player"))
+    self.PlayerHealth:SetValue(UnitHealth("player"))
     mnkLibs.setBackdrop(self.PlayerHealth, nil, nil, 0, 0, 0, 0)
     self:RegisterEvent("UNIT_HEALTH", function (self) self.PlayerHealth:SetValue(UnitHealth("player")) end)
 
