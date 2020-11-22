@@ -1,0 +1,36 @@
+## Interface: 90001
+## Version: 9.0.0.1
+
+## Title: PBuffs fan update of PhanxBuffs
+## Notes: Basic replacement for the player buff, debuff, and temporary enchant frames.
+## Notes-deDE: Einfacher Ersatz für die Stärkungszauber-, Schwächungszauber- und Waffenverzauberungs-Anzeige des Spielers.
+## Notes-esES: Sustitutos básicos de los iconos del jugador de beneficios, perjuicios y encancamientos de armas.
+## Notes-esMX: Sustitutos básicos de los iconos del jugador de beneficios, perjuicios y encancamientos de armas.
+## Notes-ptBR: Substituições básicas para os ícones do jogador de bônus, penalidades e encantamentos de armas.
+## Notes-ruRU: Простая замена иконок баффов, дебаффов, и чар, связанных с оружием игрока.
+## Notes-zhTW: 基本的玩家增益、減益、與武器暫時附魔框架的替代品。
+
+## Author: runamonk
+
+## OptionalDependencies: Masque, LibSharedMedia-3.0
+## SavedVariables: PhanxBuffsDB
+## SavedVariablesPerCharacter: PhanxBuffsIgnoreDB
+
+Libs\LibStub\LibStub.lua
+Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
+Libs\LibSharedMedia-3.0\LibSharedMedia-3.0.lua
+Libs\PhanxConfig-Checkbox\PhanxConfig-Checkbox.lua
+Libs\PhanxConfig-Dropdown\PhanxConfig-Dropdown.lua
+Libs\PhanxConfig-EditBox\PhanxConfig-EditBox.lua
+Libs\PhanxConfig-Header\PhanxConfig-Header.lua
+Libs\PhanxConfig-MediaDropdown\PhanxConfig-MediaDropdown.lua
+Libs\PhanxConfig-OptionsPanel\PhanxConfig-OptionsPanel.lua
+Libs\PhanxConfig-Slider\PhanxConfig-Slider.lua
+
+Localization.lua
+Core.lua
+Buffs.lua
+Debuffs.lua
+Enchants.lua
+Options.lua
+SkinSupport.lua
