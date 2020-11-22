@@ -383,7 +383,7 @@ local UnitSpecific = {
 		self:Tag(self.Power.value, '[curpp] | [maxpp]')
 		
 		if IsAddOnLoaded('oUF_WeaponEnchant') then
-			self.Enchant = CreateFrame('Frame', nil, self)
+			self.Enchant = CreateFrame('Frame', nil, self, BackdropTemplateMixin and "BackdropTemplate")
 			self.Enchant:SetHeight(41)
 			self.Enchant:SetWidth(41 * 2)
 			self.Enchant:SetPoint('TOPRIGHT', self, 'TOPLEFT', -2, -1)
@@ -401,7 +401,7 @@ local UnitSpecific = {
 			BuffFrame:Hide()
 			TemporaryEnchantFrame:Hide()
 			
-			self.Debuffs = CreateFrame('Frame', nil, self)
+			self.Debuffs = CreateFrame('Frame', nil, self, BackdropTemplateMixin and "BackdropTemplate")
 			self.Debuffs:SetHeight(41*4)
 			self.Debuffs:SetWidth(41*4)
 			self.Debuffs.size = 40
@@ -416,7 +416,7 @@ local UnitSpecific = {
 			self.Debuffs.PostCreateIcon = PostCreateIcon
 			self.Debuffs.PostUpdateIcon = PostUpdateIcon
 		
-			self.Buffs = CreateFrame('Frame', nil, self)
+			self.Buffs = CreateFrame('Frame', nil, self, BackdropTemplateMixin and "BackdropTemplate")
 			self.Buffs:SetHeight(320)
 			self.Buffs:SetWidth(42 * 12)
 			self.Buffs.size = 35
@@ -487,7 +487,7 @@ local UnitSpecific = {
 		if (select(2, UnitClass('player')) == 'DEATHKNIGHT' and tRunebar) then
 			self.RuneBar = {}
 			for i = 1, 6 do
-				self.RuneBar[i] = CreateFrame('StatusBar', nil, self)
+				self.RuneBar[i] = CreateFrame('StatusBar', nil, self, BackdropTemplateMixin and "BackdropTemplate")
 				if(i == 1) then
 					self.RuneBar[i]:SetPoint('BOTTOMRIGHT', self, 'BOTTOMLEFT', -4, 4)
 				else
@@ -507,7 +507,7 @@ local UnitSpecific = {
 					self.RuneBar[i]:SetStatusBarColor(unpack(oUF.colors.runes[runetype]))
 				end
 
-				self.RuneBar[i].bg = CreateFrame('StatusBar', nil, self.RuneBar[i])
+				self.RuneBar[i].bg = CreateFrame('StatusBar', nil, self.RuneBar[i], BackdropTemplateMixin and "BackdropTemplate")
 				self.RuneBar[i].bg:SetPoint('BOTTOMRIGHT', self.RuneBar[i], 'BOTTOMRIGHT', 4, -4)
 				self.RuneBar[i].bg:SetPoint('TOPLEFT', self.RuneBar[i], 'TOPLEFT', -4, 4)
 				self.RuneBar[i].bg:SetBackdrop(backdrop)
@@ -560,20 +560,20 @@ local UnitSpecific = {
 		end
 		
 		if select(2, UnitClass('player')) == 'DRUID' then
-			self.EclipseBar = CreateFrame('Frame', nil, self)
+			self.EclipseBar = CreateFrame('Frame', nil, self, BackdropTemplateMixin and "BackdropTemplate")
 			self.EclipseBar:SetSize(275, 20)
 			self.EclipseBar:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 0, 0)
 			self.EclipseBar:SetPoint('TOPRIGHT', self, 'BOTTOMRIGHT', 0, 0)
 			self.EclipseBar:SetBackdrop(backdrop)
 			self.EclipseBar:SetBackdropColor(1, 1, 1, 1)
 			
-			self.EclipseBar.LunarBar = CreateFrame('StatusBar', nil, self.EclipseBar)
+			self.EclipseBar.LunarBar = CreateFrame('StatusBar', nil, self.EclipseBar, BackdropTemplateMixin and "BackdropTemplate")
 			self.EclipseBar.LunarBar:SetPoint('LEFT', self.EclipseBar, 'LEFT', 4.5, 0)
 			self.EclipseBar.LunarBar:SetSize(266, 13)
 			self.EclipseBar.LunarBar:SetStatusBarTexture(texturebar)
 			self.EclipseBar.LunarBar:SetStatusBarColor(0, 144/255, 1)
 			
-			self.EclipseBar.SolarBar = CreateFrame('StatusBar', nil, self.EclipseBar)
+			self.EclipseBar.SolarBar = CreateFrame('StatusBar', nil, self.EclipseBar, BackdropTemplateMixin and "BackdropTemplate")
 			self.EclipseBar.SolarBar:SetPoint('LEFT', self.EclipseBar.LunarBar:GetStatusBarTexture(), 'RIGHT', 0, 0)
 			self.EclipseBar.SolarBar:SetSize(266, 13)
 			self.EclipseBar.SolarBar:SetStatusBarTexture(texturebar)
@@ -629,7 +629,7 @@ local UnitSpecific = {
 		self:Tag(self.Name, '[name]')
 		
 		if (tBuffs) then
-			self.Auras = CreateFrame('StatusBar', nil, self)
+			self.Auras = CreateFrame('StatusBar', nil, self, BackdropTemplateMixin and "BackdropTemplate")
 			self.Auras:SetHeight(120)
 			self.Auras:SetWidth(280)
 			self.Auras:SetPoint('BOTTOMLEFT', self, 'TOPLEFT', 1, 2)
@@ -820,7 +820,7 @@ local UnitSpecific = {
 		self.Power:SetHeight(6)
 		
 		if (tBuffs) then
-			self.Auras = CreateFrame('StatusBar', nil, self)
+			self.Auras = CreateFrame('StatusBar', nil, self, BackdropTemplateMixin and "BackdropTemplate")
 			self.Auras:SetHeight(100)
 			self.Auras:SetWidth(130)
 			self.Auras:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 1, -2)
@@ -883,7 +883,7 @@ local function Raidering(self, unit)
 	self:SetHeight(38)
 	--self:SetScale(0.85)
 	
-	self.Health = CreateFrame('StatusBar', nil, self)
+	self.Health = CreateFrame('StatusBar', nil, self, BackdropTemplateMixin and "BackdropTemplate")
 	self.Health:SetStatusBarTexture(texturebar)
 	self.Health:SetStatusBarColor(.31, .31, .31)
 	self.Health:SetPoint('LEFT', 4.5, 0)
@@ -913,7 +913,7 @@ local function Raidering(self, unit)
 	self.Health.value:SetPoint('RIGHT', self.Health, 'RIGHT', -3, 0)
 	self:Tag(self.Health.value, '[perhp]%')
 
-	self.Power = CreateFrame('StatusBar', nil, self)
+	self.Power = CreateFrame('StatusBar', nil, self, BackdropTemplateMixin and "BackdropTemplate")
 	self.Power:SetHeight(6)
 	self.Power:SetStatusBarTexture(texturebar)
 	self.Power:SetStatusBarColor(.25, .25, .35)
@@ -961,7 +961,7 @@ local function Shared(self, unit)
 	self:SetHeight(38)
 	--self:SetScale(0.85)
 	
-	self.Health = CreateFrame('StatusBar', nil, self)
+	self.Health = CreateFrame('StatusBar', nil, self, BackdropTemplateMixin and "BackdropTemplate")
 	self.Health:SetStatusBarTexture(texturebar)
 	self.Health:SetStatusBarColor(.31, .31, .31)
 	self.Health:SetPoint('LEFT', 4.5,0)
@@ -980,7 +980,7 @@ local function Shared(self, unit)
 	self.Health.bg:SetTexture(texturebar)
 	self.Health.bg.multiplier = .30
 
-	self.Power = CreateFrame('StatusBar', nil, self)
+	self.Power = CreateFrame('StatusBar', nil, self, BackdropTemplateMixin and "BackdropTemplate")
 	self.Power:SetHeight(9.5)
 	self.Power:SetStatusBarTexture(texturebar)
 	self.Power:SetStatusBarColor(.25, .25, .35)
