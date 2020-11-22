@@ -12,8 +12,6 @@ local LibQTip = LibStub('LibQTip-1.0')
 local lootedItems = {}
 local MAX_HISTORY_ITEMS = 30
 
-SetCVar('autoLootDefault', 0)
-
 LootFrame:Hide()
 LootFrame.Show = mnkLibs.donothing()
 LootFrame:UnregisterAllEvents()
@@ -104,6 +102,7 @@ local function ShowPhatLoots()
             CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false)
         else
             --local itemName, _, rarity, _, _, itemType, subType, _, _, itemIcon, _ = GetItemInfo(lootedItems[i].link)
+            --print(lootedItems[i].name, ' ', lootedItems[i].rarity )
             if lootedItems[i].rarity and lootedItems[i].rarity > 0 then
                 local _,_,_,color = GetItemQualityColor(lootedItems[i].rarity)
                 local itemCount = lootedItems[i].count
@@ -285,4 +284,5 @@ function mnkLoots:PLAYER_LOGIN()
         })
     self.LDB.label = 'Loots'
     self.LDB.text = ' Loots'
+    SetCVar('autoLootDefault', 0)
 end
