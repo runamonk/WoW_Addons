@@ -327,8 +327,8 @@ function mnkBagsContainer:OnButtonRemove(button)
 	if button.clink then
 		--print("OnButtonRemove:"..button.clink)
 		local itemid = select(1, GetItemInfoInstant(button.clink))
-		local i = mnkLibs.GetIndexInTable(mnkBagsKnownItems, itemid) 
-		if i > 0 then			
+		local i = mnkLibs.GetIndexInTable(mnkBagsKnownItems, itemid)
+		if (i > 0) and (GetItemCount(itemid) <= 1) then			
 			table.remove(mnkBagsKnownItems, i)
 		end		
 	end
