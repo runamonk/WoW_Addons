@@ -142,21 +142,7 @@ function mnkNames.CreateStyle(self, unit)
     self.PlayerHealth:SetMinMaxValues(0, UnitHealthMax("player"))
     self.PlayerHealth:SetValue(UnitHealth("player"))
     mnkLibs.setBackdrop(self.PlayerHealth, nil, nil, 0, 0, 0, 0)
-    self:RegisterEvent("UNIT_HEALTH", function (self) self.PlayerHealth:SetValue(UnitHealth("player")) end)
-
-
-    self.PlayerPower = CreateFrame('StatusBar', nil, self.PlayerHealth)
-    self.PlayerPower:SetSize(cfg_frame_width, 1.5)
-    self.PlayerPower:SetPoint("LEFT", self.PlayerHealth, "LEFT", 0, 0)
-    self.PlayerPower:SetPoint("BOTTOM", self.PlayerHealth, "BOTTOM", 0, 0)
-    self.PlayerPower:SetStatusBarTexture(mnkLibs.Textures.bar)
-    self.PlayerPower:GetStatusBarTexture():SetHorizTile(false)
-    self.PlayerPower:SetFrameLevel(self:GetFrameLevel()+52)
-    self.PlayerPower:SetStatusBarColor(0, 0, 2, 1) 
-    self.PlayerPower:SetMinMaxValues(0, UnitPowerMax("player"))
-    self.PlayerPower:SetValue(UnitPower("player"))
-    self:RegisterEvent("UNIT_POWER_FREQUENT", function (self) self.PlayerPower:SetValue(UnitPower("player")) end)
-    self.PlayerPower:Show()
+    self.PlayerHealth:RegisterEvent("UNIT_HEALTH", function (self) self.PlayerHealth:SetValue(UnitHealth("player")) end)
 
     self.Debuffs = CreateFrame("Frame", nil, self)
     self.Debuffs:SetSize((cfg_debuffs_num * (cfg_debuffs_size + 9)) / cfg_debuffs_rows, (cfg_debuffs_size + 9) * cfg_debuffs_rows)
@@ -254,8 +240,6 @@ function mnkNames.OnNameplatesCallback(self)
 		if (UnitExists('target') and UnitIsUnit('target', self.unit)) then
             self.PlayerHealth:Show()
             self.PlayerHealth:SetValue(UnitHealth("player"))
-            self.PlayerPower:SetValue(UnitPower("player"))
-
 			if (lastNameplate ~= nil and lastNameplate ~= self) then
 				lastNameplate.PlayerHealth:Hide()
                 lastNameplate:SetBackdropColor(0, 0, 0, 1)
@@ -268,8 +252,6 @@ function mnkNames.OnNameplatesCallback(self)
 		end  		
 	end
 end
-
-
 
 mnkNames.oUF:RegisterStyle("mnkNames", mnkNames.CreateStyle)
 mnkNames.oUF:SetActiveStyle("mnkNames")
