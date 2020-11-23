@@ -58,8 +58,7 @@ oUF.colors.happiness = {
 oUF.colors.runes = {
 		[1] = {0.69, 0.31, 0.31},	-- Blood
 		[2] = {0.33, 0.59, 0.33},	-- Unholy
-		[3] = {0.31, 0.45, 0.63},	-- Frost
-		[4] = {0.84, 0.75, 0.05},	-- Death
+		[3] = {0.31, 0.45, 0.63}	-- Frost
 }
 
 oUF.colors.tapped = {.55,.57,.61}
@@ -137,26 +136,10 @@ local function UpdateRuneBar(self, elapsed)
 end
 
 local function UpdateRunePower(self, event, rune, usable)
+	print(rune)
 	for i = 1, 6 do
-		if(rune == i and not usable and GetRuneType(rune)) then
+		if(rune == i and not usable) then
 			self.RuneBar[i]:SetScript('OnUpdate', UpdateRuneBar)
-		end
-	end
-end
-
-local function UpdateRuneType(self, event, rune)
-	if(rune) then
-		local runetype = GetRuneType(rune)
-		if(runetype) then
-			self.RuneBar[rune]:SetStatusBarColor(unpack(colors.runes[runetype]))
-		end
-	else
-		for i = 1, 6 do
-			local runetype = GetRuneType(i)
-			if(runetype) then
-				self.RuneBar[i]:SetStatusBarColor(unpack(colors.runes[runetype]))
-				
-			end
 		end
 	end
 end
@@ -485,6 +468,7 @@ local UnitSpecific = {
 		end
 		
 		if (select(2, UnitClass('player')) == 'DEATHKNIGHT' and tRunebar) then
+			local iSpec = GetSpecialization() or nil
 			self.RuneBar = {}
 			for i = 1, 6 do
 				self.RuneBar[i] = CreateFrame('StatusBar', nil, self, BackdropTemplateMixin and "BackdropTemplate")
@@ -499,28 +483,24 @@ local UnitSpecific = {
 				self.RuneBar[i]:SetWidth(6)--(275/6 - 1.25)
 				self.RuneBar[i]:SetBackdrop(backdrophp)
 				self.RuneBar[i]:SetBackdropColor(.75,.75,.75)
-				self.RuneBar[i]:SetMinMaxValues(0, 1)
 				self.RuneBar[i]:SetOrientation('Vertical')
 				self.RuneBar[i]:SetID(i)
-				local runetype = GetRuneType(i)
-				if(runetype) then
-					self.RuneBar[i]:SetStatusBarColor(unpack(oUF.colors.runes[runetype]))
+				
+				if (iSpec) then
+					self.RuneBar[i]:SetStatusBarColor(unpack(oUF.colors.runes[iSpec]))
 				end
 
-				self.RuneBar[i].bg = CreateFrame('StatusBar', nil, self.RuneBar[i], BackdropTemplateMixin and "BackdropTemplate")
-				self.RuneBar[i].bg:SetPoint('BOTTOMRIGHT', self.RuneBar[i], 'BOTTOMRIGHT', 4, -4)
-				self.RuneBar[i].bg:SetPoint('TOPLEFT', self.RuneBar[i], 'TOPLEFT', -4, 4)
-				self.RuneBar[i].bg:SetBackdrop(backdrop)
-				self.RuneBar[i].bg:SetBackdropColor(0,0,0,1)
-				self.RuneBar[i].bg:SetHeight(27)
-				self.RuneBar[i].bg:SetFrameLevel(0)
+				self.RuneBar[i].back = CreateFrame('StatusBar', nil, self.RuneBar[i], BackdropTemplateMixin and "BackdropTemplate")
+				self.RuneBar[i].back:SetPoint('BOTTOMRIGHT', self.RuneBar[i], 'BOTTOMRIGHT', 4, -4)
+				self.RuneBar[i].back:SetPoint('TOPLEFT', self.RuneBar[i], 'TOPLEFT', -4, 4)
+				self.RuneBar[i].back:SetBackdrop(backdrop)
+				self.RuneBar[i].back:SetBackdropColor(0,0,0,1)
+				self.RuneBar[i].back:SetHeight(27)
+				self.RuneBar[i].back:SetFrameLevel(0)
 				
 			end
 			RuneFrame:Hide()
-			
-			self:RegisterEvent('RUNE_TYPE_UPDATE', UpdateRuneType)
-			self:RegisterEvent('RUNE_REGEN_UPDATE', UpdateRuneType)
-			self:RegisterEvent('RUNE_POWER_UPDATE', UpdateRunePower)
+			self.Runes = self.RuneBar
 		end
 		
 		if(select(2, UnitClass('player')) == 'PALADIN') then
