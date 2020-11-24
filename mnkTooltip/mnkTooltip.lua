@@ -4,45 +4,32 @@ mnkTooltip = CreateFrame('Frame', nil, UIParent, BackdropTemplateMixin and "Back
 
 local colors = {}
 local cls = ''
-for class, color in pairs(RAID_CLASS_COLORS) do colors[class] = string.format('%02x%02x%02x', color.r * 255, color.g * 255, color.b * 255) end
+local class, color = nil
 
-local function SetBackdrop()
-    -- GameTooltip_UpdateStyle was blowing away my backdrop.
-    GameTooltip.GameTooltip_UpdateStyle = mnkLibs.donothing()
+local tooltips = { 
+        GameTooltip,
+        DropDownList1MenuBackdrop,
+        DropDownList2MenuBackdrop,
+        ItemRefTooltip,
+        ItemRefShoppingTooltip1,
+        ItemRefShoppingTooltip2,
+        ShoppingTooltip1,
+        ShoppingTooltip2,
+        SmallTextTooltip,       
+        WorldMapCompareTooltip1,
+        WorldMapCompareTooltip2,
+        WorldMapTooltip }
 
-    local tooltips = {
-        'GameTooltip',
-        'ItemRefTooltip',
-        'ItemRefShoppingTooltip1',
-        'ItemRefShoppingTooltip2',
-        'ShoppingTooltip1',
-        'ShoppingTooltip2',
-        'DropDownList1MenuBackdrop',
-        'DropDownList2MenuBackdrop',
-        'WorldMapTooltip',
-        'WorldMapCompareTooltip1',
-        'WorldMapCompareTooltip2',
-    }
-    
-    for i = 1, #tooltips do
-        local frame = _G[tooltips[i]]
-		if frame ~= nil then
-			frame:SetBackdropBorderColor(0, 0, 0, 0); -- hide the border. 
-            --mnkLibs.createBorder(frame, 0, 0, 0, 0, {.2, .2, .2, .5}) 
-            mnkLibs.setBackdrop(frame, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
-            frame:SetBackdropColor(0, 0, 0, 1)
-		end
-    end
-end
-
-local function OnTooltipSetSpell(self)
-    SetBackdrop()   
+local function updateBackdrop(self, style)
+    Mixin(self, BackdropTemplateMixin)   
+    mnkLibs.setBackdrop(self,"Interface\\Tooltips\\UI-Tooltip-Border", "Interface\\Buttons\\WHITE8x8", 0, 0, 0, 0)
+    self:SetBackdropBorderColor(.2, .2, .2, 1)
+    self:SetBackdropColor(0, 0, 0, 1)    
 end
 
 local function OnTooltipSetUnit()
-    SetBackdrop() 
-
     local _, unit = GameTooltip:GetUnit()
+    
 
     if unit ~= nil then
         cls = UnitClassification(unit)
@@ -72,8 +59,11 @@ local function OnTooltipSetUnit()
             if UnitIsPlayer(unit) then
                 local _, unitClass = UnitClass(unit)
                 local unitName, _ = UnitName(unit)
-                unitName = mnkLibs.formatPlayerName(unitName)
+                local color = RAID_CLASS_COLORS[unitClass]
 
+                GameTooltipStatusBar:SetStatusBarColor(color.r, color.g, color.b)
+                unitName = mnkLibs.formatPlayerName(unitName)
+    
                 if color then
                     GameTooltipTextLeft1:SetFormattedText(format('|cff%s%s', colors[unitClass:gsub(' ', ''):upper()] or 'ffffff', unitName))
                 else
@@ -103,37 +93,53 @@ local function OnTooltipSetUnit()
     end
 end
 
-local function OnTooltipSetItem()
-    SetBackdrop()
-end
+function mnkTooltip:PLAYER_LOGIN()
+    for class, color in pairs(RAID_CLASS_COLORS) do colors[class] = string.format('%02x%02x%02x', color.r * 255, color.g * 255, color.b * 255) end
 
-local function OnShow()
-    if not IsControlKeyDown() then
-        SetBackdrop()
-    else
-        GameTooltip:Hide()
-    end
-end
+    hooksecurefunc('GameTooltip_SetDefaultAnchor', function(tooltip, parent)
+        local f = GetMouseFocus()
+        
+        if not f or f == WorldFrame or type(f) == 'table' then
+            tooltip:SetOwner(parent, 'ANCHOR_CURSOR')
+        else
+            tooltip:ClearAllPoints()
+            tooltip:SetOwner(parent, 'ANCHOR_NONE')
+            tooltip:SetPoint('BOTTOM', f, 'TOP', 0, 5)
+        end
+    end)
 
-hooksecurefunc('GameTooltip_SetDefaultAnchor', function(tooltip, parent)
-    local f = GetMouseFocus()
+    GameTooltipStatusBar:ClearAllPoints()
+    GameTooltipStatusBar:SetPoint("LEFT",3,0)
+    GameTooltipStatusBar:SetPoint("RIGHT",-3,0)
+    GameTooltipStatusBar:SetPoint("BOTTOM",0,3)
+    GameTooltipStatusBar:SetHeight(4)
+    GameTooltipStatusBar:SetStatusBarTexture(mnkLibs.Textures.background)
+    GameTooltipStatusBar:GetStatusBarTexture():SetHorizTile(false)
+
+    GameTooltipStatusBar.bg = GameTooltipStatusBar:CreateTexture(nil,"BACKGROUND",nil,-8)
+    GameTooltipStatusBar.bg:SetTexture(mnkLibs.Textures.bar)
+    GameTooltipStatusBar.bg:SetAllPoints()
+    GameTooltipStatusBar.bg:SetColorTexture(1,1,1)
+    GameTooltipStatusBar.bg:SetVertexColor(0,0,0,0.5)
     
-    if not f or f == WorldFrame or type(f) == 'table' then
-        tooltip:SetOwner(parent, 'ANCHOR_CURSOR')
-    else
-        tooltip:ClearAllPoints()
-        tooltip:SetOwner(parent, 'ANCHOR_NONE')
-        tooltip:SetPoint('BOTTOM', f, 'TOP', 0, 5)
+    GameTooltip:HookScript('OnTooltipSetUnit', OnTooltipSetUnit)
+    GameTooltip:HookScript('OnShow', function() 
+        if IsControlKeyDown() then 
+            GameTooltip:Hide()
+        end 
+    end)
+    hooksecurefunc("SharedTooltip_SetBackdropStyle", updateBackdrop)
+
+    for i, tooltip in next, tooltips do
+        updateBackdrop(tooltip)
+        if tooltip:HasScript("OnTooltipCleared") then
+            tooltip:HookScript("OnTooltipCleared", updateBackdrop)
+        end
     end
-end)
 
 
-ItemRefTooltip:HookScript("OnTooltipSetItem", OnTooltipSetItem)
-ItemRefShoppingTooltip1:HookScript("OnTooltipSetItem", OnTooltipSetItem)
-ItemRefShoppingTooltip2:HookScript("OnTooltipSetItem", OnTooltipSetItem)
-ShoppingTooltip1:HookScript("OnTooltipSetItem", OnTooltipSetItem)
-ShoppingTooltip2:HookScript("OnTooltipSetItem", OnTooltipSetItem)
-GameTooltip:HookScript('OnTooltipSetUnit', OnTooltipSetUnit)
-GameTooltip:HookScript('OnTooltipSetSpell', OnTooltipSetSpell)
-GameTooltip:HookScript('OnTooltipSetItem', OnTooltipSetItem)
-GameTooltip:HookScript('OnShow', OnShow)
+end
+
+mnkTooltip:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
+mnkTooltip:RegisterEvent('PLAYER_LOGIN')
+
