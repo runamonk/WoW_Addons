@@ -217,7 +217,8 @@ function mnkLibs.setBackdrop(self, bgfile, edgefile, inset_l, inset_r, inset_t, 
 
     self:SetBackdrop {
         bgFile = bgfile,
-        edgeFile = edgefile, 
+        edgeFile = edgefile,
+        borderColor = {0.1,0.1,0.1,0.6}, 
         edgeSize = 1,
         tile = false, 
         tileSize = 0, 
