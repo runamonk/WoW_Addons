@@ -26,14 +26,14 @@ local function OnTooltipSetUnit()
     local _, unit = GameTooltip:GetUnit()
 
     if unit ~= nil then
-        cls = UnitClassification(unit)
-        if cls ~= 'rare' and cls ~= 'rareelite' then
-            cls = ''
+        unitRarity = UnitClassification(unit)
+        if unitRarity ~= 'rare' and cls ~= 'rareelite' then
+            unitRarity = ''
         else
-            if cls == 'rare' then
-                cls = mnkLibs.Color(COLOR_RED)..' (RARE)'
+            if unitRarity == 'rare' then
+                unitRarity = mnkLibs.Color(COLOR_RED)..' (RARE)'
             else
-                cls = mnkLibs.Color(COLOR_PURPLE)..' (RARE ELITE)'
+                unitRarity = mnkLibs.Color(COLOR_PURPLE)..' (RARE ELITE)'
             end
         end
 
@@ -41,12 +41,12 @@ local function OnTooltipSetUnit()
             if UnitIsTapDenied(unit) or UnitIsDeadOrGhost(unit) then
                 local unitName, _ = UnitName(unit)
                 GameTooltip:SetBackdropColor(.1, .1, .1, 1) 
-                GameTooltipTextLeft1:SetFormattedText(mnkLibs.Color(COLOR_GREY)..unitName..cls)
+                GameTooltipTextLeft1:SetFormattedText(mnkLibs.Color(COLOR_GREY)..unitName..unitRarity)
                 GameTooltip:AddLine(mnkLibs.Color(COLOR_WHITE)..'<<Tapped>>')
             else
                 local unitName, _ = UnitName(unit)
                 if unitName ~= nil then
-                    GameTooltipTextLeft1:SetFormattedText(unitName..cls)
+                    GameTooltipTextLeft1:SetFormattedText(unitName..unitRarity)
                     local unitReact = UnitReaction(unit, "player");
                     if unitReact <= 3 then
                         GameTooltip:SetBackdropColor(.2, 0, 0, 1) 
