@@ -123,8 +123,8 @@ function mnkTooltip:PLAYER_LOGIN()
         end 
     end)
     hooksecurefunc("SharedTooltip_SetBackdropStyle", updateBackdrop)
-
-    for i, tooltip in next, tooltips do
+    local tooltip = nil
+    for _, tooltip in next, tooltips do
         updateBackdrop(tooltip)
         if tooltip:HasScript("OnTooltipCleared") then
             tooltip:HookScript("OnTooltipCleared", updateBackdrop)
