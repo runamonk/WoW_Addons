@@ -28,7 +28,7 @@ local function SetBackdrop()
         local frame = _G[tooltips[i]]
 		if frame ~= nil then
 			frame:SetBackdropBorderColor(0, 0, 0, 0); -- hide the border. 
-            mnkLibs.createBorder(frame, 0, 0, 0, 0, {.2, .2, .2, .5}) 
+            --mnkLibs.createBorder(frame, 0, 0, 0, 0, {.2, .2, .2, .5}) 
             mnkLibs.setBackdrop(frame, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
             frame:SetBackdropColor(0, 0, 0, 1)
 		end
@@ -133,7 +133,6 @@ ItemRefShoppingTooltip1:HookScript("OnTooltipSetItem", OnTooltipSetItem)
 ItemRefShoppingTooltip2:HookScript("OnTooltipSetItem", OnTooltipSetItem)
 ShoppingTooltip1:HookScript("OnTooltipSetItem", OnTooltipSetItem)
 ShoppingTooltip2:HookScript("OnTooltipSetItem", OnTooltipSetItem)
-
 GameTooltip:HookScript('OnTooltipSetUnit', OnTooltipSetUnit)
 GameTooltip:HookScript('OnTooltipSetSpell', OnTooltipSetSpell)
 GameTooltip:HookScript('OnTooltipSetItem', OnTooltipSetItem)

@@ -415,6 +415,10 @@ function mnkBagsContainer:OnCreate(name)
 	if not name then return end
 	self.name = name
 
+	if not self.SetBackdrop then
+        Mixin(self, BackdropTemplateMixin)
+    end
+
 	-- this works better than inserting the the frame in the UISpecialFrames table.
 	-- if you go to the bank and have both the bank and your bank open, then press esc the bank won't come back up until you've toggled again.
 	self:EnableKeyboard(1);

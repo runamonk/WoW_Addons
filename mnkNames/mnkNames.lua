@@ -61,13 +61,18 @@ local function UpdateThreat(self, event, unit)
 end
 
 function mnkNames.CreateStyle(self, unit)
-    self.disableMovement = true
-    self.frameValues = CreateFrame('Frame', nil, self)
-    self.frameValues:SetFrameLevel(self:GetFrameLevel()+50)
-    self.frameValues:SetSize(self:GetSize())
-    self.frameValues:SetAllPoints()
 
-    self.Health = CreateFrame("StatusBar", nil, self)
+    if not self.SetBackdrop then
+         Mixin(self, BackdropTemplateMixin)
+    end
+
+    self.disableMovement = true
+    -- self.frameValues = CreateFrame('Frame', nil, self)
+    -- self.frameValues:SetFrameLevel(self:GetFrameLevel()+50)
+    -- self.frameValues:SetSize(self:GetSize())
+    -- self.frameValues:SetAllPoints()
+
+    self.Health = CreateFrame("StatusBar", nil, self, BackdropTemplateMixin and "BackdropTemplate")
     self.Health:SetAllPoints()
     self.Health:SetStatusBarTexture(mnkLibs.Textures.background)
     self.Health:GetStatusBarTexture():SetHorizTile(false)
@@ -107,7 +112,7 @@ function mnkNames.CreateStyle(self, unit)
     self.RaidTargetIndicator = self:CreateTexture(nil, 'OVERLAY')
     self.RaidTargetIndicator:SetPoint('LEFT', self, 'RIGHT', 8, 0)
     self.RaidTargetIndicator:SetSize(16, 16)
-    self.Castbar = CreateFrame("StatusBar", nil, self)
+    self.Castbar = CreateFrame("StatusBar", nil, self, BackdropTemplateMixin and "BackdropTemplate")
     self.Castbar:SetStatusBarTexture(mnkLibs.Textures.bar)
     self.Castbar:GetStatusBarTexture():SetHorizTile(false)
     self.Castbar.bg = self.Castbar:CreateTexture(nil, 'BORDER')
@@ -131,10 +136,10 @@ function mnkNames.CreateStyle(self, unit)
     self.Castbar.PostCastStart = mnkNames.CastbarSpellUpdate
     self.Castbar.PostChannelStart = mnkNames.CastbarSpellUpdate
 
-    self.PlayerHealth = CreateFrame('StatusBar', nil, self.Health)
-    self.PlayerHealth:SetSize(cfg_frame_width, 3)
-    self.PlayerHealth:SetPoint("LEFT", self.Health, "LEFT", 0, 0)
-    self.PlayerHealth:SetPoint("BOTTOM", self.Health, "BOTTOM", 0, 0)
+    self.PlayerHealth = CreateFrame('StatusBar', nil, self, BackdropTemplateMixin and "BackdropTemplate")
+    self.PlayerHealth:SetSize(cfg_frame_width + 3, 2)
+    self.PlayerHealth:SetPoint("LEFT", self, "LEFT", -1.5, 0)
+    self.PlayerHealth:SetPoint("TOP", self, "BOTTOM", 0, 0)
     self.PlayerHealth:SetStatusBarTexture(mnkLibs.Textures.bar)
     self.PlayerHealth:GetStatusBarTexture():SetHorizTile(false)
     self.PlayerHealth:SetFrameLevel(self:GetFrameLevel()+51)
@@ -142,7 +147,7 @@ function mnkNames.CreateStyle(self, unit)
     self.PlayerHealth:SetMinMaxValues(0, UnitHealthMax("player"))
     self.PlayerHealth:SetValue(UnitHealth("player"))
     mnkLibs.setBackdrop(self.PlayerHealth, nil, nil, 0, 0, 0, 0)
-    self.PlayerHealth:RegisterEvent("UNIT_HEALTH", function (self) self.PlayerHealth:SetValue(UnitHealth("player")) end)
+    self:RegisterEvent("UNIT_HEALTH", function (self) self.PlayerHealth:SetValue(UnitHealth("player")) end)
 
     self.Debuffs = CreateFrame("Frame", nil, self)
     self.Debuffs:SetSize((cfg_debuffs_num * (cfg_debuffs_size + 9)) / cfg_debuffs_rows, (cfg_debuffs_size + 9) * cfg_debuffs_rows)
