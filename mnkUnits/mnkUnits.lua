@@ -29,7 +29,7 @@ Config = {
 }
 
 local function CreateCastBar(self)
-    self.castbarbg = CreateFrame('Frame', nil, self)
+    self.castbarbg = CreateFrame('Frame', nil, self, BackdropTemplateMixin and "BackdropTemplate")
     self.castbarbg:SetPoint('LEFT', self, 'LEFT', 0, 0)
     self.castbarbg:SetPoint('BOTTOM', self, 'TOP', 0, 4)
     mnkLibs.setBackdrop(self.castbarbg, nil, nil, 0, 0, 0, 0)
@@ -39,7 +39,7 @@ local function CreateCastBar(self)
     mnkLibs.createBorder(self.castbarbg, 0.8, -0.8, -0.8, 0.8, {classColor.r, classColor.g, classColor.b, .5})
     self.castbarbg:Hide()
   
-    self.Castbar = CreateFrame('StatusBar', nil, self.castbarbg)
+    self.Castbar = CreateFrame('StatusBar', nil, self.castbarbg, BackdropTemplateMixin and "BackdropTemplate")
     self.Castbar:SetPoint('TOPLEFT', self.castbarbg, 0, -1)
     self.Castbar:SetPoint('BOTTOMRIGHT', self.castbarbg, 0, 1)
     self.Castbar:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
@@ -58,7 +58,7 @@ local function CreateCastBar(self)
 end
 
 local function CreateHealthBar(self)
-    local h = CreateFrame('StatusBar', nil, self)
+    local h = CreateFrame('StatusBar', nil, self, BackdropTemplateMixin and "BackdropTemplate")
     h:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
     if UnitIsPlayer(self.unit) then
         h:SetStatusBarColor(classColor.r/5, classColor.g/5, classColor.b/5)
@@ -74,7 +74,7 @@ local function CreateHealthBar(self)
 end
 
 local function CreateBottomPanel()
-    local pback = CreateFrame('Frame', 'mnkBottom', UIParent)
+    local pback = CreateFrame('Frame', 'mnkBottom', UIParent, BackdropTemplateMixin and "BackdropTemplate")
     mnkLibs.setBackdrop(pback, nil, nil, 1, 1, 1, 1)
     pback:SetBackdropColor(0, 0, 0, 1)
     pback:SetHeight(170)
@@ -84,7 +84,7 @@ local function CreateBottomPanel()
     mnkLibs.createBorder(pback, 1, -3, -3, 3, {classColor.r, classColor.g, classColor.b, .5}) 
     pback:Show()
 
-    local pplayer = CreateFrame('Frame', 'mnkBottom', UIParent)
+    local pplayer = CreateFrame('Frame', 'mnkBottom', UIParent, BackdropTemplateMixin and "BackdropTemplate")
     mnkLibs.setBackdrop(pplayer, nil, nil, 1, 1, 1, 1)
     pplayer:SetBackdropColor(0, 0, 0, 1)
     pplayer:SetHeight(65)
@@ -94,7 +94,7 @@ local function CreateBottomPanel()
     mnkLibs.createBorder(pplayer, 0.8, 1, -0.8, 0.8, {classColor.r, classColor.g, classColor.b, .5})
     pplayer:Show()
 
-    local pbackLeft = CreateFrame('Frame', 'mnkButtonsLeft', pback)
+    local pbackLeft = CreateFrame('Frame', 'mnkButtonsLeft', pback, BackdropTemplateMixin and "BackdropTemplate")
     mnkLibs.setBackdrop(pbackLeft, nil, nil, 1, 1, 1, 1)
     pbackLeft:SetBackdropColor(classColor.r/7, classColor.g/7, classColor.b/7, 1)
     pbackLeft:SetHeight(128)
@@ -104,7 +104,7 @@ local function CreateBottomPanel()
     mnkLibs.createBorder(pbackLeft, 0, -1, 0, 0, {classColor.r, classColor.g, classColor.b, .5})
     pbackLeft:Show()  
 
-    local pbackRight = CreateFrame('Frame', 'mnkButtonsRight', pback)
+    local pbackRight = CreateFrame('Frame', 'mnkButtonsRight', pback, BackdropTemplateMixin and "BackdropTemplate")
     mnkLibs.setBackdrop(pbackRight, nil, nil, 1, 1, 1, 1)
     pbackRight:SetBackdropColor(classColor.r/7, classColor.g/7, classColor.b/7, 1)
     pbackRight:SetHeight(128)
@@ -178,6 +178,11 @@ local function SetPlayerStatusFlag(self, combatFlag)
 end
 
 local function CreateUnit(self)
+
+    if not self.SetBackdrop then --**
+        Mixin(self, BackdropTemplateMixin)
+    end
+
     self:RegisterForClicks('AnyUp')
     self:SetScript('OnEnter', UnitFrame_OnEnter)
     self:SetScript('OnLeave', UnitFrame_OnLeave)
@@ -193,7 +198,7 @@ local function CreateUnit(self)
 	self.Health:SetPoint('RIGHT', self, 'RIGHT', 0, 0)
     self.Health:SetAllPoints()
 
-    self.frameValues = CreateFrame('Frame', nil, self)
+    self.frameValues = CreateFrame('Frame', nil, self, BackdropTemplateMixin and "BackdropTemplate")
     self.frameValues:SetFrameLevel(self:GetFrameLevel()+50)
     self.frameValues:SetSize(self:GetSize())
     self.frameValues:SetAllPoints()
@@ -251,7 +256,7 @@ local function PlayerUnit(self)
         SetPlayerStatusFlag(self)
         local t = {} 
         for i = 1, 10 do
-            local f = CreateFrame('StatusBar', nil, self)
+            local f = CreateFrame('StatusBar', nil, self, BackdropTemplateMixin and "BackdropTemplate")
             f:SetStatusBarTexture(mnkLibs.Textures.combo_round)
             f:SetSize(16, 16)
 
@@ -273,21 +278,21 @@ local function PlayerUnit(self)
         self.ClassPower = t
         self.Runes = t
 	
-        self.Power = CreateFrame('StatusBar', nil, self)
+        self.Power = CreateFrame('StatusBar', nil, self, BackdropTemplateMixin and "BackdropTemplate")
         self.Power:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
         self.Power:SetSize(self:GetWidth(), 3)
         self.Power:SetPoint('TOPLEFT', self.Health, 'BOTTOMLEFT', 0, 0)	
         self.Power.frequentUpdates = true
         self.Power.colorPower = true
 		
-        self.AdditionalPower = CreateFrame('StatusBar', nil, self)
+        self.AdditionalPower = CreateFrame('StatusBar', nil, self, BackdropTemplateMixin and "BackdropTemplate")
         self.AdditionalPower:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
         self.AdditionalPower:SetSize(self:GetWidth(), 3)
         self.AdditionalPower:SetPoint('TOPLEFT', self.Power, 'BOTTOMLEFT', 0, 0)
         self.AdditionalPower.frequentUpdates = true
         self.AdditionalPower.colorPower = true
 
-		self.AlternativePower = CreateFrame('StatusBar', nil, self)
+		self.AlternativePower = CreateFrame('StatusBar', nil, self, BackdropTemplateMixin and "BackdropTemplate")
         self.AlternativePower:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
         self.AlternativePower:SetSize(self:GetWidth()+2, 18)
         self.AlternativePower:SetPoint('LEFT', self, 'LEFT', -2, 0)

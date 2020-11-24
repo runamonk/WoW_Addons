@@ -211,10 +211,6 @@ end
 
 function mnkLibs.setBackdrop(self, bgfile, edgefile, inset_l, inset_r, inset_t, inset_b)
 
-    if not self.SetBackdrop then
-        Mixin(self, BackdropTemplateMixin)
-    end
-
     if not bgFile then
         bgfile = 'Interface\\ChatFrame\\ChatFrameBackground'
     end

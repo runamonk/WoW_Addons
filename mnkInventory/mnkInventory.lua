@@ -293,7 +293,7 @@ function StatusBarCell:getContentHeight()
 end
 
 function StatusBarCell:InitializeCell()
-    self.bar = CreateFrame('StatusBar',nil, self)
+    self.bar = CreateFrame('StatusBar',nil, self, BackdropTemplateMixin and "BackdropTemplate")
     self.bar:SetSize(350, 16)
     self.bar:SetPoint('CENTER')
     self.bar:SetMinMaxValues(0, 100)
