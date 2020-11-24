@@ -1,5 +1,3 @@
---thanks to an old post by Phanx.
-
 mnkTooltip = CreateFrame('Frame', nil, UIParent, BackdropTemplateMixin and "BackdropTemplate")
 
 local cls = ''
@@ -26,7 +24,6 @@ end
 
 local function OnTooltipSetUnit()
     local _, unit = GameTooltip:GetUnit()
-    
 
     if unit ~= nil then
         cls = UnitClassification(unit)
@@ -125,8 +122,6 @@ function mnkTooltip:PLAYER_LOGIN()
             tooltip:HookScript("OnTooltipCleared", updateBackdrop)
         end
     end
-
-
 end
 
 mnkTooltip:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
