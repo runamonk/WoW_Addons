@@ -42,7 +42,7 @@ local function OnTooltipSetUnit()
                 local unitName, _ = UnitName(unit)
                 GameTooltip:SetBackdropColor(.1, .1, .1, 1) 
                 GameTooltipTextLeft1:SetFormattedText(mnkLibs.Color(COLOR_GREY)..unitName..unitRarity)
-                GameTooltip:AddLine(mnkLibs.Color(COLOR_WHITE)..'<<Tapped>>')
+                GameTooltip:AddLine(mnkLibs.Color(COLOR_WHITE)..'<Tapped>')
             else
                 local unitName, _ = UnitName(unit)
                 if unitName ~= nil then
@@ -62,10 +62,12 @@ local function OnTooltipSetUnit()
                 local unitName, _ = UnitName(unit)
                 local unitColor = RAID_CLASS_COLORS[unitClass] or COLOR_WHITE
                 local unitGuildName, _, _ = GetGuildInfo(unit)
+                local unitAFK = UnitIsAFK(unit)
+                if unitAFK then unitAFK = ' <AFK>' else unitAFK = '' end
 
                 --leave the hp bar green, it's more consistant. 
                 --GameTooltipStatusBar:SetStatusBarColor(unitColor.r, unitColor.g, unitColor.b)
-                GameTooltipTextLeft1:SetFormattedText(mnkLibs.Color(unitColor)..mnkLibs.formatPlayerName(unitName))               
+                GameTooltipTextLeft1:SetFormattedText(mnkLibs.Color(unitColor)..mnkLibs.formatPlayerName(unitName)..mnkLibs.Color(COLOR_BLUE)..unitAFK)              
                 if unitGuildName ~= nil then
                     GameTooltipTextLeft2:SetFormattedText(mnkLibs.Color(COLOR_GREEN)..'<'..mnkLibs.formatPlayerName(unitGuildName)..'>')
                 end
@@ -76,7 +78,7 @@ local function OnTooltipSetUnit()
                         local targetName, _ = UnitName(unitTarget)
 
                         if UnitIsUnit(targetName, 'player') then
-                            GameTooltip:AddLine(mnkLibs.Color(COLOR_WHITE)..'Target: <<YOU>>')
+                            GameTooltip:AddLine(mnkLibs.Color(COLOR_WHITE)..'Target: <'..mnkLibs.Color(COLOR_RED)..'YOU'..mnkLibs.Color(COLOR_WHITE)..'>')
                         else
                             GameTooltip:AddLine(mnkLibs.Color(COLOR_WHITE)..'Target: '..targetName)
                         end
