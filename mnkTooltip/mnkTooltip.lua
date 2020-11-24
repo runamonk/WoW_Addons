@@ -58,14 +58,8 @@ local function OnTooltipSetUnit()
                 local unitName, _ = UnitName(unit)
                 local unitColor = RAID_CLASS_COLORS[unitClass] or COLOR_WHITE
 
-                GameTooltipStatusBar:SetStatusBarColor(color.r, color.g, color.b)
-                unitName = mnkLibs.formatPlayerName(unitName)
-    
-                if color then
-                    GameTooltipTextLeft1:SetFormattedText(mnkLibs.Color(unitColor)..unitName)
-                else
-                    GameTooltipTextLeft1:SetFormattedText(unitName)
-                end
+                GameTooltipStatusBar:SetStatusBarColor(unitColor.r, unitColor.g, unitColor.b)
+                GameTooltipTextLeft1:SetFormattedText(mnkLibs.Color(unitColor)..mnkLibs.formatPlayerName(unitName))
 
                 local guildName, _, _ = GetGuildInfo(unit)
                 if guildName ~= nil then
