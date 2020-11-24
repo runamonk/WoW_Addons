@@ -1,6 +1,4 @@
 mnkTooltip = CreateFrame('Frame', nil, UIParent, BackdropTemplateMixin and "BackdropTemplate")
-
-local cls = ''
 local tooltips = { 
         GameTooltip,
         DropDownList1MenuBackdrop,
@@ -24,9 +22,10 @@ end
 
 local function OnTooltipSetUnit()
     local _, unit = GameTooltip:GetUnit()
-
     if unit ~= nil then
-        unitRarity = UnitClassification(unit)
+        local unitName, _ = UnitName(unit)
+        local unitRarity = UnitClassification(unit)
+        
         if unitRarity ~= 'rare' and cls ~= 'rareelite' then
             unitRarity = ''
         else
@@ -38,8 +37,7 @@ local function OnTooltipSetUnit()
         end
 
         if not UnitIsPlayer(unit) then          
-            if UnitIsTapDenied(unit) or UnitIsDeadOrGhost(unit) then
-                local unitName, _ = UnitName(unit)
+            if UnitIsTapDenied(unit) or UnitIsDeadOrGhost(unit) then        
                 GameTooltip:SetBackdropColor(.1, .1, .1, 1) 
                 GameTooltipTextLeft1:SetFormattedText(mnkLibs.Color(COLOR_GREY)..unitName..unitRarity)
                 GameTooltip:AddLine(mnkLibs.Color(COLOR_WHITE)..'<Tapped>')
@@ -59,7 +57,6 @@ local function OnTooltipSetUnit()
             if UnitIsPlayer(unit) then
                 GameTooltip:SetBackdropColor(0, 0, 0, 1) 
                 local unitClass = UnitClass(unit):gsub(' ', ''):upper() 
-                local unitName, _ = UnitName(unit)
                 local unitColor = RAID_CLASS_COLORS[unitClass] or COLOR_WHITE
                 local unitGuildName, _, _ = GetGuildInfo(unit)
                 local unitAFK = UnitIsAFK(unit)
@@ -91,8 +88,7 @@ end
 
 function mnkTooltip:PLAYER_LOGIN()
     hooksecurefunc('GameTooltip_SetDefaultAnchor', function(tooltip, parent)
-        local f = GetMouseFocus()
-        
+        local f = GetMouseFocus()      
         if not f or f == WorldFrame or type(f) == 'table' then
             tooltip:SetOwner(parent, 'ANCHOR_CURSOR')
         else
@@ -109,13 +105,11 @@ function mnkTooltip:PLAYER_LOGIN()
     GameTooltipStatusBar:SetHeight(4)
     GameTooltipStatusBar:SetStatusBarTexture(mnkLibs.Textures.background)
     GameTooltipStatusBar:GetStatusBarTexture():SetHorizTile(false)
-
     GameTooltipStatusBar.bg = GameTooltipStatusBar:CreateTexture(nil,"BACKGROUND",nil,-8)
     GameTooltipStatusBar.bg:SetTexture(mnkLibs.Textures.bar)
     GameTooltipStatusBar.bg:SetAllPoints()
     GameTooltipStatusBar.bg:SetColorTexture(1,1,1)
     GameTooltipStatusBar.bg:SetVertexColor(0,0,0,0.5)
-    
     GameTooltip:HookScript('OnTooltipSetUnit', OnTooltipSetUnit)
     GameTooltip:HookScript('OnShow', function() 
         if IsControlKeyDown() then 
