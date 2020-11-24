@@ -50,9 +50,9 @@ function mnkLibs.Color(t)
 end
 
 function mnkLibs.convertRGBtoHex(r, g, b)
-    r = r <= 255 and r >= 0 and r or 0
-    g = g <= 255 and g >= 0 and g or 0
-    b = b <= 255 and b >= 0 and b or 0
+    r = (r <= 255 and r >= 1 and r) or (r and r > 0 and r < 1 and r * 255) or 1
+    g = (g <= 255 and g >= 1 and g) or (g and g > 0 and g < 1 and g * 255) or 1
+    b = (b <= 255 and b >= 1 and b) or (b and b > 0 and b < 1 and b * 255) or 1
     return string.format('|cff%02x%02x%02x', r, g, b)
 end
 
@@ -187,7 +187,7 @@ function mnkLibs.formatTime(s)
     return format('%d', mod(s, minute))
   end
 
- function mnkLibs.GetIndexInTable(table, val)
+function mnkLibs.GetIndexInTable(table, val)
     if table == nil then
         return 0
     end

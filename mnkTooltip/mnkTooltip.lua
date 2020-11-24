@@ -2,10 +2,7 @@
 
 mnkTooltip = CreateFrame('Frame', nil, UIParent, BackdropTemplateMixin and "BackdropTemplate")
 
-local colors = {}
 local cls = ''
-local class, color = nil
-
 local tooltips = { 
         GameTooltip,
         DropDownList1MenuBackdrop,
@@ -57,15 +54,15 @@ local function OnTooltipSetUnit()
             end
         else
             if UnitIsPlayer(unit) then
-                local _, unitClass = UnitClass(unit)
+                local unitClass = UnitClass(unit):gsub(' ', ''):upper() 
                 local unitName, _ = UnitName(unit)
-                local color = RAID_CLASS_COLORS[unitClass]
+                local unitColor = RAID_CLASS_COLORS[unitClass] or COLOR_WHITE
 
                 GameTooltipStatusBar:SetStatusBarColor(color.r, color.g, color.b)
                 unitName = mnkLibs.formatPlayerName(unitName)
     
                 if color then
-                    GameTooltipTextLeft1:SetFormattedText(format('|cff%s%s', colors[unitClass:gsub(' ', ''):upper()] or 'ffffff', unitName))
+                    GameTooltipTextLeft1:SetFormattedText(mnkLibs.Color(unitColor)..unitName)
                 else
                     GameTooltipTextLeft1:SetFormattedText(unitName)
                 end
@@ -94,8 +91,6 @@ local function OnTooltipSetUnit()
 end
 
 function mnkTooltip:PLAYER_LOGIN()
-    for class, color in pairs(RAID_CLASS_COLORS) do colors[class] = string.format('%02x%02x%02x', color.r * 255, color.g * 255, color.b * 255) end
-
     hooksecurefunc('GameTooltip_SetDefaultAnchor', function(tooltip, parent)
         local f = GetMouseFocus()
         

@@ -11,7 +11,6 @@ local FRIENDS_TEXTURE_BROADCAST = 'Interface\\FriendsFrame\\BroadcastIcon'
 local FRIENDS_TEXTURE_ONLINE = 'Interface\\FriendsFrame\\StatusIcon-Online'
 
 local LastFriendsOnline = 0
-local colors = {}
 
 function mnkFriends:BN_FRIEND_ACCOUNT_OFFLINE()
     self.LDB.text = mnkFriends:GetNumFriendsOnline()
@@ -81,7 +80,6 @@ function mnkFriends:OnEnter(parent)
     local x = mnkFriends:GetNumFriendsOnline()
     if x > 0 then
         tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Name', mnkLibs.Color(COLOR_GOLD)..'Level', mnkLibs.Color(COLOR_GOLD)..'Zone', mnkLibs.Color(COLOR_GOLD)..'Note')
-
         x = C_FriendList.GetNumFriends()
         local c = 0
         for i = 1, x do
@@ -90,7 +88,7 @@ function mnkFriends:OnEnter(parent)
                 c = c + 1
                 t[c] = {}
                 t[c].name = info.name
-                t[c].nameformatted = format('|cff%s%s', colors[info.className:gsub(' ', ''):upper()] or 'ffffff', info.name)
+                t[c].nameformatted = mnkLibs.Color(RAID_CLASS_COLORS[info.className:gsub(' ', ''):upper()] or COLOR_WHITE)..info.name
                 t[c].level = info.level
                 t[c].zone = info.area
                 t[c].note = info.notes
@@ -114,7 +112,7 @@ function mnkFriends:OnEnter(parent)
                 
                 if info.gameAccountInfo.clientProgram == 'WoW' then
                     t[c].name = info.gameAccountInfo.characterName 
-                    t[c].nameformatted = format('|cff%s%s', colors[info.gameAccountInfo.className:gsub(' ', ''):upper()] or 'ffffff', info.gameAccountInfo.characterName)
+                    t[c].nameformatted = mnkLibs.Color(RAID_CLASS_COLORS[info.gameAccountInfo.className:gsub(' ', ''):upper()] or COLOR_WHITE)..info.gameAccountInfo.characterName
                     t[c].level = info.gameAccountInfo.characterLevel
                     t[c].zone = info.gameAccountInfo.areaName 
                     t[c].client = info.gameAccountInfo.clientProgram 
@@ -174,7 +172,6 @@ function mnkFriends:PLAYER_LOGIN()
         OnEnter = function (parent) mnkFriends:OnEnter(parent) end, 
         OnClick = function () mnkFriends:OnClick() end
     })
-    for class, color in pairs(RAID_CLASS_COLORS) do colors[class] = string.format('%02x%02x%02x', color.r * 255, color.g * 255, color.b * 255) end
 
     self.LDB.label = 'Friends'
     self.LDB.text = mnkFriends:GetNumFriendsOnline()
