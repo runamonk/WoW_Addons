@@ -37,31 +37,37 @@ local function OnTooltipSetUnit()
             end
         end
 
-        if not UnitIsPlayer(unit) then
-            
+        if not UnitIsPlayer(unit) then          
             if UnitIsTapDenied(unit) then
                 local unitName, _ = UnitName(unit)
                 GameTooltipTextLeft1:SetFormattedText(mnkLibs.Color(COLOR_GREY)..unitName..cls)
                 GameTooltip:AddLine(mnkLibs.Color(COLOR_WHITE)..'<<Tapped>>')
             else
+
                 local unitName, _ = UnitName(unit)
                 if unitName ~= nil then
                     GameTooltipTextLeft1:SetFormattedText(unitName..cls)
+                    local unitReact = UnitReaction(unit, "player");
+                    if unitReact <= 3 then
+                        GameTooltip:SetBackdropColor(.2, 0, 0, 1) 
+                    else
+                        GameTooltip:SetBackdropColor(0, 0, 0, 1)
+                    end 
                 end
             end
         else
             if UnitIsPlayer(unit) then
+                GameTooltip:SetBackdropColor(0, 0, 0, 1) 
                 local unitClass = UnitClass(unit):gsub(' ', ''):upper() 
                 local unitName, _ = UnitName(unit)
                 local unitColor = RAID_CLASS_COLORS[unitClass] or COLOR_WHITE
+                local unitGuildName, _, _ = GetGuildInfo(unit)
 
-                GameTooltipStatusBar:SetStatusBarColor(unitColor.r, unitColor.g, unitColor.b)
-                GameTooltipTextLeft1:SetFormattedText(mnkLibs.Color(unitColor)..mnkLibs.formatPlayerName(unitName))
-
-                local guildName, _, _ = GetGuildInfo(unit)
-                if guildName ~= nil then
-                    guildName = mnkLibs.formatPlayerName(guildName)
-                    GameTooltipTextLeft2:SetFormattedText(mnkLibs.Color(COLOR_GREEN)..'<'..guildName..'>')
+                --leave the hp bar green, it's more consistant. 
+                --GameTooltipStatusBar:SetStatusBarColor(unitColor.r, unitColor.g, unitColor.b)
+                GameTooltipTextLeft1:SetFormattedText(mnkLibs.Color(unitColor)..mnkLibs.formatPlayerName(unitName))               
+                if unitGuildName ~= nil then
+                    GameTooltipTextLeft2:SetFormattedText(mnkLibs.Color(COLOR_GREEN)..'<'..mnkLibs.formatPlayerName(unitGuildName)..'>')
                 end
 
                 local unitTarget = unit..'target'
