@@ -38,12 +38,12 @@ local function OnTooltipSetUnit()
         end
 
         if not UnitIsPlayer(unit) then          
-            if UnitIsTapDenied(unit) then
+            if UnitIsTapDenied(unit) or UnitIsDeadOrGhost(unit) then
                 local unitName, _ = UnitName(unit)
+                GameTooltip:SetBackdropColor(.1, .1, .1, 1) 
                 GameTooltipTextLeft1:SetFormattedText(mnkLibs.Color(COLOR_GREY)..unitName..cls)
                 GameTooltip:AddLine(mnkLibs.Color(COLOR_WHITE)..'<<Tapped>>')
             else
-
                 local unitName, _ = UnitName(unit)
                 if unitName ~= nil then
                     GameTooltipTextLeft1:SetFormattedText(unitName..cls)
