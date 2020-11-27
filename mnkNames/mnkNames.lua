@@ -1,8 +1,10 @@
 mnkNames = CreateFrame('Frame', nil, UIParent, BackdropTemplateMixin and "BackdropTemplate")
 mnkNames.oUF = oUF or ns.oUF
 --Tags are in mnkLibs\mnkuTags
-
+local playerGuildNameNull = "mnkNamesNoGuildName"
 local _, playerClass = UnitClass('player')
+local playerGuildName = playerGuildNameNull
+
 local classColor = {}
 local _
 classColor.r, classColor.g, classColor.b, _ = GetClassColor(playerClass)
@@ -218,41 +220,67 @@ function mnkNames.OnNameplatesCallback(self)
             lastNameplate.PlayerHealth:Hide()
 		end
 	else
-        local s = UnitClassification(self.unit)
-        UpdateThreat(self, nil, self.unit)
-       
-        if s == 'rare' or s == 'rareelite' or s == 'worldboss' then
-            self.Health:SetStatusBarColor(0.5, 0.3, 1, 1)
-        else
-            local i = UnitReaction(self.unit, 'player')
-            
-            if i and i <= 3 then
-                self.Health:SetStatusBarColor(1, 0, 0, 1) 
-            elseif i and i > 5 then
-                self.Health:SetStatusBarColor(0, 1, 0, 1)
-            else 
-                self.Health:SetStatusBarColor(0.7, 0.7, 0, 1)
-            end
+        local guildName = nil
+        if UnitIsPlayer(self.unit) == true then
+            guildName, _, _ = GetGuildInfo(self.unit);
         end
 
-		if (UnitExists('target') and UnitIsUnit('target', self.unit)) then
-            self.PlayerHealth:Show()
-            self.PlayerHealth:SetValue(UnitHealth("player"))
-			if (lastNameplate ~= nil and lastNameplate ~= self) then
-				lastNameplate.PlayerHealth:Hide()
-                lastNameplate:SetBackdropColor(0, 0, 0, 1)
-			end
-			self:SetBackdropColor(1, 1, 1, 1)
-			lastNameplate = self
-		else
-			self:SetBackdropColor(0, 0, 0, 1)
-            self.PlayerHealth:Hide()
-		end  		
+        if UnitIsPlayer(self.unit) == true and (guildName ~= playerGuildName) then
+            self:Hide()
+        else
+            self:Show()
+            local s = UnitClassification(self.unit)
+            UpdateThreat(self, nil, self.unit)
+           
+            if s == 'rare' or s == 'rareelite' or s == 'worldboss' then
+                self.Health:SetStatusBarColor(0.5, 0.3, 1, 1)
+            else
+                local i = UnitReaction(self.unit, 'player')
+                
+                if i and i <= 3 then
+                    self.Health:SetStatusBarColor(1, 0, 0, 1) 
+                elseif i and i > 5 then
+                    self.Health:SetStatusBarColor(0, 1, 0, 1)
+                else 
+                    self.Health:SetStatusBarColor(0.7, 0.7, 0, 1)
+                end
+            end
+
+    		if (UnitExists('target') and UnitIsUnit('target', self.unit)) then
+                self.PlayerHealth:Show()
+                self.PlayerHealth:SetValue(UnitHealth("player"))
+    			if (lastNameplate ~= nil and lastNameplate ~= self) then
+    				lastNameplate.PlayerHealth:Hide()
+                    lastNameplate:SetBackdropColor(0, 0, 0, 1)
+    			end
+    			self:SetBackdropColor(1, 1, 1, 1)
+    			lastNameplate = self
+    		else
+    			self:SetBackdropColor(0, 0, 0, 1)
+                self.PlayerHealth:Hide()
+    		end
+        end  		
 	end
 end
+
+local function SetMyGuild()
+    playerGuildName, _, _ = GetGuildInfo("player") or playerGuildNameNull 
+end
+
+function mnkNames:PLAYER_GUILD_UPDATE()
+    SetMyGuild()
+end 
+
+function mnkNames:PLAYER_LOGIN()
+    SetMyGuild()
+end 
 
 mnkNames.oUF:RegisterStyle("mnkNames", mnkNames.CreateStyle)
 mnkNames.oUF:SetActiveStyle("mnkNames")
 mnkNames.oUF:SpawnNamePlates("mnkNames", mnkNames.OnNameplatesCallback, cvars)
+
+mnkNames:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
+mnkNames:RegisterEvent('PLAYER_GUILD_UPDATE')
+mnkNames:RegisterEvent('PLAYER_LOGIN')
 
 
