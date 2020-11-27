@@ -2,6 +2,7 @@ mnkNames = CreateFrame('Frame', nil, UIParent, BackdropTemplateMixin and "Backdr
 mnkNames.oUF = oUF or ns.oUF
 --Tags are in mnkLibs\mnkuTags
 local playerGuildNameNull = "mnkNamesNoGuildName"
+
 local _, playerClass = UnitClass('player')
 local playerGuildName = playerGuildNameNull
 
@@ -226,6 +227,7 @@ function mnkNames.OnNameplatesCallback(self)
         end
 
         if UnitIsPlayer(self.unit) == true and (guildName ~= playerGuildName) then
+            --print(UnitName(self.unit), ' ', guildName)
             self:Hide()
         else
             self:Show()
