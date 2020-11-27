@@ -7,7 +7,6 @@ local classColor = {}
 local _
 classColor.r, classColor.g, classColor.b, _ = GetClassColor(playerClass)
 
-
 local cvars = {
     nameplateGlobalScale = .8, 
     --NamePlateHorizontalScale = .6, 
@@ -24,7 +23,6 @@ local cvars = {
 	nameplatePersonalShowAlways = 0
 }
 
-local _
 local cfg_name_width = 190
 local cfg_name_height = 12
 local cfg_frame_width = 200
@@ -67,11 +65,6 @@ function mnkNames.CreateStyle(self, unit)
     end
 
     self.disableMovement = true
-    -- self.frameValues = CreateFrame('Frame', nil, self)
-    -- self.frameValues:SetFrameLevel(self:GetFrameLevel()+50)
-    -- self.frameValues:SetSize(self:GetSize())
-    -- self.frameValues:SetAllPoints()
-
     self.Health = CreateFrame("StatusBar", nil, self, BackdropTemplateMixin and "BackdropTemplate")
     self.Health:SetAllPoints()
     self.Health:SetStatusBarTexture(mnkLibs.Textures.background)
