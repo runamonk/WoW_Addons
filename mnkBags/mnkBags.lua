@@ -543,7 +543,7 @@ function mnkBagsContainer:OnCreate(name)
 		self.buttonSellItems:SetPoint("TOPRIGHT", self.resetBtn, "TOPLEFT", -2, -1)
 		self.buttonSellItems:SetSize(12,12)
 		mnkLibs.setTooltip(self.buttonSellItems, 'Sell all items.')
-		mnkLibs.setTooltip(self, 'Press alt + left click to mark and item as known.')
+		mnkLibs.setTooltip(self, 'Press alt + left click to mark an item as known.')
 		self.buttonSellItems:SetScript("OnClick", 
 			function ()
 			 	if (not MerchantFrame:IsShown()) then return end
