@@ -93,6 +93,10 @@ function ItemButton:Create(tpl, parent)
 	bFS:ClearAllPoints()
 	bFS:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 1.5, 1.5);
 
+	button:HookScript('OnClick', 
+		function (self)
+       		if (self.OnClick) then self:OnClick(self) end
+       	end)
 	return button
 end
 
@@ -112,4 +116,3 @@ end
 function ItemButton:getItemInfo(item)
 	return self.implementation:GetItemInfo(self.bagID, self.slotID, item)
 end
-

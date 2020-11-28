@@ -259,6 +259,23 @@ function cbmb:UpdateBags()
 	end 
 end
 
+function mnkBagsButton:OnClick(self)
+	-- mark an item as known and UpdateBags.
+	if IsAltKeyDown() then
+		if self.container ~= _Bags.bagNew then return end 
+		skipOnButtonRemove = true
+		--local b = _Bags.bagNew.buttons[k]
+		local clink = GetContainerItemLink(self.bagID, self.slotID)
+		local itemid = select(1, GetItemInfoInstant(clink))
+		if mnkLibs.GetIndexInTable(mnkBagsKnownItems, itemid) == 0 then			
+			mnkBagsKnownItems[#mnkBagsKnownItems+1] = itemid
+			cbmb:UpdateBags()
+		end
+		skipOnButtonRemove = false
+		ClearCursor()
+	end
+end
+
 function mnkBagsContainer:GetFirstFreeSlot(self)
 	if self == _Bags.bank then		
 		local containerIDs = {-1,5,6,7,8,9,10,11}
