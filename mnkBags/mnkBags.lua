@@ -264,9 +264,7 @@ function mnkBagsButton:OnClick(self)
 	if IsAltKeyDown() then
 		if self.container ~= _Bags.bagNew then return end 
 		skipOnButtonRemove = true
-		--local b = _Bags.bagNew.buttons[k]
-		local clink = GetContainerItemLink(self.bagID, self.slotID)
-		local itemid = select(1, GetItemInfoInstant(clink))
+		local itemid = select(1, GetItemInfoInstant(self.clink))
 		if mnkLibs.GetIndexInTable(mnkBagsKnownItems, itemid) == 0 then			
 			mnkBagsKnownItems[#mnkBagsKnownItems+1] = itemid
 			cbmb:UpdateBags()
