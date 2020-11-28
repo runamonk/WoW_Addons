@@ -669,12 +669,12 @@ end
 
 function mbContainer:ShowOrHide()
 	local result = (#self.buttons > 0) or false
-	local isBankBag = (self.name:sub(1, string.len('mb_Bank')) == 'mb_Bank') 
+	local isBankBag = (self.name:sub(1, 7) == 'mb_Bank') 
 
 	-- at the bank?
-	if ((isBankBag == true) and cbmb:AtBank() and ((#self.buttons > 0) or  									-- Bank bag? Has items in it?
-		                                           (self == mbBags.bankReagent) or (self == mbBags.bank))) or -- always show main and reagent bags
-	                                               (self == mbBags.main) then 								-- main bag		
+	if ((isBankBag == true) and cbmb:AtBank() and ((result) or  									          -- Bank bag? Has items in it?
+		                                           (self == mbBags.bankReagent) or (self == mbBags.bank))) or -- always show bank, reagent and main bags
+	                                               (self == mbBags.main) then 								  -- main bag		
 		result = true
 	-- bank bag, but not at bank? 
 	elseif (isBankBag == true) and (not cbmb:AtBank()) then     
