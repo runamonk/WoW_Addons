@@ -262,6 +262,7 @@ end
 function mnkBagsButton:OnClick(self)
 	-- mark an item as known and UpdateBags.
 	if IsAltKeyDown() then
+		--print(self.clink, ' ', self.container:GetName())
 		if self.container ~= _Bags.bagNew then return end 
 		skipOnButtonRemove = true
 		local itemid = select(1, GetItemInfoInstant(self.clink))
@@ -541,7 +542,8 @@ function mnkBagsContainer:OnCreate(name)
 		self.buttonSellItems:ClearAllPoints()
 		self.buttonSellItems:SetPoint("TOPRIGHT", self.resetBtn, "TOPLEFT", -2, -1)
 		self.buttonSellItems:SetSize(12,12)
-		mnkLibs.setTooltip(self.buttonSellItems, 'Sell all items in New bag.')
+		mnkLibs.setTooltip(self.buttonSellItems, 'Sell all items.')
+		mnkLibs.setTooltip(self, 'Press alt + left click to mark and item as known.')
 		self.buttonSellItems:SetScript("OnClick", 
 			function ()
 			 	if (not MerchantFrame:IsShown()) then return end
