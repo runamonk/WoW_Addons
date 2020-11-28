@@ -261,9 +261,8 @@ end
 
 function mnkBagsButton:OnClick(self)
 	-- mark an item as known and UpdateBags.
-	if IsAltKeyDown() then
+	if IsAltKeyDown() and (self.container == _Bags.bagNew) then
 		--print(self.clink, ' ', self.container:GetName())
-		if self.container ~= _Bags.bagNew then return end 
 		skipOnButtonRemove = true
 		local itemid = select(1, GetItemInfoInstant(self.clink))
 		if mnkLibs.GetIndexInTable(mnkBagsKnownItems, itemid) == 0 then			
