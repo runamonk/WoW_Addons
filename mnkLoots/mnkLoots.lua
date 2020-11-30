@@ -16,15 +16,6 @@ LootFrame:Hide()
 LootFrame.Show = mnkLibs.donothing()
 LootFrame:UnregisterAllEvents()
 
-local function AlreadyLooted(table, id)
-    for i = 1, #table do
-        if table[i].id == id then
-            return i
-        end
-    end
-    return false
-end
-
 local function GetNumFreeSlots()
     local free = 0
     for i = 0, 4 do
@@ -34,6 +25,16 @@ local function GetNumFreeSlots()
 end
 
 function mnkLoots:AddItem(itemLink, slotid)
+
+    local function inLootedItemsTable(table, id)
+        for i = 1, #table do
+            if table[i].id == id then
+                return i
+            end
+        end
+        return false
+    end
+
     --print('AddItem:', itemLink)
     local _ = nil
     local itemId, itemIcon, itemName, itemCount, itemRarity, itemClassID, itemSubClassID = nil
@@ -49,7 +50,7 @@ function mnkLoots:AddItem(itemLink, slotid)
 
     if itemId and itemRarity > 0 then
         --print(itemId, ' ', itemLink, ' ', itemIcon, ' ', itemName, ' ', itemCount, ' ', itemRarity)
-        local idx = AlreadyLooted(lootedItems, itemId) 
+        local idx = inLootedItemsTable(lootedItems, itemId) 
         if not idx then
             local c = #lootedItems+1
             lootedItems[c] = {}
@@ -64,20 +65,16 @@ function mnkLoots:AddItem(itemLink, slotid)
             else
                 lootedItems[c].highlight = false
             end
-            if itemRarity > 1 then
-                self:AddItemToHistory(lootedItems[c])
-            end
+            self:AddItemToHistory(lootedItems[c])
         else
             lootedItems[idx].count = (lootedItems[idx].count or 1) + (itemCount or 1)
-            if itemRarity > 1 then
-                self:AddItemToHistory(lootedItems[idx])
-            end
+            self:AddItemToHistory(lootedItems[idx])
         end
     end
 end
 
 function mnkLoots:AddItemToHistory(item)
-    local function AlreadyLooted(item)
+    local function inLootHistoryTable(item)
         for i=1, #mnkLoots_LootHistory do
             if mnkLoots_LootHistory[i] and mnkLoots_LootHistory[i].link == item.link then
                 --print('found:', item.link)
@@ -89,7 +86,7 @@ function mnkLoots:AddItemToHistory(item)
 
     if item.rarity < 2 then return end
 
-    local r = AlreadyLooted(item)
+    local r = inLootHistoryTable(item)
     if r == 0 then
         r = #mnkLoots_LootHistory+1
         mnkLoots_LootHistory[r] = item
