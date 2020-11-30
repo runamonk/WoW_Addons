@@ -16,14 +16,6 @@ LootFrame:Hide()
 LootFrame.Show = mnkLibs.donothing()
 LootFrame:UnregisterAllEvents()
 
-local function GetNumFreeSlots()
-    local free = 0
-    for i = 0, 4 do
-        free = free + GetContainerNumFreeSlots(i)
-    end
-    return free
-end
-
 function mnkLoots:AddItem(itemLink, slotid)
 
     local function inLootedItemsTable(table, id)
@@ -210,6 +202,14 @@ function mnkLoots:LOOT_CLOSED()
 end
 
 function mnkLoots:LOOT_OPENED()
+    local function GetNumFreeSlots()
+        local free = 0
+        for i = 0, 4 do
+            free = free + GetContainerNumFreeSlots(i)
+        end
+        return free
+    end
+
     -- don't run with auto loot enabled, it will conflict with blizzard code 
     -- to auto loot and sometimes cause an instant disconnect.
     if GetCVar('autoLootDefault') == 1 then return end
