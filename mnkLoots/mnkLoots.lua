@@ -112,9 +112,10 @@ function mnkLoots:CHAT_MSG_LOOT(event, arg1)
             _, l = 1, arg1:match(LOOT_ITEM_CREATED_SELF_PATTERN)
         end
 
-        if not l then return end
-        self:AddItem(l)
-        self:ShowPhatLoots()      
+        if l then 
+            self:AddItem(l)
+            self:ShowPhatLoots()
+        end      
     end
 end
 
