@@ -73,7 +73,7 @@ function mnkNames.CreateStyle(self, unit)
     self.Health:SetStatusBarTexture(mnkLibs.Textures.background)
     self.Health:GetStatusBarTexture():SetHorizTile(false)
     self.Health.colorHealth = false
-    self.Health.colorClass = true
+    self.Health.colorClass = false
     self.Health.colorReaction = false
     self.Health.colorTapping = true
     self.Health.colorDisconnected = true
@@ -131,19 +131,6 @@ function mnkNames.CreateStyle(self, unit)
     self.Castbar.PostCastNotInterruptible = mnkNames.CastbarSpellUpdate
     self.Castbar.PostCastStart = mnkNames.CastbarSpellUpdate
     self.Castbar.PostChannelStart = mnkNames.CastbarSpellUpdate
-
-    self.PlayerHealth = CreateFrame('StatusBar', nil, self, BackdropTemplateMixin and "BackdropTemplate")
-    self.PlayerHealth:SetSize(cfg_frame_width + 3, 2)
-    self.PlayerHealth:SetPoint("LEFT", self, "LEFT", -1.5, 0)
-    self.PlayerHealth:SetPoint("TOP", self, "BOTTOM", 0, 0)
-    self.PlayerHealth:SetStatusBarTexture(mnkLibs.Textures.bar)
-    self.PlayerHealth:GetStatusBarTexture():SetHorizTile(false)
-    self.PlayerHealth:SetFrameLevel(self:GetFrameLevel()+51)
-    self.PlayerHealth:SetStatusBarColor(.1, 1, .1, 1) 
-    self.PlayerHealth:SetMinMaxValues(0, UnitHealthMax("player"))
-    self.PlayerHealth:SetValue(UnitHealth("player"))
-    mnkLibs.setBackdrop(self.PlayerHealth, nil, nil, 0, 0, 0, 0)
-    self:RegisterEvent("UNIT_HEALTH", function (self) self.PlayerHealth:SetValue(UnitHealth("player")) end)
 
     self.Debuffs = CreateFrame("Frame", nil, self)
     self.Debuffs:SetSize((cfg_debuffs_num * (cfg_debuffs_size + 9)) / cfg_debuffs_rows, (cfg_debuffs_size + 9) * cfg_debuffs_rows)
@@ -218,7 +205,6 @@ function mnkNames.OnNameplatesCallback(self)
 	if not self then
 		if lastNameplate then
 			lastNameplate:SetBackdropColor(0, 0, 0, 1)
-            lastNameplate.PlayerHealth:Hide()
 		end
 	else
         local guildName = nil
@@ -249,18 +235,18 @@ function mnkNames.OnNameplatesCallback(self)
             end
 
     		if (UnitExists('target') and UnitIsUnit('target', self.unit)) then
-                self.PlayerHealth:Show()
-                self.PlayerHealth:SetValue(UnitHealth("player"))
     			if (lastNameplate ~= nil and lastNameplate ~= self) then
-    				lastNameplate.PlayerHealth:Hide()
-                    lastNameplate:SetBackdropColor(0, 0, 0, 1)
+                    lastNameplate:SetBackdropColor(0, 0, 0, 1)                 
     			end
     			self:SetBackdropColor(1, 1, 1, 1)
     			lastNameplate = self
     		else
     			self:SetBackdropColor(0, 0, 0, 1)
-                self.PlayerHealth:Hide()
     		end
+
+            if UnitIsPlayer(self.unit) == true and (guildName == playerGuildName) then
+                self.Health:SetStatusBarColor(.1, 1, .1, 1)
+            end
         end  		
 	end
 end
