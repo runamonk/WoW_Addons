@@ -12,6 +12,7 @@ db = {}
 
 local _, playerClass = UnitClass('player')
 local classColor = {}
+local MAX_WATCHABLE_QUESTS = C_QuestLog.GetMaxNumQuestsCanAccept()
 
 classColor.r, classColor.g, classColor.b, _ = GetClassColor(playerClass)
 
@@ -24,57 +25,34 @@ local function MinimapZoom(self, direction)
 end
 
  function mnkMinimap:FilterQuestTracker()
-     local currentMap =  C_Map.GetBestMapForUnit("player")
-     if not currentMap then return end
-     local mapInfo = C_Map.GetMapInfo(currentMap)
-     mnkMinimap.LDB.text = ' '..mapInfo.name
+    local currentMap =  C_Map.GetBestMapForUnit("player")
+    if not currentMap then return end
+    local mapInfo = C_Map.GetMapInfo(currentMap)
+    mnkMinimap.LDB.text = ' '..mapInfo.name
 
---     local function EmptyTracker()
+    local function EmptyTracker()
+        for i = C_QuestLog.GetNumQuestWatches(), 1, -1 do
+            local questID = C_QuestLog.GetQuestIDForQuestWatchIndex(i)
+            local questwt = C_QuestLog.GetQuestWatchType(questID)
+            if questwt == 0 then
+                C_QuestLog.RemoveQuestWatch(questID)
+            end
+        end
+    end
 
---         --for i = GetNumQuestWatches(), 1, -1 do
---         for i = C_QuestLog.GetNumQuestWatches(), 1, -1 do
---             -- check to see if it's in our list of quests that were auto tracked.
---             local x = GetQuestIndexForWatch(i)
---             local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory = GetQuestLogTitle(x)
+    local function FillTracker()      
+        local questsOnMap = C_QuestLog.GetQuestsOnMap(currentMap)
 
---             -- only remove auto-tracked quests.
---             local l = mnkLibs.GetIndexInTable(db.autoquests, questID)
---             if l > 0 then
---                 RemoveQuestWatch(GetQuestIndexForWatch(i))
---                 table.remove(db.autoquests, l)
---             end
---         end
---     end
+        for i, info in ipairs(questsOnMap) do
+            local x = C_QuestLog.GetNumQuestWatches()
+            if x < MAX_WATCHABLE_QUESTS then
+                C_QuestLog.AddQuestWatch(info.questID)
+            end
+        end
+    end
 
---     local function FillTracker()      
---         local questsOnMap = C_QuestLog.GetQuestsOnMap(currentMap)
-
---         for i, info in ipairs(questsOnMap) do
---             local x = GetNumQuestWatches()
-
---             if x < MAX_WATCHABLE_QUESTS then
---                 local idx = GetQuestLogIndexByID(info.questID)
---                 -- make sure they aren't already tracking it, if they are we don't want to auto remove it.
---                 if IsQuestWatched(idx) then
---                     -- 
---                 else
---                     AddQuestWatch(GetQuestLogIndexByID(info.questID))
-               
---                     if db.autoquests == nil then
---                         db.autoquests = {}
---                     end
-
---                     --add quest to list of auto-tracked.
---                     if mnkLibs.GetIndexInTable(db.autoquests, info.questID) == 0 then
---                         db.autoquests[#db.autoquests+1] = info.questID
---                     end                   
---                 end
---             end
---         end
---     end
-
---     EmptyTracker()
---     FillTracker()
+    EmptyTracker()
+    FillTracker()
 end
 
 function mnkMinimap:PLAYER_ENTERING_WORLD()
@@ -89,7 +67,6 @@ function mnkMinimap:PLAYER_LOGIN()
         type = 'data source', 
         OnClick = function (parent, button) 
                     MiniMapWorldMapButton:Click()
-                    --ToggleFrame(WorldMapFrame) 
         end
         })
     self.LDB.label = 'Zone:'   
