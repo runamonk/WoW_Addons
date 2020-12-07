@@ -112,9 +112,9 @@ function mnkGuild:UpdateText()
         if statusid == 0 then
             return ''
         elseif statusid == 1 then
-            return mnkLibs.Color(COLOR_GREEN)..'<Away>'
+            return mnkLibs.Color(COLOR_GREEN)..' <Away>'
         elseif statusid == 2 then
-            return mnkLibs.Color(COLOR_RED)..'<Busy>'
+            return mnkLibs.Color(COLOR_RED)..' <Busy>'
         else
             return ''
         end
@@ -145,7 +145,7 @@ function mnkGuild:UpdateText()
                     local classIcon = string.format('|TInterface\\GLUES\\CHARACTERCREATE\\UI-CHARACTERCREATE-CLASSES:16:16:0:0:256:256:%s:%s:%s:%s|t', (c1 * 256)+4, (c2 * 256)-4, (c3 * 256)+4, (c4 * 256)-4)
 
                     t[x] = {}
-                    t[x].ClassNameStatus = classIcon..mnkLibs.Color(RAID_CLASS_COLORS[class:gsub(' ', ''):upper()] or COLOR_WHITE)..mnkLibs.formatPlayerName(name)..Status(status)
+                    t[x].ClassNameStatus = classIcon..' '..mnkLibs.Color(RAID_CLASS_COLORS[class:gsub(' ', ''):upper()] or COLOR_WHITE)..mnkLibs.formatPlayerName(name)..Status(status)
                     t[x].name = name
                     t[x].level = level
                     t[x].rank = rank
