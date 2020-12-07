@@ -24,7 +24,7 @@ function mnkMisc:PLAYER_LOGIN()
     -- MainMenuBarArtFrame.RightEndCap:Hide()
 
     --Hide open all mail button, we both hate it.
-    OpenAllMail:Hide()
+    --OpenAllMail:Hide()
 
     BossBanner:Hide()
     BossBanner.Hide = mnkLibs.donothing()
