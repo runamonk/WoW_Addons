@@ -39,7 +39,7 @@ end}
 	@return container <Container>
 	@callback container:OnCreate(name, ...)
 ]]
-function Container:New(name, ...)
+function Container:New(name, bagCaption, ...)
 	local implName = self.implementation.name
 	local container = setmetatable(CreateFrame("Button", implName..name), self.__index)
 
@@ -47,6 +47,7 @@ function Container:New(name, ...)
 	container.buttons = {}
 	container.bags = setmetatable({container = container}, mt_bags)
 	container.implementation.contByName[name] = container -- Make this into pretty function?
+	container.bagCaption = bagCaption
 	table.insert(container.implementation.contByID, container)
 	container:SetParent(self.implementation)
 	if(container.OnCreate) then container:OnCreate(name, ...) end

@@ -4,6 +4,8 @@ local cbmb = cargBags:NewImplementation("mnkBags")
 local mbContainer = cbmb:GetContainerClass()
 local mbButton = cbmb:GetItemButtonClass()
 local mbBags = {}
+local bagMain, bagBank, bagReagent, bagJunk, bagNew = nil
+
 local mnkBags = CreateFrame('Frame', 'mnkBags', UIParent, BackdropTemplateMixin and "BackdropTemplate")
 
 local _
@@ -13,6 +15,7 @@ local itemSlotPadding = 4
 local itemSlotSpacer = 2
 local JunkItemsSold = 0
 local NewItemsSold = 0
+local BagScale = 1 
 
 local mediaPath = [[Interface\AddOns\mnkBags\media\]]
 local Textures = {
@@ -67,17 +70,17 @@ local function SellItemsInContainer(container)
 end
 
 local function SellJunk()
-	if (not MerchantFrame:IsShown()) or (#mbBags.bagJunk.buttons == 0) then return end
+	if (not MerchantFrame:IsShown()) or (#bagJunk.buttons == 0) then return end
 	local p = 0
-	p = SellItemsInContainer(mbBags.bagJunk)
+	p = SellItemsInContainer(bagJunk)
 	JunkItemsSold = JunkItemsSold + p
 	C_Timer.After(0.5, SellJunk) 
 end
 
 local function SellNewItems()
-	if (not MerchantFrame:IsShown()) or (#mbBags.bagNew.buttons == 0) then return end
+	if (not MerchantFrame:IsShown()) or (#bagNew.buttons == 0) then return end
 	local p = 0
-	p = SellItemsInContainer(mbBags.bagNew)
+	p = SellItemsInContainer(bagNew)
 	NewItemsSold = NewItemsSold + p
 	C_Timer.After(0.5, SellNewItems) 		
 end
@@ -151,51 +154,67 @@ function cbmb:OnInit()
 	local function ItemNotNull(item)
 		return (item ~= nil) and (item.link ~= nil)
 	end
+	
+	local function createBag(bagParent, bagClass)
+		local newBagObj = nil
+		local bagCaption = bagClass
 
-	mbBags.bankArmor	= mbContainer:New("mb_BankArmor")
-	mbBags.bankGem = mbContainer:New("mb_BankGem")
-	mbBags.bankConsumables =	mbContainer:New("mb_BankCons")
-	mbBags.bankArtifactPower = mbContainer:New("mb_BankArtifactPower")
-	mbBags.bankBattlePet	= mbContainer:New("mb_BankBattlePet")
-	mbBags.bankQuest	= mbContainer:New("mb_BankQuest")
-	mbBags.bankTrade	= mbContainer:New("mb_BankTrade")
-	mbBags.bankReagent = mbContainer:New("mb_BankReagent")
-	mbBags.bank = mbContainer:New("mb_Bank")
+		if bagCaption == "_bag" then
+			bagCaption = "Bags"
+		elseif bagCaption == "_bank" then
+			bagCaption = "Bank"
+		end
 
-	mbBags.bankArmor:SetFilter(function(item) return ItemNotNull(item) and IsBank(item) and ((item.type == mbLocals.Armor) or (item.type == mbLocals.Weapon)) end, true)
-	mbBags.bankGem:SetFilter(function(item) return ItemNotNull(item) and IsBank(item) and (item.type == mbLocals.Gem) end, true)
-	mbBags.bankQuest:SetFilter(function(item) return ItemNotNull(item) and IsBank(item) and (item.type == mbLocals.Quest) end, true)
-	mbBags.bankConsumables:SetFilter(function(item) return ItemNotNull(item) and IsBank(item) and (item.type == mbLocals.Consumables) end, true)
-	mbBags.bankArtifactPower:SetFilter(function(item) return ItemNotNull(item) and IsBank(item) and (item.type == mbLocals.ArtifactPower) end, true)
-	mbBags.bankBattlePet:SetFilter(function(item) return ItemNotNull(item) and IsBank(item) and (item.type == mbLocals.BattlePet) end, true)
-	mbBags.bankTrade:SetFilter(function(item) return ItemNotNull(item) and IsBank(item) and (item.type == mbLocals.Trades) end, true)
-	mbBags.bankReagent:SetFilter(function(item) return ItemNotNull(item) and (item.bagID == -3) end, true)
-	mbBags.bank:SetFilter(function(item) return ItemNotNull(item) and IsBank(item) end, true)
+		if bagParent and bagClass then 
+			newBagObj = mbContainer:New(bagParent..bagClass, bagCaption)
+		else
+			newBagObj = mbContainer:New(bagClass, bagCaption)
+		end
 
-	mbBags.bagJunk = mbContainer:New("mb_Junk")
-	mbBags.bagNew = mbContainer:New("mb_NewItems")
-	mbBags.armor	= mbContainer:New("mb_Armor")
-	mbBags.gem = mbContainer:New("mb_Gem")
-	mbBags.quest	= mbContainer:New("mb_Quest")
-	mbBags.consumables = mbContainer:New("mb_Consumables")
-	mbBags.artifactpower	= mbContainer:New("mb_ArtifactPower")
-	mbBags.battlepet	= mbContainer:New("mb_BattlePet")
-	mbBags.tradegoods = mbContainer:New("mb_TradeGoods")
-	mbBags.main = mbContainer:New("mb_Bag")
+		newBagObj.bagClass = bagClass
+		newBagObj.bagParent = bagParent
 
-	mbBags.bagJunk:SetFilter(function(item) return ItemNotNull(item) and IsMain(item) and (item.rarity == 0) end, true)
-	mbBags.bagNew:SetFilter(function(item) return ItemNotNull(item) and IsMain(item) and  (mnkLibs.GetIndexInTable(mnkBagsKnownItems, item.id) == 0) end, true)
-	mbBags.armor:SetFilter(function(item) return ItemNotNull(item) and IsMain(item) and ((item.type == mbLocals.Armor) or (item.type == mbLocals.Weapon)) end, true)
-	mbBags.gem:SetFilter(function(item) return ItemNotNull(item) and IsMain(item) and (item.type == mbLocals.Gem) end, true)
-	mbBags.quest:SetFilter(function(item) return ItemNotNull(item) and IsMain(item) and (item.type == mbLocals.Quest) end, true)
-	mbBags.consumables:SetFilter(function(item) return ItemNotNull(item) and IsMain(item) and (item.type == mbLocals.Consumables) end, true)
-	mbBags.artifactpower:SetFilter(function(item) return ItemNotNull(item) and IsMain(item) and (item.type == mbLocals.ArtifactPower) end, true)
-	mbBags.battlepet:SetFilter(function(item) return ItemNotNull(item) and IsMain(item) and (item.type == mbLocals.BattlePet) end, true)
-	mbBags.tradegoods:SetFilter(function(item) return ItemNotNull(item) and IsMain(item) and (item.type == mbLocals.Trades) end, true)
-	mbBags.main:SetFilter(function(item) return ItemNotNull(item) and IsMain(item) end, true)
+		if newBagObj.bagClass == "New" then
+			newBagObj:SetFilter(function(item)
+									return ItemNotNull(item) and (item.rarity > 0) and IsMain(item) and (mnkLibs.GetIndexInTable(mnkBagsKnownItems, item.id) == 0)
+				                end, true)	
+		elseif newBagObj.bagClass == "Junk" then
+			newBagObj:SetFilter(function(item)
+									return ItemNotNull(item) and IsMain(item) and (item.rarity == 0)
+				                end, true)				
+		elseif newBagObj.bagClass == "Reagents" then
+			newBagObj:SetFilter(function(item)
+									return ItemNotNull(item) and (item.bagID == -3) and (cbmb:AtBank())
+				                end, true)			
+		else
+			newBagObj:SetFilter(function(item)
+									    return ItemNotNull(item) and ((item.type == newBagObj.bagClass) and ((newBagObj.bagParent == "_bag" and IsMain(item) and (item.rarity > 0) and mnkLibs.GetIndexInTable(mnkBagsKnownItems, item.id) > 0) or 
+									    	                          (newBagObj.bagParent == "_bank" and IsBank(item))))
+				                end, true)
+		end
+		newBagObj:SetScale(BagScale)
 
-	mbBags.main:SetPoint('BOTTOMRIGHT', -20, 200)
-	mbBags.bank:SetPoint('BOTTOMRIGHT', mbBags.main, 'BOTTOMLEFT', -20, 0)
+		table.insert(mbBags, newBagObj)
+		return newBagObj
+	end
+
+	for i = 0, NUM_LE_ITEM_CLASSS-1 do
+		createBag("_bag", GetItemClassInfo(i))
+		createBag("_bank", GetItemClassInfo(i))
+	end	
+	
+	bagJunk = createBag("_bag","Junk")
+	bagNew = createBag("_bag", "New")
+
+	local sort_func = function(a, b) return a.name > b.name end
+    table.sort(mbBags, sort_func)
+
+	bagReagent = createBag("_bank","Reagents")
+	bagBank =  createBag(nil,"_bank")
+	bagMain = createBag(nil,"_bag")
+
+	bagMain:SetPoint('BOTTOMRIGHT', -20, 220)
+	bagBank:SetPoint('BOTTOMLEFT', 20, 220)
 
 	for k,_ in pairs(mbBags) do
 		mbBags[k]:OnContentsChanged(true)
@@ -218,36 +237,50 @@ function cbmb:UpdateAnchors()
 		local i = bag:GetHeight()
 		local t = lastbag:GetTop()
 		-- Check if the bag will end up off the top of the screen, if so then start a new column of containers.
-		if (t + i) > h then
-			if parentbag.mywifeisahorder then
-				bag:SetPoint("BOTTOMRIGHT", parentbag.mywifeisahorder, "BOTTOMLEFT", -16, 0)
+		if t and (t + i + 25) > h then
+
+			if parentbag == bagMain then
+				if parentbag.mywifeisahorder then
+					bag:SetPoint("BOTTOMRIGHT", parentbag.mywifeisahorder, "BOTTOMLEFT", -16, 0)
+				else
+					bag:SetPoint("BOTTOMRIGHT", parentbag, "BOTTOMLEFT", -16, 0)	
+				end
+				parentbag.mywifeisahorder = bag
 			else
-				bag:SetPoint("BOTTOMRIGHT", parentbag, "BOTTOMLEFT", -16, 0)	
+				if parentbag.mywifeisahorder then
+					bag:SetPoint("BOTTOMLEFT", parentbag.mywifeisahorder, "BOTTOMRIGHT", 16, 0)
+				else
+					bag:SetPoint("BOTTOMLEFT", parentbag, "BOTTOMRIGHT", 16, 0)	
+				end
+				parentbag.mywifeisahorder = bag				
 			end
-			parentbag.mywifeisahorder = bag
 			return
 		end
 		
-		if lastbag:ShowOrHide() or (lastbag == mbBags.bank or lastbag == mbBags.main) then
+		if lastbag:ShowOrHide() or (lastbag == bagBank or lastbag == bagMain) then
 			bag:SetPoint("BOTTOMLEFT", lastbag, "TOPLEFT", 0, 12)
 		else
 			bag:SetPoint("BOTTOMLEFT", lastbag, "BOTTOMLEFT", 0, 0)
 		end
 	end
 	--print('UpdateAnchors()')
-	local lastBank, lastMain = mbBags.bank, mbBags.main
-	mbBags.bank.mywifeisahorder = nil
-	mbBags.main.mywifeisahorder = nil
+	local lastBank, lastMain = bagBank, bagMain
 
-	for k,_ in pairs(mbBags) do	
-		if not ((k == 'main') or (k == 'bank')) then
-			mbBags[k]:ClearAllPoints()					
-			if (mbBags[k].name:sub(1, string.len('mb_Bank')) == 'mb_Bank') then	
-				SetBagAnchor(mbBags[k], lastBank, mbBags.bank)
-				lastBank = mbBags[k]
+	bagMain.mywifeisahorder = nil
+	bagBank.mywifeisahorder = nil
+
+	for _, obj in pairs(mbBags) do
+		if ((obj.name ~= bagMain.name) and (obj.name ~= bagBank.name)) then
+
+			obj:ClearAllPoints()
+			--print('namecheck: ', obj.name, ' ', obj.bagParent)					
+			if (obj.bagParent == bagBank.name) then
+				SetBagAnchor(obj, lastBank, bagBank)
+				lastBank = obj
 			else
-				SetBagAnchor(mbBags[k], lastMain, mbBags.main)
-				lastMain = mbBags[k]
+				--print("Anchor: ", obj.name, ' ', obj.bagParent, ' ', bagMain.name)	
+				SetBagAnchor(obj, lastMain, bagMain)
+				lastMain = obj
 			end
 		end
 	end
@@ -261,7 +294,7 @@ end
 
 function mbButton:OnClick(self)
 	-- mark an item as known and UpdateBags.
-	if IsAltKeyDown() and (self.container == mbBags.bagNew) then
+	if IsAltKeyDown() and (self.container == bagNew) then
 		--print(self.clink, ' ', self.container:GetName())
 		skipOnButtonRemove = true
 		local itemid = select(1, GetItemInfoInstant(self.clink))
@@ -275,7 +308,7 @@ function mbButton:OnClick(self)
 end
 
 function mbContainer:GetFirstFreeSlot(self)
-	if self == mbBags.bank then		
+	if self == bagBank then		
 		local containerIDs = {-1,5,6,7,8,9,10,11}
 		for _,i in next, containerIDs do
 			local t = GetContainerNumFreeSlots(i)
@@ -287,7 +320,7 @@ function mbContainer:GetFirstFreeSlot(self)
 				end
 			end
 		end	
-	elseif self == mbBags.bankReagent then
+	elseif self == bagReagent then
 		local bagID = -3
 		local t = GetContainerNumFreeSlots(bagID)
 		if t > 0 then
@@ -297,7 +330,7 @@ function mbContainer:GetFirstFreeSlot(self)
 				if not tLink then return bagID,j end
 			end
 		end
-	elseif self == mbBags.main then
+	elseif self == bagMain then
 		for i = 0,4 do
 			local t = GetContainerNumFreeSlots(i)
 			if t > 0 then
@@ -314,15 +347,15 @@ end
 
 function mbContainer:GetNumFreeSlots(self)
 	local free, max = 0, 0
-	if self == mbBags.main then
+	if self == bagMain then
 		for i = 0,4 do
 			free = free + GetContainerNumFreeSlots(i)
 			max = max + GetContainerNumSlots(i)
 		end
-	elseif self == mbBags.bankReagent then
+	elseif self == bagReagent then
 		free = GetContainerNumFreeSlots(-3)
 		max = GetContainerNumSlots(-3)
-	elseif self == mbBags.bank then
+	elseif self == bagBank then
 		local containerIDs = {-1,5,6,7,8,9,10,11}
 		for _,i in next, containerIDs do	
 			free = free + GetContainerNumFreeSlots(i)
@@ -450,7 +483,8 @@ function mbContainer:OnCreate(name)
 	self:EnableMouse(true)
 	self:SetFrameStrata("MEDIUM")
 	self.Caption = mnkLibs.createFontString(self, mnkLibs.Fonts.ap, 16, nil, nil, true)
-	self.Caption:SetText(mbLocals.bagCaptions[self.name])
+	--self.Caption:SetText(mbLocals.bagCaptions[self.name])
+	self.Caption:SetText(self.bagCaption)
 	self.Caption:SetPoint("TOPLEFT", 0, 2)
 	self:SetScript('OnShow', function (self) self:OnShow() end)
 	self.background = CreateFrame("Frame", nil, self)
@@ -460,9 +494,9 @@ function mbContainer:OnCreate(name)
 	self.background:SetFrameLevel(1)
 	self:SetBackdropColor(0, 0, 0, 1)
 
-	local isMain = (name == "mb_Bag") 
-	local isBank = (name == "mb_Bank")
-	local isReagent = (name == "mb_BankReagent")
+	local isMain = (name == "_bag") 
+	local isBank = (name == "_bank")
+	local isReagent = (name == "_bankReagents")
 
 	if (isMain or isBank) then 
 		self:SetBackdropColor(1/8, 1/8, 1/8, 1)
@@ -528,7 +562,7 @@ function mbContainer:OnCreate(name)
 		self.restackBtn:SetScript("OnClick", function() mbContainer:RestackItems(self) end)		
 	end
 
-	if self.name == 'mb_NewItems' then
+	if self.name == '_bagNew' then
 		self.resetBtn = createIconButton("ResetNew", self, Textures.ResetNew, "TOPRIGHT", "Reset New")
 		self.resetBtn:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, 0)
 		self.resetBtn:SetScript("OnClick", function() self:ResetNewItems() end)
@@ -568,7 +602,7 @@ function mbContainer:OnCreate(name)
 		self.Empty = mnkLibs.createFontString(self, mnkLibs.Fonts.ap, 16, nil, nil, true)
 		self.Empty:SetPoint("BOTTOMRIGHT", self.Drop, "BOTTOMRIGHT", -3, 3)
 		self.Empty:SetJustifyH("LEFT")
-		mnkLibs.createBorder(self.Drop, 0.8, -0.8, -0.8, 0.8, {1/2,1/2,1/2,1})
+		mnkLibs.createBorder(self.Drop, 0, 0, 0, 0, {1/2,1/2,1/2,1})
 		self.Drop:Show()
 		self.Empty:Show()
 
@@ -582,7 +616,8 @@ function mbContainer:OnCreate(name)
 		self.Drop:SetScript("OnMouseUp", GetFirstFreeSlot)
 		self.Drop:SetScript("OnReceiveDrag", GetFirstFreeSlot)
 	end
-	if self.name == 'mb_Junk' then
+	
+	if self.name == '_bagJunk' then
 		self.buttonDeleteJunk = CreateFrame("Button", nil, self, "UIPanelCloseButton")
 		self.buttonDeleteJunk:SetDisabledTexture("Interface\\AddOns\\mnkBags\\media\\JunkDelete")
 		self.buttonDeleteJunk:SetNormalTexture("Interface\\AddOns\\mnkBags\\media\\JunkDelete")
@@ -599,8 +634,8 @@ function mbContainer:OnCreate(name)
 					deleteAll = true
 				end
 
-				for k,_ in pairs(mbBags.bagJunk.buttons) do
-					local b = mbBags.bagJunk.buttons[k]
+				for k,_ in pairs(bagJunk.buttons) do
+					local b = bagJunk.buttons[k]
 					local clink = GetContainerItemLink(b.bagID, b.slotID)
 					local sellPrice = select(11, GetItemInfo(clink))
 					--print(clink, ' ', deleteAll, ' ', sellPrice)
@@ -619,12 +654,12 @@ end
 
 function mbContainer:OnShow()
 	-- fill the Reagent bag.
-	if self == mbBags.bankReagent then
+	if self == bagReagent then
 		-- Fill the bag but don't do the OnChange events until the very end. This is less intensive.
 		cbmb.SkipOnChange = true
 		cbmb:UpdateBag(-3)
 		cbmb.SkipOnChange = false
-		mbBags.bankReagent:OnContentsChanged()
+		bagReagent:OnContentsChanged()
 
 		if IsReagentBankUnlocked() then
 			self.reagentBtn:Show()
@@ -644,8 +679,8 @@ end
 
 function mbContainer:ResetNewItems()
 	skipOnButtonRemove = true
-	for k,_ in pairs(mbBags.bagNew.buttons) do
-		local b = mbBags.bagNew.buttons[k]
+	for k,_ in pairs(bagNew.buttons) do
+		local b = bagNew.buttons[k]
 		local clink = GetContainerItemLink(b.bagID, b.slotID)
 		local itemid = select(1, GetItemInfoInstant(clink))
 		if mnkLibs.GetIndexInTable(mnkBagsKnownItems, itemid) == 0 then			
@@ -658,25 +693,28 @@ function mbContainer:ResetNewItems()
 end
 
 function mbContainer:RestackItems(self)
-	if self == mbBags.bankReagent then
+	if self == bagReagent then
 		SortReagentBankBags()
-	elseif self == mbBags.bank then
+	elseif self == bagBank then
 		SortBankBags()
-	elseif self == mbBags.main then
+	elseif self == bagMain then
 		SortBags()
 	end
 end
 
 function mbContainer:ShowOrHide()
-	local result = (#self.buttons > 0) or false
-	local isBankBag = (self.name:sub(1, 7) == 'mb_Bank') 
+	local result = false
+	local hasItems = (#self.buttons > 0) or false
+	local isBankBag = (self.bagParent == bagBank.name)
+	local isParentBankBag = ((self.bagParent == nil) and (self.name == "_bank"))
+	local isParentMainBag = ((self.bagParent == nil) and (self.name == "_bag"))
 
-	-- at the bank?
-	if ((isBankBag == true) and cbmb:AtBank() and ((result) or  									          -- Bank bag? Has items in it?
-		                                           (self == mbBags.bankReagent) or (self == mbBags.bank))) or -- always show bank, reagent and main bags
-	                                               (self == mbBags.main) then 								  -- main bag		
-		result = true
-	-- bank bag, but not at bank? 
+	if (isParentMainBag or hasItems) then
+		result = true 
+	elseif (isBankBag or isParentBankBag) and cbmb:AtBank() then
+		if isParentBankBag or (self == bagReagent) or hasItems then
+			result = true
+		end
 	elseif (isBankBag == true) and (not cbmb:AtBank()) then     
 		result = false
 	end
@@ -691,7 +729,7 @@ function mbContainer:UpdateDimensions(self)
 	local rows = 1	
 
 	-- primary bags or bankRequest bag should always have an free slot counter.
-	if self.bagToggle or self == mbBags.bankReagent then
+	if self.bagToggle or self == bagReagent then
 		buttonCount = 1
 		if self.bagToggle then 
 			if self.pluginBagBar and self.pluginBagBar:IsShown() then 
@@ -718,7 +756,7 @@ function mbContainer:UpdateDimensions(self)
 end
 
 function mbContainer:UpdateFreeSlots()
-	mbBags.main.Empty:SetText(mbContainer:GetNumFreeSlots(mbBags.main))
-	mbBags.bank.Empty:SetText(mbContainer:GetNumFreeSlots(mbBags.bank))
-	mbBags.bankReagent.Empty:SetText(mbContainer:GetNumFreeSlots(mbBags.bankReagent))
+	bagMain.Empty:SetText(mbContainer:GetNumFreeSlots(bagMain))
+	bagBank.Empty:SetText(mbContainer:GetNumFreeSlots(bagBank))
+	bagReagent.Empty:SetText(mbContainer:GetNumFreeSlots(bagReagent))
 end
