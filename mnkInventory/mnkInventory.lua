@@ -330,8 +330,11 @@ function StatusBarCell:SetupCell(tooltip, data, justification, font, r, g, b)
     local azItemXP, azItemTotalXP = 0
     if C_AzeriteItem.HasActiveAzeriteItem() then
         azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
-        azeriteItem = Item:CreateFromItemLocation(azeriteItemLocation); 
-        azItemXP, azItemTotalXP = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
+        --print(azeriteItemLocation:IsValid())
+        if azeriteItemLocation:IsValid() then
+            azeriteItem = Item:CreateFromItemLocation(azeriteItemLocation);
+            azItemXP, azItemTotalXP = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
+        end
     end    
     local link = GetInventoryItemLink('player', data)
     local itemName, itemRarity, itemTexture
