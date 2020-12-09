@@ -25,7 +25,6 @@
 	<Script file='base\itembutton.lua' />
 	<Script file='base-add\filters.sieve.lua' />
 	<Script file='mixins\api-common.lua' />
-	<Script file='mixins\locale.lua' />
 	<Script file='mixins\parseBags.lua' />
 	<Script file='mixins\textFilter.lua' />
 	<Script file='mixins-add\layouts.lua' />

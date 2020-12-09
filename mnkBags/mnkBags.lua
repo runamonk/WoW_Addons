@@ -15,6 +15,7 @@ local itemSlotPadding = 4
 local itemSlotSpacer = 1
 local JunkItemsSold = 0
 local NewItemsSold = 0
+local BagScale = 1 
 
 local mediaPath = [[Interface\AddOns\mnkBags\media\]]
 local Textures = {
@@ -113,6 +114,7 @@ end
 
 function mnkBags:PLAYER_ENTERING_WORLD(event, addon)
 	if cbmb.notInited then
+		BagScale = mnkLibs.GetUIScale()
 		mbButton:Scaffold("Default")
 		cbmb:RegisterBlizzard()
 		cbmb:Init()
@@ -461,6 +463,8 @@ function mbContainer:OnCreate(name)
 	self.name = name
 
     Mixin(self, BackdropTemplateMixin)
+    self:SetScale(BagScale)
+
 	-- this works better than inserting the the frame in the UISpecialFrames table.
 	-- if you go to the bank and have both the bank and your bank open, then press esc the bank won't come back up until you've toggled again.
 	self:EnableKeyboard(1);
