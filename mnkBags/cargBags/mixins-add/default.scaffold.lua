@@ -34,6 +34,7 @@ local function ItemButton_Scaffold(self)
 	self.Count = _G[name.."Count"]
 	self.Cooldown = _G[name.."Cooldown"]
 	self.Quest = _G[name.."IconQuestTexture"]
+	Mixin(self, BackdropTemplateMixin)
 	mnkLibs.createBorder(self, 0.8, -0.8, -0.8, 0.8, {1,1,1,1})
 	self.Border = self.border
     self.Count = mnkLibs.createFontString(self, mnkLibs.Fonts.ap, 16, nil, nil, true)
