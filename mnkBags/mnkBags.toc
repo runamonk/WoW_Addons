@@ -5,5 +5,4 @@
 ## Dependencies: mnkLibs
 
 cargBags\embed.xml
-localization.lua
 mnkBags.lua
