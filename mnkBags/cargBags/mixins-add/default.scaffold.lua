@@ -34,17 +34,23 @@ local function ItemButton_Scaffold(self)
 	self.Count = _G[name.."Count"]
 	self.Cooldown = _G[name.."Cooldown"]
 	self.Quest = _G[name.."IconQuestTexture"]
-	Mixin(self, BackdropTemplateMixin)
-	mnkLibs.createBorder(self, 0.8, -0.8, -0.8, 0.8, {1,1,1,1})
-	self.Border = self.border
+	self.itemRarity = CreateFrame('Frame', nil, self, BackdropTemplateMixin and "BackdropTemplate")
+	--self.itemRarity:SetScale(mnkLibs.GetUIScale())
+	mnkLibs.setBackdrop(self.itemRarity, nil, nil, 0, 0, 0, 0)
+    self.itemRarity:SetBackdropColor(1, 1, 1, 1)
+    self.itemRarity:SetBackdropBorderColor(0,0,0,0)
+    self.itemRarity:SetHeight(mnkLibs.GetUIScale()*3) -- *mnkLibs.GetUIScale())
+
+    self.itemRarity:SetWidth(32)
+	self.itemRarity:SetPoint('CENTER', self, 'BOTTOM', 0, 0)
+    self.itemRarity:SetFrameStrata("HIGH")
+
     self.Count = mnkLibs.createFontString(self, mnkLibs.Fonts.ap, 16, nil, nil, true)
     self.Count:SetPoint('BOTTOMRIGHT', 0, 0)
-
 	self.BottomString = mnkLibs.createFontString(self, mnkLibs.Fonts.ap, 18, nil, nil, true)
     self.BottomString:SetPoint('CENTER', 0, 0)
     self.BottomString:SetJustifyH('CENTER')
     self.BottomString:SetShadowOffset(2, -2)
-	
 	self.boe = mnkLibs.createFontString(self, mnkLibs.Fonts.ap, 50, nil, nil, true)
     self.boe:SetPoint('TOPLEFT', -1, 35)
     self.boe:SetJustifyH('LEFT')
@@ -150,14 +156,14 @@ end
 local function ItemButton_UpdateQuest(self, item)
 	--print(item.link, ' ', item.isCompOrMount, item.type, ' ', item.subType)
 	if item.questID or item.isQuestItem then
-		self.Border:SetBackdropBorderColor(1, 1, 0, 0.8)
+		self.itemRarity:SetBackdropColor(1, 1, 0, 1)
 	elseif item.isCompOrMount then
-		self.Border:SetBackdropBorderColor(1, 0, 0, 1)
+		self.itemRarity:SetBackdropColor(1, 0, 0, 1)
 	elseif item.rarity and item.rarity > 1 then
 		local r, g, b = GetItemQualityColor(item.rarity)
-		self.Border:SetBackdropBorderColor(r, g, b, 0.8)
+		self.itemRarity:SetBackdropColor(r, g, b, 1)
 	else
-		self.Border:SetBackdropBorderColor(0.5, 0.5, 0.5, 0.8)
+		self.itemRarity:SetBackdropColor(0.5, 0.5, 0.5, 1)
 	end
 	if(self.OnUpdateQuest) then self:OnUpdateQuest(item) end
 end
