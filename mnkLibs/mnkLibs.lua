@@ -10,6 +10,8 @@ mnkLibs.Fonts = {
     frizqt = 'Fonts\\FRIZQT__.TTF'
 }
 
+local FUIScale = nil
+
 mnkLibs.DefaultTooltipFont = CreateFont("mnkLibsDefaultFont")
 mnkLibs.DefaultTooltipFont:SetFont(mnkLibs.Fonts.abf, 14)
 
@@ -75,27 +77,6 @@ function mnkLibs.createBorder(parent, top, bottom, left, right, color)
     parent.border:SetPoint('RIGHT', right, right)
     parent.border:SetBackdrop({ edgeFile = [[Interface\ChatFrame\ChatFrameBackground]], edgeSize = .9 })
     parent.border:SetBackdropBorderColor(unpack(color)) 
-end
-
-function mnkLibs.createDropShadow(frame, point, edge, color)
-    local shadow = CreateFrame('Frame', nil, frame)
-    shadow:SetFrameLevel(0)
-    shadow:SetPoint('TOPLEFT', frame, 'TOPLEFT', -point, point)
-    shadow:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', point, -point)
-    shadow:SetBackdrop({
-        bgFile = 'Interface\\Tooltips\\UI-Tooltip-Background', 
-        edgeFile = mnkLibs.Textures.border, 
-        tile = false, 
-        tileSize = 32, 
-        edgeSize = edge, 
-        insets = {
-            left = -edge, 
-            right = -edge, 
-            top = -edge, 
-            bottom = -edge
-        }})
-    shadow:SetBackdropColor(0, 0, 0, 0)
-    shadow:SetBackdropBorderColor(unpack(color))
 end
 
 function mnkLibs.createFontString(frame, font, size, outline, layer, shadow, shadowcolor) 
@@ -198,6 +179,12 @@ function mnkLibs.GetIndexInTable(table, val)
         end
     end
     return 0
+end
+
+function mnkLibs.GetUIScale()
+    local scale = string.match(GetCVar("gxWindowedResolution"), "%d+x(%d+)")
+    local uiScale = UIParent:GetScale()
+    return (768/scale/uiScale)    
 end
 
 function mnkLibs.PrintError(Message)
