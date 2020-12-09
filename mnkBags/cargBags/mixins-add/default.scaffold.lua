@@ -34,16 +34,12 @@ local function ItemButton_Scaffold(self)
 	self.Count = _G[name.."Count"]
 	self.Cooldown = _G[name.."Cooldown"]
 	self.Quest = _G[name.."IconQuestTexture"]
-	self.itemRarity = CreateFrame('Frame', nil, self, BackdropTemplateMixin and "BackdropTemplate")
-	--self.itemRarity:SetScale(mnkLibs.GetUIScale())
-	mnkLibs.setBackdrop(self.itemRarity, nil, nil, 0, 0, 0, 0)
-    self.itemRarity:SetBackdropColor(1, 1, 1, 1)
-    self.itemRarity:SetBackdropBorderColor(0,0,0,0)
-    self.itemRarity:SetHeight(mnkLibs.GetUIScale()*3) -- *mnkLibs.GetUIScale())
 
-    self.itemRarity:SetWidth(32)
+	self.itemRarity = self:CreateTexture()
+	self.itemRarity:SetTexture("Interface/BUTTONS/WHITE8X8")
+	self.itemRarity:SetColorTexture(.6 ,.6, .6, .2)
+	self.itemRarity:SetSize(32, 1)
 	self.itemRarity:SetPoint('CENTER', self, 'BOTTOM', 0, 0)
-    self.itemRarity:SetFrameStrata("HIGH")
 
     self.Count = mnkLibs.createFontString(self, mnkLibs.Fonts.ap, 16, nil, nil, true)
     self.Count:SetPoint('BOTTOMRIGHT', 0, 0)
@@ -156,14 +152,14 @@ end
 local function ItemButton_UpdateQuest(self, item)
 	--print(item.link, ' ', item.isCompOrMount, item.type, ' ', item.subType)
 	if item.questID or item.isQuestItem then
-		self.itemRarity:SetBackdropColor(1, 1, 0, 1)
+		self.itemRarity:SetColorTexture(1, 1, 0, 1)
 	elseif item.isCompOrMount then
-		self.itemRarity:SetBackdropColor(1, 0, 0, 1)
+		self.itemRarity:SetColorTexture(1, 0, 0, 1)
 	elseif item.rarity and item.rarity > 1 then
 		local r, g, b = GetItemQualityColor(item.rarity)
-		self.itemRarity:SetBackdropColor(r, g, b, 1)
+		self.itemRarity:SetColorTexture(r, g, b, 1)
 	else
-		self.itemRarity:SetBackdropColor(0.5, 0.5, 0.5, 1)
+		self.itemRarity:SetColorTexture(0.5, 0.5, 0.5, 1)
 	end
 	if(self.OnUpdateQuest) then self:OnUpdateQuest(item) end
 end
