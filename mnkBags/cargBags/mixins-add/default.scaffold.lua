@@ -60,14 +60,14 @@ end
 	@param item <table> The itemTable holding information, see Implementation:GetItemInfo()
 	@callback OnUpdate(item)
 ]]
-local L = cargBags:GetLocalizedTypes()
-local ilvlTypes = {
-	[L.ItemClass["Armor"]] = true,
-	[L.ItemClass["Weapon"]] = true,
-}
-local ilvlSubTypes = {
-	[GetItemSubClassInfo(3,11)] = true	--Artifact Relic
-}
+-- local L = cargBags:GetLocalizedTypes()
+-- local ilvlTypes = {
+-- 	[L.ItemClass["Armor"]] = true,
+-- 	[L.ItemClass["Weapon"]] = true,
+-- }
+-- local ilvlSubTypes = {
+-- 	[GetItemSubClassInfo(3,11)] = true	--Artifact Relic
+-- }
 
 local function ItemButton_Update(self, item)
 	if item.texture then
@@ -98,7 +98,9 @@ local function ItemButton_Update(self, item)
 
 	-- Item Level
 	if item.link then
-		if (item.type and (ilvlTypes[item.type] or item.subType and ilvlSubTypes[item.subType])) and item.level > 0 then
+		if (item.type and item.level > 0) and (item.classid == LE_ITEM_CLASS_WEAPON or 
+			                                   item.classid == LE_ITEM_CLASS_ARMOR or
+			                                   item.classid == LE_ITEM_CLASS_ITEM_ENHANCEMENT) then 
 			local r,g,b = GetItemQualityColor(item.rarity);
 			self.BottomString:SetText(item.level)
 			self.BottomString:SetTextColor(1, 1, 1, 1)
