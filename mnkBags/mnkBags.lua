@@ -12,7 +12,7 @@ local _
 local skipOnButtonRemove = false
 local itemSlotSize = 32
 local itemSlotPadding = 4
-local itemSlotSpacer = 2
+local itemSlotSpacer = 1
 local JunkItemsSold = 0
 local NewItemsSold = 0
 local BagScale = 1 
@@ -114,7 +114,7 @@ end
 
 function mnkBags:PLAYER_ENTERING_WORLD(event, addon)
 	if cbmb.notInited then
-		--BagScale = mnkLibs.GetUIScale()
+		BagScale = mnkLibs.GetUIScale()
 		mbButton:Scaffold("Default")
 		cbmb:RegisterBlizzard()
 		cbmb:Init()
@@ -193,8 +193,6 @@ function cbmb:OnInit()
 									    	                          (newBagObj.bagParent == "_bank" and IsBank(item))))
 				                end, true)
 		end
-		newBagObj:SetScale(BagScale)
-
 		table.insert(mbBags, newBagObj)
 		return newBagObj
 	end
@@ -464,9 +462,8 @@ function mbContainer:OnCreate(name)
 	if not name then return end
 	self.name = name
 
-	if not self.SetBackdrop then
-        Mixin(self, BackdropTemplateMixin)
-    end
+    Mixin(self, BackdropTemplateMixin)
+    self:SetScale(BagScale)
 
 	-- this works better than inserting the the frame in the UISpecialFrames table.
 	-- if you go to the bank and have both the bank and your bank open, then press esc the bank won't come back up until you've toggled again.
