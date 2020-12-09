@@ -37,6 +37,7 @@ local cfg_debuffs_rows = 1
 local cfg_debuffs_size = 24
 local cfg_debuffs_spacing = 5
 local lastNameplate = nil
+local addonScale = 1
 
 local function UpdateThreat(self, event, unit)
     local _, _, threatpct, _, _ = UnitDetailedThreatSituation("player", unit)
@@ -66,6 +67,7 @@ function mnkNames.CreateStyle(self, unit)
     if not self.SetBackdrop then
          Mixin(self, BackdropTemplateMixin)
     end
+    self:SetScale(addonScale)
 
     self.disableMovement = true
     self.Health = CreateFrame("StatusBar", nil, self, BackdropTemplateMixin and "BackdropTemplate")
@@ -255,6 +257,12 @@ local function SetMyGuild()
     playerGuildName, _, _ = GetGuildInfo("player") or playerGuildNameNull 
 end
 
+function mnkNames:PLAYER_ENTERING_WORLD(event, firstTime)
+    if firstTime then
+        addonScale = mnkLibs.GetUIScale()
+    end
+end
+
 function mnkNames:PLAYER_GUILD_UPDATE()
     SetMyGuild()
 end 
@@ -268,6 +276,7 @@ mnkNames.oUF:SetActiveStyle("mnkNames")
 mnkNames.oUF:SpawnNamePlates("mnkNames", mnkNames.OnNameplatesCallback, cvars)
 
 mnkNames:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
+mnkNames:RegisterEvent('PLAYER_ENTERING_WORLD')
 mnkNames:RegisterEvent('PLAYER_GUILD_UPDATE')
 mnkNames:RegisterEvent('PLAYER_LOGIN')
 
