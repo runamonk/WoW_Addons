@@ -37,8 +37,8 @@ local function ItemButton_Scaffold(self)
 
 	self.itemRarity = self:CreateTexture()
 	self.itemRarity:SetTexture("Interface/BUTTONS/WHITE8X8")
-	self.itemRarity:SetColorTexture(.6 ,.6, .6, .2)
-	self.itemRarity:SetSize(32, 1)
+	self.itemRarity:SetColorTexture(1 ,1, 1, 1)
+	self.itemRarity:SetSize(32, 2)
 	self.itemRarity:SetPoint('CENTER', self, 'BOTTOM', 0, 0)
 
     self.Count = mnkLibs.createFontString(self, mnkLibs.Fonts.ap, 16, nil, nil, true)
