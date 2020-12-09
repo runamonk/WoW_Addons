@@ -114,7 +114,7 @@ end
 
 function mnkBags:PLAYER_ENTERING_WORLD(event, addon)
 	if cbmb.notInited then
-		BagScale = mnkLibs.GetUIScale()
+		--BagScale = mnkLibs.GetUIScale()
 		mbButton:Scaffold("Default")
 		cbmb:RegisterBlizzard()
 		cbmb:Init()

@@ -184,7 +184,8 @@ end
 function mnkLibs.GetUIScale()
     local scale = string.match(GetCVar("gxWindowedResolution"), "%d+x(%d+)")
     local uiScale = UIParent:GetScale()
-    return (768/scale/uiScale)    
+    return (768/scale/uiScale)
+    --return UIParent:GetEffectiveScale()    
 end
 
 function mnkLibs.PrintError(Message)
