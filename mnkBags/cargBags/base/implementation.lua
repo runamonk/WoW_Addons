@@ -294,16 +294,11 @@ local defaultItem = cargBags:NewItemTable()
 	@param i <table> [optional]
 	@return i <table>
 ]]
-local ilvlTypes = {
-	[GetItemClassInfo(4)] = true,	--Armor
-	[GetItemClassInfo(2)] = true,	--Weapon
-}
-local ilvlSubTypes = {
-	[GetItemSubClassInfo(3,11)] = true	--Artifact Relic
-}
 
 local function IsItemBOE(item)
-	if item.link and (item.type and (ilvlTypes[item.type] or item.subType and ilvlSubTypes[item.subType])) and item.level > 0 then	
+	if item.link and item.type and item.level > 0 and (item.classid == LE_ITEM_CLASS_WEAPON or 
+				                                       item.classid == LE_ITEM_CLASS_ARMOR or
+				                                       item.classid == LE_ITEM_CLASS_ITEM_ENHANCEMENT) then
 		local scanTip = CreateFrame("GameTooltip", "scanTip", UIParent, "GameTooltipTemplate")
 		scanTip:ClearLines()
 		scanTip:SetHyperlink(item.link)	
@@ -377,22 +372,31 @@ function Implementation:GetItemInfo(bagID, slotID, i)
 			return i	
 		else
 			local _
-			i.texture, i.count, i.locked, i.quality, i.readable, _, _, _, _, i.id = GetContainerItemInfo(bagID, slotID)
+			i.texture, i.count, i.locked, i.quality, i.readable, _, i.link, _, _, i.id = GetContainerItemInfo(bagID, slotID)
 			i.cdStart, i.cdFinish, i.cdEnable = GetContainerItemCooldown(bagID, slotID)
 			i.isQuestItem, i.questID, i.questActive = GetContainerItemQuestInfo(bagID, slotID)
 			i.isInSet, i.setName = GetContainerItemEquipmentSetInfo(bagID, slotID)
-			--print(clink)
-			-- *edits by Lars "Goldpaw" Norberg for WoW 5.0.4 (MoP)
-			-- last return value here, "texture", doesn't show for battle pets
 			local texture
 
-			i.name, i.link, i.rarity, i.level, i.minLevel, i.type, i.subType, i.stackCount, i.equipLoc, texture, i.sellPrice, i.classid, i.subclassid  = GetItemInfo(clink)
-			i.link = clink
+			i.name, _, i.rarity, i.level, i.minLevel, i.type, i.subType, i.stackCount, i.equipLoc, texture, i.sellPrice, i.classid, i.subclassid  = GetItemInfo(clink)
 
+			-- default items that come through without proper information as misc.
+			if i.name == nil then
+				local data, name = strmatch(clink, "|H(.-)|h(.-)|h")
+				local  _, _, level, rarity, _, _, _, id = strmatch(data, "(%w+):(%d+):(%d+):(%d+):(%d+):(%d+):(%d+):(%d+)")
+				i.type = GetItemClassInfo(15) -- Misc
+				i.rarity = tonumber(rarity) or 0
+				i.name = name
+				i.level = tonumber(level) or 0
+				i.classid = tonumber(LE_ITEM_CLASS_MISCELLANEOUS)	
+				--print(i.link, ' ', i.name, ' ', i.id, ' ', i.classid, ' ', i.type, ' ', i.level)
+			end
+			
 			if i.classid == LE_ITEM_CLASS_MISCELLANEOUS and (i.subclassid == LE_ITEM_MISCELLANEOUS_COMPANION_PET or i.subclassid == LE_ITEM_MISCELLANEOUS_MOUNT) then
 				i.isCompOrMount = true
 			end
-			if (i.type and (ilvlTypes[i.type] or i.subType and ilvlSubTypes[i.subType])) and i.level > 0 then
+
+			if (i.level > 0) and (i.classid == LE_ITEM_CLASS_WEAPON or i.classid == LE_ITEM_CLASS_ARMOR or i.classid == LE_ITEM_CLASS_ITEM_ENHANCEMENT) then 
 				--print(i.link, ' ', i.type)
 				if IsItemBOE(i) then
 					i.boe = true
@@ -404,30 +408,9 @@ function Implementation:GetItemInfo(bagID, slotID, i)
 				end
 			end
 			-- get the item spell to determine if the item is an Artifact Power boosting item
-			if IsArtifactPowerItem(i.id) then
-				i.type = ARTIFACT_POWER
-			end
-			-- texture
-			i.texture = i.texture or texture
-			
-			-- battle pet info must be extracted from the itemlink
-			if (clink:find("battlepet")) then
-				if not(L) then
-					L = cargBags:GetLocalizedTypes()
-				end
-				local data, name = strmatch(clink, "|H(.-)|h(.-)|h")
-				local  _, _, level, rarity, _, _, _, id = strmatch(data, "(%w+):(%d+):(%d+):(%d+):(%d+):(%d+):(%d+):(%d+)")
-				i.type = L.ItemClass["Battle Pets"]
-				i.rarity = tonumber(rarity) or 0
-				i.id = tonumber(id) or 0
-				i.name = name
-				i.minLevel = level
-			elseif (clink:find("keystone")) then
-				local data, name = strsplit("[", clink)
-				i.name = strsplit("]", name)
-				if not i.id then i.id = 138019 end
-				_, _, i.rarity, i.level, i.minLevel, i.type, i.subType, i.stackCount, i.equipLoc, texture, i.sellPrice  = GetItemInfo(i.id)
-			end
+			-- if IsArtifactPowerItem(i.id) then
+			-- 	i.type = ARTIFACT_POWER
+			-- end
 			--cache the item info so that we're not constantly looking it up and causing freezing or ui crashes.
 			self:doCacheItem(i, bagID, slotID)
 			return i

@@ -681,6 +681,11 @@ function mbContainer:ResetNewItems()
 		local b = bagNew.buttons[k]
 		local clink = GetContainerItemLink(b.bagID, b.slotID)
 		local itemid = select(1, GetItemInfoInstant(clink))
+		-- some items ie battle pets cannot be looked up with GetItemInfo etc. So parse out the id.
+		if itemid == nil then
+			itemid = select(10, GetContainerItemInfo(b.bagID, b.slotID))
+		end
+
 		if mnkLibs.GetIndexInTable(mnkBagsKnownItems, itemid) == 0 then			
 			mnkBagsKnownItems[#mnkBagsKnownItems+1] = itemid
 		end
