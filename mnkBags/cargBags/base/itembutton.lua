@@ -49,17 +49,12 @@ local mt_gen_key = {__index = function(self,k) self[k] = {}; return self[k]; end
 ]]
 function ItemButton:New(bagID, slotID)
 	self.recycled = self.recycled or setmetatable({}, mt_gen_key)
-	
-
 	local tpl, parent = self:GetTemplate(bagID)
 	local button = table.remove(self.recycled[tpl]) or self:Create(tpl, parent)
-
 	button.bagID = bagID
 	button.slotID = slotID
 	button:SetID(slotID)
-	
 	button:Show()
-	
 	return button
 end
 
@@ -74,9 +69,7 @@ function ItemButton:Create(tpl, parent)
 	local impl = self.implementation
 	impl.numSlots = (impl.numSlots or 0) + 1
 	local name = ("%sSlot%d"):format(impl.name, impl.numSlots)
-
 	local button = setmetatable(CreateFrame("ItemButton", name, parent, tpl), self.__index)
-
 	if(button.Scaffold) then button:Scaffold(tpl) end
 	if(button.OnCreate) then button:OnCreate(tpl) end
 	local btnNT = _G[button:GetName().."NormalTexture"]
@@ -85,14 +78,11 @@ function ItemButton:Create(tpl, parent)
 	if btnNT then btnNT:SetTexture("") end
 	if btnNIT then btnNIT:SetTexture("") end
 	if btnBIT then btnBIT:SetTexture("") end
-	
 	button:SetSize(32, 32)
-	
 	bFS = _G[button:GetName().."Count"]
 	bFS.Count = mnkLibs.createFontString(button, mnkLibs.Fonts.ap, 16, nil, nil, true)
 	bFS:ClearAllPoints()
 	bFS:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 1.5, 1.5);
-
 	button:HookScript('OnClick', 
 		function (self)
        		if (self.OnClick) then self:OnClick(self) end
