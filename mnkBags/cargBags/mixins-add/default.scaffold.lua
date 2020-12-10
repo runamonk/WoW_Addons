@@ -98,13 +98,9 @@ local function ItemButton_Update(self, item)
 
 	-- Item Level
 	if item.link then
-		if item.classid == nil then
-			item.classid = LE_ITEM_CLASS_MISCELLANEOUS
-		end
-
-		if (item.type and (item.level and item.level > 0)) and (item.classid == LE_ITEM_CLASS_WEAPON or 
-			                                   item.classid == LE_ITEM_CLASS_ARMOR or
-			                                   item.classid == LE_ITEM_CLASS_ITEM_ENHANCEMENT) then 
+		if (item.type and (item.level and item.level > 0)) and (item.classid == LE_ITEM_CLASS_WEAPON or    
+			                                                    item.classid == LE_ITEM_CLASS_ARMOR or
+			                                                    item.classid == LE_ITEM_CLASS_ITEM_ENHANCEMENT) then 
 			local r,g,b = GetItemQualityColor(item.rarity);
 			self.BottomString:SetText(item.level)
 			self.BottomString:SetTextColor(1, 1, 1, 1)
