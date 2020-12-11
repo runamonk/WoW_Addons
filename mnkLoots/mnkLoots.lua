@@ -37,11 +37,10 @@ function mnkLoots:AddItem(itemLink, slotid, count)
         itemName, _, itemRarity, _, _, _, _, _, _, itemIcon, _, itemClassID, itemSubClassID, _, _, _, _ = GetItemInfo(itemLink)        
     end
 
-    --if not itemCount then itemCount = GetItemCount(itemLink) end
     itemId = select(1, GetItemInfoInstant(itemLink))
 
     if itemId and itemRarity > 0 then
-        print(itemId, ' ', itemLink, ' ', itemIcon, ' ', itemName, ' ', itemCount, ' ', itemRarity)
+        --print(itemId, ' ', itemLink, ' ', itemIcon, ' ', itemName, ' ', itemCount, ' ', itemRarity)
         local idx = inLootedItemsTable(lootedItems, itemId) 
         if not idx then
             local c = #lootedItems+1
@@ -49,7 +48,6 @@ function mnkLoots:AddItem(itemLink, slotid, count)
             lootedItems[c].name = itemName
             lootedItems[c].id = itemId
             lootedItems[c].link = itemLink
-            --lootedItems[c].count = (itemCount or 1) + (GetItemCount(itemLink) or 1)
             lootedItems[c].count = (count or 1) + GetItemCount(itemLink)
             lootedItems[c].rarity = itemRarity
             lootedItems[c].icon = itemIcon
@@ -103,12 +101,9 @@ function mnkLoots:CHAT_MSG_LOOT(event, arg1)
                                })
         return str:match(pattern)
     end
-
-
     if arg1 ~= nil then
         local l = nil
-        local c = 1
-        
+        local c = 0     
         l, c = getItemAndCount(arg1, LOOT_ITEM_SELF_MULTIPLE) 
         if not l then
             l, c = getItemAndCount(arg1, LOOT_ITEM_SELF)
@@ -128,7 +123,7 @@ function mnkLoots:CHAT_MSG_LOOT(event, arg1)
         if not l then
             l, _ = getItemAndCount(arg1, LOOT_ROLL_YOU_WON)
         end
-        print(l, c)
+        --print(l, c)
         if l then
             self:AddItem(l,nil,c)
             self:ShowPhatLoots()
