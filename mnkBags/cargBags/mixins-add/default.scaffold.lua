@@ -152,7 +152,7 @@ local function ItemButton_UpdateQuest(self, item)
 		local r, g, b = GetItemQualityColor(item.rarity)
 		self.itemRarity:SetColorTexture(r, g, b, 1)
 	else
-		self.itemRarity:SetColorTexture(0.5, 0.5, 0.5, 1)
+		self.itemRarity:SetColorTexture(0, 0, 0, 0)
 	end
 	if(self.OnUpdateQuest) then self:OnUpdateQuest(item) end
 end

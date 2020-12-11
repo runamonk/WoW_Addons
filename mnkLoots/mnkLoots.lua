@@ -16,7 +16,7 @@ LootFrame:Hide()
 LootFrame.Show = mnkLibs.donothing()
 LootFrame:UnregisterAllEvents()
 
-function mnkLoots:AddItem(itemLink, slotid)
+function mnkLoots:AddItem(itemLink, slotid, count)
 
     local function inLootedItemsTable(table, id)
         for i = 1, #table do
@@ -37,11 +37,11 @@ function mnkLoots:AddItem(itemLink, slotid)
         itemName, _, itemRarity, _, _, _, _, _, _, itemIcon, _, itemClassID, itemSubClassID, _, _, _, _ = GetItemInfo(itemLink)        
     end
 
-    if not itemCount then itemCount = 0 end
+    --if not itemCount then itemCount = GetItemCount(itemLink) end
     itemId = select(1, GetItemInfoInstant(itemLink))
 
     if itemId and itemRarity > 0 then
-        --print(itemId, ' ', itemLink, ' ', itemIcon, ' ', itemName, ' ', itemCount, ' ', itemRarity)
+        print(itemId, ' ', itemLink, ' ', itemIcon, ' ', itemName, ' ', itemCount, ' ', itemRarity)
         local idx = inLootedItemsTable(lootedItems, itemId) 
         if not idx then
             local c = #lootedItems+1
@@ -49,7 +49,8 @@ function mnkLoots:AddItem(itemLink, slotid)
             lootedItems[c].name = itemName
             lootedItems[c].id = itemId
             lootedItems[c].link = itemLink
-            lootedItems[c].count = (itemCount or 1) + (GetItemCount(itemLink) or 1)
+            --lootedItems[c].count = (itemCount or 1) + (GetItemCount(itemLink) or 1)
+            lootedItems[c].count = (count or 1) + GetItemCount(itemLink)
             lootedItems[c].rarity = itemRarity
             lootedItems[c].icon = itemIcon
             if itemClassID == LE_ITEM_CLASS_MISCELLANEOUS and (itemSubClassID == LE_ITEM_MISCELLANEOUS_COMPANION_PET or itemSubClassID == LE_ITEM_MISCELLANEOUS_MOUNT) then
@@ -92,25 +93,44 @@ function mnkLoots:AddItemToHistory(item)
 end
 
 function mnkLoots:CHAT_MSG_LOOT(event, arg1)
+
+    local function getItemAndCount(str, format)
+        local pattern = ""     
+        pattern = format:gsub("[%^%$%(%)%%%.%[%]%*%+%-%?]", function(c) return "%"..c end)
+        pattern = pattern:gsub("%%%%([sd])", {
+                                 ["s"] = "(.-)",
+                                 ["d"] = "(%d+)",
+                               })
+        return str:match(pattern)
+    end
+
+
     if arg1 ~= nil then
-        local LOOT_ITEM_PUSH_PATTERN = (LOOT_ITEM_PUSHED_SELF):gsub('%%s', '(.+)')  -- You receive item : %s|Hitem :%d :%d :%d :%d|h[%s]|h%s.
-        local LOOT_ITEM_CREATED_SELF_PATTERN = LOOT_ITEM_CREATED_SELF:gsub('%%s', '(.+)') -- You create : %s|Hitem :%d :%d :%d :%d|h[%s]|h%s.
-        local LOOT_ITEM_SELF_PATTERN = LOOT_ITEM_SELF:gsub('%%s', '(.+)') -- You receive loot : %s|Hitem :%d :%d :%d :%d|h[%s]|h%s.
-        local LOOT_ROLL_YOU_WON_PATTERN = LOOT_ROLL_YOU_WON:gsub('%%s', '(.+)') -- You won : %s|Hitem :%d :%d :%d :%d|h[%s]|h%s
-
-        _, l = 1, arg1:match(LOOT_ITEM_PUSH_PATTERN)
+        local l = nil
+        local c = 1
+        
+        l, c = getItemAndCount(arg1, LOOT_ITEM_SELF_MULTIPLE) 
         if not l then
-            _, l = 1, arg1:match(LOOT_ITEM_CREATED_SELF_PATTERN)
+            l, c = getItemAndCount(arg1, LOOT_ITEM_SELF)
         end
         if not l then
-            _, l = 1, arg1:match(LOOT_ITEM_SELF_PATTERN)
+            l, c = getItemAndCount(arg1, LOOT_ITEM_PUSHED_SELF_MULTIPLE)
         end
         if not l then
-            _, l = 1, arg1:match(LOOT_ROLL_YOU_WON_PATTERN)
+            l, _ = getItemAndCount(arg1, LOOT_ITEM_PUSHED_SELF)
         end
-
-        if l then 
-            self:AddItem(l)
+        if not l then
+            l, c = getItemAndCount(arg1, LOOT_ITEM_CREATED_SELF_MULTIPLE)
+        end        
+        if not l then
+            l, _ = getItemAndCount(arg1, LOOT_ITEM_CREATED_SELF)
+        end
+        if not l then
+            l, _ = getItemAndCount(arg1, LOOT_ROLL_YOU_WON)
+        end
+        print(l, c)
+        if l then
+            self:AddItem(l,nil,c)
             self:ShowPhatLoots()
         end      
     end
@@ -232,10 +252,10 @@ function mnkLoots:LOOT_OPENED()
             break
         end
 
-        local link = GetLootSlotLink(i)
-        if link then
-            self:AddItem(link,i)
-        end
+        -- local link = GetLootSlotLink(i)
+        -- if link then
+        --     self:AddItem(link,i)
+        -- end
         LootSlot(i)
         ConfirmLootSlot(i)
     end
@@ -265,7 +285,7 @@ function mnkLoots:ShowPhatLoots()
             CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false)
         else
             --local itemName, _, rarity, _, _, itemType, subType, _, _, itemIcon, _ = GetItemInfo(lootedItems[i].link)
-            print(lootedItems[i].name, ' ', lootedItems[i].rarity )
+            --print(lootedItems[i].name, ' ', lootedItems[i].rarity )
             if lootedItems[i].rarity and lootedItems[i].rarity > 0 then
                 local _,_,_,color = GetItemQualityColor(lootedItems[i].rarity)
                 local itemCount = lootedItems[i].count
