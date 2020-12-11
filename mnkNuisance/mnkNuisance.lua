@@ -8,21 +8,18 @@ mnkNuisance:RegisterEvent('DUEL_REQUESTED')
 mnkNuisance:RegisterEvent('PET_BATTLE_PVP_DUEL_REQUESTED')
 
 local LibQTip = LibStub('LibQTip-1.0')
-local BlockThisSession = 0
 
 function mnkNuisance:DUEL_REQUESTED()
     if mnkNuisance_bBlockEnabled == true then
         CancelDuel()
         StaticPopup_Hide('DUEL_REQUESTED')
-        BlockThisSession = (BlockThisSession + 1)
         self:UpdateText()
         print('Duel declined automtically.')
     end    
 end
 
 function mnkNuisance:IsFriend(chatUser)
-    local _, i = C_FriendList.GetNumFriends()
-    
+    local i = C_FriendList.GetNumFriends()
     if chatUser ~= nil then
         for x = 1, i do
             local name = GetFriendInfo(i)
@@ -37,11 +34,12 @@ function mnkNuisance:IsFriend(chatUser)
         local _, i = BNGetNumFriends()
         
         for x = 1, i do
-            local _, _, _, _, toonName, _, _, isOnline, _, _, _, _, _, _, _, _ = BNGetFriendInfo(x)
-            if toonName ~= nil then
+            local info = C_BattleNet.GetFriendAccountInfo(i)
+
+            if info.characterName ~= nil then
                 --print(toonName)
                 --print(chatUser)
-                if isOnline and mnkLibs.formatPlayerName(toonName) == mnkLibs.formatPlayerName(chatUser) then
+                if isOnline and mnkLibs.formatPlayerName(info.characterName) == mnkLibs.formatPlayerName(chatUser) then
                     print('mnkNuisnace: Allowing invite request from battle.net friend '..chatUser)
                     return true
                 end
@@ -53,7 +51,7 @@ end
 
 function mnkNuisance:InGuild(chatUser)
     if IsInGuild() then
-        GuildRoster()
+        C_GuildInfo.GuildRoster()
         local _, _, iOnline = GetNumGuildMembers()
 
         for i = 1, iOnline do
@@ -99,7 +97,6 @@ function mnkNuisance:PARTY_INVITE_REQUEST(event, arg1)
             print('Declined group invite from '..arg1)
             --TODO AddIgnore() assholes.
             --SendChatMessage('Thanks for the invite. I auto-decline all group invites by default.', 'WHISPER', nil, arg1)
-            BlockThisSession = (BlockThisSession + 1)
             self:UpdateText()
         end
     end
@@ -127,10 +124,10 @@ end
 function mnkNuisance:UpdateText()
     if mnkNuisance_bBlockEnabled == true then
         self.LDB.icon = 'Interface\\Icons\\Achievement_dungeon_naxxramas_10man'
-        self.LDB.text = mnkLibs.Color(COLOR_RED)..'Blocked '..' ('..BlockThisSession..')'
+        self.LDB.text = mnkLibs.Color(COLOR_WHITE)..'Ignore Invites:'..mnkLibs.Color(COLOR_GREEN)..' ON'
     else
         self.LDB.icon = 'Interface\\Icons\\Achievement_dungeon_naxxramas'
-        self.LDB.text = mnkLibs.Color(COLOR_GREEN)..'Blocking off'
+        self.LDB.text = mnkLibs.Color(COLOR_WHITE)..'Ignore Invites:'..mnkLibs.Color(COLOR_RED)..' OFF'
     end
 end
 
