@@ -38,7 +38,7 @@ local function ItemButton_Scaffold(self)
 	self.itemRarity = self:CreateTexture()
 	self.itemRarity:SetTexture("Interface/BUTTONS/WHITE8X8")
 	self.itemRarity:SetColorTexture(1 ,1, 1, 1)
-	self.itemRarity:SetSize(32, 2.72)
+	self.itemRarity:SetSize(32, 2)
 	self.itemRarity:SetPoint('CENTER', self, 'BOTTOM', 0, 0)
 
     self.Count = mnkLibs.createFontString(self, mnkLibs.Fonts.ap, 16, nil, nil, true)
@@ -60,15 +60,6 @@ end
 	@param item <table> The itemTable holding information, see Implementation:GetItemInfo()
 	@callback OnUpdate(item)
 ]]
--- local L = cargBags:GetLocalizedTypes()
--- local ilvlTypes = {
--- 	[L.ItemClass["Armor"]] = true,
--- 	[L.ItemClass["Weapon"]] = true,
--- }
--- local ilvlSubTypes = {
--- 	[GetItemSubClassInfo(3,11)] = true	--Artifact Relic
--- }
-
 local function ItemButton_Update(self, item)
 	if item.texture then
 		local tex = item.texture or self.bgTex
@@ -88,8 +79,8 @@ local function ItemButton_Update(self, item)
 	else
 		self.Count:Hide()
 	end
-	self.count = item.count -- Thank you Blizz for not using local variables >.> (BankFrame.lua @ 234 )
-
+	self.count = item.count
+	
 	if item.boe then
 		self.boe:Show()
 	else

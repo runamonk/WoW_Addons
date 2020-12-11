@@ -93,12 +93,20 @@ end
 
 function mnkLoots:CHAT_MSG_LOOT(event, arg1)
     if arg1 ~= nil then
-        local LOOT_ITEM_PUSH_PATTERN = (LOOT_ITEM_PUSHED_SELF):gsub('%%s', '(.+)')
-        local LOOT_ITEM_CREATED_SELF_PATTERN = LOOT_ITEM_CREATED_SELF:gsub('%%s', '(.+)')
+        local LOOT_ITEM_PUSH_PATTERN = (LOOT_ITEM_PUSHED_SELF):gsub('%%s', '(.+)')  -- You receive item : %s|Hitem :%d :%d :%d :%d|h[%s]|h%s.
+        local LOOT_ITEM_CREATED_SELF_PATTERN = LOOT_ITEM_CREATED_SELF:gsub('%%s', '(.+)') -- You create : %s|Hitem :%d :%d :%d :%d|h[%s]|h%s.
+        local LOOT_ITEM_SELF_PATTERN = LOOT_ITEM_SELF:gsub('%%s', '(.+)') -- You receive loot : %s|Hitem :%d :%d :%d :%d|h[%s]|h%s.
+        local LOOT_ROLL_YOU_WON_PATTERN = LOOT_ROLL_YOU_WON:gsub('%%s', '(.+)') -- You won : %s|Hitem :%d :%d :%d :%d|h[%s]|h%s
 
         _, l = 1, arg1:match(LOOT_ITEM_PUSH_PATTERN)
         if not l then
             _, l = 1, arg1:match(LOOT_ITEM_CREATED_SELF_PATTERN)
+        end
+        if not l then
+            _, l = 1, arg1:match(LOOT_ITEM_SELF_PATTERN)
+        end
+        if not l then
+            _, l = 1, arg1:match(LOOT_ROLL_YOU_WON_PATTERN)
         end
 
         if l then 
@@ -257,7 +265,7 @@ function mnkLoots:ShowPhatLoots()
             CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false)
         else
             --local itemName, _, rarity, _, _, itemType, subType, _, _, itemIcon, _ = GetItemInfo(lootedItems[i].link)
-            --print(lootedItems[i].name, ' ', lootedItems[i].rarity )
+            print(lootedItems[i].name, ' ', lootedItems[i].rarity )
             if lootedItems[i].rarity and lootedItems[i].rarity > 0 then
                 local _,_,_,color = GetItemQualityColor(lootedItems[i].rarity)
                 local itemCount = lootedItems[i].count
@@ -274,6 +282,7 @@ function mnkLoots:ShowPhatLoots()
                 end
 
                 local s = string.format('|T%s|t %s', lootedItems[i].icon..':16:16:0:0:64:64:4:60:4:60', color..lootedItems[i].name..mnkLibs.Color(COLOR_WHITE)..itemCount)
+                --print("ShowPhatLoots:", s)
                 CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false)
             end
         end
