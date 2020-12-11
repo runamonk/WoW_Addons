@@ -59,7 +59,7 @@ function mnkNuisance:InGuild(chatUser)
 
             --mnkLibs.PrintError(online, ' n:', string.sub(name, 1, string.find(name, '-')-1)), ' c:', chatUser)
             if online and (mnkLibs.formatPlayerName(name) == mnkLibs.formatPlayerName(chatUser)) then
-                print('mnkNuisnace: Allowing invite request from guildie '..name)
+                print('mnkNuisnace: Allowing invite request from guild member '..name)
                 return true
             end
         end
