@@ -182,10 +182,11 @@ function mnkLibs.GetIndexInTable(table, val)
 end
 
 function mnkLibs.GetUIScale()
-    local scale = string.match(GetCVar("gxWindowedResolution"), "%d+x(%d+)")
-    local uiScale = UIParent:GetScale()
-    return (768/scale/uiScale)
-    --return UIParent:GetEffectiveScale()    
+    --local scale = string.match(GetCVar("gxWindowedResolution"), "%d+x(%d+)")  
+    -- local uiScale = UIParent:GetScale()
+    -- return (768/scale/uiScale)   
+    local physicalWidth, physicalHeight = GetPhysicalScreenSize();
+    return 768.0 / physicalHeight;
 end
 
 function mnkLibs.PrintError(Message)
