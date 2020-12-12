@@ -5,7 +5,6 @@ mnkLoots_LootHistory = {}
 mnkLoots:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
 mnkLoots:RegisterEvent('PLAYER_LOGIN')
 mnkLoots:RegisterEvent('LOOT_OPENED')
---mnkLoots:RegisterEvent('LOOT_CLOSED')
 mnkLoots:RegisterEvent('CHAT_MSG_LOOT')
 
 local LibQTip = LibStub('LibQTip-1.0')
@@ -89,6 +88,23 @@ function mnkLoots:AddItemToHistory(item)
         mnkLoots_LootHistory[r].lootcount = mnkLoots_LootHistory[r].lootcount + 1
         mnkLoots_LootHistory[r].timestamp = date("%m/%d/%y %H:%M:%S")
     end
+
+    if #mnkLoots_LootHistory > MAX_HISTORY_ITEMS then
+        local c = #mnkLoots_LootHistory-MAX_HISTORY_ITEMS
+        --print('HistoryCount: ', #mnkLoots_LootHistory, ' to remove: ', c)
+        for i = 1, #mnkLoots_LootHistory do
+            if i > c then break end
+            mnkLoots_LootHistory[i] = nil
+        end
+
+        -- compress the table back down.
+        for i = #mnkLoots_LootHistory, 1, -1 do
+            if not mnkLoots_LootHistory[i] then
+                table.remove(mnkLoots_LootHistory, i)
+            end
+        end         
+        --print('Count:', #mnkLoots_LootHistory)
+    end 
 end
 
 function mnkLoots:CHAT_MSG_LOOT(event, arg1)
@@ -225,11 +241,6 @@ function mnkLoots:LOOT_OPENED()
             CloseLoot()
             break
         end
-
-        -- local link = GetLootSlotLink(i)
-        -- if link then
-        --     self:AddItem(link,i)
-        -- end
         LootSlot(i)
         ConfirmLootSlot(i)
     end
@@ -283,25 +294,6 @@ function mnkLoots:ShowPhatLoots()
             end
             table.remove(lootedItems, i)
         end
-
-        lootedItems = {}
-
-        if #mnkLoots_LootHistory > MAX_HISTORY_ITEMS then
-            local c = #mnkLoots_LootHistory-MAX_HISTORY_ITEMS
-            --print('HistoryCount: ', #mnkLoots_LootHistory, ' to remove: ', c)
-            for i = 1, #mnkLoots_LootHistory do
-                if i > c then break end
-                mnkLoots_LootHistory[i] = nil
-            end
-
-            -- compress the table back down.
-            for i = #mnkLoots_LootHistory, 1, -1 do
-                if not mnkLoots_LootHistory[i] then
-                    table.remove(mnkLoots_LootHistory, i)
-                end
-            end         
-            --print('Count:', #mnkLoots_LootHistory)
-        end  
     end
     -- this is a terrible way to handle this but I cannot think of a better way to actually get all the items looted that is accurate
     -- and shows all the items looted, created etc. Since the chat message comes in before the actual bag is updated
