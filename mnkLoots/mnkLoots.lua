@@ -277,7 +277,7 @@ function mnkLoots:ShowPhatLoots()
                     end
 
                     local s = string.format('|T%s|t %s', lootedItems[i].icon..':16:16:0:0:64:64:4:60:4:60', color..lootedItems[i].name..mnkLibs.Color(COLOR_WHITE)..itemCount)
-                    print("ShowPhatLoots:", s, itemCount)
+                    --print("ShowPhatLoots:", s, itemCount)
                     CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false)
                 end
             end
