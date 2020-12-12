@@ -109,9 +109,8 @@ end
 
 function mnkLoots:CHAT_MSG_LOOT(event, arg1)
 
-    local function getItemAndCount(str, format)
-        local pattern = ""     
-        pattern = format:gsub("[%^%$%(%)%%%.%[%]%*%+%-%?]", function(c) return "%"..c end)
+    local function getItemAndCount(str, format)   
+        local pattern = format:gsub("[%^%$%(%)%%%.%[%]%*%+%-%?]", function(count) return "%"..count end)
         pattern = pattern:gsub("%%%%([sd])", {
                                  ["s"] = "(.-)",
                                  ["d"] = "(%d+)",
