@@ -5,7 +5,7 @@ mnkLoots_LootHistory = {}
 mnkLoots:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
 mnkLoots:RegisterEvent('PLAYER_LOGIN')
 mnkLoots:RegisterEvent('LOOT_OPENED')
-mnkLoots:RegisterEvent('LOOT_CLOSED')
+--mnkLoots:RegisterEvent('LOOT_CLOSED')
 mnkLoots:RegisterEvent('CHAT_MSG_LOOT')
 
 local LibQTip = LibStub('LibQTip-1.0')
@@ -41,6 +41,7 @@ function mnkLoots:AddItem(itemLink, slotid, count)
 
     if itemId and itemRarity > 0 then
         --print(itemId, ' ', itemLink, ' ', itemIcon, ' ', itemName, ' ', itemCount, ' ', itemRarity)
+        --print('AddItem',count,itemCount)
         local idx = inLootedItemsTable(lootedItems, itemId) 
         if not idx then
             local c = #lootedItems+1
@@ -48,7 +49,7 @@ function mnkLoots:AddItem(itemLink, slotid, count)
             lootedItems[c].name = itemName
             lootedItems[c].id = itemId
             lootedItems[c].link = itemLink
-            lootedItems[c].count = (count or 1) + GetItemCount(itemLink)
+            lootedItems[c].count = count--(count or 0) + GetItemCount(itemLink)
             lootedItems[c].rarity = itemRarity
             lootedItems[c].icon = itemIcon
             if itemClassID == LE_ITEM_CLASS_MISCELLANEOUS and (itemSubClassID == LE_ITEM_MISCELLANEOUS_COMPANION_PET or itemSubClassID == LE_ITEM_MISCELLANEOUS_MOUNT) then
@@ -103,7 +104,7 @@ function mnkLoots:CHAT_MSG_LOOT(event, arg1)
     end
     if arg1 ~= nil then
         local l = nil
-        local c = 0     
+        local c = nil     
         l, c = getItemAndCount(arg1, LOOT_ITEM_SELF_MULTIPLE) 
         if not l then
             l, c = getItemAndCount(arg1, LOOT_ITEM_SELF)
@@ -125,7 +126,7 @@ function mnkLoots:CHAT_MSG_LOOT(event, arg1)
         end
         --print(l, c)
         if l then
-            self:AddItem(l,nil,c)
+            self:AddItem(l)
             self:ShowPhatLoots()
         end      
     end
@@ -202,28 +203,6 @@ function mnkLoots:OnEnter(parent)
     tooltip:Show()
 end
 
-function mnkLoots:LOOT_CLOSED()
-    self:ShowPhatLoots()
-    lootedItems = {}
-
-    if #mnkLoots_LootHistory > MAX_HISTORY_ITEMS then
-        local c = #mnkLoots_LootHistory-MAX_HISTORY_ITEMS
-        --print('HistoryCount: ', #mnkLoots_LootHistory, ' to remove: ', c)
-        for i = 1, #mnkLoots_LootHistory do
-            if i > c then break end
-            mnkLoots_LootHistory[i] = nil
-        end
-
-        -- compress the table back down.
-        for i = #mnkLoots_LootHistory, 1, -1 do
-            if not mnkLoots_LootHistory[i] then
-                table.remove(mnkLoots_LootHistory, i)
-            end
-        end         
-        --print('Count:', #mnkLoots_LootHistory)
-    end  
-end
-
 function mnkLoots:LOOT_OPENED()
     local function GetNumFreeSlots()
         local free = 0
@@ -269,39 +248,63 @@ function mnkLoots:PLAYER_LOGIN()
 end
 
 function mnkLoots:ShowPhatLoots()
-    for i = 1, #lootedItems do
-        if i > #lootedItems then return end
+    local function doit()
+        for i = 1, #lootedItems do
+            if i > #lootedItems then return end
 
-        if lootedItems[i].link:find('battlepet') then
-            local _, speciesID, _, rarity = (':'):split(lootedItems[i].link)
-            local color = GetItemQualityColor(rarity)
-            local name, icon = C_PetJournal.GetPetInfoBySpeciesID(speciesID)
-            local s = string.format('|T%s|t %s', icon..':16:16:0:0:64:64:4:60:4:60', '|c'..color..name)
-            CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false)
-        else
-            --local itemName, _, rarity, _, _, itemType, subType, _, _, itemIcon, _ = GetItemInfo(lootedItems[i].link)
-            --print(lootedItems[i].name, ' ', lootedItems[i].rarity )
-            if lootedItems[i].rarity and lootedItems[i].rarity > 0 then
-                local _,_,_,color = GetItemQualityColor(lootedItems[i].rarity)
-                local itemCount = lootedItems[i].count
-                if itemCount > 1 then
-                    itemCount = ' ['..itemCount..']'
-                else
-                    itemCount = ' '
-                end
-
-                if lootedItems[i].highlight then
-                    color = mnkLibs.Color(COLOR_RED)
-                else
-                    color = ' |c'..color
-                end
-
-                local s = string.format('|T%s|t %s', lootedItems[i].icon..':16:16:0:0:64:64:4:60:4:60', color..lootedItems[i].name..mnkLibs.Color(COLOR_WHITE)..itemCount)
-                --print("ShowPhatLoots:", s)
+            if lootedItems[i].link:find('battlepet') then
+                local _, speciesID, _, rarity = (':'):split(lootedItems[i].link)
+                local color = GetItemQualityColor(rarity)
+                local name, icon = C_PetJournal.GetPetInfoBySpeciesID(speciesID)
+                local s = string.format('|T%s|t %s', icon..':16:16:0:0:64:64:4:60:4:60', '|c'..color..name)
                 CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false)
+            else
+                --local itemName, _, rarity, _, _, itemType, subType, _, _, itemIcon, _ = GetItemInfo(lootedItems[i].link)
+                --print(lootedItems[i].name, ' ', lootedItems[i].rarity )
+                if lootedItems[i].rarity and lootedItems[i].rarity > 0 then
+                    local _,_,_,color = GetItemQualityColor(lootedItems[i].rarity)
+                    local itemCount = GetItemCount(lootedItems[i].link)--lootedItems[i].count
+                    if itemCount > 1 then
+                        itemCount = ' ['..itemCount..']'
+                    else
+                        itemCount = ' '
+                    end
+
+                    if lootedItems[i].highlight then
+                        color = mnkLibs.Color(COLOR_RED)
+                    else
+                        color = ' |c'..color
+                    end
+
+                    local s = string.format('|T%s|t %s', lootedItems[i].icon..':16:16:0:0:64:64:4:60:4:60', color..lootedItems[i].name..mnkLibs.Color(COLOR_WHITE)..itemCount)
+                    print("ShowPhatLoots:", s, itemCount)
+                    CombatText_AddMessage(s, CombatText_StandardScroll, 255, 255, 255, nil, false)
+                end
             end
+            table.remove(lootedItems, i)
         end
-        table.remove(lootedItems, i)
-        C_Timer.After(0.2, function() mnkLoots:ShowPhatLoots() end) 
-    end        
+
+        lootedItems = {}
+
+        if #mnkLoots_LootHistory > MAX_HISTORY_ITEMS then
+            local c = #mnkLoots_LootHistory-MAX_HISTORY_ITEMS
+            --print('HistoryCount: ', #mnkLoots_LootHistory, ' to remove: ', c)
+            for i = 1, #mnkLoots_LootHistory do
+                if i > c then break end
+                mnkLoots_LootHistory[i] = nil
+            end
+
+            -- compress the table back down.
+            for i = #mnkLoots_LootHistory, 1, -1 do
+                if not mnkLoots_LootHistory[i] then
+                    table.remove(mnkLoots_LootHistory, i)
+                end
+            end         
+            --print('Count:', #mnkLoots_LootHistory)
+        end  
+    end
+    -- this is a terrible way to handle this but I cannot think of a better way to actually get all the items looted that is accurate
+    -- and shows all the items looted, created etc. Since the chat message comes in before the actual bag is updated
+    -- don't actually get the itemcount until after a forced delay.
+    C_Timer.After(.5, function() doit() end) 
 end
