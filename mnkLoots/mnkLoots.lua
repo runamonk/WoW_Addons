@@ -81,11 +81,9 @@ function mnkLoots:AddItemToHistory(item)
     if r == 0 then
         r = #mnkLoots_LootHistory+1
         mnkLoots_LootHistory[r] = item
-        mnkLoots_LootHistory[r].lootcount = 1
         mnkLoots_LootHistory[r].zone = GetZoneText()
         mnkLoots_LootHistory[r].timestamp = date("%m/%d/%y %H:%M:%S")
     else
-        mnkLoots_LootHistory[r].lootcount = mnkLoots_LootHistory[r].lootcount + 1
         mnkLoots_LootHistory[r].timestamp = date("%m/%d/%y %H:%M:%S")
     end
 
@@ -189,12 +187,7 @@ function mnkLoots:OnEnter(parent)
         local c = 0
         for i=1, #t do
             if  t[i] then
- 
-                if t[i].lootcount > 1 then
-                    s = string.format('|T%s|t %s', t[i].icon..':16:16:0:0:64:64:4:60:4:60', t[i].link)..' x '..t[i].lootcount
-                else
-                    s = string.format('|T%s|t %s', t[i].icon..':16:16:0:0:64:64:4:60:4:60', t[i].link)
-                end
+                s = string.format('|T%s|t %s', t[i].icon..':16:16:0:0:64:64:4:60:4:60', t[i].link)
 
                 if t[i].highlight then
                     s = mnkLibs.Color(COLOR_RED)..'>'..s..mnkLibs.Color(COLOR_RED)..'<'
