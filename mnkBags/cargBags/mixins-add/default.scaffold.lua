@@ -89,14 +89,17 @@ local function ItemButton_Update(self, item)
 
 	-- Item Level
 	if item.link then
-		if (item.type and (item.level and item.level > 0)) and (item.classid == LE_ITEM_CLASS_WEAPON or    
-			                                                    item.classid == LE_ITEM_CLASS_ARMOR or
-			                                                    item.classid == LE_ITEM_CLASS_ITEM_ENHANCEMENT) then 
+		if item.isCompOrMount then
+			self.BottomString:SetTextColor(1, 0, 0, 1)
+		elseif (item.type and (item.level and item.level > 0)) and (item.classid == LE_ITEM_CLASS_WEAPON or    
+			                                                        item.classid == LE_ITEM_CLASS_ARMOR or
+			                                                        item.classid == LE_ITEM_CLASS_ITEM_ENHANCEMENT) then 
 			local r,g,b = GetItemQualityColor(item.rarity);
 			self.BottomString:SetText(item.level)
-			self.BottomString:SetTextColor(1, 1, 1, 1)
+			self.BottomString:SetTextColor(r, g, b, 1)
 			self.BottomString:SetShadowColor(r/5, g/5, b/5, 1)	
 		else
+			self.BottomString:SetTextColor(1, 1, 1, 1)
 			self.BottomString:SetText("")
 		end
 	else
@@ -143,18 +146,7 @@ end
 	@callback OnUpdateQuest(item)
 ]]
 local function ItemButton_UpdateQuest(self, item)
-	--print(item.link, ' ', item.isCompOrMount, item.type, ' ', item.subType)
-	if item.questID or item.isQuestItem then
-		self.itemRarity:SetColorTexture(1, 1, 0, 1)
-	elseif item.isCompOrMount then
-		self.itemRarity:SetColorTexture(1, 0, 0, 1)
-	elseif item.rarity and item.rarity > 1 then
-		local r, g, b = GetItemQualityColor(item.rarity)
-		self.itemRarity:SetColorTexture(r, g, b, 1)
-	else
-		self.itemRarity:SetColorTexture(0, 0, 0, 0)
-	end
-	if(self.OnUpdateQuest) then self:OnUpdateQuest(item) end
+	if (self.OnUpdateQuest) then self:OnUpdateQuest(item) end
 end
 
 cargBags:RegisterScaffold("Default", function(self)
