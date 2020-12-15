@@ -1,0 +1,7 @@
+## Interface: 90001
+## Title: mnkBackpack
+## Author: runamonk
+## SavedVariablesPerCharacter: mnkBackpackKnownItems
+## Dependencies: mnkLibs
+
+mnkBackpack.lua
