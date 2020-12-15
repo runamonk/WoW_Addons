@@ -1,6 +1,6 @@
 ## Interface: 90002
 ## Author: alekk
-## Version: 2.2
+## Version: 2.3
 ## Title: oUF alekk
 ## Notes: oUF layout
 ## RequiredDeps: oUF

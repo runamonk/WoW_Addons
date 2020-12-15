@@ -855,6 +855,9 @@ local function Raidering(self, unit)
 	self.menu = menu
 	
 	self:HookScript("OnShow", updateAllElements)
+	if not self.SetBackdrop then
+		Mixin(self, BackdropTemplateMixin)
+	end
 
 	self:SetBackdrop(backdrop)
 	self:SetBackdropColor(0 ,0 ,0 ,1)
@@ -934,7 +937,9 @@ local function Shared(self, unit)
 	self.menu = menu
 	
 	self:HookScript("OnShow", updateAllElements)
-	Mixin(self, BackdropTemplateMixin)
+	if not self.SetBackdrop then
+		Mixin(self, BackdropTemplateMixin)
+	end
 	self:SetBackdrop(backdrop)
 	self:SetBackdropColor(0,0,0,1)
 	self:SetWidth(125)
