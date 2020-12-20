@@ -17,17 +17,6 @@
 	along with cargBags; if not, write to the Free Software
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-DESCRIPTION
-	A collection of buttons for the bags.
-
-	The buttons are not positioned automatically, use the standard-
-	function :LayoutButtons() for this
-
-DEPENDENCIES
-	mixins/api-common
-	mixins/parseBags (optional)
-	base-add/filters.sieve.lua (optional)
-
 CALLBACKS
 	BagButton:OnCreate(bagID)
 ]]
@@ -177,9 +166,7 @@ function BagButton:OnClick()
 	end
 
 	if(PutItemInBag((self.GetInventorySlot and self:GetInventorySlot()) or self.invID)) then return end
-	
-	-- runamonk don't need this and it's confusing that it's here at all.
-	-- Somehow we need to disconnect this from the filter-sieve
+
 	if self.bar.AllowFilter then
 		local container = self.bar.container
 		if(container and container.SetFilter) then
@@ -234,8 +221,34 @@ local disabled = {
 	[0] = true,
 }
 
+local function arrangeAsGrid(self, columns, spacing, xOffset, yOffset)
+	columns, spacing = columns or 8, spacing or 5
+	xOffset, yOffset = xOffset or 0, yOffset or 0
+
+	local width, height = 0, 0
+	local col, row = 0, 0
+	for i, button in ipairs(self.buttons) do
+
+		if(i == 1) then -- Hackish, I know
+			width, height = button:GetSize()
+		end
+
+		col = i % columns
+		if(col == 0) then col = columns end
+		row = math.ceil(i/columns)
+
+		local xPos = (col-1) * (width + spacing)
+		local yPos = -1 * (row-1) * (height + spacing)
+
+		button:ClearAllPoints()
+		button:SetPoint("TOPLEFT", self, "TOPLEFT", xPos+xOffset, yPos+yOffset)
+	end
+
+	return columns * (width+spacing)-spacing, row * (height+spacing)-spacing
+end
+
 -- Register the plugin
-cargBags:RegisterPlugin("BagBar", function(self, bags)
+cargBags:RegisterPlugin("BagBar", function(self, bags, NoOfBags)
 	if(cargBags.ParseBags) then
 		bags = cargBags:ParseBags(bags)
 	end
@@ -243,9 +256,6 @@ cargBags:RegisterPlugin("BagBar", function(self, bags)
 	local bar = CreateFrame("Frame",  nil, self)
 	bar.container = self
 	bar.AllowFilter = true
-	bar.layouts = cargBags.classes.Container.layouts
-	bar.LayoutButtons = cargBags.classes.Container.LayoutButtons
-
 	local buttonClass = self.implementation:GetBagButtonClass()
 	bar.buttons = {}
 	for i=1, #bags do
@@ -261,5 +271,7 @@ cargBags:RegisterPlugin("BagBar", function(self, bags)
 	self.implementation:RegisterEvent("PLAYERBANKBAGSLOTS_CHANGED", bar, updater)
 	self.implementation:RegisterEvent("ITEM_LOCK_CHANGED", bar, onLock)
 
+	bar:SetSize(arrangeAsGrid(bar, NoOfBags, 4, 0, 0))
 	return bar
 end)
+
