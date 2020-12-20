@@ -35,11 +35,11 @@ local function ItemButton_Scaffold(self)
 	self.Cooldown = _G[name.."Cooldown"]
 	self.Quest = _G[name.."IconQuestTexture"]
 
-	self.itemRarity = self:CreateTexture()
-	self.itemRarity:SetTexture("Interface/BUTTONS/WHITE8X8")
-	self.itemRarity:SetColorTexture(1 ,1, 1, 1)
-	self.itemRarity:SetSize(32, 2)
-	self.itemRarity:SetPoint('CENTER', self, 'BOTTOM', 0, 0)
+	-- self.itemRarity = self:CreateTexture()
+	-- self.itemRarity:SetTexture("Interface/BUTTONS/WHITE8X8")
+	-- self.itemRarity:SetColorTexture(1 ,1, 1, 1)
+	-- self.itemRarity:SetSize(32, 2)
+	-- self.itemRarity:SetPoint('CENTER', self, 'BOTTOM', 0, 0)
 
     self.Count = mnkLibs.createFontString(self, mnkLibs.Fonts.ap, 16, nil, nil, true)
     self.Count:SetPoint('BOTTOMRIGHT', 0, 0)
