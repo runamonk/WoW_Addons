@@ -4,5 +4,5 @@
 ## SavedVariablesPerCharacter: mnkBagsKnownItems
 ## Dependencies: mnkLibs
 
-cargBags\embed.xml
+cargBags\cargBags.xml
 mnkBags.lua
