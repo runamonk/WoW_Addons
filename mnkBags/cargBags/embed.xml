@@ -4,7 +4,6 @@
 	<Script file='container.lua' />
 	<Script file='itembutton.lua' />
 	<Script file='filters.lua' />
-	<Script file='textFilter.lua' />
 	<Script file='bagBar.lua' />
 	<Script file='SearchBar.lua' />
 </Ui>

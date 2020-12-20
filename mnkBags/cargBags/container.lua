@@ -47,6 +47,7 @@ function Container:New(name, bagCaption, ...)
 	container.buttons = {}
 	container.bags = setmetatable({container = container}, mt_bags)
 	container.implementation.contByName[name] = container -- Make this into pretty function?
+	container.ParseTextFilter = self.implementation.ParseTextFilter
 	container.SpawnPlugin = self.implementation.SpawnPlugin
 	container.bagCaption = bagCaption
 	table.insert(container.implementation.contByID, container)
@@ -105,4 +106,8 @@ function Container:ApplyToButtons(func, ...)
 	for i, button in pairs(self.buttons) do
 		func(button, ...)
 	end
+end
+
+function Container:SetTextFilter(text, textFilters)
+	self.filters = self:ParseTextFilter(text, self.filters, textFilters)
 end
