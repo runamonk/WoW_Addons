@@ -28,6 +28,19 @@ DEPENDENCIES
 
 local addon, ns = ...
 local cargBags = ns.cargBags
+local Container = cargBags.classes.Container
+local Implementation = cargBags.classes.Implementation
+
+local defaultFilters = {
+	n = function(i, arg) return i.name and i.name:lower():match(arg) end,
+	t = function(i, arg) return (i.type and i.type:lower():match(arg)) or (i.subType and i.subType:lower():match(arg)) or (i.equipLoc and i.equipLoc:lower():match(arg)) end,
+	b = function(i, arg) return i.bindOn and i.bindOn:match(arg) end,
+	q = function(i, arg) return i.rarity == tonumber(arg) end,
+	bag = function(i, arg) return i.bagID == tonumber(arg) end,
+	quest = function(i, arg) return i.isQuestItem end,
+
+	_default = "n",
+}
 
 local function apply(self, container, text, mode)
 	if(text == "" or not text) then
@@ -82,6 +95,7 @@ local function onEnter(search)
 	if(search.OnEnterPressed) then search:OnEnterPressed() end
 end
 
+cargBags.textFilters = defaultFilters
 cargBags:RegisterPlugin("SearchBar", function(self, target)
 	local search = CreateFrame("EditBox", nil, self)
 	search:SetFontObject(GameFontHighlight)

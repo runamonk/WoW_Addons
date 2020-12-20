@@ -97,6 +97,24 @@ function Implementation:SpawnPlugin(name, ...)
 	end
 end
 
+function Implementation:ParseTextFilter(text, filters, textFilters)
+	filters = filters or cargBags.classes.FilterSet:New()
+	textFilters = textFilters or defaultFilters
+
+	for match in text:gmatch("[^,;&]+") do
+		local mod, type, value = match:trim():match("^(!?)(.-)[:=]?([^:=]*)$")
+		mod = (mod == "!" and -1) or true
+		if(value and type ~= "" and textFilters[type]) then
+			filters:SetExtended(textFilters[type], value:lower(), mod)
+		elseif(value and type == "" and textFilters._default) then
+			local name = textFilters._default
+			filters:SetExtended(textFilters[name], value:lower(), mod)
+		end
+	end
+
+	return filters
+end
+
 --[[!
 	Toggles the implementation
 	@param forceopen <bool> Only open it
