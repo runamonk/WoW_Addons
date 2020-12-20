@@ -215,12 +215,6 @@ local function onLock(self, event, bagID, slotID)
 	end
 end
 
-local disabled = {
-	[-2] = true,
-	[-1] = true,
-	[0] = true,
-}
-
 local function arrangeAsGrid(self, columns, spacing, xOffset, yOffset)
 	columns, spacing = columns or 8, spacing or 5
 	xOffset, yOffset = xOffset or 0, yOffset or 0
@@ -248,30 +242,25 @@ local function arrangeAsGrid(self, columns, spacing, xOffset, yOffset)
 end
 
 -- Register the plugin
-cargBags:RegisterPlugin("BagBar", function(self, bags, NoOfBags)
-	if(cargBags.ParseBags) then
-		bags = cargBags:ParseBags(bags)
-	end
-
+cargBags:RegisterPlugin("BagBar", function(self, bags)
 	local bar = CreateFrame("Frame",  nil, self)
 	bar.container = self
 	bar.AllowFilter = true
 	local buttonClass = self.implementation:GetBagButtonClass()
 	bar.buttons = {}
 	for i=1, #bags do
-		if(not disabled[bags[i]]) then -- Temporary until I include fake buttons for backpack, bankframe and keyring
-			local button = buttonClass:Create(bags[i])
-			button:SetParent(bar)
-			button.bar = bar
-			table.insert(bar.buttons, button)
-		end
+		--print(bags[i], i)
+		local button = buttonClass:Create(bags[i])
+		button:SetParent(bar)
+		button.bar = bar
+		table.insert(bar.buttons, button)
 	end
 
 	self.implementation:RegisterEvent("BAG_UPDATE", bar, updater)
 	self.implementation:RegisterEvent("PLAYERBANKBAGSLOTS_CHANGED", bar, updater)
 	self.implementation:RegisterEvent("ITEM_LOCK_CHANGED", bar, onLock)
 
-	bar:SetSize(arrangeAsGrid(bar, NoOfBags, 4, 0, 0))
+	bar:SetSize(arrangeAsGrid(bar, #bags, 4, 0, 0))
 	return bar
 end)
 

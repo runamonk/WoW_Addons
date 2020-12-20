@@ -514,7 +514,7 @@ function mbContainer:OnCreate(name)
 		self.CloseButton:SetScript("OnClick", function(self) if cbmb:AtBank() then CloseBankFrame() else CloseAllBags() end end)
 
 		if isMain then
-			self.pluginBagBar = self:SpawnPlugin("BagBar", "backpack+bags", 4)
+			self.pluginBagBar = self:SpawnPlugin("BagBar", {1, 2, 3, 4})
 			self.SearchButton = CreateFrame("Button", nil, self)
 			self.SearchButton:SetWidth((itemSlotSize+itemSlotPadding) * self.Columns-itemSlotSize) -- subtract both buttons.
 			self.SearchButton:SetHeight(18)
@@ -530,7 +530,7 @@ function mbContainer:OnCreate(name)
 			self.SearchIcon:SetWidth(16)
 			self.SearchIcon:SetHeight(16)
 		else
-			self.pluginBagBar = self:SpawnPlugin("BagBar", "bank", 7)
+			self.pluginBagBar = self:SpawnPlugin("BagBar", {5, 6, 7, 8, 9, 10, 11})
 		end
 		
 		self.pluginBagBar.isGlobal = true
