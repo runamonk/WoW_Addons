@@ -38,6 +38,7 @@ end
 
 cargBags.classes = {} --- <table> Holds all classes by their name
 cargBags.itemKeys = {} --- <table> Holds all ItemKeys by their name
+cargBags.plugins = {}
 
 local widgets = setmetatable({}, {__index = function(self, widget)
 	self[widget] = getmetatable(CreateFrame(widget))
@@ -57,6 +58,10 @@ function cargBags:NewClass(name, parent, widget)
 	class._parent = parent
 	self.classes[name] = class
 	return class
+end
+
+function cargBags:RegisterPlugin(name, func)
+	cargBags.plugins[name] = func
 end
 
 --- Creates a new instance of the class 'Implementation'

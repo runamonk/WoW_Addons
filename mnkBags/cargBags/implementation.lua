@@ -87,6 +87,16 @@ function Implementation:OnHide()
 	if(self:AtBank()) then CloseBankFrame() end
 end
 
+function Implementation:SpawnPlugin(name, ...)
+	if(cargBags.plugins[name]) then
+		local plugin = cargBags.plugins[name](self, ...)
+		if(plugin) then
+			plugin.parent = self
+		end
+		return plugin
+	end
+end
+
 --[[!
 	Toggles the implementation
 	@param forceopen <bool> Only open it
@@ -227,16 +237,8 @@ end
 	@callback OnInit
 ]]
 function Implementation:Init()
-	if(not self.notInited) then return end
-	
-	 -- initialization of bags in combat taints the itembuttons within - Lars Norberg
+	if (not self.notInited) then return end
 	if (InCombatLockdown()) then
-		local L = LibStub("gLocale-1.0"):GetLocale(addon, true)
-		if (L) then
-			UIErrorsFrame:AddMessage(L["Can't initialize bags while engaged in combat."], 1.0, 0.82, 0.0, 1.0)
-			UIErrorsFrame:AddMessage(L["Please exit combat then re-open the bags!"], 1.0, 0.82, 0.0, 1.0)
-		end
-
 		return
 	end
 	

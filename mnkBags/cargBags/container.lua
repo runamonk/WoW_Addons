@@ -47,6 +47,7 @@ function Container:New(name, bagCaption, ...)
 	container.buttons = {}
 	container.bags = setmetatable({container = container}, mt_bags)
 	container.implementation.contByName[name] = container -- Make this into pretty function?
+	container.SpawnPlugin = self.implementation.SpawnPlugin
 	container.bagCaption = bagCaption
 	table.insert(container.implementation.contByID, container)
 	container:SetParent(self.implementation)
