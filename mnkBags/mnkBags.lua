@@ -596,14 +596,15 @@ function mbContainer:OnCreate(name)
 	end
 
 	if (isMain or isBank or isReagent) then
-		self.Drop = CreateFrame("ItemButton", self.name.."Drop", self)
+		self.Drop = CreateFrame("ItemButton", self.name.."Drop", self, BackdropTemplateMixin and "BackdropTemplate")
 		self.Drop.NormalTexture = _G[self.Drop:GetName().."NormalTexture"]
 		self.Drop.NormalTexture:SetTexture(nil)
 		self.Drop:SetSize(itemSlotSize,itemSlotSize)
-		self.Empty = mnkLibs.createFontString(self, mnkLibs.Fonts.ap, 16, nil, nil, true)
+		self.Empty = mnkLibs.createFontString(self.Drop, mnkLibs.Fonts.ap, 16, nil, nil, true)
 		self.Empty:SetPoint("BOTTOMRIGHT", self.Drop, "BOTTOMRIGHT", -3, 3)
-		self.Empty:SetJustifyH("LEFT")
-		mnkLibs.createBorder(self.Drop, 0, 0, 0, 0, {1/2,1/2,1/2,1})
+		self.Empty:SetJustifyH("CENTER")
+		mnkLibs.setBackdrop(self.Drop, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
+		self.Drop:SetBackdropColor(.2,.2,.2,1)
 		self.Drop:Show()
 		self.Empty:Show()
 
