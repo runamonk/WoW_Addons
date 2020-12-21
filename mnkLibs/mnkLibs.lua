@@ -47,6 +47,31 @@ COLOR_BLUE = {r = 51, g = 153, b = 255}
 COLOR_PURPLE = {r = 128, g = 114, b = 194}
 COLOR_GREY = {r = 168, g = 168, b = 168}
 
+function mnkLibs.arrangeAsGrid(parent, buttons, columns, spacing, xOffset, yOffset)
+    columns, spacing = columns or 8, spacing or 5
+    xOffset, yOffset = xOffset or 0, yOffset or 0
+    local width, height = 0, 0
+    local col, row = 0, 0
+
+    for i, button in ipairs(buttons) do
+        if not button then return end
+
+        if(i == 1) then
+            width, height = button:GetSize()
+        end
+
+        col = i % columns
+        if(col == 0) then col = columns end
+        row = math.ceil(i/columns)
+        local xPos = (col-1) * (width + spacing)
+        local yPos = -1 * (row-1) * (height + spacing)
+        button:ClearAllPoints()
+        button:SetPoint("TOPLEFT", parent, "TOPLEFT", xPos+xOffset, yPos+yOffset)
+    end
+
+    return columns * (width+spacing)-spacing, row * (height+spacing)-spacing
+end
+
 function mnkLibs.Color(t)
     return mnkLibs.convertRGBtoHex(t.r, t.g, t.b)
 end

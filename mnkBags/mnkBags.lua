@@ -10,9 +10,7 @@ local mnkBags = CreateFrame('Frame', 'mnkBags', UIParent, BackdropTemplateMixin 
 
 local _
 local skipOnButtonRemove = false
-local itemSlotSize = 32
-local itemSlotPadding = 4
-local itemSlotSpacer = 1
+local itemSlotSize = 24
 local JunkItemsSold = 0
 local NewItemsSold = 0
 
@@ -303,6 +301,10 @@ function mbButton:OnClick(self)
 	end
 end
 
+function mbButton:OnCreate(tpl, parent, button)
+	button:SetSize(itemSlotSize, itemSlotSize)
+end
+
 function mbContainer:GetFirstFreeSlot(self)
 	if self == bagBank then		
 		local containerIDs = {-1,5,6,7,8,9,10,11}
@@ -380,11 +382,7 @@ end
 
 function mbContainer:OnContentsChanged(skipUpdateAnchors)
 	if cbmb.SkipOnChange then return end
-
-	--print('OnChanged ',  self.name)
-	local col, row = 0, 0
-	local CaptionHeight = 20
-	local buttonIDs = {}
+	local buttons = {}
 
   	for i, button in pairs(self.buttons) do
   		local clink = GetContainerItemLink(button.bagID, button.slotID)
@@ -392,9 +390,9 @@ function mbContainer:OnContentsChanged(skipUpdateAnchors)
   		if clink then
   			--local name = select(1, GetItemInfo(clink))
   			local item = cbmb:GetItemInfo(button.bagID, button.slotID)
-  			buttonIDs[i] = {item.name, item.count, button}
+  			buttons[i] = {item.name, item.count, button}
   		else
-  			buttonIDs[i] = {nil, 0, button}
+  			buttons[i] = {nil, 0, button}
   		end
 	end
 	
@@ -405,38 +403,51 @@ function mbContainer:OnContentsChanged(skipUpdateAnchors)
 
  		return (v1[1] < v2[1]) or ((v1[1] == v2[1]) and (v1[2] > v2[2]))
 	end
+	table.sort(buttons, sort)
+	local col, row = 0, 0
 
-	table.sort(buttonIDs, sort)
+	local CaptionHeight = 20
+	local lb, rb = nil, nil
 
-	for _,v in ipairs(buttonIDs) do
+	for _,v in ipairs(buttons) do
 		local button = v[3]
 		button:ClearAllPoints()
-	  
-		local xPos = col * (itemSlotSize + itemSlotPadding) + itemSlotSpacer
-		local yPos = (-1 * row * (itemSlotSize + itemSlotPadding)) - CaptionHeight
+	  	
+	  	-- first row
+	  	if not lb and not rb then
+	  		button:SetPoint("TOPLEFT", self, "TOPLEFT", 0, CaptionHeight * -1)
+	  		rb = button
+	  		col = col + 1
+	  	else
+	  		-- new row
+	  		if rb and not lb then
+	  			button:SetPoint("TOPLEFT", rb, "BOTTOMLEFT", 0, -1)
+	  			rb = button
+	  			col = col + 1
+	  		else
+	  			-- add to current row
+				button:SetPoint("TOPLEFT", lb, "TOPRIGHT", 1, 0)
+				col = col + 1
+			end
+		end
 
-		button:SetPoint("TOPLEFT", self, "TOPLEFT", xPos, yPos)
-		if(col >= self.Columns-1) then
+		if col == self.Columns then
+			lb = nil
 			col = 0
-			row = row + 1
-		else
-			col = col + 1
+		else	
+			lb = button
 		end
 	end
-
-	-- compress empty slots.
-	local xPos = col * (itemSlotSize + itemSlotPadding) + itemSlotSpacer
-	local yPos = (-1 * row * (itemSlotSize + itemSlotPadding)) - CaptionHeight
 
 	local tDrop = self.Drop
 	if tDrop then
 		tDrop:ClearAllPoints()
-		tDrop:SetPoint("TOPLEFT", self, "TOPLEFT", xPos, yPos)
-		if(col >= self.Columns-1) then
-			col = 0
-			row = row + 1
-		else
-			col = col + 1
+		if self == bagMain then
+			tDrop:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 0, 2)
+		elseif self == bagBank then
+			tDrop:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 0, 2)
+		elseif self == bagReagent then
+			tDrop:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 8)
 		end
 	end
 
@@ -485,7 +496,7 @@ function mbContainer:OnCreate(name)
 	mnkLibs.createBorder(self, 4,-4,-5,5, {1/3,1/3,1/3,1})
 	self.background:SetFrameStrata("HIGH")
 	self.background:SetFrameLevel(1)
-	self:SetBackdropColor(0, 0, 0, 1)
+	self:SetBackdropColor(.1,.1,.1, 1)
 
 	local isMain = (name == "_bag") 
 	local isBank = (name == "_bank")
@@ -514,28 +525,27 @@ function mbContainer:OnCreate(name)
 		self.CloseButton:SetScript("OnClick", function(self) if cbmb:AtBank() then CloseBankFrame() else CloseAllBags() end end)
 
 		if isMain then
-			self.pluginBagBar = self:SpawnPlugin("BagBar", {1, 2, 3, 4})
+			self.pluginBagBar = self:SpawnPlugin("BagBar", {1, 2, 3, 4}, itemSlotSize)
 			self.SearchButton = CreateFrame("Button", nil, self)
-			self.SearchButton:SetWidth((itemSlotSize+itemSlotPadding) * self.Columns-itemSlotSize) -- subtract both buttons.
+			self.SearchButton:SetWidth(75) 
 			self.SearchButton:SetHeight(18)
-			self.SearchButton:SetPoint("BOTTOMLEFT", 5, -8)
-			self.SearchButton:SetPoint("BOTTOMRIGHT", -86, -8)
+			self.SearchButton:SetPoint("TOPLEFT", self, "TOPLEFT", 30, 2)
 			self.pluginSearch = self:SpawnPlugin("SearchBar", self.SearchButton)
 			self.pluginSearch.isGlobal = true
 			self.pluginSearch.highlightFunction = function(button, match) button:SetAlpha(match and 1 or 0.1) end
 			self.SearchIcon = self:CreateTexture(nil, "ARTWORK") 
 			self.SearchIcon:SetTexture(Textures.Search)
 			self.SearchIcon:SetVertexColor(0.8, 0.8, 0.8)
-			self.SearchIcon:SetPoint("BOTTOMLEFT", self.SearchButton, "BOTTOMLEFT", -3, 8)
+			self.SearchIcon:SetPoint("TOPLEFT", self.SearchButton, "TOPLEFT", 0, 0)
 			self.SearchIcon:SetWidth(16)
 			self.SearchIcon:SetHeight(16)
 		else
-			self.pluginBagBar = self:SpawnPlugin("BagBar", {5, 6, 7, 8, 9, 10, 11})
+			self.pluginBagBar = self:SpawnPlugin("BagBar", {5, 6, 7, 8, 9, 10, 11}, itemSlotSize)
 		end
 		
 		self.pluginBagBar.isGlobal = true
 		self.pluginBagBar.AllowFilter = false
-		self.pluginBagBar:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -2, 25)
+		self.pluginBagBar:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -16, 16)
 		self.pluginBagBar:Hide()
 
 		self.bagToggle = createIconButton("Bags", self, Textures.BagToggle, "BOTTOMRIGHT", "Toggle Bags")
@@ -720,7 +730,7 @@ end
 
 function mbContainer:UpdateDimensions(self)
 	local BagBarHeight = 0
-	local CaptionHeight = 28
+	local CaptionHeight = 20
 	local buttonCount = 0
 	local rows = 1	
 
@@ -729,9 +739,9 @@ function mbContainer:UpdateDimensions(self)
 		buttonCount = 1
 		if self.bagToggle then 
 			if self.pluginBagBar and self.pluginBagBar:IsShown() then 
-				BagBarHeight = 60
+				BagBarHeight = 20
 			else 
-				BagBarHeight = 16
+				BagBarHeight = 0
 			end
 		end
 	else
@@ -747,8 +757,8 @@ function mbContainer:UpdateDimensions(self)
 		--print(self:GetName(), ' ', self.columns, ' ', buttonCount, ' ', rows)
 	end
 
-	self:SetWidth((itemSlotSize + itemSlotPadding) * self.Columns )
-	self:SetHeight(((itemSlotSize + itemSlotPadding) * rows) + (BagBarHeight + CaptionHeight) - 8)
+	self:SetWidth((itemSlotSize+1) * self.Columns) 
+	self:SetHeight(((itemSlotSize+2) * rows) + CaptionHeight)
 end
 
 function mbContainer:UpdateFreeSlots()
