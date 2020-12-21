@@ -471,8 +471,12 @@ function mbContainer:OnCreate(name)
 	self.name = name
 
     Mixin(self, BackdropTemplateMixin)
-	-- this works better than inserting the the frame in the UISpecialFrames table.
-	-- if you go to the bank and have both the bank and your bank open, then press esc the bank won't come back up until you've toggled again.
+	--[[  
+	 This works better than inserting the the frame in the UISpecialFrames table.
+	 if you go to the bank and have both the bank and your bank open, then press 
+	 esc the bank won't come back up until you've toggled again. 
+	 ]]
+
 	self:EnableKeyboard(1);
 	self:SetScript("OnKeyDown",function(self,key)
 		if key == 'ESCAPE' then
