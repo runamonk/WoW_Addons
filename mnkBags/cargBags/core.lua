@@ -63,7 +63,7 @@ end
 function cargBags:RegisterPlugin(name, func)
 	cargBags.plugins[name] = func
 end
-
+           
 --- Creates a new instance of the class 'Implementation'
 --  @param name <string> The name of the implementation
 --  @return instance <Implementation> The new instance
