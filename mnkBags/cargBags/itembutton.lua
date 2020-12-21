@@ -70,19 +70,17 @@ function ItemButton:Create(tpl, parent)
 	impl.numSlots = (impl.numSlots or 0) + 1
 	local name = ("%sSlot%d"):format(impl.name, impl.numSlots)
 	local button = setmetatable(CreateFrame("ItemButton", name, parent, tpl), self.__index)
-	if(button.OnCreate) then button:OnCreate(tpl) end
 	local btnNT = _G[button:GetName().."NormalTexture"]
 	local btnNIT = button.NewItemTexture
 	local btnBIT = button.BattlepayItemTexture
 	if btnNT then btnNT:SetTexture("") end
 	if btnNIT then btnNIT:SetTexture("") end
 	if btnBIT then btnBIT:SetTexture("") end
-	button:SetSize(32, 32)
+
 	bFS = _G[button:GetName().."Count"]
 	bFS.Count = mnkLibs.createFontString(button, mnkLibs.Fonts.ap, 16, nil, nil, true)
 	bFS:ClearAllPoints()
 	bFS:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 1.5, 1.5);
-
 	button.glowTex = "Interface\\Buttons\\UI-ActionButton-Border" --! @property glowTex <string> The textures used for the glow
 	button.glowAlpha = 0.8 --! @property glowAlpha <number> The alpha of the glow texture
 	button.glowBlend = "ADD" --! @property glowBlend <string> The blendMode of the glow texture
@@ -110,6 +108,9 @@ function ItemButton:Create(tpl, parent)
 		function (self)
        		if (self.OnClick) then self:OnClick(self) end
        	end)
+
+	if (button.OnCreate) then button:OnCreate(tpl, parent, button) end
+
 	return button
 end
 

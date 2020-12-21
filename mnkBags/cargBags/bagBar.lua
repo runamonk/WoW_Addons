@@ -67,8 +67,6 @@ function BagButton:Create(bagID)
     checked:SetAllPoints()
     button.checked = checked
 
-    button:SetSize(32, 32)
-
     button.Icon =       _G[name.."IconTexture"]
     button.Count =      _G[name.."Count"]
     button.Cooldown =   _G[name.."Cooldown"]
@@ -215,34 +213,8 @@ local function onLock(self, event, bagID, slotID)
 	end
 end
 
-local function arrangeAsGrid(self, columns, spacing, xOffset, yOffset)
-	columns, spacing = columns or 8, spacing or 5
-	xOffset, yOffset = xOffset or 0, yOffset or 0
-
-	local width, height = 0, 0
-	local col, row = 0, 0
-	for i, button in ipairs(self.buttons) do
-
-		if(i == 1) then -- Hackish, I know
-			width, height = button:GetSize()
-		end
-
-		col = i % columns
-		if(col == 0) then col = columns end
-		row = math.ceil(i/columns)
-
-		local xPos = (col-1) * (width + spacing)
-		local yPos = -1 * (row-1) * (height + spacing)
-
-		button:ClearAllPoints()
-		button:SetPoint("TOPLEFT", self, "TOPLEFT", xPos+xOffset, yPos+yOffset)
-	end
-
-	return columns * (width+spacing)-spacing, row * (height+spacing)-spacing
-end
-
 -- Register the plugin
-cargBags:RegisterPlugin("BagBar", function(self, bags)
+cargBags:RegisterPlugin("BagBar", function(self, bags, buttonSize)
 	local bar = CreateFrame("Frame",  nil, self)
 	bar.container = self
 	bar.AllowFilter = true
@@ -252,6 +224,7 @@ cargBags:RegisterPlugin("BagBar", function(self, bags)
 		--print(bags[i], i)
 		local button = buttonClass:Create(bags[i])
 		button:SetParent(bar)
+		button:SetSize(buttonSize,buttonSize)
 		button.bar = bar
 		table.insert(bar.buttons, button)
 	end
@@ -259,8 +232,7 @@ cargBags:RegisterPlugin("BagBar", function(self, bags)
 	self.implementation:RegisterEvent("BAG_UPDATE", bar, updater)
 	self.implementation:RegisterEvent("PLAYERBANKBAGSLOTS_CHANGED", bar, updater)
 	self.implementation:RegisterEvent("ITEM_LOCK_CHANGED", bar, onLock)
-
-	bar:SetSize(arrangeAsGrid(bar, #bags, 4, 0, 0))
+	bar:SetSize(mnkLibs.arrangeAsGrid(bar, bar.buttons, #bags, 2, 0, 0)) 
 	return bar
 end)
 
