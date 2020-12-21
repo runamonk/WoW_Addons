@@ -95,10 +95,10 @@ function ItemButton:Create(tpl, parent)
 	button.Quest = _G[name.."IconQuestTexture"]
     button.Count = mnkLibs.createFontString(button, mnkLibs.Fonts.ap, 16, nil, nil, true)
     button.Count:SetPoint('BOTTOMRIGHT', 0, 0)
-	button.BottomString = mnkLibs.createFontString(button, mnkLibs.Fonts.ap, 18, nil, nil, true)
-    button.BottomString:SetPoint('CENTER', 0, 0)
-    button.BottomString:SetJustifyH('CENTER')
-    button.BottomString:SetShadowOffset(2, -2)
+	button.ItemLevel = mnkLibs.createFontString(button, mnkLibs.Fonts.ap, 18, nil, nil, true)
+    button.ItemLevel:SetPoint('CENTER', 0, 0)
+    button.ItemLevel:SetJustifyH('CENTER')
+    button.ItemLevel:SetShadowOffset(2, -2)
 	button.boe = mnkLibs.createFontString(button, mnkLibs.Fonts.ap, 50, nil, nil, true)
     button.boe:SetPoint('TOPLEFT', -1, 35)
     button.boe:SetJustifyH('LEFT')
@@ -160,20 +160,20 @@ function ItemButton:Update(item)
 	-- Item Level
 	if item.link then
 		if item.isCompOrMount then
-			self.BottomString:SetTextColor(1, 0, 0, 1)
+			self.ItemLevel:SetTextColor(1, 0, 0, 1)
 		elseif (item.type and (item.level and item.level > 0)) and (item.classid == LE_ITEM_CLASS_WEAPON or    
 			                                                        item.classid == LE_ITEM_CLASS_ARMOR or
 			                                                        item.classid == LE_ITEM_CLASS_ITEM_ENHANCEMENT) then 
 			local r,g,b = GetItemQualityColor(item.rarity);
-			self.BottomString:SetText(item.level)
-			self.BottomString:SetTextColor(r, g, b, 1)
-			self.BottomString:SetShadowColor(r/5, g/5, b/5, 1)	
+			self.ItemLevel:SetText(item.level)
+			self.ItemLevel:SetTextColor(r, g, b, 1)
+			self.ItemLevel:SetShadowColor(r/5, g/5, b/5, 1)	
 		else
-			self.BottomString:SetTextColor(1, 1, 1, 1)
-			self.BottomString:SetText("")
+			self.ItemLevel:SetTextColor(1, 1, 1, 1)
+			self.ItemLevel:SetText("")
 		end
 	else
-		self.BottomString:SetText("")
+		self.ItemLevel:SetText("")
 	end
 
 	self:UpdateCooldown(item)
