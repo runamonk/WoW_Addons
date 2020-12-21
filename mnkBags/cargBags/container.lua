@@ -46,7 +46,7 @@ function Container:New(name, bagCaption, ...)
 	container.name = name
 	container.buttons = {}
 	container.bags = setmetatable({container = container}, mt_bags)
-	container.implementation.contByName[name] = container -- Make this into pretty function?
+	container.implementation.contByName[name] = container
 	container.ParseTextFilter = self.implementation.ParseTextFilter
 	container.SpawnPlugin = self.implementation.SpawnPlugin
 	container.bagCaption = bagCaption
