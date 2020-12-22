@@ -235,16 +235,16 @@ function cbmb:UpdateAnchors()
 
 			if parentbag == bagMain then
 				if parentbag.mywifeisahorder then
-					bag:SetPoint("BOTTOMRIGHT", parentbag.mywifeisahorder, "BOTTOMLEFT", -3, 0)
+					bag:SetPoint("BOTTOMRIGHT", parentbag.mywifeisahorder, "BOTTOMLEFT", -1, 0)
 				else
-					bag:SetPoint("BOTTOMRIGHT", parentbag, "BOTTOMLEFT", -3, 0)	
+					bag:SetPoint("BOTTOMRIGHT", parentbag, "BOTTOMLEFT", -1, 0)	
 				end
 				parentbag.mywifeisahorder = bag
 			else
 				if parentbag.mywifeisahorder then
-					bag:SetPoint("BOTTOMLEFT", parentbag.mywifeisahorder, "BOTTOMRIGHT", 3, 0)
+					bag:SetPoint("BOTTOMLEFT", parentbag.mywifeisahorder, "BOTTOMRIGHT", 1, 0)
 				else
-					bag:SetPoint("BOTTOMLEFT", parentbag, "BOTTOMRIGHT", 3, 0)	
+					bag:SetPoint("BOTTOMLEFT", parentbag, "BOTTOMRIGHT", 1, 0)	
 				end
 				parentbag.mywifeisahorder = bag				
 			end
@@ -252,7 +252,7 @@ function cbmb:UpdateAnchors()
 		end
 		
 		if lastbag:ShowOrHide() or (lastbag == bagBank or lastbag == bagMain) then
-			bag:SetPoint("BOTTOMLEFT", lastbag, "TOPLEFT", 0, 3)
+			bag:SetPoint("BOTTOMLEFT", lastbag, "TOPLEFT", 0, 1)
 		else
 			bag:SetPoint("BOTTOMLEFT", lastbag, "BOTTOMLEFT", 0, 0)
 		end
@@ -469,13 +469,12 @@ end
 function mbContainer:OnCreate(name)
 	if not name then return end
 	self.name = name
-    Mixin(self, BackdropTemplateMixin)
+
 	--[[  
 	 This works better than inserting the the frame in the UISpecialFrames table.
 	 if you go to the bank and have both the bank and your bank open, then press 
 	 esc the bank won't come back up until you've toggled again. 
 	 ]]
-
 	self:EnableKeyboard(1);
 	self:SetScript("OnKeyDown",function(self,key)
 		if key == 'ESCAPE' then
@@ -490,19 +489,17 @@ function mbContainer:OnCreate(name)
 	self:EnableMouse(true)
 	self:SetFrameStrata("MEDIUM")
 	self.Caption = mnkLibs.createFontString(self, mnkLibs.Fonts.ap, 16, nil, nil, true)
-	--self.Caption:SetText(mbLocals.bagCaptions[self.name])
 	self.Caption:SetText(self.bagCaption)
 	self.Caption:SetPoint("TOPLEFT", 2, 0)
 	self:SetScript('OnShow', function (self) self:OnShow() end)
 	mnkLibs.createTexture(self, 'BACKGROUND', {.1, .1, .1, 1})
-	mnkLibs.createBorder(self, 1,-1,-1,1, {1/3,1/3,1/3,1})
+	mnkLibs.createBorder(self, 1,-1,-1,1, {1/6,1/6,1/6,1})
 
 	local isMain = (name == "_bag") 
 	local isBank = (name == "_bank")
 	local isReagent = (name == "_bankReagents")
 
 	if (isMain or isBank) then 
-		--self:SetBackdropColor(1/8, 1/8, 1/8, 1)
 		self:SetMovable(true)
 		self:SetUserPlaced(true)
 		self:RegisterForClicks("LeftButton", "RightButton")
@@ -731,34 +728,14 @@ end
 function mbContainer:UpdateDimensions(self)
 	local BagBarHeight = 0
 	local CaptionHeight = 20
-	local buttonCount = 0
 	local rows = 1	
 
-	-- primary bags or bankRequest bag should always have an free slot counter.
-	if self.bagToggle or self == bagReagent then
-		buttonCount = 1
-		if self.bagToggle then 
-			if self.pluginBagBar and self.pluginBagBar:IsShown() then 
-				BagBarHeight = 20
-			else 
-				BagBarHeight = 0
-			end
-		end
-	else
-		BagBarHeight = 0
-	end
-
-	buttonCount = buttonCount + #self.buttons
-
-	if buttonCount > 0 then
-		rows = mnkLibs.Round((#self.buttons/self.Columns),1)
-		if (rows == 0) then rows = 1 end
-		if ((rows * self.Columns) < buttonCount) then rows = (rows + 1) end
-		--print(self:GetName(), ' ', self.columns, ' ', buttonCount, ' ', rows)
-	end
+	rows = mnkLibs.Round((#self.buttons/self.Columns),1)
+	if (rows == 0) then rows = 1 end
+	if ((rows * self.Columns) < #self.buttons) then rows = (rows + 1) end
 
 	self:SetWidth((itemSlotSize+1) * self.Columns + 8) 
-	self:SetHeight(((itemSlotSize+2) * rows) + CaptionHeight)
+	self:SetHeight(((itemSlotSize+1) * rows) + CaptionHeight + 2)
 end
 
 function mbContainer:UpdateFreeSlots()
