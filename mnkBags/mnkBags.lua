@@ -6,6 +6,10 @@ local mbButton = cbmb:GetItemButtonClass()
 local mbBags = {}
 local bagMain, bagBank, bagReagent, bagJunk, bagNew = nil
 
+local _, playerClass = UnitClass('player')
+local classColor = {}
+classColor.r, classColor.g, classColor.b, _ = GetClassColor(playerClass)
+
 local mnkBags = CreateFrame('Frame', 'mnkBags', UIParent, BackdropTemplateMixin and "BackdropTemplate")
 
 local _
@@ -303,6 +307,9 @@ end
 
 function mbButton:OnCreate(tpl, parent, button)
 	button:SetSize(itemSlotSize, itemSlotSize)
+	if not button.border then
+		mnkLibs.createBorder(button, 1,-1,-1,1, {.2,.2,.2, 1})
+	end
 end
 
 function mbContainer:GetFirstFreeSlot(self)
@@ -439,18 +446,6 @@ function mbContainer:OnContentsChanged(skipUpdateAnchors)
 		end
 	end
 
-	local tDrop = self.Drop
-	if tDrop then
-		tDrop:ClearAllPoints()
-		if self == bagMain then
-			tDrop:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 2, 2)
-		elseif self == bagBank then
-			tDrop:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 2, 2)
-		elseif self == bagReagent then
-			tDrop:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -4, 8)
-		end
-	end
-
 	self:UpdateDimensions(self)
 
 	if self:ShowOrHide() then
@@ -469,13 +464,12 @@ end
 function mbContainer:OnCreate(name)
 	if not name then return end
 	self.name = name
-
 	--[[  
 	 This works better than inserting the the frame in the UISpecialFrames table.
 	 if you go to the bank and have both the bank and your bank open, then press 
 	 esc the bank won't come back up until you've toggled again. 
 	 ]]
-	self:EnableKeyboard(1);
+	self:EnableKeyboard(1)
 	self:SetScript("OnKeyDown",function(self,key)
 		if key == 'ESCAPE' then
 			self:SetPropagateKeyboardInput(false)
@@ -483,17 +477,18 @@ function mbContainer:OnCreate(name)
 		else
 			self:SetPropagateKeyboardInput(true)
 		end
-	end);
+	end)
 
 	self.Columns = 12
 	self:EnableMouse(true)
 	self:SetFrameStrata("MEDIUM")
-	self.Caption = mnkLibs.createFontString(self, mnkLibs.Fonts.ap, 16, nil, nil, true)
+	self.Caption = mnkLibs.createFontString(self, mnkLibs.Fonts.ap, 14, nil, nil, true)
 	self.Caption:SetText(self.bagCaption)
 	self.Caption:SetPoint("TOPLEFT", 2, 0)
+	self.Caption:SetTextColor(.6,.6,.6, 1)
 	self:SetScript('OnShow', function (self) self:OnShow() end)
 	mnkLibs.createTexture(self, 'BACKGROUND', {.1, .1, .1, 1})
-	mnkLibs.createBorder(self, 1,-1,-1,1, {1/6,1/6,1/6,1})
+	mnkLibs.createBorder(self, 1,-1,-1,1, {.5,.5,.5, 1})
 
 	local isMain = (name == "_bag") 
 	local isBank = (name == "_bank")
@@ -508,12 +503,17 @@ function mbContainer:OnCreate(name)
 			self:StartMoving() 
 		end)
 		self:SetScript("OnMouseUp",  self.StopMovingOrSizing)
-
+		self.bgt:SetColorTexture(.2,.2,.2,1)
+		
 		self.CloseButton = CreateFrame("Button", nil, self, "UIPanelCloseButton")
-		self.CloseButton:SetDisabledTexture("Interface\\AddOns\\mnkBags\\media\\Close")
-		self.CloseButton:SetNormalTexture("Interface\\AddOns\\mnkBags\\media\\Close")
-		self.CloseButton:SetPushedTexture("Interface\\AddOns\\mnkBags\\media\\Close")
-		self.CloseButton:SetHighlightTexture("Interface\\AddOns\\mnkBags\\media\\Close")		
+		self.CloseButton.Caption = mnkLibs.createFontString(self.CloseButton, mnkLibs.Fonts.ap, 18, nil, nil, true)
+		self.CloseButton.Caption:SetText("x")
+		self.CloseButton.Caption:SetPoint("CENTER")
+		self.CloseButton.Caption:SetTextColor(.5,.5,.5, 1)
+		self.CloseButton:SetDisabledTexture("")
+		self.CloseButton:SetNormalTexture("")
+		self.CloseButton:SetPushedTexture("")
+		self.CloseButton:SetHighlightTexture("")	
 		self.CloseButton:ClearAllPoints()
 		self.CloseButton:SetPoint("TOPRIGHT", -1, 0)
 		self.CloseButton:SetSize(12,12)
@@ -560,17 +560,30 @@ function mbContainer:OnCreate(name)
 	end
 
 	if self.name == '_bagNew' then
-		self.resetBtn = createIconButton("ResetNew", self, Textures.ResetNew, "TOPRIGHT", "Reset New")
-		self.resetBtn:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, 0)
+		self.resetBtn = CreateFrame("Button", nil, self, "UIPanelCloseButton")
+		self.resetBtn:SetSize(12,12)
+		self.resetBtn:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -2)
 		self.resetBtn:SetScript("OnClick", function() self:ResetNewItems() end)
-
+		mnkLibs.setTooltip(self.resetBtn, 'Mark new items as known.')
+		self.resetBtn.Caption = mnkLibs.createFontString(self.resetBtn, mnkLibs.Fonts.ap, 16, nil, nil, true)
+		self.resetBtn.Caption:SetText("R")
+		self.resetBtn.Caption:SetPoint("CENTER")
+		self.resetBtn.Caption:SetTextColor(.5,.5,.5, 1)
+		self.resetBtn:SetDisabledTexture("")
+		self.resetBtn:SetNormalTexture("")
+		self.resetBtn:SetPushedTexture("")
+		self.resetBtn:SetHighlightTexture("")
 		self.buttonSellItems = CreateFrame("Button", nil, self, "UIPanelCloseButton")
-		self.buttonSellItems:SetDisabledTexture("Interface\\AddOns\\mnkBags\\media\\Sell")
-		self.buttonSellItems:SetNormalTexture("Interface\\AddOns\\mnkBags\\media\\Sell")
-		self.buttonSellItems:SetPushedTexture("Interface\\AddOns\\mnkBags\\media\\Sell")
-		self.buttonSellItems:SetHighlightTexture("Interface\\AddOns\\mnkBags\\media\\Sell")		
+		self.buttonSellItems.Caption = mnkLibs.createFontString(self.buttonSellItems, mnkLibs.Fonts.ap, 14, nil, nil, true)
+		self.buttonSellItems.Caption:SetText("$")
+		self.buttonSellItems.Caption:SetPoint("CENTER")
+		self.buttonSellItems.Caption:SetTextColor(.5,.5,.5, 1)
+		self.buttonSellItems:SetDisabledTexture("")
+		self.buttonSellItems:SetNormalTexture("")
+		self.buttonSellItems:SetPushedTexture("")
+		self.buttonSellItems:SetHighlightTexture("")	
 		self.buttonSellItems:ClearAllPoints()
-		self.buttonSellItems:SetPoint("TOPRIGHT", self.resetBtn, "TOPLEFT", -2, -1)
+		self.buttonSellItems:SetPoint("TOPRIGHT", self.resetBtn, "TOPLEFT", -2, 0)
 		self.buttonSellItems:SetSize(12,12)
 		mnkLibs.setTooltip(self.buttonSellItems, 'Sell all items.')
 		mnkLibs.setTooltip(self, 'Press alt + left click to mark an item as known.')
@@ -595,12 +608,21 @@ function mbContainer:OnCreate(name)
 		self.Drop = CreateFrame("ItemButton", self.name.."Drop", self, BackdropTemplateMixin and "BackdropTemplate")
 		self.Drop.NormalTexture = _G[self.Drop:GetName().."NormalTexture"]
 		self.Drop.NormalTexture:SetTexture(nil)
-		self.Drop:SetSize(itemSlotSize,itemSlotSize)
+		self.Drop:SetSize(itemSlotSize+1,itemSlotSize+1)
+
+		if isMain then
+			self.Drop:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 3, 2)
+		elseif isBank then
+			self.Drop:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 3, 2)
+		elseif isReagent then
+			self.Drop:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -4, 3)
+		end
+
 		self.Empty = mnkLibs.createFontString(self.Drop, mnkLibs.Fonts.ap, 16, nil, nil, true)
-		self.Empty:SetPoint("BOTTOMRIGHT", self.Drop, "BOTTOMRIGHT", -3, 3)
+		self.Empty:SetAllPoints()
 		self.Empty:SetJustifyH("CENTER")
 		mnkLibs.setBackdrop(self.Drop, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
-		self.Drop:SetBackdropColor(.2,.2,.2,1)
+		self.Drop:SetBackdropColor(.3,.3,.3,1)
 		self.Drop:Show()
 		self.Empty:Show()
 
@@ -617,13 +639,19 @@ function mbContainer:OnCreate(name)
 	
 	if self.name == '_bagJunk' then
 		self.buttonDeleteJunk = CreateFrame("Button", nil, self, "UIPanelCloseButton")
-		self.buttonDeleteJunk:SetDisabledTexture("Interface\\AddOns\\mnkBags\\media\\JunkDelete")
-		self.buttonDeleteJunk:SetNormalTexture("Interface\\AddOns\\mnkBags\\media\\JunkDelete")
-		self.buttonDeleteJunk:SetPushedTexture("Interface\\AddOns\\mnkBags\\media\\JunkDelete")
-		self.buttonDeleteJunk:SetHighlightTexture("Interface\\AddOns\\mnkBags\\media\\JunkDelete")		
+		self.buttonDeleteJunk:SetDisabledTexture("")
+		self.buttonDeleteJunk:SetNormalTexture("")
+		self.buttonDeleteJunk:SetPushedTexture("")
+		self.buttonDeleteJunk:SetHighlightTexture("")		
 		self.buttonDeleteJunk:ClearAllPoints()
-		self.buttonDeleteJunk:SetPoint("TOPRIGHT", 2, 0)
+		self.buttonDeleteJunk:SetPoint("TOPRIGHT", 0, -2)
 		self.buttonDeleteJunk:SetSize(12,12)
+
+		self.buttonDeleteJunk.Caption = mnkLibs.createFontString(self.buttonDeleteJunk, mnkLibs.Fonts.ap, 16, nil, nil, true)
+		self.buttonDeleteJunk.Caption:SetText("D")
+		self.buttonDeleteJunk.Caption:SetPoint("CENTER")
+		self.buttonDeleteJunk.Caption:SetTextColor(.5,.5,.5, 1)
+
 		mnkLibs.setTooltip(self.buttonDeleteJunk, 'Destroy all junk with a sell price of less than 1g. ALT + Click to destory all junk.')
 		self.buttonDeleteJunk:SetScript("OnClick", 
 			function(self, button)

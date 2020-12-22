@@ -72,17 +72,7 @@ function BagButton:Create(bagID)
     button.Cooldown =   _G[name.."Cooldown"]
     button.Quest =      _G[name.."IconQuestTexture"]
     button.Border =     _G[name.."NormalTexture"]
-    
-    button.bg = CreateFrame("Frame", nil, button, BackdropTemplateMixin and "BackdropTemplate")
-    button.bg:SetAllPoints(button)
-    button.bg:SetBackdrop({
-        bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
-        edgeFile = "Interface\\Buttons\\WHITE8x8",
-        tile = false, tileSize = 16, edgeSize = 1,
-    })
-    button.bg:SetBackdropColor(1, 1, 1, 0)
-    button.bg:SetBackdropBorderColor(0, 0, 0, 1)
-    
+    mnkLibs.createBorder(button, 1,-1,-1,1, {.5,.5,.5, 1})
     button.Icon:SetTexCoord(.08, .92, .08, .92)
     button.Icon:SetVertexColor(0.8, 0.8, 0.8)
     button.Border:SetAlpha(0)
