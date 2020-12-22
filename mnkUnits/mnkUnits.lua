@@ -4,7 +4,6 @@ local _, playerClass = UnitClass('player')
 local classColor = {}
 local _
 local firstTime = true
-local addonScale = 1
 
 classColor.r, classColor.g, classColor.b, _ = GetClassColor(playerClass)
 --Tags are in mnkLibs\mnkuTags
@@ -183,7 +182,6 @@ local function CreateUnit(self)
     if not self.SetBackdrop then --**
         Mixin(self, BackdropTemplateMixin)
     end
-    self:SetScale(addonScale)
     self:RegisterForClicks('AnyUp')
     self:SetScript('OnEnter', UnitFrame_OnEnter)
     self:SetScript('OnLeave', UnitFrame_OnLeave)
@@ -435,8 +433,6 @@ function mnkUnits:DoOnEvent(event, arg1)
 		SetPlayerStatusFlag(oUF_mnkUnitsPlayer, false)
 	elseif event == 'PLAYER_ENTERING_WORLD' then
         if firstTime then
-            addonScale = mnkLibs.GetUIScale()
-
             SetCVar("NameplatePersonalShowAlways",0)
             AlertFrame:UnregisterAllEvents()
             AlertFrame.Show = mnkLibs.donothing()
