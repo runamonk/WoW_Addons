@@ -235,16 +235,16 @@ function cbmb:UpdateAnchors()
 
 			if parentbag == bagMain then
 				if parentbag.mywifeisahorder then
-					bag:SetPoint("BOTTOMRIGHT", parentbag.mywifeisahorder, "BOTTOMLEFT", -16, 0)
+					bag:SetPoint("BOTTOMRIGHT", parentbag.mywifeisahorder, "BOTTOMLEFT", -3, 0)
 				else
-					bag:SetPoint("BOTTOMRIGHT", parentbag, "BOTTOMLEFT", -16, 0)	
+					bag:SetPoint("BOTTOMRIGHT", parentbag, "BOTTOMLEFT", -3, 0)	
 				end
 				parentbag.mywifeisahorder = bag
 			else
 				if parentbag.mywifeisahorder then
-					bag:SetPoint("BOTTOMLEFT", parentbag.mywifeisahorder, "BOTTOMRIGHT", 16, 0)
+					bag:SetPoint("BOTTOMLEFT", parentbag.mywifeisahorder, "BOTTOMRIGHT", 3, 0)
 				else
-					bag:SetPoint("BOTTOMLEFT", parentbag, "BOTTOMRIGHT", 16, 0)	
+					bag:SetPoint("BOTTOMLEFT", parentbag, "BOTTOMRIGHT", 3, 0)	
 				end
 				parentbag.mywifeisahorder = bag				
 			end
@@ -252,7 +252,7 @@ function cbmb:UpdateAnchors()
 		end
 		
 		if lastbag:ShowOrHide() or (lastbag == bagBank or lastbag == bagMain) then
-			bag:SetPoint("BOTTOMLEFT", lastbag, "TOPLEFT", 0, 12)
+			bag:SetPoint("BOTTOMLEFT", lastbag, "TOPLEFT", 0, 3)
 		else
 			bag:SetPoint("BOTTOMLEFT", lastbag, "BOTTOMLEFT", 0, 0)
 		end
@@ -415,7 +415,7 @@ function mbContainer:OnContentsChanged(skipUpdateAnchors)
 	  	
 	  	-- first row
 	  	if not lb and not rb then
-	  		button:SetPoint("TOPLEFT", self, "TOPLEFT", 0, CaptionHeight * -1)
+	  		button:SetPoint("TOPLEFT", self, "TOPLEFT", 4, CaptionHeight * -1)
 	  		rb = button
 	  		col = col + 1
 	  	else
@@ -443,11 +443,11 @@ function mbContainer:OnContentsChanged(skipUpdateAnchors)
 	if tDrop then
 		tDrop:ClearAllPoints()
 		if self == bagMain then
-			tDrop:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 0, 2)
+			tDrop:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 2, 2)
 		elseif self == bagBank then
-			tDrop:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 0, 2)
+			tDrop:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 2, 2)
 		elseif self == bagReagent then
-			tDrop:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 8)
+			tDrop:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -4, 8)
 		end
 	end
 
@@ -469,7 +469,6 @@ end
 function mbContainer:OnCreate(name)
 	if not name then return end
 	self.name = name
-
     Mixin(self, BackdropTemplateMixin)
 	--[[  
 	 This works better than inserting the the frame in the UISpecialFrames table.
@@ -493,18 +492,17 @@ function mbContainer:OnCreate(name)
 	self.Caption = mnkLibs.createFontString(self, mnkLibs.Fonts.ap, 16, nil, nil, true)
 	--self.Caption:SetText(mbLocals.bagCaptions[self.name])
 	self.Caption:SetText(self.bagCaption)
-	self.Caption:SetPoint("TOPLEFT", 0, 2)
+	self.Caption:SetPoint("TOPLEFT", 2, 0)
 	self:SetScript('OnShow', function (self) self:OnShow() end)
-	mnkLibs.setBackdrop(self, mnkLibs.Textures.background, nil, 4, 4, 4, 4)
-	mnkLibs.createBorder(self, 4,-4,-5,5, {1/3,1/3,1/3,1})
-	self:SetBackdropColor(.1,.1,.1, 1)
+	mnkLibs.createTexture(self, 'BACKGROUND', {.1, .1, .1, 1})
+	mnkLibs.createBorder(self, 1,-1,-1,1, {1/3,1/3,1/3,1})
 
 	local isMain = (name == "_bag") 
 	local isBank = (name == "_bank")
 	local isReagent = (name == "_bankReagents")
 
 	if (isMain or isBank) then 
-		self:SetBackdropColor(1/8, 1/8, 1/8, 1)
+		--self:SetBackdropColor(1/8, 1/8, 1/8, 1)
 		self:SetMovable(true)
 		self:SetUserPlaced(true)
 		self:RegisterForClicks("LeftButton", "RightButton")
@@ -520,7 +518,7 @@ function mbContainer:OnCreate(name)
 		self.CloseButton:SetPushedTexture("Interface\\AddOns\\mnkBags\\media\\Close")
 		self.CloseButton:SetHighlightTexture("Interface\\AddOns\\mnkBags\\media\\Close")		
 		self.CloseButton:ClearAllPoints()
-		self.CloseButton:SetPoint("TOPRIGHT", 2, 0)
+		self.CloseButton:SetPoint("TOPRIGHT", -1, 0)
 		self.CloseButton:SetSize(12,12)
 		mnkLibs.setTooltip(self.CloseButton, 'Close')
 		self.CloseButton:SetScript("OnClick", function(self) if cbmb:AtBank() then CloseBankFrame() else CloseAllBags() end end)
@@ -530,7 +528,7 @@ function mbContainer:OnCreate(name)
 			self.SearchButton = CreateFrame("Button", nil, self)
 			self.SearchButton:SetWidth(75) 
 			self.SearchButton:SetHeight(18)
-			self.SearchButton:SetPoint("TOPLEFT", self, "TOPLEFT", 30, 2)
+			self.SearchButton:SetPoint("TOPLEFT", self, "TOPLEFT", 30, -1)
 			self.pluginSearch = self:SpawnPlugin("SearchBar", self.SearchButton)
 			self.pluginSearch.isGlobal = true
 			self.pluginSearch.highlightFunction = function(button, match) button:SetAlpha(match and 1 or 0.1) end
@@ -550,7 +548,7 @@ function mbContainer:OnCreate(name)
 		self.pluginBagBar:Hide()
 
 		self.bagToggle = createIconButton("Bags", self, Textures.BagToggle, "BOTTOMRIGHT", "Toggle Bags")
-		self.bagToggle:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 4, -4)
+		self.bagToggle:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 0)
 		self.bagToggle:SetScript("OnClick", function()
 			if(self.pluginBagBar:IsShown()) then 
 				self.pluginBagBar:Hide()
@@ -588,11 +586,11 @@ function mbContainer:OnCreate(name)
 	
 	if isReagent then
 		self.reagentBtn = createIconButton("SendReagents", self, Textures.Deposit, "TOPRIGHT", REAGENTBANK_DEPOSIT)
-		self.reagentBtn:SetPoint("TOPRIGHT", self, "TOPRIGHT", 4, 0)
+		self.reagentBtn:SetPoint("TOPRIGHT", self, "TOPRIGHT", 2, -2)
 		self.reagentBtn:SetScript("OnClick", function()	 mbContainer:DepositReagentBank() end)
 
 		self.restackBtn = createIconButton("Restack", self, Textures.Restack, "BOTTOMRIGHT", "Restack")
-		self.restackBtn:SetPoint("TOPRIGHT", self.reagentBtn, "TOPLEFT", -3, 1)
+		self.restackBtn:SetPoint("TOPRIGHT", self.reagentBtn, "TOPLEFT", 0, 1)
 		self.restackBtn:SetScript("OnClick", function() mbContainer:RestackItems(self) end)
 	end
 
@@ -759,7 +757,7 @@ function mbContainer:UpdateDimensions(self)
 		--print(self:GetName(), ' ', self.columns, ' ', buttonCount, ' ', rows)
 	end
 
-	self:SetWidth((itemSlotSize+1) * self.Columns) 
+	self:SetWidth((itemSlotSize+1) * self.Columns + 8) 
 	self:SetHeight(((itemSlotSize+2) * rows) + CaptionHeight)
 end
 
