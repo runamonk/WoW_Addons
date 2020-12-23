@@ -239,16 +239,16 @@ function cbmb:UpdateAnchors()
 
 			if parentbag == bagMain then
 				if parentbag.mywifeisahorder then
-					bag:SetPoint("BOTTOMRIGHT", parentbag.mywifeisahorder, "BOTTOMLEFT", -1, 0)
+					bag:SetPoint("BOTTOMRIGHT", parentbag.mywifeisahorder, "BOTTOMLEFT", -3, 0)
 				else
 					bag:SetPoint("BOTTOMRIGHT", parentbag, "BOTTOMLEFT", -1, 0)	
 				end
 				parentbag.mywifeisahorder = bag
 			else
 				if parentbag.mywifeisahorder then
-					bag:SetPoint("BOTTOMLEFT", parentbag.mywifeisahorder, "BOTTOMRIGHT", 1, 0)
+					bag:SetPoint("BOTTOMLEFT", parentbag.mywifeisahorder, "BOTTOMRIGHT", 3, 0)
 				else
-					bag:SetPoint("BOTTOMLEFT", parentbag, "BOTTOMRIGHT", 1, 0)	
+					bag:SetPoint("BOTTOMLEFT", parentbag, "BOTTOMRIGHT", 3, 0)	
 				end
 				parentbag.mywifeisahorder = bag				
 			end
@@ -256,7 +256,7 @@ function cbmb:UpdateAnchors()
 		end
 		
 		if lastbag:ShowOrHide() or (lastbag == bagBank or lastbag == bagMain) then
-			bag:SetPoint("BOTTOMLEFT", lastbag, "TOPLEFT", 0, 1)
+			bag:SetPoint("BOTTOMLEFT", lastbag, "TOPLEFT", 0, 3)
 		else
 			bag:SetPoint("BOTTOMLEFT", lastbag, "BOTTOMLEFT", 0, 0)
 		end
@@ -308,7 +308,7 @@ end
 function mbButton:OnCreate(tpl, parent, button)
 	button:SetSize(itemSlotSize, itemSlotSize)
 	if not button.border then
-		mnkLibs.createBorder(button, 1,-1,-1,1, {.2,.2,.2, 1})
+		mnkLibs.createBorder(button, 1,-1,-1,1, {.3,.3,.3,1})
 	end
 end
 
@@ -541,7 +541,7 @@ function mbContainer:OnCreate(name)
 		
 		self.pluginBagBar.isGlobal = true
 		self.pluginBagBar.AllowFilter = false
-		self.pluginBagBar:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -16, 16)
+		self.pluginBagBar:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -18, 18)
 		self.pluginBagBar:Hide()
 
 		self.bagToggle = createIconButton("Bags", self, Textures.BagToggle, "BOTTOMRIGHT", "Toggle Bags")

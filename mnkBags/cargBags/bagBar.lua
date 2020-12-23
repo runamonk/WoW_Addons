@@ -222,7 +222,7 @@ cargBags:RegisterPlugin("BagBar", function(self, bags, buttonSize)
 	self.implementation:RegisterEvent("BAG_UPDATE", bar, updater)
 	self.implementation:RegisterEvent("PLAYERBANKBAGSLOTS_CHANGED", bar, updater)
 	self.implementation:RegisterEvent("ITEM_LOCK_CHANGED", bar, onLock)
-	bar:SetSize(mnkLibs.arrangeAsGrid(bar, bar.buttons, #bags, 2, 0, 0)) 
+	bar:SetSize(mnkLibs.arrangeAsGrid(bar, bar.buttons, #bags, 3, 0, 0)) 
 	return bar
 end)
 
