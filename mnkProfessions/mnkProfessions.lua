@@ -112,11 +112,3 @@ function mnkProfessions:UpdateText()
         return 'n/a'
     end
 end
-
-
-
-
-
-
-
-
