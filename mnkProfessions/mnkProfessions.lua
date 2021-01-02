@@ -14,20 +14,6 @@ function mnkProfessions:CHAT_MSG_SKILL(event, arg)
     CombatText_AddMessage(arg, CombatText_StandardScroll, 255, 255, 255, nil, false)
 end
 
-function mnkProfessions:GetProfText(p)
-    if p ~= nil then
-        local _, icon, skillLevel, maxSkillLevel, _, _, _, _, _, _ = GetProfessionInfo(p)
-        icon = icon..':16:16:0:0:64:64:4:60:4:60'
-        if skillLevel == maxSkillLevel then
-            return string.format('|T%s|t', icon) ..' '..mnkLibs.Color(COLOR_WHITE)..maxSkillLevel
-        else 
-            return string.format('|T%s|t', icon) ..' '..mnkLibs.Color(COLOR_WHITE)..skillLevel..'/'..maxSkillLevel
-        end
-    else
-        return ''
-    end
-end
-
 function mnkProfessions:OnClick(self)
     ToggleSpellBook(BOOKTYPE_PROFESSION)
 end
@@ -39,40 +25,24 @@ function mnkProfessions:OnEnter(parent)
     tooltip:SetHeaderFont(mnkLibs.DefaultTooltipFont)
     tooltip:Clear()
     
+    local prof1, prof2, prof3, prof4, prof5 = GetProfessions()
+
+    local function AddProfLine(p)
+        if p then
+            local name, icon, skillLevel, maxSkillLevel, _, _, _, _, _, _ = GetProfessionInfo(p)
+            icon = icon..':16:16:0:0:64:64:4:60:4:60'
+            tooltip:AddLine(string.format('|T%s|t %s', icon, name), SPACER, skillLevel..'/'..maxSkillLevel)
+        end
+    end
+
     tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Profession', SPACER, mnkLibs.Color(COLOR_GOLD)..'Level')
 
-    local prof1, prof2, archaeology, fishing, cooking = GetProfessions()
-
-    if prof1 ~= nil then
-        local name, icon, skillLevel, maxSkillLevel, _, _, _, _, _, _ = GetProfessionInfo(prof1)
-        icon = icon..':16:16:0:0:64:64:4:60:4:60'
-        
-        tooltip:AddLine(string.format('|T%s|t %s', icon, name), SPACER, skillLevel..'/'..maxSkillLevel)
-    end
-
-    if prof2 ~= nil then
-        local name, icon, skillLevel, maxSkillLevel, _, _, _, _, _, _ = GetProfessionInfo(prof2)
-        icon = icon..':16:16:0:0:64:64:4:60:4:60'
-        tooltip:AddLine(string.format('|T%s|t %s', icon, name), SPACER, skillLevel..'/'..maxSkillLevel)
-    end
-
-    if archaeology ~= nil then
-        local name, icon, skillLevel, maxSkillLevel, _, _, _, _, _, _ = GetProfessionInfo(archaeology)
-        icon = icon..':16:16:0:0:64:64:4:60:4:60'
-        tooltip:AddLine(string.format('|T%s|t %s', icon, name), SPACER, skillLevel..'/'..maxSkillLevel)
-    end
-
-    if fishing ~= nil then
-        local name, icon, skillLevel, maxSkillLevel, _, _, _, _, _, _ = GetProfessionInfo(fishing)
-        icon = icon..':16:16:0:0:64:64:4:60:4:60'
-        tooltip:AddLine(string.format('|T%s|t %s', icon, name), SPACER, skillLevel..'/'..maxSkillLevel)
-    end 
-    
-    if cooking ~= nil then
-        local name, icon, skillLevel, maxSkillLevel, _, _, _, _, _, _ = GetProfessionInfo(cooking)
-        icon = icon..':16:16:0:0:64:64:4:60:4:60'
-        tooltip:AddLine(string.format('|T%s|t %s', icon, name), SPACER, skillLevel..'/'..maxSkillLevel)
-    end 
+    local prof1, prof2, prof3, prof4, prof5 = GetProfessions()
+    AddProfLine(prof1)
+    AddProfLine(prof2)
+    AddProfLine(prof3)
+    AddProfLine(prof4)
+    AddProfLine(prof5)
 
     tooltip:SetAutoHideDelay(.1, parent)
     tooltip:SmartAnchorTo(parent)
@@ -103,21 +73,35 @@ function mnkProfessions:UpdateText()
     local s2 = ""
     local prof1, prof2, prof3, prof4, prof5 = GetProfessions()
     
+    local function GetProfText(p)
+        if p ~= nil then
+            local _, icon, skillLevel, maxSkillLevel, _, _, _, _, _, _ = GetProfessionInfo(p)
+            icon = icon..':16:16:0:0:64:64:4:60:4:60'
+            if skillLevel == maxSkillLevel then
+                return string.format('|T%s|t', icon) ..' '..mnkLibs.Color(COLOR_WHITE)..maxSkillLevel
+            else 
+                return string.format('|T%s|t', icon) ..' '..mnkLibs.Color(COLOR_WHITE)..skillLevel..'/'..maxSkillLevel
+            end
+        else
+            return ''
+        end
+    end
+
     local function AddProfText(p)
         if not p then return end
 
         if s1 == "" and p then
-            s1 = mnkProfessions:GetProfText(p)
+            s1 = GetProfText(p)
         elseif s1 ~= "" and s2 == "" and p then
-            s2 = mnkProfessions:GetProfText(p)
+            s2 = GetProfText(p)
         end
     end
 
-    AddProfText(prof5)
-    AddProfText(prof4)
-    AddProfText(prof3)
-    AddProfText(prof2)
     AddProfText(prof1)
+    AddProfText(prof2)
+    AddProfText(prof3)
+    AddProfText(prof4)
+    AddProfText(prof5)
    
    --print(s1, s2)
     if s1 ~= "" and s2 ~= "" then
