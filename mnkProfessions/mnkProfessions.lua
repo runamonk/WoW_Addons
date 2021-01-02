@@ -41,7 +41,7 @@ function mnkProfessions:OnEnter(parent)
     
     tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Profession', SPACER, mnkLibs.Color(COLOR_GOLD)..'Level')
 
-    local prof1, prof2, archaeology, fishing, cooking, firstAid = GetProfessions()
+    local prof1, prof2, archaeology, fishing, cooking = GetProfessions()
 
     if prof1 ~= nil then
         local name, icon, skillLevel, maxSkillLevel, _, _, _, _, _, _ = GetProfessionInfo(prof1)
@@ -73,12 +73,6 @@ function mnkProfessions:OnEnter(parent)
         icon = icon..':16:16:0:0:64:64:4:60:4:60'
         tooltip:AddLine(string.format('|T%s|t %s', icon, name), SPACER, skillLevel..'/'..maxSkillLevel)
     end 
-
-    -- if firstAid ~= nil then
-    --     local name, icon, skillLevel, maxSkillLevel, _, _, _, _, _, _ = GetProfessionInfo(firstAid)
-    --     icon = icon..':16:16:0:0:64:64:4:60:4:60'
-    --     tooltip:AddLine(string.format('|T%s|t %s', icon, name), SPACER, skillLevel..'/'..maxSkillLevel)
-    -- end 
 
     tooltip:SetAutoHideDelay(.1, parent)
     tooltip:SmartAnchorTo(parent)
