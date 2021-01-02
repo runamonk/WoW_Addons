@@ -74,11 +74,11 @@ function mnkProfessions:OnEnter(parent)
         tooltip:AddLine(string.format('|T%s|t %s', icon, name), SPACER, skillLevel..'/'..maxSkillLevel)
     end 
 
-    if firstAid ~= nil then
-        local name, icon, skillLevel, maxSkillLevel, _, _, _, _, _, _ = GetProfessionInfo(firstAid)
-        icon = icon..':16:16:0:0:64:64:4:60:4:60'
-        tooltip:AddLine(string.format('|T%s|t %s', icon, name), SPACER, skillLevel..'/'..maxSkillLevel)
-    end 
+    -- if firstAid ~= nil then
+    --     local name, icon, skillLevel, maxSkillLevel, _, _, _, _, _, _ = GetProfessionInfo(firstAid)
+    --     icon = icon..':16:16:0:0:64:64:4:60:4:60'
+    --     tooltip:AddLine(string.format('|T%s|t %s', icon, name), SPACER, skillLevel..'/'..maxSkillLevel)
+    -- end 
 
     tooltip:SetAutoHideDelay(.1, parent)
     tooltip:SmartAnchorTo(parent)
@@ -101,65 +101,34 @@ function mnkProfessions:PLAYER_LOGIN()
 end
 
 function mnkProfessions:SKILL_LINES_CHANGED()
-    self:UpdateText()
+    self.LDB.text = self:UpdateText()
 end
 
 function mnkProfessions:UpdateText()
-    local prof1, prof2, prof3, prof4, prof5, prof6 = GetProfessions()
+    local s1 = ""
+    local s2 = ""
+    local prof1, prof2, prof3, prof4, prof5 = GetProfessions()
     
-    local s1 = ''
-    local s2 = ''
+    local function AddProfText(p)
+        if not p then return end
 
-    if prof1 ~= nil then
-        s1 = mnkProfessions:GetProfText(prof1)
-    end
-
-    if prof2 ~= nil then
-        if s1 == '' then
-            s1 = mnkProfessions:GetProfText(prof2)
-        else
-            s2 = mnkProfessions:GetProfText(prof2)
+        if s1 == "" and p then
+            s1 = mnkProfessions:GetProfText(p)
+        elseif s1 ~= "" and s2 == "" and p then
+            s2 = mnkProfessions:GetProfText(p)
         end
     end
 
-    if (s2 == '') and (prof3 ~= '' or prof4 ~= '' or prof5 ~= '' or prof6 ~= '') then
-        if prof3 ~= nil then
-            if s1 == '' then
-                s1 = mnkProfessions:GetProfText(prof3)
-            elseif s2 == '' then
-                s2 = mnkProfessions:GetProfText(prof3)
-            end
-        end
-        
-        if prof4 ~= nil then
-            if s1 == '' then
-                s1 = mnkProfessions:GetProfText(prof4)
-            elseif s2 == '' then
-                s2 = mnkProfessions:GetProfText(prof4)
-            end
-        end
-
-        if prof5 ~= nil then
-            if s1 == '' then
-                s1 = mnkProfessions:GetProfText(prof5)
-            elseif s2 == '' then
-                s2 = mnkProfessions:GetProfText(prof5)
-            end
-        end
-        
-        if prof3 ~= nil then
-            if s1 == '' then
-                s1 = mnkProfessions:GetProfText(prof6)
-            elseif s2 == '' then
-                s2 = mnkProfessions:GetProfText(prof6)
-            end
-        end
-    end
-    
-
-    if s2 ~= '' then
+    AddProfText(prof5)
+    AddProfText(prof4)
+    AddProfText(prof3)
+    AddProfText(prof2)
+    AddProfText(prof1)
+   
+   --print(s1, s2)
+    if s1 ~= "" and s2 ~= "" then
         return s1..' '..s2
-    elseif s1 ~= '' then
+    elseif s1 ~= "" then
         return s1
     else
         return 'n/a'
