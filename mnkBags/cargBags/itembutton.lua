@@ -91,6 +91,7 @@ function ItemButton:Create(tpl, parent)
 	button.Count = _G[name.."Count"]
 	button.Cooldown = _G[name.."Cooldown"]
 	button.Quest = _G[name.."IconQuestTexture"]
+
     button.Count = mnkLibs.createFontString(button, mnkLibs.Fonts.ap, 16, nil, nil, true)
     button.Count:SetPoint('BOTTOMRIGHT', 0, 0)
 	button.ItemLevel = mnkLibs.createFontString(button, mnkLibs.Fonts.ap, 18, nil, nil, true)
@@ -185,14 +186,22 @@ function ItemButton:Update(item)
 end
 
 function ItemButton:UpdateCooldown(item)
-	if(item.cdEnable == 1 and item.cdStart and item.cdStart > 0) then
-		self.Cooldown:SetCooldown(item.cdStart, item.cdFinish)
-		self.Cooldown:Show()
-	else
-		self.Cooldown:Hide()
-	end
+	--print(item.name, item.cdEnable, item.cdStart, item.cdFinish)
+   	if (item.cdEnable == 1 and item.cdStart and item.cdStart > 0) then
+   		self.Cooldown:SetCooldown(item.cdStart, item.cdFinish)
+   		--self.Cooldown:GetRegions():SetTextColor(1, 0, 0);
+		self.Cooldown:GetRegions():SetFont(mnkLibs.Fonts.ap, 16, "")
+		--self.Cooldown:GetRegions():Show()
+   		self.Cooldown:Show()
+   	else
+   		self.Cooldown:Hide()
+    end
 
-	if(self.OnUpdateCooldown) then self:OnUpdateCooldown(item) end
+	if (self.OnUpdateCooldown) then self:OnUpdateCooldown(item) end
+end
+
+function ItemButton:OnUpdateCooldown(item)
+	--print('OnUpdateCooldown')
 end
 
 function ItemButton:UpdateLock(item)
