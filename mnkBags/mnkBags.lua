@@ -525,7 +525,7 @@ function mbContainer:OnCreate(name)
 			self.SearchButton = CreateFrame("Button", nil, self)
 			self.SearchButton:SetWidth(75) 
 			self.SearchButton:SetHeight(18)
-			self.SearchButton:SetPoint("TOPLEFT", self, "TOPLEFT", 30, -1)
+			self.SearchButton:SetPoint("TOPLEFT", self, "TOPLEFT", 30, 1)
 			self.pluginSearch = self:SpawnPlugin("SearchBar", self.SearchButton)
 			self.pluginSearch.isGlobal = true
 			self.pluginSearch.highlightFunction = function(button, match) button:SetAlpha(match and 1 or 0.1) end
