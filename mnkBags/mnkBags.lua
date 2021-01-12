@@ -9,6 +9,8 @@ local bagMain, bagBank, bagReagent, bagJunk, bagNew = nil
 local _, playerClass = UnitClass('player')
 local classColor = {}
 classColor.r, classColor.g, classColor.b, _ = GetClassColor(playerClass)
+local borderPix = PixelUtil.GetNearestPixelSize(1, UIParent:GetEffectiveScale(), 1);
+
 
 local mnkBags = CreateFrame('Frame', 'mnkBags', UIParent, BackdropTemplateMixin and "BackdropTemplate")
 
@@ -308,7 +310,7 @@ end
 function mbButton:OnCreate(tpl, parent, button)
 	button:SetSize(itemSlotSize, itemSlotSize)
 	if not button.border then
-		mnkLibs.createBorder(button, 1,-1,-1,1, {.3,.3,.3,1})
+		mnkLibs.createBorder(button, borderPix,-borderPix,-borderPix,borderPix, {.3,.3,.3,1})
 	end
 end
 
@@ -485,10 +487,10 @@ function mbContainer:OnCreate(name)
 	self.Caption = mnkLibs.createFontString(self, mnkLibs.Fonts.ap, 14, nil, nil, true)
 	self.Caption:SetText(self.bagCaption)
 	self.Caption:SetPoint("TOPLEFT", 2, 0)
-	self.Caption:SetTextColor(.6,.6,.6, 1)
+	self.Caption:SetTextColor(classColor.r/1, classColor.g/1, classColor.b/1, 1)
 	self:SetScript('OnShow', function (self) self:OnShow() end)
-	mnkLibs.createTexture(self, 'BACKGROUND', {.1, .1, .1, 1})
-	mnkLibs.createBorder(self, 1,-1,-1,1, {.5,.5,.5, 1})
+	mnkLibs.createTexture(self, 'BACKGROUND', {0, 0, 0, 1})
+	mnkLibs.createBorder(self, borderPix,-borderPix,-borderPix,borderPix, {classColor.r/5, classColor.g/5, classColor.b/5, .5})
 
 	local isMain = (name == "_bag") 
 	local isBank = (name == "_bank")
@@ -503,7 +505,7 @@ function mbContainer:OnCreate(name)
 			self:StartMoving() 
 		end)
 		self:SetScript("OnMouseUp",  self.StopMovingOrSizing)
-		self.bgt:SetColorTexture(.2,.2,.2,1)
+		self.bgt:SetColorTexture(classColor.r/5, classColor.g/5, classColor.b/5,1)
 		
 		self.CloseButton = CreateFrame("Button", nil, self, "UIPanelCloseButton")
 		self.CloseButton.Caption = mnkLibs.createFontString(self.CloseButton, mnkLibs.Fonts.ap, 18, nil, nil, true)
@@ -622,7 +624,7 @@ function mbContainer:OnCreate(name)
 		self.Empty:SetAllPoints()
 		self.Empty:SetJustifyH("CENTER")
 		mnkLibs.setBackdrop(self.Drop, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
-		self.Drop:SetBackdropColor(.3,.3,.3,1)
+		self.Drop:SetBackdropColor(classColor.r/7, classColor.g/7, classColor.b/7 ,1)
 		self.Drop:Show()
 		self.Empty:Show()
 
