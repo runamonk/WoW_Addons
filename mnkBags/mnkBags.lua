@@ -9,8 +9,7 @@ local bagMain, bagBank, bagReagent, bagJunk, bagNew = nil
 local _, playerClass = UnitClass('player')
 local classColor = {}
 classColor.r, classColor.g, classColor.b, _ = GetClassColor(playerClass)
-local borderPix = PixelUtil.GetNearestPixelSize(1, UIParent:GetEffectiveScale(), 1);
-
+local borderPix = mnkLibs.GetPixel()
 
 local mnkBags = CreateFrame('Frame', 'mnkBags', UIParent, BackdropTemplateMixin and "BackdropTemplate")
 

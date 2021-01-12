@@ -15,6 +15,7 @@ local classColor = {}
 local MAX_WATCHABLE_QUESTS = C_QuestLog.GetMaxNumQuestsCanAccept()
 
 classColor.r, classColor.g, classColor.b, _ = GetClassColor(playerClass)
+local borderPix = mnkLibs.GetPixel()
 
 local function MinimapZoom(self, direction)
     if (direction > 0) then 
@@ -102,7 +103,7 @@ function mnkMinimap:SetMinimapPositionAndSize()
     MinimapCluster:EnableMouse(false)
     MinimapCluster:SetMovable(true)
 
-    mnkLibs.createBorder(Minimap, 0, 0, 0, 0, {classColor.r, classColor.g, classColor.b, .5}) 
+    mnkLibs.createBorder(Minimap, -1,-1,-1,-1, {classColor.r, classColor.g, classColor.b, .5}) 
     MinimapBackdrop:Hide()
     MinimapBorder:Hide()
     MinimapZoomIn:Hide()

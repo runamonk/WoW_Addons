@@ -208,6 +208,10 @@ function mnkLibs.GetIndexInTable(table, val)
     return 0
 end
 
+function mnkLibs.GetPixel()
+    return PixelUtil.GetNearestPixelSize(1, UIParent:GetEffectiveScale(), 1);
+end
+
 function mnkLibs.GetUIScale()
     --local scale = string.match(GetCVar("gxWindowedResolution"), "%d+x(%d+)")  
     -- local uiScale = UIParent:GetScale()
