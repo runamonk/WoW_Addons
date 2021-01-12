@@ -103,7 +103,7 @@ function mnkMinimap:SetMinimapPositionAndSize()
     MinimapCluster:EnableMouse(false)
     MinimapCluster:SetMovable(true)
 
-    mnkLibs.createBorder(Minimap, -1,-1,-1,-1, {classColor.r, classColor.g, classColor.b, .5}) 
+    --mnkLibs.createBorder(Minimap, 0,0,0,0, {classColor.r, classColor.g, classColor.b, .5}) 
     MinimapBackdrop:Hide()
     MinimapBorder:Hide()
     MinimapZoomIn:Hide()
