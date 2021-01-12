@@ -100,7 +100,7 @@ function mnkLibs.createBorder(parent, top, bottom, left, right, color)
     parent.border:SetPoint('BOTTOM', bottom, bottom)
     parent.border:SetPoint('LEFT', left, left)
     parent.border:SetPoint('RIGHT', right, right)
-    parent.border:SetBackdrop({ edgeFile = [[Interface\Buttons\WHITE8x8]], edgeSize = .9 })
+    parent.border:SetBackdrop({ edgeFile = [[Interface\Buttons\WHITE8x8]], edgeSize = mnkLibs.GetPixel() })
     --parent.border:SetBackdropColor(unpack(color))
     parent.border:SetBackdropBorderColor(unpack(color)) 
 end
