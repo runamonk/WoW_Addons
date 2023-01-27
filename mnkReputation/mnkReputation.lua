@@ -26,7 +26,6 @@ local iHonored = 0
 local iNeutral = 0
 local iFriendly = 0
 local iRevered = 0
-local iNeutral = 0
 
 local function GetFactionColor(standingid)
     if standingid == 8 then
@@ -78,15 +77,6 @@ function mnkReputation:GetAllFactions()
     local x = GetNumFactions()
     local idx = 0
     local header = ''
-
-    iExalted = 0
-    iHated = 0
-    iHonored = 0
-    iNeutral = 0
-    iFriendly = 0
-    iRevered = 0
-    iNeutral = 0
-    
     
     for i = 1, x do
         local name, _, standingId, _, max, current, _, _, isHeader, isCollapsed, hasRep, _, _,  factionID = GetFactionInfo(i)
@@ -102,23 +92,7 @@ function mnkReputation:GetAllFactions()
         end
 
         if (isHeader == false) or (isHeader and hasRep) then
-            --print(i, ' ', name, ' ', isHeader)
 
-            if mnkReputation:InTable(mnkReputation_db.Watched, name) == true then
-                if standingId == 8 then
-                    iExalted = iExalted + 1
-                elseif standingId >= 1 and standingId <= 3 then
-                    iHated = iHated + 1
-                elseif standingId == 4 then
-                    iNeutral = iNeutral + 1
-                elseif standingId == 5 then
-                    iFriendly = iFriendly + 1
-                elseif standingId == 6 then
-                    iHonored = iHonored + 1
-                elseif standingId == 7 then
-                    iRevered = iRevered + 1
-                end
-            end
             local isParagon = C_Reputation.IsFactionParagon(factionID)
             if isParagon then
                 pCurrent, pMax, _, pReward = C_Reputation.GetFactionParagonInfo(factionID);
@@ -278,15 +252,6 @@ function mnkReputation:OnEnter(parent)
                 tooltip:SetCell(y, 1, tblAllFactions[i], 2 , StatusBarCellProvider)
             end
         end
-        
-        tooltip:AddLine(' ')
-        local y, x = tooltip:AddLine()
-        tooltip:SetCell(y, 1, mnkLibs.Color(GetFactionColor(8))..'Exalted: '..mnkLibs.Color(COLOR_WHITE)..iExalted..
-                              mnkLibs.Color(GetFactionColor(7))..' Revered: '..mnkLibs.Color(COLOR_WHITE)..iRevered..
-                              mnkLibs.Color(GetFactionColor(6))..' Honored: '..mnkLibs.Color(COLOR_WHITE)..iHonored..
-                              mnkLibs.Color(GetFactionColor(5))..' Friendly: '..mnkLibs.Color(COLOR_WHITE)..iFriendly.. 
-                              mnkLibs.Color(GetFactionColor(4))..' Neutral: '..mnkLibs.Color(COLOR_WHITE)..iNeutral
-                              ,'LEFT', 2, StatusBarCellProvider)
     end
 
     tooltip:SetAutoHideDelay(.1, parent)
@@ -339,12 +304,7 @@ end
 
 function mnkReputation:UpdateText()
     self:GetAllFactions()  
-    self.LDB.text = mnkLibs.Color(COLOR_PURPLE)..iExalted..mnkLibs.Color(COLOR_WHITE)..' / '..
-                    mnkLibs.Color(COLOR_BLUE)..iRevered..mnkLibs.Color(COLOR_WHITE)..' / '..
-                    mnkLibs.Color(COLOR_GREEN)..iHonored
-                            --  mnkLibs.Color(COLOR_DKGREEN)..iFriendly..mnkLibs.Color(COLOR_WHITE)..' / '..
-                            --  mnkLibs.Color(COLOR_YELLOW)..iNeutral..mnkLibs.Color(COLOR_WHITE)..' / '..
-                            --  mnkLibs.Color(COLOR_RED)..iHated
+    self.LDB.text = mnkLibs.Color(COLOR_GOLD)..#tblAllFactions
 end
 
 function StatusBarCell:getContentHeight()
@@ -353,14 +313,14 @@ end
 
 function StatusBarCell:InitializeCell()
     self.bar = CreateFrame('StatusBar',nil, self)
-    self.bar:SetSize(350, 16)
+    self.bar:SetSize(400, 16)
     self.bar:SetPoint('CENTER')
     self.bar:SetMinMaxValues(0, 100)
     self.bar:SetPoint('LEFT', self, 'LEFT', 1, 0)
     self.bar:SetStatusBarTexture('Interface\\ChatFrame\\ChatFrameBackground')
     self.fsName = self.bar:CreateFontString(nil, 'OVERLAY')
     self.fsName:SetPoint('LEFT', self.bar, 'LEFT', 5, 0)
-    self.fsName:SetWidth(250)
+    self.fsName:SetWidth(300)
     self.fsName:SetFontObject(_G.GameTooltipText)
     self.fsName:SetShadowColor(0, 0, 0)
     self.fsName:SetShadowOffset(1, -1)
@@ -389,7 +349,9 @@ function StatusBarCell:SetupCell(tooltip, data, justification, font, r, g, b)
         if data.header == '.Guild.' then
             self.fsName:SetText(mnkLibs.Color(COLOR_GREEN)..'<'..mnkLibs.Color(GetFactionColor(data.standingid))..data.name..mnkLibs.Color(COLOR_GREEN)..'>')
         elseif data.renownlevel ~= null then
-            self.fsName:SetText(mnkLibs.Color(COLOR_WHITE)..data.name.." - ["..data.renownlevel.."]")
+            self.fsName:SetText(mnkLibs.Color(COLOR_WHITE)..data.name.." ["..data.renownlevel.."]")
+        elseif data.rankmaxlevel ~= null or data.ranklevel ~= null then
+            self.fsName:SetText(mnkLibs.Color(COLOR_WHITE)..data.name.." [Rank"..data.ranklevel.."/"..data.rankmaxlevel.."]")
         elseif data.hasreward then
             self.fsName:SetText(mnkLibs.Color(COLOR_GOLD)..data.name)
         else

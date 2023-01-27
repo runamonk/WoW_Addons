@@ -78,9 +78,9 @@ function mnkProfessions:UpdateText()
             local _, icon, skillLevel, maxSkillLevel, _, _, _, _, _, _ = GetProfessionInfo(p)
             icon = icon..':16:16:0:0:64:64:4:60:4:60'
             if skillLevel == maxSkillLevel then
-                return string.format('|T%s|t', icon) ..' '..mnkLibs.Color(COLOR_WHITE)..maxSkillLevel
+                return string.format('|T%s|t', icon) ..' '..mnkLibs.Color(COLOR_GOLD)..maxSkillLevel
             else 
-                return string.format('|T%s|t', icon) ..' '..mnkLibs.Color(COLOR_WHITE)..skillLevel..'/'..maxSkillLevel
+                return string.format('|T%s|t', icon) ..' '..mnkLibs.Color(COLOR_GOLD)..skillLevel..mnkLibs.Color(COLOR_WHITE)..'/'..mnkLibs.Color(COLOR_GOLD)..maxSkillLevel
             end
         else
             return ''
