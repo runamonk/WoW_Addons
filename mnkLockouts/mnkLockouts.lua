@@ -1,4 +1,4 @@
-mnkLockouts = CreateFrame('frame', 'mnkLockouts', UIParent, BackdropTemplateMixin and "BackdropTemplate")
+mnkLockouts = CreateFrame('frame', 'mnkLockouts', UIParent, BackdropTemplate)
 mnkLockouts.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 mnkLockouts:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
 mnkLockouts:RegisterEvent('PLAYER_LOGIN')
@@ -23,9 +23,6 @@ function mnkLockouts:OnEnter(parent)
     tooltip:SetFont(mnkLibs.DefaultTooltipFont)
     tooltip:SetHeaderFont(mnkLibs.DefaultTooltipFont)
     tooltip:Clear()
-
-
-    
     
 	t = {}
 	local r = 0
@@ -59,9 +56,9 @@ function mnkLockouts:OnEnter(parent)
     tooltip:SetAutoHideDelay(.1, parent)
     tooltip:SmartAnchorTo(parent)
     tooltip:SetFrameStrata('HIGH')
-    tooltip:SetBackdropBorderColor(0, 0, 0, 0)
-    mnkLibs.setBackdrop(tooltip, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
-    tooltip:SetBackdropColor(0, 0, 0, 1)    
+    --tooltip:SetBackdropBorderColor(0, 0, 0, 0)
+    --mnkLibs.setBackdrop(tooltip, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
+    --tooltip:SetBackdropColor(0, 0, 0, 1)    
     tooltip:EnableMouse(true)
     tooltip:Show()
 end

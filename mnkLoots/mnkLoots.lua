@@ -1,4 +1,4 @@
-mnkLoots = CreateFrame('Frame', nil, UIParent, BackdropTemplateMixin and "BackdropTemplate")
+mnkLoots = CreateFrame('Frame', nil, UIParent, BackdropTemplate)
 mnkLoots.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 mnkLoots_LootHistory = {}
 
@@ -204,9 +204,9 @@ function mnkLoots:OnEnter(parent)
     tooltip:SmartAnchorTo(parent)
     tooltip:UpdateScrolling(400)
     tooltip:SetFrameStrata('HIGH')
-    tooltip:SetBackdropBorderColor(0, 0, 0, 0)
-    mnkLibs.setBackdrop(tooltip, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
-    tooltip:SetBackdropColor(0, 0, 0, 1)    
+    --tooltip:SetBackdropBorderColor(0, 0, 0, 0)
+    --mnkLibs.setBackdrop(tooltip, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
+    --tooltip:SetBackdropColor(0, 0, 0, 1)    
     tooltip:EnableMouse(true)
     tooltip:Show()
 end
@@ -215,7 +215,7 @@ function mnkLoots:LOOT_OPENED()
     local function GetNumFreeSlots()
         local free = 0
         for i = 0, 4 do
-            free = free + GetContainerNumFreeSlots(i)
+            free = free + C_Container.GetContainerNumFreeSlots(i)
         end
         return free
     end

@@ -1,4 +1,4 @@
-mnkGearSets = CreateFrame('Frame', nil, UIParent, BackdropTemplateMixin and "BackdropTemplate")
+mnkGearSets = CreateFrame('Frame', nil, UIParent, BackdropTemplate)
 mnkGearSets.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 mnkGearSets:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
 mnkGearSets:RegisterEvent('PLAYER_LOGIN')
@@ -60,9 +60,9 @@ function mnkGearSets:OnEnter(parent)
         end
         tooltip:SetAutoHideDelay(.1, parent)
         tooltip:SmartAnchorTo(parent)
-        tooltip:SetBackdropBorderColor(0, 0, 0, 0)
-        mnkLibs.setBackdrop(tooltip, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
-        tooltip:SetBackdropColor(0, 0, 0, 1)
+        --tooltip:SetBackdropBorderColor(0, 0, 0, 0)
+        --mnkLibs.setBackdrop(tooltip, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
+        --tooltip:SetBackdropColor(0, 0, 0, 1)
         tooltip:EnableMouse(true)        
         tooltip:Show()
     end

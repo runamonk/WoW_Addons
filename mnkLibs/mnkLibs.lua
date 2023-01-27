@@ -13,7 +13,7 @@ mnkLibs.Fonts = {
 local FUIScale = nil
 
 mnkLibs.DefaultTooltipFont = CreateFont("mnkLibsDefaultFont")
-mnkLibs.DefaultTooltipFont:SetFont(mnkLibs.Fonts.abf, 14)
+mnkLibs.DefaultTooltipFont:SetFont(mnkLibs.Fonts.abf, 14, "")
 
 mnkLibs.Textures = {
     arrow_down          = 'Interface\\AddOns\\mnkLibs\\Assets\\arrow_down',
@@ -114,7 +114,8 @@ function mnkLibs.createFontString(frame, font, size, outline, layer, shadow, sha
             shadowcolor = {0, 0, 0, 1}
         end
 
-        fs:SetShadowColor(shadowcolor)
+        --fs:SetShadowColor(shadowcolor)
+        fs:SetShadowColor(0, 0, 0, 0)
         fs:SetShadowOffset(1, -1)
     else
         fs:SetShadowColor(0, 0, 0, 0)
@@ -231,12 +232,16 @@ end
 
 function mnkLibs.setBackdrop(self, bgfile, edgefile, inset_l, inset_r, inset_t, inset_b)
 
-    if not bgFile then
-        bgfile = 'Interface\\ChatFrame\\ChatFrameBackground'
+    if not self.SetBackdrop then
+        Mixin(self, BackdropTemplateMixin)
     end
+    
+    self:ClearBackdrop()
+    bf = 'Interface\\ChatFrame\\ChatFrameBackground'
 
-    self:SetBackdrop {
-        bgFile = bgfile,
+    local backdropInfo =
+    {
+        bgFile = bf,
         edgeFile = edgefile,
         borderColor = {0.1,0.1,0.1,0.6}, 
         edgeSize = 1,
@@ -246,8 +251,10 @@ function mnkLibs.setBackdrop(self, bgfile, edgefile, inset_l, inset_r, inset_t, 
             left = -inset_l, 
             right = -inset_r, 
             top = -inset_t, 
-            bottom = -inset_b
-        }}
+            bottom = -inset_b }
+    } 
+
+    self:SetBackdrop(backdropInfo)
     self:SetBackdropColor(0, 0, 0, 1)
 end
 

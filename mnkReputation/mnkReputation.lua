@@ -1,4 +1,4 @@
-mnkReputation = CreateFrame('Frame', nil, UIParent, BackdropTemplateMixin and "BackdropTemplate")
+mnkReputation = CreateFrame('Frame', nil, UIParent, BackdropTemplate)
 mnkReputation.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 mnkReputation:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
 
@@ -92,6 +92,10 @@ function mnkReputation:GetAllFactions()
         local name, _, standingId, _, max, current, _, _, isHeader, isCollapsed, hasRep, _, _,  factionID = GetFactionInfo(i)
         local pCurrent, pMax = 0
         local pReward = false
+        local repInfo = C_GossipInfo.GetFriendshipReputation(factionID)
+        local rankInfo = C_GossipInfo.GetFriendshipReputationRanks(factionID)    
+        local dataMajor = C_MajorFactions.GetMajorFactionData(factionID)
+        local standing = ""
 
         if isHeader then
             header = name
@@ -99,6 +103,7 @@ function mnkReputation:GetAllFactions()
 
         if (isHeader == false) or (isHeader and hasRep) then
             --print(i, ' ', name, ' ', isHeader)
+
             if mnkReputation:InTable(mnkReputation_db.Watched, name) == true then
                 if standingId == 8 then
                     iExalted = iExalted + 1
@@ -132,21 +137,40 @@ function mnkReputation:GetAllFactions()
                 --     print('GetFactionParagonInfo() returned nil.', ' name:', name, ' pCurrent:', pCurrent, ' pMax:', pMax, ' factionID:', factionID)
                 end
             end
+
+            standing = _G['FACTION_STANDING_LABEL'..standingId]
+            local renownlevel = null
+
+            if (dataMajor ~= null) then
+                current = dataMajor.renownReputationEarned
+                max = dataMajor.renownLevelThreshold
+                renownlevel = "Renown "..dataMajor.renownLevel
+            end
+
+            --print(name.." "..rankInfo.currentLevel.." "..rankInfo.maxLevel.." "..repInfo.standing.." "..(repInfo.nextThreshold or 0))
+            if (repInfo.name ~= null) then 
+                current = repInfo.standing or 0
+                max = repInfo.nextThreshold or current
+                --print(name.." "..current.." / "..max)
+            end
             
             idx = idx + 1
             tblAllFactions[idx] = {}
             if header == 'Guild' then
                 header = '.Guild.'
             end
-
+           
             tblAllFactions[idx].header = header
             tblAllFactions[idx].name = name
             tblAllFactions[idx].standingid = standingId
-            tblAllFactions[idx].standing = _G['FACTION_STANDING_LABEL'..standingId]
+            tblAllFactions[idx].standing = standing
             tblAllFactions[idx].current = current
             tblAllFactions[idx].max = max
             tblAllFactions[idx].hasrep = hasRep
             tblAllFactions[idx].hasreward = pReward
+            tblAllFactions[idx].ranklevel = rankInfo.currentLevel
+            tblAllFactions[idx].rankmaxlevel = rankInfo.maxLevel
+            tblAllFactions[idx].renownlevel = renownlevel
         end
     end
 
@@ -269,9 +293,9 @@ function mnkReputation:OnEnter(parent)
     tooltip:SmartAnchorTo(parent)
     tooltip:UpdateScrolling(500)
     tooltip.step = 50
-    tooltip:SetBackdropBorderColor(0, 0, 0, 0)
-    mnkLibs.setBackdrop(tooltip, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
-    tooltip:SetBackdropColor(0, 0, 0, 1)
+    --tooltip:SetBackdropBorderColor(0, 0, 0, 0)
+    --mnkLibs.setBackdrop(tooltip, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
+    --tooltip:SetBackdropColor(0, 0, 0, 1)
     tooltip:EnableMouse(true)    
     tooltip:Show()
 end
@@ -364,14 +388,18 @@ function StatusBarCell:SetupCell(tooltip, data, justification, font, r, g, b)
     if (type(data) == "table") then 
         if data.header == '.Guild.' then
             self.fsName:SetText(mnkLibs.Color(COLOR_GREEN)..'<'..mnkLibs.Color(GetFactionColor(data.standingid))..data.name..mnkLibs.Color(COLOR_GREEN)..'>')
+        elseif data.renownlevel ~= null then
+            self.fsName:SetText(mnkLibs.Color(COLOR_WHITE)..data.name.." - ["..data.renownlevel.."]")
         elseif data.hasreward then
             self.fsName:SetText(mnkLibs.Color(COLOR_GOLD)..data.name)
         else
             self.fsName:SetText(mnkLibs.Color(GetFactionColor(data.standingid))..data.name)
         end
         self.fsTogo:SetText(mnkLibs.Color(GetFactionColor(data.standingid))..mnkReputation:GetRepLeft(data.max - data.current))
-    
         local c = GetFactionColor(data.standingid)
+        if (data.renownlevel ~= null) then
+            c = COLOR_BLUE
+        end
         self.bar:SetStatusBarColor(c.r/255/2, c.g/255/2, c.b/255/2, 1)
         self.bar:SetValue(math.min((data.current / data.max) * 100, 100))
         return self.bar:GetWidth(), self.bar:GetHeight()

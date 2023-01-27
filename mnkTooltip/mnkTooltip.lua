@@ -15,7 +15,7 @@ local tooltips = {
 
 local function updateBackdrop(self, style)
     Mixin(self, BackdropTemplateMixin)   
-    mnkLibs.setBackdrop(self,"Interface\\Tooltips\\UI-Tooltip-Border", "Interface\\Buttons\\WHITE8x8", 0, 0, 0, 0)
+    --mnkLibs.setBackdrop(self,"Interface\\Tooltips\\UI-Tooltip-Border", "Interface\\Buttons\\WHITE8x8", 0, 0, 0, 0)
     self:SetBackdropBorderColor(.2, .2, .2, 1)
     self:SetBackdropColor(0, 0, 0, 1)    
 end
@@ -112,7 +112,7 @@ function mnkTooltip:PLAYER_LOGIN()
     GameTooltipStatusBar.bg:SetAllPoints()
     GameTooltipStatusBar.bg:SetColorTexture(1,1,1)
     GameTooltipStatusBar.bg:SetVertexColor(0,0,0,0.5)
-    GameTooltip:HookScript('OnTooltipSetUnit', OnTooltipSetUnit)
+    --GameTooltip:HookScript('OnTooltipSetUnit', OnTooltipSetUnit)
     GameTooltip:HookScript('OnShow', function() 
         if IsControlKeyDown() then 
             GameTooltip:Hide()

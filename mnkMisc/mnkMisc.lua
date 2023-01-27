@@ -14,7 +14,7 @@ function mnkMisc:ADDON_LOADED(event, arg1, arg2)
         SetCVar('enableFloatingCombatText', 1)
         SetCVar('colorChatNamesByClass', 1)
         SetCVar('chatStyle', 'classic')
-        OrderHall_CheckCommandBar = mnkLibs.donothing
+        --OrderHall_CheckCommandBar = mnkLibs.donothing
     end
 end
 
@@ -26,10 +26,10 @@ function mnkMisc:PLAYER_LOGIN()
     --Hide open all mail button, we both hate it.
     --OpenAllMail:Hide()
 
-    BossBanner:Hide()
-    BossBanner.Hide = mnkLibs.donothing()
-    BossBanner.Show = mnkLibs.donothing()
-    BossBanner:UnregisterAllEvents()
+    --BossBanner:Hide()
+    --BossBanner.Hide = mnkLibs.donothing()
+    --BossBanner.Show = mnkLibs.donothing()
+    --BossBanner:UnregisterAllEvents()
 end
 
 SLASH_RL1 = '/rl'

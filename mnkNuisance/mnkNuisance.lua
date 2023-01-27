@@ -1,4 +1,4 @@
-mnkNuisance = CreateFrame('Frame', nil, UIParent, BackdropTemplateMixin and "BackdropTemplate")
+mnkNuisance = CreateFrame('Frame', nil, UIParent, BackdropTemplate)
 mnkNuisance.LDB = LibStub:GetLibrary('LibDataBroker-1.1')
 mnkNuisance_bBlockEnabled = true
 mnkNuisance:SetScript('OnEvent', function(self, event, ...) self[event](self, event, ...) end)
@@ -82,9 +82,9 @@ function mnkNuisance:OnEnter(parent)
 
     tooltip:SetAutoHideDelay(.1, parent)
     tooltip:SmartAnchorTo(parent)
-    tooltip:SetBackdropBorderColor(0, 0, 0, 0)
-    mnkLibs.setBackdrop(tooltip, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
-    tooltip:SetBackdropColor(0, 0, 0, 1)
+    --tooltip:SetBackdropBorderColor(0, 0, 0, 0)
+    --mnkLibs.setBackdrop(tooltip, mnkLibs.Textures.background, nil, 0, 0, 0, 0)
+    --tooltip:SetBackdropColor(0, 0, 0, 1)
     tooltip:EnableMouse(true)    
     tooltip:Show()
 end
