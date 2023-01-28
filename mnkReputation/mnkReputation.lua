@@ -7,6 +7,7 @@ mnkReputation:RegisterEvent('PLAYER_ENTERING_WORLD')
 mnkReputation:RegisterEvent('CHAT_MSG_COMBAT_FACTION_CHANGE')
 mnkReputation:RegisterEvent('PLAYER_GUILD_UPDATE')
 mnkReputation:RegisterEvent('UPDATE_FACTION')
+mnkReputation:RegisterEvent('MAJOR_FACTION_RENOWN_LEVEL_CHANGED')
 
 local libQTip = LibStub('LibQTip-1.0')
 local libAG = LibStub('AceGUI-3.0')
@@ -19,13 +20,6 @@ mnkReputation_db.Watched = {}
 local tblAllFactions = {}
 local tblTabards = {}
 local sFactions = nil
-
-local iExalted = 0
-local iHated = 0
-local iHonored = 0
-local iNeutral = 0
-local iFriendly = 0
-local iRevered = 0
 
 local function GetFactionColor(standingid)
     if standingid == 8 then
@@ -232,9 +226,9 @@ function mnkReputation:OnEnter(parent)
     local color = COLOR_WHITE
     local tooltip = libQTip:Acquire('mnkReputationToolTip', 2, 'LEFT', 'LEFT')
     local y, x = nil
-
+    
     mnkReputation.tooltip = tooltip
-
+    
     tooltip:Clear()
     tooltip:SetFont(mnkLibs.DefaultTooltipFont)
     tooltip:SetHeaderFont(mnkLibs.DefaultTooltipFont)
@@ -296,6 +290,10 @@ function mnkReputation:UpdateTable(t, scrollbox)
             t[x].name = scrollbox.children[i]:GetUserData('name')
         end
     end 
+end
+
+function mnkReputation:MAJOR_FACTION_RENOWN_LEVEL_CHANGED()
+    self:UpdateText()
 end
 
 function mnkReputation:UPDATE_FACTION()
