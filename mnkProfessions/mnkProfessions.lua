@@ -15,7 +15,9 @@ function mnkProfessions:CHAT_MSG_SKILL(event, arg)
 end
 
 function mnkProfessions:OnClick(self)
-    ToggleSpellBook(BOOKTYPE_PROFESSION)
+    --This causes a taint.
+    --ToggleFrame(SpellBookFrame)
+    --ToggleSpellBook(BOOKTYPE_PROFESSION)
 end
 
 function mnkProfessions:OnEnter(parent) 
