@@ -361,7 +361,7 @@ function StatusBarCell:SetupCell(tooltip, data, justification, font, r, g, b)
             c = COLOR_BLUE
         end
         self.bar:SetStatusBarColor(c.r/255/2, c.g/255/2, c.b/255/2, 1)
-        self.bar:SetValue(math.min((data.current / data.max) * 100, 100))
+        self.bar:SetValue(math.min((data.current or 0 / data.max) * 100, 100))
         return self.bar:GetWidth(), self.bar:GetHeight()
     else
         -- Just text so create a background with the bar.
