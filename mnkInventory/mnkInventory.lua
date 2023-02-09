@@ -82,9 +82,8 @@ function mnkInventory:UPDATE_INVENTORY_ALERTS()
 end
 
 function mnkInventory:CalculateAverageiLevel()
-    --AverageItemLevel = math.floor(select(2, GetAverageItemLevel()))
-    --GetAverageItemLevel() is returning a cached calculation, so it's out of sync when I need it.
-    local t = 0
+    AverageItemLevel = math.floor(select(2, GetAverageItemLevel()))
+--[[     local t = 0
     AverageItemLevel = 0
 
     for i=0, #tInventoryItems do
@@ -94,7 +93,7 @@ function mnkInventory:CalculateAverageiLevel()
     		if e ~= 'BODY' and e ~= 'TABARD' then
 	    		t = t + tInventoryItems[i].iLevel
 	    		-- 2H and Ranged weapons are counted twice because they count as two slots.
-	    		if e == '2HWEAPON' or e == 'RANGED' then
+	    		if e == '2HWEAPON' or e == 'RANGEDRIGHT' then
 	    			t = t + tInventoryItems[i].iLevel
 	    		end
 	    	end
@@ -102,7 +101,7 @@ function mnkInventory:CalculateAverageiLevel()
     end
     if t > 0 then
         AverageItemLevel = math.floor(t/16) -- divide by 16 (slots)
-    end
+    end ]]
 end
 
 function mnkInventory:GetInventoryItems()
