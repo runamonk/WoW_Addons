@@ -12,22 +12,39 @@ mnkInventory:RegisterEvent('PLAYER_LOGIN')
 mnkInventory:RegisterEvent('MERCHANT_SHOW')
 mnkInventory:RegisterEvent('PLAYER_EQUIPMENT_CHANGED')
 mnkInventory:RegisterEvent('PLAYER_ENTERING_WORLD') 
---mnkInventory:RegisterEvent('ITEM_UPGRADE_MASTER_UPDATE')
-mnkInventory:RegisterEvent('CONFIRM_XP_LOSS')
-mnkInventory:RegisterEvent('PLAYER_DEAD')
-mnkInventory:RegisterEvent('PLAYER_UNGHOST')
-mnkInventory:RegisterEvent('UPDATE_INVENTORY_ALERTS')
+mnkInventory:RegisterEvent('PLAYER_AVG_ITEM_LEVEL_UPDATE')
+mnkInventory:RegisterEvent('UPDATE_INVENTORY_DURABILITY')
 
-function mnkInventory:CHAT_MSG_COMBAT_MISC_INFO()
+function mnkInventory:PLAYER_LOGIN()
+	self.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkInventory', {
+	    icon = 'Interface\\Icons\\Inv_chest_plate15.blp', 
+	    type = 'data source', 
+	    OnEnter = function (parent) mnkInventory:OnEnter(parent) end, 
+	    OnClick = function () mnkInventory.OnClick() end
+        })
+	self.LDB.label = 'Inventory'
+	self:GetInventoryItems()
+end
+
+function mnkInventory:PLAYER_AVG_ITEM_LEVEL_UPDATE()
+    self:CalculateAverageiLevel()
+    self:UpdateText()
+end
+
+function mnkInventory:PLAYER_ENTERING_WORLD(event, firstTime, reload)
+    self:CalculateAverageiLevel()
+    self:UpdateAll();
+end
+
+function mnkInventory:PLAYER_EQUIPMENT_CHANGED(event, slotid, hasCurrent)
+	self:UpdateSlotInfo(slotid)
+	self:CalculateAverageiLevel()
+    self:UpdateText()
+end
+
+function mnkInventory:UPDATE_INVENTORY_DURABILITY()
     self:UpdateAll()
-end
-
-function mnkInventory:CONFIRM_XP_LOSS()
-	self:UpdateAll()
-end
-
-function mnkInventory:ITEM_UPGRADE_MASTER_UPDATE()
-	self:UpdateAlliLevels()
+    self:UpdateText()
 end
 
 function mnkInventory:MERCHANT_SHOW(event, ...)
@@ -45,40 +62,6 @@ function mnkInventory:MERCHANT_SHOW(event, ...)
     --GetGuildBankWithdrawMoney()
     --RepairAllItems(1)
     end 
-end
-
-function mnkInventory:PLAYER_DEAD()
-	self:UpdateAll()
-end
-
-function mnkInventory:PLAYER_ENTERING_WORLD(event, firstTime, reload)
-	if not firstTime then
-		self:UpdateAll()
-	end
-end
-
-function mnkInventory:PLAYER_EQUIPMENT_CHANGED(event, slotid, hasCurrent)
-	self:UpdateSlotInfo(slotid)
-	self:CalculateAverageiLevel()
-end
-
-function mnkInventory:PLAYER_LOGIN()
-	self.LDB = LibStub('LibDataBroker-1.1'):NewDataObject('mnkInventory', {
-	    icon = 'Interface\\Icons\\Inv_chest_plate15.blp', 
-	    type = 'data source', 
-	    OnEnter = function (parent) mnkInventory:OnEnter(parent) end, 
-	    OnClick = function () mnkInventory.OnClick() end
-        })
-	self.LDB.label = 'Inventory'
-	self:GetInventoryItems()
-end
-
-function mnkInventory:PLAYER_UNGHOST()
-	self:UpdateAll()
-end
-
-function mnkInventory:UPDATE_INVENTORY_ALERTS()
-	self:UpdateAll()
 end
 
 function mnkInventory:CalculateAverageiLevel()
