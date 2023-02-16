@@ -14,11 +14,7 @@ local libAG = LibStub('AceGUI-3.0')
 local fConfig = nil
 local StatusBarCellProvider, StatusBarCell = libQTip:CreateCellProvider()
 
-mnkReputation_db = {}
-mnkReputation_db.Watched = {}
-
 local tblAllFactions = {}
-local tblTabards = {}
 local sFactions = nil
 
 local function GetFactionColor(standingid)
@@ -39,26 +35,6 @@ local function GetFactionColor(standingid)
     end
 end
 
---[[ function mnkReputation:AddCheckbox(scrollbox, checked, name, standingid, standing, rating)
-    local c = libAG:Create('CheckBox')
-    c:SetValue(checked)
-    c:SetLabel(name..' ['..mnkLibs.Color(GetFactionColor(standingid or 0))..standing..mnkLibs.Color(COLOR_WHITE)..'] '..mnkLibs.Color(COLOR_WHITE)..rating)
-    c:SetUserData('name', name)
-    c:SetWidth(400)
-    scrollbox:AddChild(c)
-end ]]
-
---[[ function mnkReputation:AddLabel(scrollbox, name, standing)
-    local c = libAG:Create('Label')
-    c:SetText(' ')
-    scrollbox:AddChild(c)
-
-    local c = libAG:Create('Label')
-    c:SetText(mnkLibs.Color(COLOR_GOLD)..name..standing)
-    c:SetWidth(400)
-    scrollbox:AddChild(c)
-end ]]
-
 function mnkReputation:CHAT_MSG_COMBAT_FACTION_CHANGE(event, arg1)
     CombatText_AddMessage(mnkLibs.Color(COLOR_BLUE)..arg1, CombatText_StandardScroll, 255, 255, 255, nil, false)
     mnkReputation:UpdateText()    
@@ -71,16 +47,21 @@ function mnkReputation:GetAllFactions()
     local idx = 0
     local header = ''
     
-    for i = 1, x do
-        local name, _, standingId, _, max, current, _, _, isHeader, isCollapsed, hasRep, _, _,  factionID = GetFactionInfo(i)
-        local pCurrent, pMax = 0
-        local pReward = false
-        local repInfo = C_GossipInfo.GetFriendshipReputation(factionID)
-        local rankInfo = C_GossipInfo.GetFriendshipReputationRanks(factionID)    
-        local dataMajor = C_MajorFactions.GetMajorFactionData(factionID)
-        local standing = ""
 
-        if (isCollapsed == false) then
+    for i = 1, x do
+        local name, _, standingId, _, max, current, _, _, isHeader, isCollapsed, hasRep, isWatched, _,  factionID = GetFactionInfo(i)
+        if isWatched == nil then
+            isWatched = isCollapsed
+        end
+        
+        if (factionID ~= nil) and ((isCollapsed == false) or (isWatched == false)) then
+            local pCurrent, pMax = 0
+            local pReward = false
+            local repInfo = C_GossipInfo.GetFriendshipReputation(factionID)
+            local rankInfo = C_GossipInfo.GetFriendshipReputationRanks(factionID)    
+            local dataMajor = C_MajorFactions.GetMajorFactionData(factionID)
+            local standing = ""
+            
             if isHeader then
                 header = name
             end
@@ -188,19 +169,16 @@ function mnkReputation:OnEnter(parent)
     tooltip:Clear()
     tooltip:SetFont(mnkLibs.DefaultTooltipFont)
     tooltip:SetHeaderFont(mnkLibs.DefaultTooltipFont)
-    if #mnkReputation_db.Watched == 0 then
+    if #tblAllFactions == 0 then
         tooltip:AddLine('You have not selected any factions to display.')
-        tooltip:AddLine('Right click on mnkReputation to open the config.')
+        tooltip:AddLine('Open the reputation dialog and expand some reputations.')
     else 
         table.sort(tblAllFactions, function(a, b) return a.name < b.name end)
-
         tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Factions', nil)
 
         for i = 1, #tblAllFactions do
-            --if mnkReputation:InTable(mnkReputation_db.Watched, tblAllFactions[i].name) == true then
-                y, _ = tooltip:AddLine()
-                tooltip:SetCell(y, 1, tblAllFactions[i], 2 , StatusBarCellProvider)
-            --end
+            y, _ = tooltip:AddLine()
+            tooltip:SetCell(y, 1, tblAllFactions[i], 2 , StatusBarCellProvider)
         end
     end
 
