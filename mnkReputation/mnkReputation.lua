@@ -39,16 +39,16 @@ local function GetFactionColor(standingid)
     end
 end
 
-function mnkReputation:AddCheckbox(scrollbox, checked, name, standingid, standing, rating)
+--[[ function mnkReputation:AddCheckbox(scrollbox, checked, name, standingid, standing, rating)
     local c = libAG:Create('CheckBox')
     c:SetValue(checked)
     c:SetLabel(name..' ['..mnkLibs.Color(GetFactionColor(standingid or 0))..standing..mnkLibs.Color(COLOR_WHITE)..'] '..mnkLibs.Color(COLOR_WHITE)..rating)
     c:SetUserData('name', name)
     c:SetWidth(400)
     scrollbox:AddChild(c)
-end
+end ]]
 
-function mnkReputation:AddLabel(scrollbox, name, standing)
+--[[ function mnkReputation:AddLabel(scrollbox, name, standing)
     local c = libAG:Create('Label')
     c:SetText(' ')
     scrollbox:AddChild(c)
@@ -57,11 +57,10 @@ function mnkReputation:AddLabel(scrollbox, name, standing)
     c:SetText(mnkLibs.Color(COLOR_GOLD)..name..standing)
     c:SetWidth(400)
     scrollbox:AddChild(c)
-end
+end ]]
 
 function mnkReputation:CHAT_MSG_COMBAT_FACTION_CHANGE(event, arg1)
     CombatText_AddMessage(mnkLibs.Color(COLOR_BLUE)..arg1, CombatText_StandardScroll, 255, 255, 255, nil, false)
-    mnkReputation:GetAllFactions()
     mnkReputation:UpdateText()    
 end
 
@@ -81,64 +80,66 @@ function mnkReputation:GetAllFactions()
         local dataMajor = C_MajorFactions.GetMajorFactionData(factionID)
         local standing = ""
 
-        if isHeader then
-            header = name
-        end
+        if (isCollapsed == false) then
+            if isHeader then
+                header = name
+            end
 
-        if (isHeader == false) or (isHeader and hasRep) then
+            if (isHeader == false) or (isHeader and hasRep) then
 
-            local isParagon = C_Reputation.IsFactionParagon(factionID)
-            if isParagon then
-                pCurrent, pMax, _, pReward = C_Reputation.GetFactionParagonInfo(factionID);
-                -- if pCurrent is greater than 10000, the first character is paragon level.
-                -- if event == 'CHAT_MSG_LOOT' then
-                --     print(name, 'pReward:', pReward)
-                -- end
-                if pCurrent and pMax then
-                    if pCurrent >= pMax then
-                        current = string.sub(tostring(pCurrent), #tostring(pCurrent)-3,#tostring(pCurrent))
-                    else
-                        current = pCurrent
+                local isParagon = C_Reputation.IsFactionParagon(factionID)
+                if isParagon then
+                    pCurrent, pMax, _, pReward = C_Reputation.GetFactionParagonInfo(factionID);
+                    -- if pCurrent is greater than 10000, the first character is paragon level.
+                    -- if event == 'CHAT_MSG_LOOT' then
+                    --     print(name, 'pReward:', pReward)
+                    -- end
+                    if pCurrent and pMax then
+                        if pCurrent >= pMax then
+                            current = string.sub(tostring(pCurrent), #tostring(pCurrent)-3,#tostring(pCurrent))
+                        else
+                            current = pCurrent
+                        end
+                        max = pMax
+                    -- else
+                    --     print('GetFactionParagonInfo() returned nil.', ' name:', name, ' pCurrent:', pCurrent, ' pMax:', pMax, ' factionID:', factionID)
                     end
-                    max = pMax
-                -- else
-                --     print('GetFactionParagonInfo() returned nil.', ' name:', name, ' pCurrent:', pCurrent, ' pMax:', pMax, ' factionID:', factionID)
                 end
-            end
 
-            standing = _G['FACTION_STANDING_LABEL'..standingId]
-            local renownlevel = null
+                standing = _G['FACTION_STANDING_LABEL'..standingId]
+                local renownlevel = null
 
-            if (dataMajor ~= null) then
-                current = dataMajor.renownReputationEarned
-                max = dataMajor.renownLevelThreshold
-                renownlevel = "Renown "..dataMajor.renownLevel
-            end
+                if (dataMajor ~= null) then
+                    current = dataMajor.renownReputationEarned
+                    max = dataMajor.renownLevelThreshold
+                    renownlevel = "Renown "..dataMajor.renownLevel
+                    --print(name.." "..current.." "..max.." "..renownlevel)
+                end
 
-            --print(name.." "..rankInfo.currentLevel.." "..rankInfo.maxLevel.." "..repInfo.standing.." "..(repInfo.nextThreshold or 0))
-            if (repInfo.name ~= null) then 
-                current = repInfo.standing or 0
-                max = repInfo.nextThreshold or current
-                --print(name.." "..current.." / "..max)
-            end
+                if (repInfo.name ~= null) then 
+                    current = repInfo.standing or 0
+                    max = repInfo.nextThreshold or current
+                    --print(name.." "..current.." / "..max)
+                end
+                
+                idx = idx + 1
+                tblAllFactions[idx] = {}
+                if header == 'Guild' then
+                    header = '.Guild.'
+                end
             
-            idx = idx + 1
-            tblAllFactions[idx] = {}
-            if header == 'Guild' then
-                header = '.Guild.'
+                tblAllFactions[idx].header = header
+                tblAllFactions[idx].name = name
+                tblAllFactions[idx].standingid = standingId
+                tblAllFactions[idx].standing = standing
+                tblAllFactions[idx].current = current
+                tblAllFactions[idx].max = max
+                tblAllFactions[idx].hasrep = hasRep
+                tblAllFactions[idx].hasreward = pReward
+                tblAllFactions[idx].ranklevel = rankInfo.currentLevel
+                tblAllFactions[idx].rankmaxlevel = rankInfo.maxLevel
+                tblAllFactions[idx].renownlevel = renownlevel
             end
-           
-            tblAllFactions[idx].header = header
-            tblAllFactions[idx].name = name
-            tblAllFactions[idx].standingid = standingId
-            tblAllFactions[idx].standing = standing
-            tblAllFactions[idx].current = current
-            tblAllFactions[idx].max = max
-            tblAllFactions[idx].hasrep = hasRep
-            tblAllFactions[idx].hasreward = pReward
-            tblAllFactions[idx].ranklevel = rankInfo.currentLevel
-            tblAllFactions[idx].rankmaxlevel = rankInfo.maxLevel
-            tblAllFactions[idx].renownlevel = renownlevel
         end
     end
 
@@ -172,54 +173,9 @@ function mnkReputation:InTable(t, name)
 end
 
 function mnkReputation:OnClick(event, button)
-    if button == 'RightButton' then
-        --if fConfig ~= nil then
-        --  return;
-        --end
-        if fConfig == nil then
-            fConfig = libAG:Create('Frame')
-            fConfig:SetCallback('OnClose', function () mnkReputation:OnConfigClose() end)
-            fConfig:SetTitle('mnkReputation Favorite Factions')
-            fConfig:SetStatusText('Check factions you want to watch.')
-            fConfig:SetHeight(500)
-            fConfig:SetWidth(400)
-            fConfig:EnableResize(false)
-            fConfig:SetLayout('Fill')
-            fConfig:PauseLayout()
-            g = libAG:Create('InlineGroup')
-            g:SetTitle('Factions')
-            g:SetLayout('Fill')
-
-            sFactions = libAG:Create('ScrollFrame')
-            sFactions:SetLayout('List')
-            g:AddChild(sFactions)
-            fConfig:AddChild(g)
-        else
-            fConfig:Show()
-        end
-
-        sFactions.ReleaseChildren(sFactions)
-        mnkReputation:GetAllFactions()
-        local header = ''
-
-        for i = 1, #tblAllFactions do
-            if header ~= tblAllFactions[i].header then
-                header = tblAllFactions[i].header
-                local s = (tblAllFactions[i].max - tblAllFactions[i].current)
-                mnkReputation:AddLabel(sFactions, header, ' ('..tblAllFactions[i].standing..' - '..tostring(s)..')')
-            end
-            mnkReputation:AddCheckbox(sFactions, mnkReputation:InTable(mnkReputation_db.Watched, tblAllFactions[i].name), tblAllFactions[i].name, tblAllFactions[i].standingid, tblAllFactions[i].standing, mnkReputation:GetRepLeft(tblAllFactions[i].max - tblAllFactions[i].current))
-        end
-
-        fConfig:ResumeLayout()
-    elseif button == 'LeftButton' then
+    if button == 'LeftButton' then
         ToggleCharacter('ReputationFrame')
     end
-end
-
-function mnkReputation:OnConfigClose()
-    mnkReputation:UpdateTable(mnkReputation_db.Watched, sFactions)
-    mnkReputation:UpdateText()
 end
 
 function mnkReputation:OnEnter(parent)
@@ -241,10 +197,10 @@ function mnkReputation:OnEnter(parent)
         tooltip:AddHeader(mnkLibs.Color(COLOR_GOLD)..'Factions', nil)
 
         for i = 1, #tblAllFactions do
-            if mnkReputation:InTable(mnkReputation_db.Watched, tblAllFactions[i].name) == true then
+            --if mnkReputation:InTable(mnkReputation_db.Watched, tblAllFactions[i].name) == true then
                 y, _ = tooltip:AddLine()
                 tooltip:SetCell(y, 1, tblAllFactions[i], 2 , StatusBarCellProvider)
-            end
+            --end
         end
     end
 
