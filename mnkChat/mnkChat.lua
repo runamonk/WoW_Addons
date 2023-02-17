@@ -13,9 +13,9 @@ mnkChat_db.Messages = {}
 mnkChat_db.NEW_MESSAGES = 0
 
 local MAX_MESSAGES = 10
-local font = CreateFont('tooltipFont')
+--local font = CreateFont('tooltipFont')
 
-font:SetFont(mnkLibs.Fonts.abf, 12)
+--font:SetFont(mnkLibs.Fonts.abf, 12)
 
 local StickyTypeChannels = {
     SAY = 1, 
@@ -32,9 +32,9 @@ local StickyTypeChannels = {
 local tabs = {'Left','Middle','Right','SelectedLeft','SelectedRight','SelectedMiddle','HighlightLeft','HighlightMiddle','HighlightRight'}
 
 SLASH_CLEAR_CHAT1 = '/clear'
-ChatFontNormal:SetFont(mnkLibs.Fonts.ap, 14, '')
-ChatFontNormal:SetShadowOffset(1,1)
-ChatFontNormal:SetShadowColor(0,0,0)
+--ChatFontNormal:SetFont(mnkLibs.Fonts.ap, 14, '')
+--ChatFontNormal:SetShadowOffset(1,1)
+--ChatFontNormal:SetShadowColor(0,0,0)
 
 FloatingChatFrame_OnMouseScroll = function(self, dir)
     if(dir > 0) then
@@ -254,8 +254,8 @@ function mnkChat:SetupFrame(frame)
     end
 
     frame:SetClampRectInsets(0, 0, 0, 0)
-    frame:SetMaxResize(UIParent:GetWidth(), UIParent:GetHeight())
-    frame:SetMinResize(200, 40) 
+    --frame:SetMaxResize(UIParent:GetWidth(), UIParent:GetHeight())
+    --frame:SetMinResize(200, 40) 
     frame:SetFading(false) 
     frame:SetClampedToScreen(false)
     frame:SetScript('OnHyperlinkEnter', function (frame, link, ...)
@@ -272,10 +272,10 @@ function mnkChat:SetupFrame(frame)
     frame.ScrollBar:Hide()
     frame.ScrollBar:HookScript('OnShow', frame.ScrollBar.Hide)
 
-    _G[frame:GetName()..'ButtonFrame']:Hide()
-    _G[frame:GetName()..'ButtonFrame']:HookScript('OnShow', _G[frame:GetName()..'ButtonFrame'].Hide)
-    _G[frame:GetName()..'ButtonFrameMinimizeButton']:Hide()
-    _G[frame:GetName()..'ButtonFrameMinimizeButton']:HookScript('OnShow', _G[frame:GetName()..'ButtonFrameMinimizeButton'].Hide)
+    -- _G[frame:GetName()..'ButtonFrame']:Hide()
+    -- _G[frame:GetName()..'ButtonFrame']:HookScript('OnShow', _G[frame:GetName()..'ButtonFrame'].Hide)
+    -- _G[frame:GetName()..'ButtonFrameMinimizeButton']:Hide()
+    -- _G[frame:GetName()..'ButtonFrameMinimizeButton']:HookScript('OnShow', _G[frame:GetName()..'ButtonFrameMinimizeButton'].Hide)
     _G[frame:GetName()..'EditBox']:SetAltArrowKeyMode(false)
     
     if GetCVar('chatStyle') == 'classic' then
@@ -285,28 +285,28 @@ function mnkChat:SetupFrame(frame)
         _G[frame:GetName()..'EditBox']:SetHeight(25)
     end
 
-    local tex = { _G[frame:GetName()..'EditBox']:GetRegions()}
-    for t = 6, #tex do tex[t]:SetAlpha(0) end
-    mnkLibs.createTexture(_G[frame:GetName()..'EditBox'], 'BACKGROUND', {1/6, 1/6, 1/6, 1})
-    mnkLibs.createBorder(_G[frame:GetName()..'EditBox'], 0, 0, 0, 0, {1/4, 1/4, 1/4, 1})
+    --local tex = { _G[frame:GetName()..'EditBox']:GetRegions()}
+    --for t = 6, #tex do tex[t]:SetAlpha(0) end
+    --mnkLibs.createTexture(_G[frame:GetName()..'EditBox'], 'BACKGROUND', {1/6, 1/6, 1/6, 1})
+    --mnkLibs.createBorder(_G[frame:GetName()..'EditBox'], 0, 0, 0, 0, {1/4, 1/4, 1/4, 1})
 
-    _G[frame:GetName()..'EditBoxLeft']:Hide()
-    _G[frame:GetName()..'EditBoxMid']:Hide()
-    _G[frame:GetName()..'EditBoxRight']:Hide()
-    _G[frame:GetName()]:SetFont(mnkLibs.Fonts.ap, 14, '')
-    _G[frame:GetName()].SetFont = mnkLibs.donothing
-    _G[frame:GetName()..'TabText']:SetFont(mnkLibs.Fonts.oswald, 18, '')
-    _G[frame:GetName()..'TabText']:SetShadowOffset(1,1)
-    _G[frame:GetName()..'TabText']:SetShadowColor(0,0,0)
-    _G[frame:GetName()..'TabText'].SetShadowOffset = mnkLibs.donothing
-    _G[frame:GetName()..'TabText'].SetShadowColor = mnkLibs.donothing
-    _G[frame:GetName()..'TabText']:SetTextColor(1,1,1)
-    _G[frame:GetName()..'TabText']:SetVertexColor(1,1,1)
-    _G[frame:GetName()..'TabText'].SetTextColor = mnkLibs.donothing
-    _G[frame:GetName()..'TabText'].SetVertexColor = mnkLibs.donothing
+    --_G[frame:GetName()..'EditBoxLeft']:Hide()
+    --_G[frame:GetName()..'EditBoxMid']:Hide()
+    --_G[frame:GetName()..'EditBoxRight']:Hide()
+    -- _G[frame:GetName()]:SetFont(mnkLibs.Fonts.ap, 14, '')
+    -- _G[frame:GetName()].SetFont = mnkLibs.donothing
+    -- _G[frame:GetName()..'TabText']:SetFont(mnkLibs.Fonts.oswald, 18, '')
+    -- _G[frame:GetName()..'TabText']:SetShadowOffset(1,1)
+    -- _G[frame:GetName()..'TabText']:SetShadowColor(0,0,0)
+    -- _G[frame:GetName()..'TabText'].SetShadowOffset = mnkLibs.donothing
+    -- _G[frame:GetName()..'TabText'].SetShadowColor = mnkLibs.donothing
+    -- _G[frame:GetName()..'TabText']:SetTextColor(1,1,1)
+    -- _G[frame:GetName()..'TabText']:SetVertexColor(1,1,1)
+    -- _G[frame:GetName()..'TabText'].SetTextColor = mnkLibs.donothing
+    -- _G[frame:GetName()..'TabText'].SetVertexColor = mnkLibs.donothing
     
     -- remove the tab textures.
-    for index, value in pairs(tabs) do _G[frame:GetName()..'Tab'..value]:SetTexture(nil) end
+    --for index, value in pairs(tabs) do _G[frame:GetName()..'Tab'..value]:SetTexture(nil) end
 
 	if frame ~= COMBATLOG then
         if not mnkChat.hooks[frame] then
